@@ -29,7 +29,7 @@ void window(void) {
 	unsigned short winWidth = windowSize('x');
 	unsigned short winHeight = windowSize('y');
 
-	char programName[5] = "Fiflo";
+	char programName[7] = " Fiflo ";
 	unsigned short programNameLen = strlen(programName);
 	unsigned short programNameCenter = (winWidth - programNameLen) / 2;
 
@@ -38,8 +38,13 @@ void window(void) {
 
 	printf("%s", programName);
 
-	for(i = 0; i < programNameCenter; i++) {
-		printWhiteblock(); }
+	if(winWidth % 2 == 0) {
+		for(i = 0; i <= programNameCenter; i++) {
+			printWhiteblock(); }}
+
+	else {
+		for(i = 0; i < programNameCenter; i++) {
+			printWhiteblock(); }}
 
 	for(i = 2; i < winHeight; i++) {
 		printf("%c", '\n'); }
