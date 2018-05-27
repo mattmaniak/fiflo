@@ -5,7 +5,7 @@ tags. Dates are not alternative version names. They are just release dates.
 Changelog contains ONLY new tangible features. To see what's new in source
 files use diff-like tools or "git log".
 
-### v0.2.0:
+### v0.2.0 (May 27, 2018)
 - Version deleted from the upper bar.
 - Program's name centering in the upper bar fixed.
 - Basic *nixGetch implemented.
