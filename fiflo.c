@@ -1,34 +1,15 @@
-#include <stdint.h>
-#include <stdio.h>
+#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-
-void render(void) {
-	struct winsize win;
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
-
-	uint16_t i;
-	uint16_t winWidth = win.ws_col;
-	uint16_t winHeight = win.ws_row;
-
-	for(i = 0; i < winWidth; i++) {
-		printf("%c", 's');
-	}
-	for(i = 2; i < winHeight; i++) {
-		printf("%c", '\n');
-	}
-	for(i = 0; i < winWidth; i++) {
-		printf("%c", 's');
-	}
-}
+#include "src/render.h"
 
 // *argv[] - table of pointers, (*argv)[] pointer of table.
-int main(uint8_t argc, char *argv[]) {
+int main(unsigned char argc, char *argv[]) {
 	if(argc > 2) {
-		puts("To many args!");
+		exit(1);
 	}
 
-	render();
+	window();
 	return 0;
 }
 
