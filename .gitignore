@@ -1,0 +1,4 @@
+fiflo
+*.swp
+**/__pycache__/
+
