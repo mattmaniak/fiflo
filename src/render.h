@@ -1,16 +1,17 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include "input.h"
 
-void printWhiteblock(void) {
-	printf("%s", "\033[7m \033[0m"); }
+#define MIN_WIDTH 40
+#define MIN_HEIGHT 20
 
-unsigned short windowSize(char axis) {
-	#define MIN_WIDTH 40
-	#define MIN_HEIGHT 20
+int8_t whiteblock[9] = "\033[7m \033[0m"; // Mostly white rectangle.
 
+uint16_t windowSize(int8_t axis) {
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
@@ -25,25 +26,29 @@ unsigned short windowSize(char axis) {
 		return win.ws_row; }}
 
 void window(void) {
-	unsigned short i;
-	unsigned short winWidth = windowSize('x');
-	unsigned short winHeight = windowSize('y');
+	uint16_t i;
+	uint16_t winWidth = windowSize('x');
+	uint16_t winHeight = windowSize('y');
 
-	char programName[14] = " Fiflo v0.1.0 ";
-	unsigned short programNameLen = strlen(programName);
-	unsigned short programNameCenter = (winWidth - programNameLen) / 2;
+	int8_t programName[7] = " Fiflo ";
+	uint16_t programNameLen = strlen(programName);
+	uint16_t programNameCenter = (winWidth - programNameLen) / 2;
 
 	for(i = 0; i < programNameCenter; i++) {
-		printWhiteblock(); }
+		printf("%s", whiteblock); }
 
 	printf("%s", programName);
 
-	for(i = 0; i < programNameCenter; i++) {
-		printWhiteblock(); }
+	if(winWidth % 2 == 0) {
+		for(i = 0; i <= programNameCenter; i++) {
+			printf("%s", whiteblock); }}
+	else {
+		for(i = 0; i < programNameCenter; i++) {
+			printf("%s", whiteblock); }}
 
-	for(i = 2; i < winHeight; i++) {
+	for(i = 1; i < winHeight; i++) {
 		printf("%c", '\n'); }
 
 	for(i = 0; i < winWidth; i++) {
-		printWhiteblock(); }}
+		printf("%s", whiteblock); }}
 
