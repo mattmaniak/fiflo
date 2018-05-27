@@ -9,6 +9,7 @@
 #define MIN_WIDTH 40
 #define MIN_HEIGHT 20
 
+uint16_t i;
 int8_t whiteblock[9] = "\033[7m \033[0m"; // Mostly white rectangle.
 
 uint16_t windowSize(int8_t axis) {
@@ -25,8 +26,7 @@ uint16_t windowSize(int8_t axis) {
 	else if(axis == 'y') {
 		return win.ws_row; }}
 
-void window(void) {
-	uint16_t i;
+void window(int8_t character) {
 	uint16_t winWidth = windowSize('x');
 	uint16_t winHeight = windowSize('y');
 
@@ -46,7 +46,9 @@ void window(void) {
 		for(i = 0; i < programNameCenter; i++) {
 			printf("%s", whiteblock); }}
 
-	for(i = 1; i < winHeight; i++) {
+
+	printf("%c", character);
+	for(i = 2; i < winHeight; i++) {
 		printf("%c", '\n'); }
 
 	for(i = 0; i < winWidth; i++) {

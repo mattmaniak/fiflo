@@ -2,15 +2,15 @@
 
 void typeAndPrint(void) {
 	while(1) {
-		unixGetch();
-		window(); }}
+		int8_t pressedKey = unixGetch();
+		window(pressedKey); }}
 
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(uint8_t argc, int8_t *argv[]) {
 	if(argc > 2) {
 		exit(1); }
 
-	window();
+	window(' ');
 	typeAndPrint();
 	return 0; }
 
