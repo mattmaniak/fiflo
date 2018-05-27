@@ -5,13 +5,12 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-void printWhiteblock(void) {
-	printf("%s", "\033[7m \033[0m"); }
+#define MIN_WIDTH 40
+#define MIN_HEIGHT 20
+
+int8_t whiteblock[9] = "\033[7m \033[0m"; // Mostly white rectangle.
 
 uint16_t windowSize(int8_t axis) {
-	#define MIN_WIDTH 40
-	#define MIN_HEIGHT 20
-
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
@@ -35,21 +34,21 @@ void window(void) {
 	uint16_t programNameCenter = (winWidth - programNameLen) / 2;
 
 	for(i = 0; i < programNameCenter; i++) {
-		printWhiteblock(); }
+		printf("%s", whiteblock); }
 
 	printf("%s", programName);
 
 	if(winWidth % 2 == 0) {
 		for(i = 0; i <= programNameCenter; i++) {
-			printWhiteblock(); }}
+			printf("%s", whiteblock); }}
 
 	else {
 		for(i = 0; i < programNameCenter; i++) {
-			printWhiteblock(); }}
+			printf("%s", whiteblock); }}
 
 	for(i = 2; i < winHeight; i++) {
 		printf("%c", '\n'); }
 
 	for(i = 0; i < winWidth; i++) {
-		printWhiteblock(); }}
+		printf("%s", whiteblock); }}
 

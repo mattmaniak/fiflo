@@ -14,3 +14,5 @@ try:
 finally:
 	termios.tcsetattr(fd, termios.TCSADRAIN, oldSettings)
 
+termios.tcflush(sys.stdin, termios.TCIOFLUSH)
+
