@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -7,7 +8,7 @@
 void printWhiteblock(void) {
 	printf("%s", "\033[7m \033[0m"); }
 
-unsigned short windowSize(char axis) {
+uint16_t windowSize(int8_t axis) {
 	#define MIN_WIDTH 40
 	#define MIN_HEIGHT 20
 
@@ -25,13 +26,13 @@ unsigned short windowSize(char axis) {
 		return win.ws_row; }}
 
 void window(void) {
-	unsigned short i;
-	unsigned short winWidth = windowSize('x');
-	unsigned short winHeight = windowSize('y');
+	uint16_t i;
+	uint16_t winWidth = windowSize('x');
+	uint16_t winHeight = windowSize('y');
 
-	char programName[7] = " Fiflo ";
-	unsigned short programNameLen = strlen(programName);
-	unsigned short programNameCenter = (winWidth - programNameLen) / 2;
+	int8_t programName[7] = " Fiflo ";
+	uint16_t programNameLen = strlen(programName);
+	uint16_t programNameCenter = (winWidth - programNameLen) / 2;
 
 	for(i = 0; i < programNameCenter; i++) {
 		printWhiteblock(); }
