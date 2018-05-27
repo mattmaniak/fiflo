@@ -29,7 +29,7 @@ void window(void) {
 	unsigned short winWidth = windowSize('x');
 	unsigned short winHeight = windowSize('y');
 
-	char programName[14] = " Fiflo v0.1.0 ";
+	char programName[5] = "Fiflo";
 	unsigned short programNameLen = strlen(programName);
 	unsigned short programNameCenter = (winWidth - programNameLen) / 2;
 
