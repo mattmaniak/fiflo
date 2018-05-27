@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include "graphics.h"
 
 unsigned short windowSize(char axis) {
@@ -9,8 +12,10 @@ unsigned short windowSize(char axis) {
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
-//	if(win.ws_col < MIN_WIDTH) {
-//		 }
+	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT) {
+		puts("To small terminal for Fiflo!");
+		exit(1);
+	}
 
 	if(axis == 'x') {
 		return win.ws_col;
@@ -26,7 +31,7 @@ void window(void) {
 	unsigned short winWidth = windowSize('x');
 	unsigned short winHeight = windowSize('y');
 
-	char programName[16] = " Fiflo v.0.1.0 \0";
+	char programName[14] = " Fiflo v0.1.0 ";
 	unsigned short programNameLen = strlen(programName);
 	unsigned short programNameCenter = (winWidth - programNameLen) / 2;
 

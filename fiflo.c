@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
 #include "src/render.h"
 
 // *argv[] - table of pointers, (*argv)[] pointer of table.
