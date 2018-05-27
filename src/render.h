@@ -46,7 +46,6 @@ void window(int8_t character) {
 		for(i = 0; i < programNameCenter; i++) {
 			printf("%s", whiteblock); }}
 
-
 	printf("%c", character);
 	for(i = 2; i < winHeight; i++) {
 		printf("%c", '\n'); }

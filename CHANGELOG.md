@@ -1,12 +1,15 @@
-# Fiflo
-## Changelog
+# Fiflo - changelog
+
+## Description
 Below version numbers contains more detailed descriptions of annotated Git
 tags. Dates are not alternative version names. They are just release dates.
 Changelog contains ONLY new tangible features. To see what's new in source
 files use diff-like tools or "git log".
 
+## Versions
+
 ### v0.3.0 (?)
-- Printing pressed chars on the screen.
+- Printing pressed char on the screen.
 
 ### v0.2.0 (May 27, 2018)
 - Version deleted from the upper bar.
