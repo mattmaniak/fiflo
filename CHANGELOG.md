@@ -8,6 +8,7 @@ files use diff-like tools or "git log".
 ### v0.2.0:
 - Version deleted from the upper bar.
 - Program's name centering in the upper bar fixed.
+- Basic *nixGetch implemented.
 
 ### v0.1.1 (May 27, 2018):
 - Branches are now merged, not rebased.

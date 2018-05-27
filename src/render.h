@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include "input.h"
 
 #define MIN_WIDTH 40
 #define MIN_HEIGHT 20
@@ -41,12 +42,11 @@ void window(void) {
 	if(winWidth % 2 == 0) {
 		for(i = 0; i <= programNameCenter; i++) {
 			printf("%s", whiteblock); }}
-
 	else {
 		for(i = 0; i < programNameCenter; i++) {
 			printf("%s", whiteblock); }}
 
-	for(i = 2; i < winHeight; i++) {
+	for(i = 1; i < winHeight; i++) {
 		printf("%c", '\n'); }
 
 	for(i = 0; i < winWidth; i++) {
