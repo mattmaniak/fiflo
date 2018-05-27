@@ -3,7 +3,9 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include "graphics.h"
+
+void printWhiteblock(void) {
+	printf("%s", "\033[7m \033[0m"); }
 
 unsigned short windowSize(char axis) {
 	#define MIN_WIDTH 40
@@ -14,19 +16,15 @@ unsigned short windowSize(char axis) {
 
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT) {
 		puts("To small terminal for Fiflo!");
-		exit(1);
-	}
+		exit(1); }
 
 	if(axis == 'x') {
-		return win.ws_col;
-	}
+		return win.ws_col; }
+
 	else if(axis == 'y') {
-		return win.ws_row;
-	}
-}
+		return win.ws_row; }}
 
 void window(void) {
-
 	unsigned short i;
 	unsigned short winWidth = windowSize('x');
 	unsigned short winHeight = windowSize('y');
@@ -36,17 +34,16 @@ void window(void) {
 	unsigned short programNameCenter = (winWidth - programNameLen) / 2;
 
 	for(i = 0; i < programNameCenter; i++) {
-		printWhiteblock();
-	}
+		printWhiteblock(); }
+
 	printf("%s", programName);
+
 	for(i = 0; i < programNameCenter; i++) {
-		printWhiteblock();
-	}
+		printWhiteblock(); }
 
 	for(i = 2; i < winHeight; i++) {
-		printf("%c", '\n');
-	}
+		printf("%c", '\n'); }
+
 	for(i = 0; i < winWidth; i++) {
-		printWhiteblock();
-	}
-}
+		printWhiteblock(); }}
+
