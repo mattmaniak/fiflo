@@ -1,5 +1,6 @@
 #define MIN_WIDTH 40
 #define MIN_HEIGHT 20
+#define MAX_CHAR_AMOUNT 65535
 
 uint16_t i;
 int8_t whiteblock[9] = "\033[7m \033[0m"; // Mostly white rectangle.
@@ -33,8 +34,19 @@ void clearWindow(void) // To provide rendering in a one frame.
 	}
 }
 
-void window(int8_t pressedKey, int32_t charCount)
+void window(int8_t pressedKey, int16_t charCount)
 {
+	{
+		if(charCount <= 0)
+		{
+			charCount = 0;
+		}
+		else if(charCount >= MAX_CHAR_AMOUNT)
+		{
+			charCount = MAX_CHAR_AMOUNT;
+		}	
+	}
+
 	uint16_t winWidth = windowSize('x');
 	uint16_t winHeight = windowSize('y');
 

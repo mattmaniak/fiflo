@@ -19,7 +19,14 @@ void typeAndPrint(void)
 	while(1)
 	{
 		int8_t pressedKey = unixGetch();
-		charCount++;
+		if(pressedKey == BACKSPACE)
+		{
+			charCount--;
+		}
+		else
+		{
+			charCount++;
+		}
 		clearWindow();
 		window(pressedKey, charCount);
 	}
