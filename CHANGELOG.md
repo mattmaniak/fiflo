@@ -8,18 +8,19 @@ files use diff-like tools or "git log".
 
 ## Versions
 
-### v0.3.0 (?)
+### v0.3.0 (?):
 - Printing pressed char on the screen.
+- Rendering in a one frame.
 
-### v0.2.0 (May 27, 2018)
+### v0.2.0 (May 27, 2018):
 - Version deleted from the upper bar.
 - Program's name centering in the upper bar fixed.
 - Basic *nixGetch implemented.
 
-### v0.1.1 (May 27, 2018)
+### v0.1.1 (May 27, 2018):
 - Branches are now merged, not rebased.
 
-### v0.1.0 (May 27, 2018)
+### v0.1.0 (May 27, 2018):
 - Program's name and version in upper bar.
 - Changelog added.
 - Windows size checking.
