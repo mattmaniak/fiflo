@@ -1,3 +1,5 @@
+#include "src/headers.h"
+#include "src/input.h"
 #include "src/render.h"
 
 void typeAndPrint(void) {

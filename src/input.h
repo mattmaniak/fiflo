@@ -1,6 +1,3 @@
-#include <termios.h>
-#include <unistd.h>
-
 int8_t unixGetch(void) { // https://stackoverflow.com/questions/12710582/
 	int8_t key;
 	struct termios oldt,newt;

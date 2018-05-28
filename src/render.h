@@ -1,11 +1,3 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include "input.h"
-
 #define MIN_WIDTH 40
 #define MIN_HEIGHT 20
 
