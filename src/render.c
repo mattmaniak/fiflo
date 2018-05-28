@@ -3,7 +3,7 @@
 #define MIN_WIDTH 80
 #define MIN_HEIGHT 20
 #define MAX_CHAR_AMOUNT 0x7FFFFFFF
-#define whiteblock "\033[7m \033[0m"
+#define WHITEBLOCK "\033[7m \033[0m"
 
 uint16_t i;
 uint16_t windowSize(int8_t axis)
@@ -35,28 +35,14 @@ void clearWindow(void) // To provide rendering in a one frame.
 	}
 }
 
-void window(int8_t pressedKey, int32_t charCount)
+void upperBorder(void)
 {
-	{
-		if(charCount <= 0)
-		{
-			charCount = 0;
-		}
-		else if(charCount >= MAX_CHAR_AMOUNT)
-		{
-			charCount = MAX_CHAR_AMOUNT;
-		}	
-	}
-
 	uint16_t winWidth = windowSize('x');
-	uint16_t winHeight = windowSize('y');
-
 	int8_t programName[7] = " Fiflo ";
-	uint16_t programNameLen = strlen(programName);
-	uint16_t programNameCenter = (winWidth - programNameLen) / 2;
+	uint16_t programNameCenter = (winWidth - 7) / 2;
 	for(i = 0; i < programNameCenter; i++)
 	{
-		printf("%s", whiteblock);
+		printf("%s", WHITEBLOCK);
 	}
 
 	printf("%s", programName);
@@ -64,29 +50,49 @@ void window(int8_t pressedKey, int32_t charCount)
 	{
 		for(i = 0; i <= programNameCenter; i++)
 		{
-			printf("%s", whiteblock);
+			printf("%s", WHITEBLOCK);
 		}
 	}
 	else
 	{
 		for(i = 0; i < programNameCenter; i++)
 		{
-			printf("%s", whiteblock);
+			printf("%s", WHITEBLOCK);
 		}
 	}
+}
+
+void lowerBorder(int32_t charCount)
+{
+	uint16_t winWidth = windowSize('x');
+	for(i = 0; i < winWidth; i++)
+	{
+		printf("%s", WHITEBLOCK);
+	}
+}
+
+void window(int8_t pressedKey, int32_t charCount)
+{
+	if(charCount <= 0)
+	{
+		charCount = 0;
+	}
+	else if(charCount >= MAX_CHAR_AMOUNT)
+	{
+		charCount = MAX_CHAR_AMOUNT;
+	}
+
+	uint16_t winWidth = windowSize('x');
+	uint16_t winHeight = windowSize('y');
+
+	upperBorder();
 
 	printf("%c", pressedKey);
 	for(i = 3; i < winHeight; i++)
 	{
 		printf("%c", '\n');
 	}
-
-	printf("%s", "Chars: ");
-	printf("%i", charCount);
-	printf("%c", '\n');
-	for(i = 0; i < winWidth; i++)
-	{
-		printf("%s", whiteblock);
-	}
+	printf("%i\n", charCount);
+	lowerBorder(charCount);
 }
 

@@ -1,7 +1,7 @@
 #include "src/input.c"
 #include "src/render.c"
 
-uint32_t charCount;
+uint32_t charBuffer, lineBuffer;
 
 void argcCheck(int8_t argc)
 {
@@ -19,14 +19,14 @@ void typeAndPrint(void)
 		int8_t pressedKey = unixGetch();
 		if(pressedKey == 127) // Backspace.
 		{
-			charCount--;
+			charBuffer--;
 		}
 		else
 		{
-			charCount++;
+			charBuffer++;
 		}
 		clearWindow();
-		window(pressedKey, charCount);
+		window(pressedKey, charBuffer);
 	}
 }
 

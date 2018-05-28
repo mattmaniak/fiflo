@@ -1,6 +1,5 @@
 #include "input.h"
 
-
 int8_t unixGetch(void) // https://stackoverflow.com/questions/12710582/
 {
 	int8_t key;
@@ -13,9 +12,4 @@ int8_t unixGetch(void) // https://stackoverflow.com/questions/12710582/
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return key;
 }
-/*
-int8_t getKey(void)
-{
-	
-}
-*/
+
