@@ -1,7 +1,5 @@
-#include "src/headers.h"
-#include "src/input.h"
-#include "src/keymap.h"
-#include "src/render.h"
+#include "src/input.c"
+#include "src/render.c"
 
 uint32_t charCount;
 
@@ -19,7 +17,7 @@ void typeAndPrint(void)
 	while(1)
 	{
 		int8_t pressedKey = unixGetch();
-		if(pressedKey == BACKSPACE)
+		if(pressedKey == 127) // Backspace.
 		{
 			charCount--;
 		}
