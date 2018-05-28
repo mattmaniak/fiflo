@@ -1,4 +1,5 @@
-int8_t unixGetch(void) { // https://stackoverflow.com/questions/12710582/
+int8_t unixGetch(void) // https://stackoverflow.com/questions/12710582/
+{
 	int8_t key;
 	struct termios oldt,newt;
 	tcgetattr( STDIN_FILENO, &oldt );
@@ -7,5 +8,6 @@ int8_t unixGetch(void) { // https://stackoverflow.com/questions/12710582/
 	tcsetattr( STDIN_FILENO, TCSANOW, &newt );
 	key = getchar();
 	tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
-	return key; }
+	return key;
+}
 
