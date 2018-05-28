@@ -18,6 +18,12 @@ uint16_t windowSize(int8_t axis) {
 	else if(axis == 'y') {
 		return win.ws_row; }}
 
+void clearWindow(void) { // To provide rendering in a one frame.
+	uint16_t winHeight = windowSize('y');
+
+	for(i = 0; i < winHeight; i++) {
+		printf("%s", "\033[F\033[K"); }}
+
 void window(int8_t character) {
 	uint16_t winWidth = windowSize('x');
 	uint16_t winHeight = windowSize('y');
