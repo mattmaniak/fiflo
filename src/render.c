@@ -5,7 +5,6 @@
 #define MIN_HEIGHT 20
 #define MAX_WIDTH 500
 #define MAX_HEIGHT 300
-#define MAX_CHAR_AMOUNT 0x7FFFFFFF
 
 uint16_t i;
 
@@ -21,11 +20,11 @@ uint16_t windowSize(int8_t axis) {
 		exit(1);
 	}
 
-	if(axis == 'x') {
-		return win.ws_col;
-	}
-	else if(axis == 'y') {
-		return win.ws_row;
+	switch (axis) {
+		case 'x':
+			return win.ws_col;
+		case 'y':
+			return win.ws_row;
 	}
 }
 
@@ -36,24 +35,16 @@ void clearWindow(void) { // To provide rendering in a one frame.
 	}
 }
 
-void window(int8_t pressedKey, int32_t charCount) {
-	if(charCount <= 0) {
-		charCount = 0;
-	}
-	else if(charCount >= MAX_CHAR_AMOUNT) {
-		charCount = MAX_CHAR_AMOUNT;
-	}
-
-	uint16_t winWidth = windowSize('x');
+void window(int8_t pressedKey, uint32_t charBuffer) {
 	uint16_t winHeight = windowSize('y');
-
 	upperBorder();
 
 	printf("%c", pressedKey);
+
 	for(i = 3; i < winHeight; i++) {
 		printf("%c", '\n');
 	}
-	printf("%i\n", charCount);
+	printf("%i\n", charBuffer);
 	lowerBorder();
 }
 

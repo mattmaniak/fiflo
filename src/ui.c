@@ -9,9 +9,9 @@ void upperBorder(void) {
 	for(i = 0; i < programNameCenter; i++) {
 		printf("%s", WHITEBLOCK);
 	}
-
 	printf("%s", programName);
-	if(winWidth % 2 == 0) {
+
+	if(winWidth % 2 == 0) { // Without it there could be non-colored block.
 		for(i = 0; i <= programNameCenter; i++)
 		{
 			printf("%s", WHITEBLOCK);

@@ -7,7 +7,7 @@
 #include <termios.h>
 
 int8_t unixGetch(void);
-int8_t getKey(void);
+int8_t _getch(void);
 
 #endif
 
