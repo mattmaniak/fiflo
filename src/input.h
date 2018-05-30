@@ -8,5 +8,6 @@
 
 int8_t unixGetch(void);
 int8_t getKey(void);
+
 #endif
 

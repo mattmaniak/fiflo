@@ -11,6 +11,7 @@ files use diff-like tools or "git log".
 ### v0.3.0 (?):
 - Printing pressed char on the screen.
 - Rendering in a one frame.
+- Full terminal size checking.
 
 ### v0.2.0 (May 27, 2018):
 - Version deleted from the upper bar.
