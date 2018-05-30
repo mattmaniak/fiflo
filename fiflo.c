@@ -1,9 +1,10 @@
 #include "src/input.c"
 #include "src/render.c"
 
-#define MAX_CHAR_AMOUNT 0x7FFFFFFF
+// Chars amount: from 0 to signed int8/16/32_t - 1.
+#define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
-int32_t charBuffer = 0;
+int8_t charBuffer = 0;
 
 void argcCheck(int8_t argc) {
 	if(argc > 2) {
@@ -24,8 +25,8 @@ void typeAndPrint(void) {
 		}
 		else {
 			charBuffer++;
-			if(charBuffer >= MAX_CHAR_AMOUNT) {
-				charBuffer = MAX_CHAR_AMOUNT;
+			if(charBuffer >= CHAR_BUFFER_SIZE) {
+				charBuffer = CHAR_BUFFER_SIZE;
 			}
 		}
 		clearWindow();
