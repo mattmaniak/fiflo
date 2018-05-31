@@ -20,7 +20,7 @@ uint16_t windowSize(int8_t axis) {
 		exit(1);
 	}
 
-	switch (axis) {
+	switch(axis) {
 		case 'x':
 			return win.ws_col;
 		case 'y':
@@ -35,9 +35,8 @@ void clearWindow(void) { // To provide rendering in a one frame.
 	}
 }
 
-void window(int8_t pressedKey, uint32_t charBuffer) {
+void window(char pressedKey, uint32_t charBuffer) {
 	uint16_t winHeight = windowSize('y');
-	upperBorder();
 
 	printf("%c", pressedKey);
 

@@ -1,5 +1,5 @@
 # Fiflo
-## Terminal-based text editor
+## Simple terminal-based text editor.
 
 Nano-inspired.
 

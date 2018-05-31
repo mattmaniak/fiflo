@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <termios.h>
 
-int8_t unixGetch(void);
+char unixGetch(void);
 
 #endif
 

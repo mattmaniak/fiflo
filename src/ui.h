@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define WHITEBLOCK "\033[7m \033[0m"
+#define WHITEBLOCK "\033[7m \033[0m\0"
 
 void upperBorder(void);
 void lowerBorder(void);

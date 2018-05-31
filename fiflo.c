@@ -6,7 +6,7 @@
 
 int8_t charBuffer = 0;
 
-void argcCheck(int8_t argc) {
+void argcCheck(char argc) {
 	if(argc > 2) {
 		puts("Pass 0 or 1 (filename) arg to Fiflo.");
 		exit(1);
@@ -15,7 +15,7 @@ void argcCheck(int8_t argc) {
 
 void typeAndPrint(void) {
 	while(1) {
-		int8_t pressedKey = unixGetch();
+		char pressedKey = unixGetch();
 
 		if(pressedKey == 127) { // Backspace.
 			charBuffer--;
@@ -37,6 +37,7 @@ void typeAndPrint(void) {
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(uint8_t argc, int8_t *argv[]) {
 	argcCheck(argc);
+	upperBorder();
 	window(' ', charBuffer);
 	typeAndPrint();
 	return 0;

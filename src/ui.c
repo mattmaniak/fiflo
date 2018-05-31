@@ -4,7 +4,7 @@ uint16_t i;
 
 void upperBorder(void) {
 	uint16_t winWidth = windowSize('x');
-	int8_t programName[7] = " Fiflo ";
+	char programName[8] = " Fiflo \0";
 	uint16_t programNameCenter = (winWidth - 7) / 2;
 	for(i = 0; i < programNameCenter; i++) {
 		printf("%s", WHITEBLOCK);
@@ -18,7 +18,7 @@ void upperBorder(void) {
 		}
 	}
 	else {
-		for(i = 0; i < programNameCenter; i++) {
+		for(i = 1; i <= programNameCenter; i++) {
 			printf("%s", WHITEBLOCK);
 		}
 	}

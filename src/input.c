@@ -1,7 +1,7 @@
 #include "input.h"
 
-int8_t unixGetch(void) { // https://stackoverflow.com/questions/12710582/
-	int8_t key;
+char unixGetch(void) { // https://stackoverflow.com/questions/12710582/
+	char key;
 	struct termios oldt,newt;
 	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
