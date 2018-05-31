@@ -21,4 +21,3 @@ between one or a few commits to provide updated code on the "develop" branch.
 - https://semver.org/,
 - https://nvie.com/posts/a-successful-git-branching-model/ and between,
 - https://guides.github.com/introduction/flow/.
-

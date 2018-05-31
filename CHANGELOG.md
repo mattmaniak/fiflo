@@ -7,6 +7,10 @@ Changelog contains only new tangible features. To see what's new in source
 files use diff-like tools or "git log".
 
 ## Versions:
+### v0.4.0 (?):
+- Multiple chars rendering.
+- UI even more simplified.
+
 ### v0.3.0 (May 31, 2018):
 - Printing only pressed char on the screen.
 - Working char counter with under/overflow protection.
@@ -29,4 +33,3 @@ files use diff-like tools or "git log".
 
 ### v0.0.0 (May 27, 2018):
 - Initial release (basic window rendering).
-
