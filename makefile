@@ -1,3 +1,3 @@
 make_fiflo:
-	gcc -Wall fiflo.c -o fiflo
+	gcc -Wall -Wextra -Wpedantic -Wshadow fiflo.c -o fiflo
 

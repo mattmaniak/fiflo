@@ -6,14 +6,7 @@
 
 int8_t charBuffer = 0;
 
-void argcCheck(char argc) {
-	if(argc > 2) {
-		puts("Pass 0 or 1 (filename) arg to Fiflo.");
-		exit(1);
-	}
-}
-
-void typeAndPrint(void) {
+void typeAndPrint() {
 	while(1) {
 		char pressedKey = unixGetch();
 
@@ -35,9 +28,15 @@ void typeAndPrint(void) {
 }
 
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
-int main(uint8_t argc, int8_t *argv[]) {
-	argcCheck(argc);
+int main(int argc, char *argv[]) {
+	if(argc != 2) {
+		puts("Pass certainly 1 arg (filename) to Fiflo.");
+		exit(1);
+	}
+	printf("%s", "\033[F\033[K");
+	printf("Filename: %s", argv[1]);
 	window(' ', charBuffer);
+
 	typeAndPrint();
 	return 0;
 }

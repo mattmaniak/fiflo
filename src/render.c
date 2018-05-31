@@ -26,6 +26,7 @@ uint16_t windowSize(int8_t axis) {
 		case 'y':
 			return win.ws_row;
 	}
+	return 0; // Protection from the [-Wreturn-type] warning.
 }
 
 void clearWindow(void) { // To provide rendering in a one frame.
