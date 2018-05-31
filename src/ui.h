@@ -2,10 +2,11 @@
 #define UI_H
 
 #include <stdio.h>
+#include <string.h>
 
-#define WHITEBLOCK "\033[7m \033[0m\0"
+#define INVERT_COLORS "\033[7m\0"
+#define RESTORE_COLORS "\033[0m\0"
 
-void upperBorder(void);
 void lowerBorder(void);
 
 #endif

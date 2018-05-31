@@ -36,11 +36,8 @@ void clearWindow(void) { // To provide rendering in a one frame.
 }
 
 void window(char pressedKey, uint32_t charBuffer) {
-	uint16_t winHeight = windowSize('y');
-
-	printf("%c", pressedKey);
-
-	for(i = 3; i < winHeight; i++) {
+	printf("%c", pressedKey); // Printing all chars will be here.
+	for(i = 2; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
 	printf("%i\n", charBuffer);

@@ -37,7 +37,6 @@ void typeAndPrint(void) {
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(uint8_t argc, int8_t *argv[]) {
 	argcCheck(argc);
-	upperBorder();
 	window(' ', charBuffer);
 	typeAndPrint();
 	return 0;
