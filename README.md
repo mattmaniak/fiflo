@@ -1,5 +1,5 @@
 # Fiflo
-## Terminal-based text editor.
+## The simple terminal-based text editor.
 
-Version naming: semver.org.
+Nano-inspired. Currently unusable because WIP.
 
