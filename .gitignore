@@ -1,4 +1,4 @@
 fiflo
 *.swp
-**/__pycache__/
+*.save
 

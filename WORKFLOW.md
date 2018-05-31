@@ -17,7 +17,7 @@ back. Fixes from "hotfix" are made independently on the "develop" branch.
 parameters - merged is more accurate for this purpose. OFC everything is pushed
 between one or a few commits to provide updated code on the "develop" branch.
 
-## Sources I used
+## Sources I used:
 - https://semver.org/,
 - https://nvie.com/posts/a-successful-git-branching-model/ and between,
 - https://guides.github.com/introduction/flow/.

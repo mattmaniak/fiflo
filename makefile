@@ -1,3 +1,3 @@
 make_fiflo:
-	gcc fiflo.c -o fiflo
+	gcc -Wall fiflo.c -o fiflo
 

@@ -3,13 +3,13 @@
 ## Description
 Below version numbers contains more detailed descriptions of annotated Git
 tags. Dates are not alternative version names. They are just release dates.
-Changelog contains ONLY new tangible features. To see what's new in source
+Changelog contains only new tangible features. To see what's new in source
 files use diff-like tools or "git log".
 
-## Versions
-
-### v0.3.0 (?):
-- Printing pressed char on the screen.
+## Versions:
+### v0.3.0 (May 31, 2018):
+- Printing only pressed char on the screen.
+- Working char counter with under/overflow protection.
 - Rendering in a one frame.
 - Full terminal size checking.
 
