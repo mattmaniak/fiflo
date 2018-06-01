@@ -29,7 +29,7 @@ uint16_t windowSize(int8_t axis) {
 	return 0; // Protection from the [-Wreturn-type] warning.
 }
 
-void clearWindow(void) { // To provide rendering in a one frame.
+void clearFrame(void) { // To provide rendering in a one frame.
 	uint16_t winHeight = windowSize('y');
 	for(i = 0; i < winHeight; i++) {
 		printf("%s", "\033[F\033[K");

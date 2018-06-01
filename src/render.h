@@ -7,7 +7,7 @@
 #include <sys/ioctl.h>
 
 uint16_t windowSize(int8_t axis);
-void clearWindow(void);
+void clearFrame(void);
 void window(char pressedKey, int8_t charBuffer);
 
 #endif

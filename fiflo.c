@@ -6,7 +6,12 @@
 
 int8_t charBuffer = 0;
 
-void typeAndPrint() {
+void typeAndPrint(char filename[32]) {
+	int8_t filenameSize = strlen(filename);
+	if(filenameSize > 32) {
+		puts("\nMaximum filename lenght is 32 chars.");
+		exit(1);
+	}
 	while(1) {
 		char pressedKey = unixGetch();
 
@@ -22,7 +27,7 @@ void typeAndPrint() {
 				charBuffer = CHAR_BUFFER_SIZE;
 			}
 		}
-		clearWindow();
+		clearFrame();
 		window(pressedKey, charBuffer);
 	}
 }
@@ -37,7 +42,7 @@ int main(int argc, char *argv[]) {
 	printf("Filename: %s", argv[1]);
 	window(' ', charBuffer);
 
-	typeAndPrint();
+	typeAndPrint(argv[1]);
 	return 0;
 }
 

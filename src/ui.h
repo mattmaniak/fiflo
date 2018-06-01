@@ -5,8 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define INVERT_COLORS "\033[7m\0"
-#define RESTORE_COLORS "\033[0m\0"
+// ANSI escape codes.
+#define RESTORE "\033[0m\0"
+#define BOLD "\033[1m\0"
 
 void lowerBorder(void);
 
