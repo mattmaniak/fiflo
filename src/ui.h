@@ -1,7 +1,6 @@
 #ifndef UI_H
 #define UI_H
 
-#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -9,7 +8,8 @@
 #define RESTORE "\033[0m\0"
 #define BOLD "\033[1m\0"
 
-void lowerBorder(void);
+int8_t charBufferString(int8_t chars);
+void lowerBorder(int8_t chars);
 
 #endif
 

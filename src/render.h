@@ -8,7 +8,7 @@
 
 uint16_t windowSize(int8_t axis);
 void clearFrame(void);
-void window(char pressedKey, int8_t charBuffer);
+void window(char pressedKey, int8_t chars);
 
 #endif
 

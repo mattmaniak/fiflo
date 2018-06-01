@@ -36,12 +36,11 @@ void clearFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
-void window(char pressedKey, int8_t charBuffer) {
+void window(char pressedKey, int8_t chars) {
 	printf("%c", pressedKey); // Printing all chars will be here.
-	for(i = 2; i < windowSize('y'); i++) {
+	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
-	printf("%i\n", charBuffer);
-	lowerBorder();
+	lowerBorder(chars);
 }
 
