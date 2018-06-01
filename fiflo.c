@@ -28,7 +28,7 @@ void typeAndPrint(char filename[32]) {
 			}
 		}
 		clearFrame();
-		window(pressedKey, charBuffer);
+		window(pressedKey, charBuffer, filename);
 	}
 }
 
@@ -38,10 +38,7 @@ int main(int argc, char *argv[]) {
 		puts("Pass certainly 1 arg (filename) to Fiflo.");
 		exit(1);
 	}
-	printf("%s", "\033[F\033[K");
-	printf("Filename: %s", argv[1]);
-	window(' ', charBuffer);
-
+	window(' ', charBuffer, argv[1]);
 	typeAndPrint(argv[1]);
 	return 0;
 }

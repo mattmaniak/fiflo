@@ -26,7 +26,7 @@ uint16_t windowSize(int8_t axis) {
 		case 'y':
 			return win.ws_row;
 	}
-	return 0; // Protection from the [-Wreturn-type] warning.
+	return 0; // Protection from the -Wreturn-type warning.
 }
 
 void clearFrame(void) { // To provide rendering in a one frame.
@@ -36,11 +36,11 @@ void clearFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
-void window(char pressedKey, int8_t chars) {
+void window(char pressedKey, int8_t chars, char filename[32]) {
 	printf("%c", pressedKey); // Printing all chars will be here.
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
-	lowerBorder(chars);
+	lowerBorder(chars, filename);
 }
 

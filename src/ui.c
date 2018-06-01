@@ -11,15 +11,19 @@ int8_t decimalIntLen(int8_t chars) { // Return len of decimal charchars.
 	return len;
 }
 
-void lowerBorder(int8_t chars) {
+void lowerBorder(int8_t chars, char filename[32]) {
 	char programName[10] = " Fiflo | \0";
+	char singleBorder[4] = " | \0";
 	char charAmount[10] = " chars | \0";
 	char stdinPlace[9] = "| stdin:\0";
-	uint16_t whitespace = strlen(programName) + strlen(charAmount)
-	+ decimalIntLen(chars) + strlen(stdinPlace) + 1; // 1 - stdin buffer.
+	uint16_t whitespace = strlen(programName) + strlen(filename)
+	+ strlen(singleBorder) + strlen(charAmount) + decimalIntLen(chars)
+	+ strlen(stdinPlace) + 1; // 1 - stdin buffer.
 
 	printf("%s", BOLD);
 	printf("%s", programName);
+	printf("%s", filename);
+	printf("%s", singleBorder);
 	printf("%d", chars);
 	printf("%s", charAmount);
 	for(i = 0; i < windowSize('x') - whitespace; i++) {
