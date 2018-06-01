@@ -2,10 +2,13 @@
 
 uint16_t i;
 
-int8_t charcharsString(int8_t chars) { // Return len of decimal charchars.
-	if(chars < 10) return 1;
-	if(chars >= 10 && chars < 100) return 2;
-	if(chars >= 100) return 3;
+int8_t decimalIntLen(int8_t chars) { // Return len of decimal charchars.
+	int8_t len = 1;
+	while(chars > 9) {
+		len++;
+		chars /= 10;
+	}
+	return len;
 }
 
 void lowerBorder(int8_t chars) {
@@ -13,7 +16,7 @@ void lowerBorder(int8_t chars) {
 	char charAmount[10] = " chars | \0";
 	char stdinPlace[9] = "| stdin:\0";
 	uint16_t whitespace = strlen(programName) + strlen(charAmount)
-	+ charcharsString(chars) + strlen(stdinPlace) + 1;
+	+ decimalIntLen(chars) + strlen(stdinPlace) + 1; // 1 - stdin buffer.
 
 	printf("%s", BOLD);
 	printf("%s", programName);

@@ -8,7 +8,7 @@
 #define RESTORE "\033[0m\0"
 #define BOLD "\033[1m\0"
 
-int8_t charBufferString(int8_t chars);
+int8_t decimalIntLen(int8_t chars);
 void lowerBorder(int8_t chars);
 
 #endif
