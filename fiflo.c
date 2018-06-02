@@ -4,7 +4,7 @@
 // Chars amount: from 0 to signed int8/16/32_t - 1.
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
-int8_t charsAmount = 1, linesAmount = 1;
+int8_t charsAmount = 0, linesAmount = 1;
 
 void typeAndPrint(char filename[32]) {
 	while(1) {
@@ -29,7 +29,7 @@ void typeAndPrint(char filename[32]) {
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(int argc, char *argv[]) {
 	if(argc != 2) {
-		fprintf(stderr, "%s", "Pass certainly 1 arg (filename) to Fiflo.\n");
+		fprintf(stderr, "%s", "Usage: Fiflo [filename].\n");
 		exit(1);
 	}
 	int8_t filenameLen = strlen(argv[1]);
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "%s", "Maximum filename length is 32 chars.\n");
 		exit(1);
 	}
-	window('s', argv[1], charsAmount, linesAmount);
+	windowEmpty(argv[1], charsAmount, linesAmount);
 	typeAndPrint(argv[1]);
 	return 0;
 }

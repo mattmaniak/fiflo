@@ -36,22 +36,29 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
-void lineLenCheck(int8_t chars) { // TODO: Doesn't works!.
+int8_t lineLenCheck(int8_t chars) { // TODO: Works partially!
 	if(chars >= 80) {
-		chars = 80;
+		return 80;
 	}
 }
 
 void window(char key, char filename[32], int8_t chars, int8_t lines) {
 	int16_t lineLen = strlen(singleLine);
-	lineLenCheck(chars);
-	singleLine[80] = '\0';
+	chars = lineLenCheck(chars);
 	singleLine[chars] = key;
+	singleLine[chars + 1] = '\0';
 
 	for(i = 0; i < chars; i++) {
 		printf("%c", singleLine[i]);
 	}
 	for(i = 1; i < windowSize('y'); i++) {
+		printf("%c", '\n');
+	}
+	infoBar(filename, chars, lines);
+}
+
+void windowEmpty(char filename[32], int8_t chars, int8_t lines) {
+	for(i = 0; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
 	infoBar(filename, chars, lines);

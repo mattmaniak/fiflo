@@ -10,6 +10,7 @@ files use diff-like tools or "git log".
 ### v0.4.0 (?):
 - Multiple chars rendering.
 - UI even more simplified.
+- Info about amount of chars and lines.
 
 ### v0.3.0 (May 31, 2018):
 - Printing only pressed char on the screen.
