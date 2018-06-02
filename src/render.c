@@ -7,6 +7,7 @@
 #define MAX_HEIGHT 300
 
 int16_t i;
+char singleLine[80];
 
 int16_t windowSize(int8_t axis) {
 	struct winsize win;
@@ -35,16 +36,21 @@ void clearFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
-char singleLine[82];
+void lineLenCheck(int8_t chars) { // TODO: Doesn't works!.
+	if(chars >= 80) {
+		chars = 80;
+	}
+}
 
 void window(char key, int8_t chars, char filename[32]) {
-	singleLine[82] = '\0';
-	int16_t lineLength = strlen(singleLine);
+	int16_t lineLen = strlen(singleLine);
+	lineLenCheck(chars);
+	singleLine[80] = '\0';
 	singleLine[chars] = key;
+
 	for(i = 0; i < chars; i++) {
 		printf("%c", singleLine[i]);
 	}
-
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
