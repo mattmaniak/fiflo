@@ -7,9 +7,9 @@
 #include <sys/ioctl.h>
 
 int16_t windowSize(int8_t axis);
-void clearFrame(void);
+void cleanFrame(void);
 void lineLenCheck(int8_t chars);
-void window(char key, int8_t chars, char filename[32]);
+void window(char key, char filename[32], int8_t chars, int8_t lines);
 
 #endif
 

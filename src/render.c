@@ -29,7 +29,7 @@ int16_t windowSize(int8_t axis) {
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
-void clearFrame(void) { // To provide rendering in a one frame.
+void cleanFrame(void) { // To provide rendering in a one frame.
 	int16_t winHeight = windowSize('y');
 	for(i = 0; i < winHeight; i++) {
 		printf("%s", "\033[F\033[K");
@@ -42,7 +42,7 @@ void lineLenCheck(int8_t chars) { // TODO: Doesn't works!.
 	}
 }
 
-void window(char key, int8_t chars, char filename[32]) {
+void window(char key, char filename[32], int8_t chars, int8_t lines) {
 	int16_t lineLen = strlen(singleLine);
 	lineLenCheck(chars);
 	singleLine[80] = '\0';
@@ -54,6 +54,6 @@ void window(char key, int8_t chars, char filename[32]) {
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
-	infoBar(chars, filename);
+	infoBar(filename, chars, lines);
 }
 
