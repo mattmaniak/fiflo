@@ -7,7 +7,7 @@
 #define MAX_HEIGHT 300
 
 int16_t i;
-char singleLine[80];
+char singleLine[79];
 
 int16_t windowSize(int8_t axis) {
 	struct winsize win;
@@ -45,8 +45,7 @@ int8_t lineLenCheck(int8_t chars) { // TODO: Works partially!
 void window(char key, char filename[32], int8_t chars, int8_t lines) {
 	int16_t lineLen = strlen(singleLine);
 	chars = lineLenCheck(chars);
-	singleLine[chars] = key;
-	singleLine[chars + 1] = '\0';
+	singleLine[chars - 1] = key;
 
 	for(i = 0; i < chars; i++) {
 		printf("%c", singleLine[i]);
