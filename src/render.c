@@ -35,12 +35,14 @@ void clearFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
+char singleLine[82];
+
 void window(char key, int8_t chars, char filename[32]) {
-	char singleLine[81];
-	singleLine[chars] = key;
+	singleLine[82] = '\0';
 	int16_t lineLength = strlen(singleLine);
+	singleLine[chars] = key;
 	for(i = 0; i < chars; i++) {
-		printf("%c", singleLine[chars]);
+		printf("%c", singleLine[i]);
 	}
 
 	for(i = 1; i < windowSize('y'); i++) {
