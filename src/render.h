@@ -6,9 +6,10 @@
 #include <stdlib.h>
 #include <sys/ioctl.h>
 
-uint16_t windowSize(int8_t axis);
+int16_t windowSize(int8_t axis);
 void clearFrame(void);
-void window(char pressedKey, int8_t chars, char filename[32]);
+int16_t charBuffer(char key, int8_t chars);
+void window(char key, int8_t chars, char filename[32]);
 
 #endif
 

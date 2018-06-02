@@ -6,9 +6,9 @@
 #define MAX_WIDTH 500
 #define MAX_HEIGHT 300
 
-uint16_t i;
+int16_t i;
 
-uint16_t windowSize(int8_t axis) {
+int16_t windowSize(int8_t axis) {
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT) {
@@ -19,7 +19,6 @@ uint16_t windowSize(int8_t axis) {
 		puts("Maximum terminal size is 500x300.");
 		exit(1);
 	}
-
 	switch(axis) {
 		case 'x':
 			return win.ws_col;
@@ -30,17 +29,23 @@ uint16_t windowSize(int8_t axis) {
 }
 
 void clearFrame(void) { // To provide rendering in a one frame.
-	uint16_t winHeight = windowSize('y');
+	int16_t winHeight = windowSize('y');
 	for(i = 0; i < winHeight; i++) {
 		printf("%s", "\033[F\033[K");
 	}
 }
 
-void window(char pressedKey, int8_t chars, char filename[32]) {
-	printf("%c", pressedKey); // Printing all chars will be here.
+void window(char key, int8_t chars, char filename[32]) {
+	char singleLine[81];
+	singleLine[chars] = key;
+	int16_t lineLength = strlen(singleLine);
+	for(i = 0; i < chars; i++) {
+		printf("%c", singleLine[chars]);
+	}
+
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
-	lowerBorder(chars, filename);
+	infoBar(chars, filename);
 }
 

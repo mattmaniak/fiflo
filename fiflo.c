@@ -4,7 +4,7 @@
 // Chars amount: from 0 to signed int8/16/32_t - 1.
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
-int8_t charBuffer = 0;
+int8_t charAmount = 1;
 
 void typeAndPrint(char filename[32]) {
 	int8_t filenameSize = strlen(filename);
@@ -14,21 +14,20 @@ void typeAndPrint(char filename[32]) {
 	}
 	while(1) {
 		char pressedKey = unixGetch();
-
 		if(pressedKey == 127) { // Backspace.
-			charBuffer--;
-			if(charBuffer <= 0) {
-				charBuffer = 0;
+			charAmount--;
+			if(charAmount <= 0) {
+				charAmount = 0;
 			}
 		}
 		else {
-			charBuffer++;
-			if(charBuffer >= CHAR_BUFFER_SIZE) {
-				charBuffer = CHAR_BUFFER_SIZE;
+			charAmount++;
+			if(charAmount >= CHAR_BUFFER_SIZE) {
+				charAmount = CHAR_BUFFER_SIZE;
 			}
 		}
 		clearFrame();
-		window(pressedKey, charBuffer, filename);
+		window(pressedKey, charAmount, filename);
 	}
 }
 
@@ -38,7 +37,7 @@ int main(int argc, char *argv[]) {
 		puts("Pass certainly 1 arg (filename) to Fiflo.");
 		exit(1);
 	}
-	window(' ', charBuffer, argv[1]);
+	window('s', charAmount, argv[1]);
 	typeAndPrint(argv[1]);
 	return 0;
 }

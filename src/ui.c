@@ -1,6 +1,6 @@
 #include "ui.h"
 
-uint16_t i;
+int16_t i;
 
 int8_t decimalIntLen(int8_t chars) { // Return len of decimal charchars.
 	int8_t len = 1;
@@ -11,7 +11,7 @@ int8_t decimalIntLen(int8_t chars) { // Return len of decimal charchars.
 	return len;
 }
 
-void lowerBorder(int8_t chars, char filename[32]) {
+void infoBar(int8_t chars, char filename[32]) {
 	char programName[10] = " Fiflo | \0";
 	char singleBorder[4] = " | \0";
 	char charAmount[10] = " chars | \0";

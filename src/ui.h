@@ -9,7 +9,7 @@
 #define BOLD "\033[1m\0"
 
 int8_t decimalIntLen(int8_t chars);
-void lowerBorder(int8_t chars, char filename[32]);
+void infoBar(int8_t chars, char filename[32]);
 
 #endif
 
