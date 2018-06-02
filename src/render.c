@@ -36,7 +36,7 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
-int8_t lineLenCheck(int8_t chars) { // TODO: Works partially!
+int8_t lineLenCheck(int8_t chars) { // TODO: NULL terminator!
 	if(chars >= 80) {
 		return 80;
 	}
@@ -50,6 +50,8 @@ void window(char key, char filename[32], int8_t chars, int8_t lines) {
 	for(i = 0; i < chars; i++) {
 		printf("%c", singleLine[i]);
 	}
+	cursor();
+
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
@@ -57,7 +59,8 @@ void window(char key, char filename[32], int8_t chars, int8_t lines) {
 }
 
 void windowEmpty(char filename[32], int8_t chars, int8_t lines) {
-	for(i = 0; i < windowSize('y'); i++) {
+	cursor();
+	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
 	infoBar(filename, chars, lines);

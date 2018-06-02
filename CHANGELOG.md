@@ -7,10 +7,10 @@ Changelog contains only new tangible features. To see what's new in source
 files use diff-like tools or "git log".
 
 ## Versions:
-### v0.4.0 (?):
-- Multiple chars rendering.
-- UI even more simplified.
-- Info about amount of chars and lines.
+### v0.4.0 (WIP):
+- Rendering a whole line of typed chars/strings.
+- UI redesigned.
+- Cursor added.
 
 ### v0.3.0 (May 31, 2018):
 - Printing only pressed char on the screen.

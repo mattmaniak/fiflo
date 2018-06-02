@@ -2,6 +2,12 @@
 
 int16_t i;
 
+void cursor(void) {
+	printf("%s", BLINK);
+	printf("%c", '|');
+	printf("%s", RESET);
+}
+
 int8_t decimalIntLen(int8_t chars) { // Return len of decimal charchars.
 	int8_t len = 1;
 	while(chars > 9) {
@@ -36,6 +42,6 @@ void infoBar(char filename[32], int8_t chars, int8_t lines) {
 	printf("%d", lines);
 	printf("%s", linesText);
 	printf("%s", stdinPlace);
-	printf("%s", RESTORE);
+	printf("%s", RESET);
 }
 
