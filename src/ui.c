@@ -22,10 +22,12 @@ void infoBar(char filename[32], int8_t chars, int8_t lines) {
 	char charsText[8] = "chars: \0";
 	char linesText[11] = " | lines: \0";
 	char stdinPlace[10] = " | stdin>\0";
-	uint16_t whitespace = strlen(programName) + strlen(filename)
+	int16_t whitespace = strlen(programName) + strlen(filename)
 	+ decimalIntLen(chars) + strlen(charsText)
 	+ decimalIntLen(lines) + strlen(linesText)
 	+ strlen(stdinPlace) + 1; // 1 - stdin buffer.
+
+	int16_t *barBuffer = malloc(sizeof(int16_t) + 6); // 6 \0 chars.
 
 	printf("%s", BOLD);
 	printf("%s", programName);
@@ -39,6 +41,7 @@ void infoBar(char filename[32], int8_t chars, int8_t lines) {
 	printf("%d", lines);
 	printf("%s", stdinPlace);
 	printf("%s", RESET);
+	free(barBuffer);
 }
 
 void help(void) {

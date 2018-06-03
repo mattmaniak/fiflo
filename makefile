@@ -6,7 +6,7 @@ test:
 	./src/configure.sh
 
 compile:
-	gcc fiflo.c -o fiflo
+	gcc fiflo.c -o fiflo -lasan -fsanitize=address -fsanitize=signed-integer-overflow
 
 install:
 	cp fiflo /usr/bin/fiflo
