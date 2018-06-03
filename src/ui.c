@@ -47,6 +47,9 @@ void infoBar(char filename[32], int8_t chars, int8_t lines) {
 }
 
 void help(void) {
-	puts("Usage: fiflo [option].");
+	puts("Usage: fiflo [one parameter].\n");
+	puts("Parameter   | Description");
+	puts("NULL        | Show help.");
+	puts("[filename]  | Create/open given file. WIP");
 }
 
