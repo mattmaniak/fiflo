@@ -45,7 +45,12 @@ int8_t lineLenCheck(int8_t chars) { // TODO: NULL terminator!
 void window(char key, char filename[32], int8_t chars, int8_t lines) {
 	int16_t lineLen = strlen(singleLine);
 	chars = lineLenCheck(chars);
-	singleLine[chars - 1] = key;
+	if(key == 127) {
+		singleLine[chars - 1] = 'B';
+	}
+	else {
+		singleLine[chars - 1] = key;
+	}
 
 	for(i = 0; i < chars; i++) {
 		printf("%c", singleLine[i]);
