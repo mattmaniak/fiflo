@@ -3,8 +3,9 @@
 int16_t i;
 
 void cursor(void) {
+	printf("%s", BOLD);
 	printf("%s", BLINK);
-	printf("%c", '|');
+	printf("%c", '_');
 	printf("%s", RESET);
 }
 
@@ -43,5 +44,9 @@ void infoBar(char filename[32], int8_t chars, int8_t lines) {
 	printf("%s", linesText);
 	printf("%s", stdinPlace);
 	printf("%s", RESET);
+}
+
+void help(void) {
+	puts("Usage: fiflo [option].");
 }
 

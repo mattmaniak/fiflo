@@ -32,6 +32,10 @@ int main(int argc, char *argv[]) {
 		fputs("Usage: Fiflo [filename].\n", stderr);
 		exit(1);
 	}
+	if(argv[1] == "-h" || argv[1] == "--help") { // TODO
+		help();
+		exit(0);
+	}
 	int8_t filenameLen = strlen(argv[1]);
 	if(filenameLen > 32) {
 		fputs("Maximum filename length is 32 chars.\n", stderr);
