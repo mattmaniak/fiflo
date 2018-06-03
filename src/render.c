@@ -13,11 +13,11 @@ int16_t windowSize(int8_t axis) {
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT) {
-		puts("Minimal terminal size is 40x20.");
+		fputs("Minimal terminal size is 40x20.\n", stderr);
 		exit(1);
 	}
 	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT) {
-		puts("Maximum terminal size is 500x300.");
+		fputs("Maximum terminal size is 500x300.\n", stderr);
 		exit(1);
 	}
 	switch(axis) {

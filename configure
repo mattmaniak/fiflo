@@ -5,7 +5,7 @@ function checkHeader {
 	then
 		echo "OK, found."
 	else
-		echo "ERROR, not found!"
+		echo "ERROR, doesn't found!"
 	fi
 }
 
@@ -13,13 +13,13 @@ if type gcc
 then
 	echo "OK: gcc found."
 else
-	echo "ERROR: gcc not found."
+	echo "ERROR: gcc doesn't found."
 fi
 
 checkHeader stdio.h
 checkHeader stdint.h
 checkHeader stdlib.h
 checkHeader string.h
-checkHeader linux/ioctl.h
+checkHeader sys/ioctl.h # TODO: doesn't found!
 checkHeader unistd.h
 checkHeader termios.h

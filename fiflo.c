@@ -29,12 +29,12 @@ void typeAndPrint(char filename[32]) {
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(int argc, char *argv[]) {
 	if(argc != 2) {
-		fprintf(stderr, "%s", "Usage: Fiflo [filename].\n");
+		fputs("Usage: Fiflo [filename].\n", stderr);
 		exit(1);
 	}
 	int8_t filenameLen = strlen(argv[1]);
 	if(filenameLen > 32) {
-		fprintf(stderr, "%s", "Maximum filename length is 32 chars.\n");
+		fputs("Maximum filename length is 32 chars.\n", stderr);
 		exit(1);
 	}
 	windowEmpty(argv[1], charsAmount, linesAmount);

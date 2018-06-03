@@ -1,14 +1,18 @@
-# Fiflo
-## The simple terminal-based text editor.
+# Fiflo - The simple terminal-based text editor.
 
+## Description
 Nano-inspired. Currently unsafe && unusable because WIP.
 
-To install:
+## Installation
 ```bash
 sudo ./configure && sudo make
 ```
 
-Uninstallation:
+## Uninstallation
 ```bash
 sudo make uninstall
 ```
+
+## FAQ
+Will you ever port it into a Windows?
+- No.
