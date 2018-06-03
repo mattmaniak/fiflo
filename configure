@@ -1,0 +1,25 @@
+#! /bin/bash
+
+function checkHeader {
+	if ls /usr/include/$1
+	then
+		echo "OK, found."
+	else
+		echo "ERROR, not found!"
+	fi
+}
+
+if type gcc
+then
+	echo "OK: gcc found."
+else
+	echo "ERROR: gcc not found."
+fi
+
+checkHeader stdio.h
+checkHeader stdint.h
+checkHeader stdlib.h
+checkHeader string.h
+checkHeader linux/ioctl.h
+checkHeader unistd.h
+checkHeader termios.h
