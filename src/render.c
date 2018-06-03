@@ -46,7 +46,7 @@ void window(char key, char filename[32], int8_t chars, int8_t lines) {
 	int16_t lineLen = strlen(singleLine);
 	chars = lineLenCheck(chars);
 	if(key == 127) {
-		singleLine[chars - 1] = 'B';
+		singleLine[chars - 1] = 0x00;
 	}
 	else {
 		singleLine[chars - 1] = key;

@@ -1,21 +1,10 @@
 #! /bin/bash
 
 function checkHeader {
-	if ls /usr/include/$1
-	then
-		echo "OK, found."
-	else
-		echo "ERROR, doesn't found!"
-	fi
+	find /usr/include/$1
 }
 
-if type gcc
-then
-	echo "OK: gcc found."
-else
-	echo "ERROR: gcc doesn't found."
-fi
-
+type gcc
 checkHeader stdio.h
 checkHeader stdint.h
 checkHeader stdlib.h
@@ -23,3 +12,6 @@ checkHeader string.h
 checkHeader sys/ioctl.h # TODO: doesn't found!
 checkHeader unistd.h
 checkHeader termios.h
+
+echo "Ignore if you haven't got 'sys/ioctl.h' but the program has compiled."
+

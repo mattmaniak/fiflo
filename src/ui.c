@@ -3,7 +3,6 @@
 int16_t i;
 
 void cursor(void) {
-	printf("%s", BOLD);
 	printf("%s", BLINK);
 	printf("%c", '_');
 	printf("%s", RESET);
@@ -44,8 +43,8 @@ void infoBar(char filename[32], int8_t chars, int8_t lines) {
 
 void help(void) {
 	puts("Usage: fiflo [one parameter].\n");
-	puts("Parameter   | Description");
-	puts("NULL        | Show help.");
-	puts("[filename]  | Create/open given file. WIP");
+	puts("Parameter:    Description:");
+	puts("NULL          Show help.");
+	puts("[filename]    Create/open given file. WIP");
 }
 

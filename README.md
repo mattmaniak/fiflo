@@ -3,9 +3,15 @@
 ## Description
 Nano-inspired. Currently unsafe && unusable because WIP.
 
+## Compilation
+This will run src/configure.sh to check your system and compile Fiflo.
+```
+make
+```
+
 ## Installation
 ```
-sudo ./configure && sudo make
+sudo make install
 ```
 
 ## Uninstallation
