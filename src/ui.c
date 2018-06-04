@@ -1,6 +1,6 @@
 #include "ui.h"
 
-int16_t i;
+uint16_t i;
 
 void cursor(void) { // Blinking floor.
 	printf("%s", BLINK);
@@ -24,10 +24,10 @@ void infoBar(int8_t chars, int8_t lines) { // Lower border with a text.
 	char stdinText[10] = " | stdin<\0";
 	uint16_t whitespace = strlen(programName) + decimalIntLen(chars)
 	+ strlen(charsText) + decimalIntLen(lines) + strlen(linesText)
-	+ strlen(stdinText) + 1; // 1 - stdin buffer.
+	+ strlen(stdinText) + 1; // 1 - stdin place.
 
 	uint16_t width = windowSize('x');
-	void *barBuffer = malloc(width); // 6 \0 chars.
+	uint16_t *barBuffer = malloc(width);
 
 	printf("%s%s", BOLD, programName);
 	for(i = 0; i < windowSize('x') - whitespace; i++) {

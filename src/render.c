@@ -6,8 +6,8 @@
 #define MAX_WIDTH 500
 #define MAX_HEIGHT 300
 
-int16_t i;
-char singleLine[79];
+uint16_t i;
+char singleLine[80];
 
 uint16_t windowSize(char axis) { // Check term size and return width or height.
 	struct winsize win;
@@ -36,41 +36,45 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
-int8_t lineLenCheck(int8_t chars) { // TODO: NULL terminator!
-	if(chars >= 80) {
-		return 80;
-	}
-	return chars;
-}
-
 void window(int8_t chars, int8_t lines, char key) { // Wrapper.
-	int16_t *lineBuffer = malloc((chars / lines * sizeof(char)) + 1);
+	uint16_t charPos;
+	uint16_t height = windowSize('y');
+	int8_t *lineBuffer = malloc(chars * lines * sizeof(char) + 1);
+	uint16_t *windowBuffer = malloc(height);
 
-	chars = lineLenCheck(chars);
 	if(key == 127) {
 		singleLine[chars - 1] = singleLine[chars];
 	}
 	else {
 		singleLine[chars - 1] = key;
 	}
-
-	for(i = 0; i < chars; i++) {
-		printf("%c", singleLine[i]);
+	/*
+	Integration of variables: "chars" and "charPos" is highly required TODO.
+	They means the same so there is no need to split.
+	*/
+	for(charPos = 0; charPos < chars; charPos++) {
+		printf("%c", singleLine[charPos]);
 	}
 	cursor();
-
-	for(i = 1; i < windowSize('y'); i++) {
+	for(i = 1; i < height; i++) {
 		printf("%c", '\n');
 	}
 	infoBar(chars, lines);
+
 	free(lineBuffer);
+	free(windowBuffer);
 }
 
 void windowEmpty(int8_t chars, int8_t lines) { // Showed at the beginning.
+	uint16_t height = windowSize('y');
+	uint16_t *windowBuffer = malloc(height);
+
 	cursor();
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
 	infoBar(chars, lines);
+
+	free(windowBuffer);
 }
 

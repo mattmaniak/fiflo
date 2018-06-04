@@ -8,7 +8,7 @@
 
 uint16_t windowSize(char axis);
 void cleanFrame(void);
-int8_t lineLenCheck(int8_t chars);
+
 void window(int8_t chars, int8_t lines, char key);
 void windowEmpty(int8_t chars, int8_t lines);
 

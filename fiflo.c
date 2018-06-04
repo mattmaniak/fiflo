@@ -18,8 +18,8 @@ void typeAndPrint(void) {
 		}
 		else {
 			charsAmount++;
-			if(charsAmount >= CHAR_BUFFER_SIZE) {
-				charsAmount = CHAR_BUFFER_SIZE;
+			if(charsAmount >= 80) {
+				charsAmount = 80; // Actually prints 81 chars max.
 			}
 		}
 		cleanFrame();
