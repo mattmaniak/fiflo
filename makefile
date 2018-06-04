@@ -6,7 +6,13 @@ test:
 	./src/configure.sh
 
 compile:
-	gcc fiflo.c -o fiflo -lasan -fsanitize=address -fsanitize=signed-integer-overflow
+	gcc fiflo.c -o fiflo \
+	-lasan \
+	-fsanitize=address \
+	-fsanitize=undefined \
+	-fsanitize=signed-integer-overflow \
+	-Wall \
+	-Wextra
 
 install:
 	cp fiflo /usr/bin/fiflo

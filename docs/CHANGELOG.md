@@ -11,7 +11,7 @@ files use diff-like tools or "git log".
 - Rendering a whole line of typed chars/strings.
 - UI redesigned.
 - Cursor added.
-- Makefile && similar improved.
+- Makefile && similar ones improved.
 
 ### v0.3.0 (May 31, 2018):
 - Printing only pressed char on the screen.

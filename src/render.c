@@ -40,6 +40,7 @@ int8_t lineLenCheck(int8_t chars) { // TODO: NULL terminator!
 	if(chars >= 80) {
 		return 80;
 	}
+	return chars;
 }
 
 void window(int8_t chars, int8_t lines, char key) { // Wrapper.
@@ -47,7 +48,7 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 
 	chars = lineLenCheck(chars);
 	if(key == 127) {
-		singleLine[chars - 1] = 'B';
+		singleLine[chars - 1] = singleLine[chars];
 	}
 	else {
 		singleLine[chars - 1] = key;
