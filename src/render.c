@@ -9,7 +9,7 @@
 int16_t i;
 char singleLine[79];
 
-int16_t windowSize(int8_t axis) {
+uint16_t windowSize(char axis) { // Check term size and return width or height.
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT) {
@@ -30,8 +30,8 @@ int16_t windowSize(int8_t axis) {
 }
 
 void cleanFrame(void) { // To provide rendering in a one frame.
-	int16_t winHeight = windowSize('y');
-	for(i = 0; i < winHeight; i++) {
+	uint16_t height = windowSize('y');
+	for(i = 0; i < height; i++) {
 		printf("%s", "\033[F\033[K");
 	}
 }
@@ -42,8 +42,7 @@ int8_t lineLenCheck(int8_t chars) { // TODO: NULL terminator!
 	}
 }
 
-void window(char key, char filename[32], int8_t chars, int8_t lines) {
-	int16_t lineLen = strlen(singleLine);
+void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	int16_t *lineBuffer = malloc((chars / lines * sizeof(char)) + 1);
 
 	chars = lineLenCheck(chars);
@@ -62,15 +61,15 @@ void window(char key, char filename[32], int8_t chars, int8_t lines) {
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
-	infoBar(filename, chars, lines);
+	infoBar(chars, lines);
 	free(lineBuffer);
 }
 
-void windowEmpty(char filename[32], int8_t chars, int8_t lines) {
+void windowEmpty(int8_t chars, int8_t lines) { // Showed at the beginning.
 	cursor();
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
-	infoBar(filename, chars, lines);
+	infoBar(chars, lines);
 }
 

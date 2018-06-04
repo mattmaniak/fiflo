@@ -2,7 +2,7 @@
 
 int16_t i;
 
-void cursor(void) {
+void cursor(void) { // Blinking floor.
 	printf("%s", BLINK);
 	printf("%c", '_');
 	printf("%s", RESET);
@@ -17,37 +17,25 @@ int8_t decimalIntLen(int8_t chars) { // Return len of decimal charchars.
 	return len;
 }
 
-void infoBar(char filename[32], int8_t chars, int8_t lines) {
+void infoBar(int8_t chars, int8_t lines) { // Lower border with a text.
 	char programName[10] = " Fiflo | \0";
 	char charsText[8] = "chars: \0";
 	char linesText[11] = " | lines: \0";
-	char stdinPlace[10] = " | stdin>\0";
-	int16_t whitespace = strlen(programName) + strlen(filename)
-	+ decimalIntLen(chars) + strlen(charsText)
-	+ decimalIntLen(lines) + strlen(linesText)
-	+ strlen(stdinPlace) + 1; // 1 - stdin buffer.
+	char stdinText[10] = " | stdin<\0";
+	uint16_t whitespace = strlen(programName) + decimalIntLen(chars)
+	+ strlen(charsText) + decimalIntLen(lines) + strlen(linesText)
+	+ strlen(stdinText) + 1; // 1 - stdin buffer.
 
-	int16_t *barBuffer = malloc(sizeof(int16_t) + 6); // 6 \0 chars.
+	uint16_t width = windowSize('x');
+	void *barBuffer = malloc(width); // 6 \0 chars.
 
-	printf("%s", BOLD);
-	printf("%s", programName);
-	printf("%s", filename);
+	printf("%s%s", BOLD, programName);
 	for(i = 0; i < windowSize('x') - whitespace; i++) {
 		printf("%c", ' ');
 	}
-	printf("%s", charsText);
-	printf("%d", chars);
-	printf("%s", linesText);
-	printf("%d", lines);
-	printf("%s", stdinPlace);
-	printf("%s", RESET);
-	free(barBuffer);
-}
+	printf("%s%d%s%d%s%s", charsText, chars, linesText, lines, stdinText,
+	RESET);
 
-void help(void) {
-	puts("Usage: fiflo [one parameter].\n");
-	puts("Parameter:    Description:");
-	puts("NULL          Show help.");
-	puts("[filename]    Create/open given file. WIP");
+	free(barBuffer);
 }
 

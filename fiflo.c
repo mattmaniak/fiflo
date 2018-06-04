@@ -5,8 +5,9 @@
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
 int8_t charsAmount = 0, linesAmount = 1;
+// TODO int8_t textBuffer[1][80];
 
-void typeAndPrint(char filename[32]) {
+void typeAndPrint(void) {
 	while(1) {
 		char pressedKey = unixGetch();
 		if(pressedKey == 127) { // Backspace.
@@ -22,23 +23,14 @@ void typeAndPrint(char filename[32]) {
 			}
 		}
 		cleanFrame();
-		window(pressedKey, filename, charsAmount, linesAmount);
+		window(charsAmount, linesAmount, pressedKey);
 	}
 }
 
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
-int main(int argc, char *argv[]) {
-	if(argc != 2) {
-		help();
-		exit(1);
-	}
-	int8_t filenameLen = strlen(argv[1]);
-	if(filenameLen > 32) {
-		fputs("Maximum filename length is 32 chars.\n", stderr);
-		exit(1);
-	}
-	windowEmpty(argv[1], charsAmount, linesAmount);
-	typeAndPrint(argv[1]);
+int main(void) {
+	windowEmpty(charsAmount, linesAmount);
+	typeAndPrint();
 	return 0;
 }
 
