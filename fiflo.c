@@ -15,10 +15,13 @@ void programRound(void) {
 				charsAmount = 0;
 			}
 		}
+		else if(pressedKey == CTRL_X) {
+			exit(0);
+		}
 		else {
 			charsAmount++;
 			if(charsAmount >= 80) {
-				charsAmount = 80; // Actually prints 81 chars max.
+				charsAmount = 80;
 			}
 		}
 		cleanFrame();

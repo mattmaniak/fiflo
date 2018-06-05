@@ -2,15 +2,15 @@
 #include "keymap.h"
 #include "ui.c"
 
-#define MIN_WIDTH 80
-#define MIN_HEIGHT 20
-#define MAX_WIDTH 500
-#define MAX_HEIGHT 300
-
 uint16_t i;
 char text[1][80];
 
 uint16_t windowSize(char axis) { // Check term size and return width or height.
+	#define MIN_WIDTH 80
+	#define MIN_HEIGHT 20
+	#define MAX_WIDTH 500
+	#define MAX_HEIGHT 300
+
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT) {
@@ -39,7 +39,6 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 
 void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	uint16_t charPos;
-	uint16_t height = windowSize('y');
 	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
 	if(lineBuffer == NULL) {
 		memError();
@@ -47,6 +46,7 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 
 	if(key != BACKSPACE) {
 		text[lines - 1][chars - 1] = key; // TODO: the last char is overwritten.
+		text[lines - 1][chars] = '\0';
 	}
 	/*
 	Integration of variables: "chars" and "charPos" is highly required TODO.
@@ -56,7 +56,7 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 		printf("%c", text[lines - 1][charPos]);
 	}
 	cursor();
-	for(i = 1; i < height; i++) {
+	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
 	infoBar(chars, lines);
@@ -65,10 +65,8 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 }
 
 void windowEmpty(int8_t chars, int8_t lines) { // Showed at the beginning.
-	uint16_t height = windowSize('y');
-
 	cursor();
-	for(i = 1; i < height; i++) {
+	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
 	infoBar(chars, lines);
