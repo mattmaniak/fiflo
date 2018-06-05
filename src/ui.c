@@ -27,7 +27,11 @@ void infoBar(int8_t chars, int8_t lines) { // Lower border with a text.
 	+ strlen(stdinText) + 1; // 1 - stdin place.
 
 	uint16_t width = windowSize('x');
-	uint16_t *barBuffer = malloc(width);
+	char* barBuffer = malloc(width);
+
+	if(barBuffer == NULL) {
+		memError();
+	}
 
 	printf("%s%s", BOLD, programName);
 	for(i = 0; i < windowSize('x') - whitespace; i++) {

@@ -36,11 +36,18 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
+void memError(void) {
+	fputs("Cannot allocate memory!\n", stderr);
+	exit(1);
+}
+
 void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	uint16_t charPos;
 	uint16_t height = windowSize('y');
-	int8_t *lineBuffer = malloc(chars * lines * sizeof(char) + 1);
-	uint16_t *windowBuffer = malloc(height);
+	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
+	if(lineBuffer == NULL) {
+		memError();
+	}
 
 	if(key == 127) {
 		singleLine[chars - 1] = singleLine[chars];
@@ -62,19 +69,15 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	infoBar(chars, lines);
 
 	free(lineBuffer);
-	free(windowBuffer);
 }
 
 void windowEmpty(int8_t chars, int8_t lines) { // Showed at the beginning.
 	uint16_t height = windowSize('y');
-	uint16_t *windowBuffer = malloc(height);
 
 	cursor();
-	for(i = 1; i < windowSize('y'); i++) {
+	for(i = 1; i < height; i++) {
 		printf("%c", '\n');
 	}
 	infoBar(chars, lines);
-
-	free(windowBuffer);
 }
 

@@ -7,7 +7,7 @@
 int8_t charsAmount = 0, linesAmount = 1;
 // TODO int8_t textBuffer[1][80];
 
-void typeAndPrint(void) {
+void programRound(void) {
 	while(1) {
 		char pressedKey = unixGetch();
 		if(pressedKey == 127) { // Backspace.
@@ -30,7 +30,7 @@ void typeAndPrint(void) {
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(void) {
 	windowEmpty(charsAmount, linesAmount);
-	typeAndPrint();
+	programRound();
 	return 0;
 }
 
