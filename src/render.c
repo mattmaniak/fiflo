@@ -1,4 +1,5 @@
 #include "render.h"
+#include "keymap.h"
 #include "ui.c"
 
 #define MIN_WIDTH 80
@@ -36,11 +37,6 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
-void memError(void) {
-	fputs("Cannot allocate memory!\n", stderr);
-	exit(1);
-}
-
 void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	uint16_t charPos;
 	uint16_t height = windowSize('y');
@@ -48,7 +44,8 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	if(lineBuffer == NULL) {
 		memError();
 	}
-	if(key != 127) {
+
+	if(key != BACKSPACE) {
 		text[lines - 1][chars - 1] = key;
 	}
 	/*

@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "memory.c"
 
 uint16_t i;
 
