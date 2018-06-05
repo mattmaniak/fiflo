@@ -7,7 +7,7 @@
 #define MAX_HEIGHT 300
 
 uint16_t i;
-char singleLine[80];
+char text[1][80];
 
 uint16_t windowSize(char axis) { // Check term size and return width or height.
 	struct winsize win;
@@ -48,19 +48,18 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	if(lineBuffer == NULL) {
 		memError();
 	}
-
 	if(key == 127) {
-		singleLine[chars - 1] = singleLine[chars];
+		text[lines - 1][chars - 1] = text[lines - 1][chars];
 	}
 	else {
-		singleLine[chars - 1] = key;
+		text[lines - 1][chars - 1] = key;
 	}
 	/*
 	Integration of variables: "chars" and "charPos" is highly required TODO.
 	They means the same so there is no need to split.
 	*/
 	for(charPos = 0; charPos < chars; charPos++) {
-		printf("%c", singleLine[charPos]);
+		printf("%c", text[lines - 1][charPos]);
 	}
 	cursor();
 	for(i = 1; i < height; i++) {
