@@ -1,7 +1,7 @@
 #! /bin/bash
 
 function checkHeader {
-	find /usr/include/$1
+	ls /usr/include/$1
 }
 
 type gcc
@@ -14,4 +14,4 @@ checkHeader unistd.h
 checkHeader termios.h
 
 echo "Ignore if you haven't got 'sys/ioctl.h' but the program has compiled."
-
+echo "If you haven't got any other header compilation will fail!"

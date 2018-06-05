@@ -3,8 +3,12 @@
 ## Description
 Nano-inspired. Currently unsafe && unusable because WIP.
 
+## Configuration
+```
+./configure
+```
+
 ## Compilation
-This will run src/configure.sh to check your system and compile Fiflo.
 ```
 make
 ```

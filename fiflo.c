@@ -4,9 +4,7 @@
 // Chars amount: from 0 to signed int8/16/32_t - 1.
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
-int8_t charsAmount = 1, linesAmount = 1;
-
-// TODO int8_t textBuffer[1][80];
+int8_t charsAmount = 0, linesAmount = 1;
 
 void programRound(void) {
 	while(1) {
@@ -30,7 +28,7 @@ void programRound(void) {
 
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(void) {
-	window(charsAmount, linesAmount, 'i');
+	windowEmpty(charsAmount, linesAmount);
 	programRound();
 	return 0;
 }
