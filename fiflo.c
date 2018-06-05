@@ -9,7 +9,7 @@ int8_t charsAmount = 0, linesAmount = 1;
 void programRound(void) {
 	while(1) {
 		char pressedKey = unixGetch();
-		if(pressedKey == BACKSPACE) { // Backspace.
+		if(pressedKey == BACKSPACE) {
 			charsAmount--;
 			if(charsAmount <= 0) {
 				charsAmount = 0;
@@ -20,7 +20,7 @@ void programRound(void) {
 		}
 		else {
 			charsAmount++;
-			if(charsAmount >= 80) {
+			if(charsAmount >= 80) { // TODO: the last char is overwritten.
 				charsAmount = 80;
 			}
 		}

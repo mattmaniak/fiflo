@@ -12,6 +12,7 @@ files use diff-like tools or "git log".
 - UI redesigned.
 - Cursor added.
 - Makefile && similar ones improved.
+- Saving to a file.
 
 ### v0.3.0 (May 31, 2018):
 - Printing only pressed char on the screen.
