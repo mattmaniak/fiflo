@@ -48,10 +48,7 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	if(lineBuffer == NULL) {
 		memError();
 	}
-	if(key == 127) {
-		text[lines - 1][chars - 1] = text[lines - 1][chars];
-	}
-	else {
+	if(key != 127) {
 		text[lines - 1][chars - 1] = key;
 	}
 	/*
