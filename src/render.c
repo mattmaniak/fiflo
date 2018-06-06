@@ -26,8 +26,7 @@ uint16_t windowSize(char axis) { // Check term size and return width or height.
 }
 
 void cleanFrame(void) { // To provide rendering in a one frame.
-	uint16_t height = windowSize('y');
-	for(i = 0; i < height; i++) {
+	for(i = 0; i < windowSize('y'); i++) {
 		printf("%s", "\033[F\033[K");
 	}
 }

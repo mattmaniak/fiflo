@@ -3,12 +3,12 @@
 // Memory && IO operations.
 
 void memError(void) {
-	fputs("Cannot allocate memory!\n", stderr);
+	fputs("\nCannot allocate memory!\n", stderr);
 	exit(1);
 }
 
 void fileError(void) {
-	fputs("Cannot open the file!\n", stderr);
+	fputs("\nCannot open the file!\n", stderr);
 	exit(1);
 }
 
@@ -25,11 +25,16 @@ char unixGetch(void) { // https://stackoverflow.com/questions/12710582/
 }
 
 void writeToFile(void) {
-	FILE* testfile = fopen("testfile.asdf", "rw");
-	if(testfile == NULL) {
-		fileError();
+	FILE* selectedFile = fopen("textfile.asdf", "r+");
+	if(selectedFile == NULL) {
+		selectedFile = fopen("textfile.asdf", "wb");
+
+		if(selectedFile == NULL) {
+			fileError();
+		}
 	}
-	fprintf(testfile, "%s", "Text");
-	fclose(testfile);
+	char *text = "Write this to the file";
+	fprintf(selectedFile, "%s\n", text);
+	fclose(selectedFile);
 }
 

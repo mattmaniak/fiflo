@@ -18,6 +18,7 @@ void programRound(void) {
 			}
 		}
 		else if(pressedKey == CTRL_X) {
+			writeToFile();
 			exit(0);
 		}
 		else {
@@ -28,12 +29,15 @@ void programRound(void) {
 		}
 		cleanFrame();
 		window(charsAmount, linesAmount, pressedKey);
-		writeToFile();
 	}
 }
 
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
-int main(void) {
+int main(int argc, char* argv[]) {
+	if(argc > 2) {
+		fputs("Too many args!\n", stderr);
+		exit(1);
+	}
 	windowEmpty(charsAmount, linesAmount);
 	programRound();
 	return 0;
