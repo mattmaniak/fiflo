@@ -18,7 +18,6 @@ void programRound(void) {
 			}
 		}
 		else if(pressedKey == CTRL_X) {
-			writeToFile();
 			exit(0);
 		}
 		else {
@@ -35,10 +34,14 @@ void programRound(void) {
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(int argc, char* argv[]) {
 	if(argc > 2) {
-		fputs("Too many args!\n", stderr);
+		fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
 		exit(1);
 	}
-	windowEmpty(charsAmount, linesAmount);
+	if(argv[1] == NULL) {
+		fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
+		exit(1);
+	}
+	window(charsAmount, linesAmount, '\0');
 	programRound();
 	return 0;
 }

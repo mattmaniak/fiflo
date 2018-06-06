@@ -14,8 +14,8 @@
 
 uint16_t windowSize(char axis);
 void cleanFrame(void);
+void writeToFile(char textToWrite[][]);
 void window(int8_t chars, int8_t lines, char key);
-void windowEmpty(int8_t chars, int8_t lines);
 
 #endif
 

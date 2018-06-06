@@ -8,6 +8,7 @@ char text[1][80];
 uint16_t windowSize(char axis) { // Check term size and return width or height.
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT) {
 		fputs("Minimal terminal size is 40x20.\n", stderr);
 		exit(1);
@@ -31,13 +32,28 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
+void writeToFile(char textToWrite[][]) {
+	FILE* selectedFile = fopen("textfile.asdf", "r+");
+	if(selectedFile == NULL) {
+		selectedFile = fopen("textfile.asdf", "wb");
+
+		if(selectedFile == NULL) {
+			fileError();
+		}
+	}
+	for(i = 0; i < 80; i++) {
+		fprintf(selectedFile, "%c\n", textToWrite[0][i]);
+	}
+	fclose(selectedFile);
+}
+
 void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	uint16_t charPos;
 	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
+
 	if(lineBuffer == NULL) {
 		memError();
 	}
-
 	if(key != BACKSPACE) {
 		text[lines - 1][chars - 1] = key;
 		text[lines - 1][chars] = '\0';
@@ -54,15 +70,6 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 		printf("%c", '\n');
 	}
 	infoBar(chars, lines);
-
 	free(lineBuffer);
-}
-
-void windowEmpty(int8_t chars, int8_t lines) { // Showed at the beginning.
-	cursor();
-	for(i = 1; i < windowSize('y'); i++) {
-		printf("%c", '\n');
-	}
-	infoBar(chars, lines);
 }
 

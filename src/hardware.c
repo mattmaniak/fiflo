@@ -24,17 +24,3 @@ char unixGetch(void) { // https://stackoverflow.com/questions/12710582/
 	return key;
 }
 
-void writeToFile(void) {
-	FILE* selectedFile = fopen("textfile.asdf", "r+");
-	if(selectedFile == NULL) {
-		selectedFile = fopen("textfile.asdf", "wb");
-
-		if(selectedFile == NULL) {
-			fileError();
-		}
-	}
-	char *text = "Write this to the file";
-	fprintf(selectedFile, "%s\n", text);
-	fclose(selectedFile);
-}
-
