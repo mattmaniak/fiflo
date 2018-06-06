@@ -6,11 +6,6 @@ uint16_t i;
 char text[1][80];
 
 uint16_t windowSize(char axis) { // Check term size and return width or height.
-	#define MIN_WIDTH 80
-	#define MIN_HEIGHT 20
-	#define MAX_WIDTH 500
-	#define MAX_HEIGHT 300
-
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT) {

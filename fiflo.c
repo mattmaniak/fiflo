@@ -28,6 +28,7 @@ void programRound(void) {
 		}
 		cleanFrame();
 		window(charsAmount, linesAmount, pressedKey);
+		writeToFile();
 	}
 }
 

@@ -17,6 +17,8 @@
 #define BACKSPACE 127
 
 void memError(void);
+void fileError(void);
 char unixGetch(void);
+void writeToFile(void);
 
 #endif
