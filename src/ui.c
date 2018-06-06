@@ -1,6 +1,7 @@
 #include "ui.h"
-#include "memory.c"
+#include "hardware.h"
 
+// All rendered elements.
 uint16_t i;
 
 void cursor(void) { // Blinking floor.

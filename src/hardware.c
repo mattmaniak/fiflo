@@ -1,4 +1,11 @@
-#include "input.h"
+#include "hardware.h"
+
+// IO and memory operations.
+
+void memError(void) {
+	fputs("Cannot allocate memory!\n", stderr);
+	exit(1);
+}
 
 char unixGetch(void) { // https://stackoverflow.com/questions/12710582/
 	char key;

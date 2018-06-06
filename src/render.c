@@ -1,7 +1,7 @@
 #include "render.h"
-#include "keymap.h"
 #include "ui.c"
 
+// Drawing funcions.
 uint16_t i;
 char text[1][80];
 

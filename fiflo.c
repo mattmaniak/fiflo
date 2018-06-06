@@ -1,5 +1,7 @@
-#include "src/input.c"
+#include "src/hardware.c"
 #include "src/render.c"
+
+// File with the main logic.
 
 // Chars amount: from 0 to signed int8/16/32_t - 1.
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
