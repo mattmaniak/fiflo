@@ -24,13 +24,12 @@ void infoBar(int8_t chars, int8_t lines) { // Lower border with a text.
 	char charsText[8] = "chars: \0";
 	char linesText[11] = " | lines: \0";
 	char stdinText[10] = " | stdin<\0";
+
 	uint16_t whitespace = strlen(programName) + decimalIntLen(chars)
-	+ strlen(charsText) + decimalIntLen(lines) + strlen(linesText)
+	+ strlen(charsText) +  strlen(linesText)
 	+ strlen(stdinText) + 1; // 1 - stdin place.
 
-	uint16_t width = windowSize('x');
-	char* barBuffer = malloc(width);
-
+	char* barBuffer = malloc(windowSize('x'));
 	if(barBuffer == NULL) {
 		memError();
 	}

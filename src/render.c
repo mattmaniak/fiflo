@@ -32,7 +32,7 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 	}
 }
 
-void writeToFile(char textToWrite[][]) {
+void writeToFile(char charToWrite) {
 	FILE* selectedFile = fopen("textfile.asdf", "r+");
 	if(selectedFile == NULL) {
 		selectedFile = fopen("textfile.asdf", "wb");
@@ -41,9 +41,7 @@ void writeToFile(char textToWrite[][]) {
 			fileError();
 		}
 	}
-	for(i = 0; i < 80; i++) {
-		fprintf(selectedFile, "%c\n", textToWrite[0][i]);
-	}
+	fprintf(selectedFile, "%c\n", charToWrite);
 	fclose(selectedFile);
 }
 
@@ -63,7 +61,9 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	They means the same so there is no need to split.
 	*/
 	for(charPos = 0; charPos < chars; charPos++) {
+		char currentChar = text[lines - 1][charPos];
 		printf("%c", text[lines - 1][charPos]);
+		writeToFile(currentChar);
 	}
 	cursor();
 	for(i = 1; i < windowSize('y'); i++) {
