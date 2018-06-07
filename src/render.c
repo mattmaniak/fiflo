@@ -64,8 +64,8 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	They means the same so there is no need to split.
 	*/
 	for(charPos = 0; charPos < chars; charPos++) {
-		char currentChar = text[lines - 1][charPos];
-		printf("%c", text[lines - 1][charPos]);
+		char currentChar = text[lines - 1][charPos - 1];
+		printf("%c", text[lines - 1][charPos - 1]);
 		writeToFile(currentChar);
 	}
 	cursor();
