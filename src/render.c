@@ -3,7 +3,7 @@
 
 // Drawing funcions.
 uint16_t i;
-char text[1][80];
+char text[1][81];
 
 uint16_t windowSize(char axis) { // Check term size and return width or height.
 	struct winsize win;
@@ -53,8 +53,11 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 		memError();
 	}
 	if(key != BACKSPACE) {
-		text[lines - 1][chars - 1] = key;
-		text[lines - 1][chars] = '\0';
+		text[lines - 1][chars - 2] = key; // TODO: allocates only 79 char.
+		text[lines - 1][chars - 1] = '\0';
+	}
+	else {
+		text[lines - 1][chars - 1] = '\0';
 	}
 	/*
 	Integration of variables: "chars" and "charPos" is highly required TODO.
