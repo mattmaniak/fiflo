@@ -33,15 +33,11 @@ void cleanFrame(void) { // To provide rendering in a one frame.
 }
 
 void writeToFile(char charToWrite) {
-	FILE* selectedFile = fopen("textfile.asdf", "r+");
-	if(selectedFile == NULL) {
-		selectedFile = fopen("textfile.asdf", "wb");
-
-		if(selectedFile == NULL) {
-			fileError();
-		}
+	FILE* selectedFile = fopen("textfile.asdf", "a+");
+	if(selectedFile == NULL) { // TODO: change fd to "append".
+		fileError();
 	}
-	fprintf(selectedFile, "%c\n", charToWrite);
+	fprintf(selectedFile, "%c", charToWrite);
 	fclose(selectedFile);
 }
 
@@ -52,7 +48,7 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	if(lineBuffer == NULL) {
 		memError();
 	}
-	if(key != BACKSPACE) {
+	if(key != BACKSPACE) { // To prevent double 'backspace'.
 		text[lines - 1][chars - 2] = key; // TODO: allocates only 79 char.
 		text[lines - 1][chars - 1] = '\0';
 	}
@@ -64,9 +60,8 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	They means the same so there is no need to split.
 	*/
 	for(charPos = 0; charPos < chars; charPos++) {
-		char currentChar = text[lines - 1][charPos - 1];
 		printf("%c", text[lines - 1][charPos - 1]);
-		writeToFile(currentChar);
+		writeToFile(text[lines - 1][charPos - 1]);
 	}
 	cursor();
 	for(i = 1; i < windowSize('y'); i++) {

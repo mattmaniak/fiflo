@@ -11,6 +11,7 @@ int8_t charsAmount = 0, linesAmount = 1;
 void programRound(void) {
 	while(1) {
 		char pressedKey = unixGetch();
+
 		if(pressedKey == BACKSPACE) {
 			charsAmount--;
 			if(charsAmount <= 0) {
