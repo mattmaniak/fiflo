@@ -41,7 +41,7 @@ void writeToFile(char charToWrite) {
 	fclose(selectedFile);
 }
 
-void window(int8_t chars, int8_t lines, char key) { // Wrapper.
+void window(int8_t chars, int8_t lines, char key, char baseFilename[]) {
 	uint16_t charPos;
 	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
 
@@ -67,7 +67,7 @@ void window(int8_t chars, int8_t lines, char key) { // Wrapper.
 	for(i = 1; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
-	infoBar(chars, lines);
+	infoBar(chars, lines, baseFilename);
 	free(lineBuffer);
 }
 

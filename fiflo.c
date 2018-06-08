@@ -8,7 +8,7 @@
 
 int8_t charsAmount = 0, linesAmount = 1;
 
-void programRound(void) {
+void programRound(char baseFilename[256]) {
 	while(1) {
 		char pressedKey = unixGetch();
 
@@ -28,7 +28,7 @@ void programRound(void) {
 			}
 		}
 		cleanFrame();
-		window(charsAmount, linesAmount, pressedKey);
+		window(charsAmount, linesAmount, pressedKey, baseFilename);
 	}
 }
 
@@ -42,8 +42,13 @@ int main(int argc, char* argv[]) {
 		fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
 		exit(1);
 	}
-	window(charsAmount, linesAmount, '\0');
-	programRound();
+	if(strlen(argv[1]) > 255) {
+		fputs("Maximum base filename length: 255 chars.\n", stderr);
+		exit(1);
+	}
+
+	window(charsAmount, linesAmount, '\0', argv[1]);
+	programRound(argv[1]);
 	return 0;
 }
 
