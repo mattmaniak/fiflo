@@ -1,4 +1,4 @@
-# Fiflo - the simple terminal-based text editor.
+# Fiflo - simple terminal-based text editor.
 
 ## Description
 Nano-inspired. Currently unsafe && unusable because WIP.

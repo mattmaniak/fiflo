@@ -49,8 +49,15 @@ void window(int8_t chars, int8_t lines, char key, char baseFilename[]) {
 		memError();
 	}
 	if(key != BACKSPACE) { // To prevent double 'backspace'.
-		text[lines - 1][chars - 2] = key; // TODO: allocates only 79 char.
-		text[lines - 1][chars - 1] = '\0';
+		if(chars == 0) {
+			text[lines - 1][chars] = key; // TODO: allocates only 79 char.
+		}
+		else if(chars == 1) {
+			text[lines - 1][chars - 1] = key; // TODO: allocates only 79 char.
+		}
+		else {
+			text[lines - 1][chars - 2] = key; // TODO: allocates only 79 char.
+		}
 	}
 	else {
 		text[lines - 1][chars - 1] = '\0';
