@@ -6,7 +6,7 @@
 // Chars amount: from 0 to signed int8/16/32_t - 1.
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
-int8_t charsAmount = 0, linesAmount = 1;
+int8_t charsAmount = 1, linesAmount = 1;
 
 void programRound(char baseFilename[256]) {
 	while(1) {
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	window(charsAmount, linesAmount, '\0', argv[1]);
+	window(charsAmount, linesAmount, 'N', argv[1]);
 	programRound(argv[1]);
 	return 0;
 }

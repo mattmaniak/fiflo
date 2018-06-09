@@ -49,29 +49,20 @@ void window(int8_t chars, int8_t lines, char key, char baseFilename[]) {
 		memError();
 	}
 	if(key != BACKSPACE) { // To prevent double 'backspace'.
-		if(chars == 0) {
-			text[lines - 1][chars] = key; // TODO: allocates only 79 char.
-		}
-		else if(chars == 1) {
-			text[lines - 1][chars - 1] = key; // TODO: allocates only 79 char.
-		}
-		else {
-			text[lines - 1][chars - 2] = key; // TODO: allocates only 79 char.
-		}
+		text[lines - 1][chars - 1] = key; // TODO: allocates only 79 char.
 	}
-	else {
-		text[lines - 1][chars - 1] = '\0';
-	}
+	text[lines - 1][chars] = 'N';
 	/*
 	Integration of variables: "chars" and "charPos" is highly required TODO.
 	They means the same so there is no need to split.
 	*/
-	for(charPos = 0; charPos < chars; charPos++) {
+	for(charPos = 1; charPos <= chars; charPos++) {
 		printf("%c", text[lines - 1][charPos - 1]);
 		writeToFile(text[lines - 1][charPos - 1]);
 	}
+
 	cursor();
-	for(i = 1; i < windowSize('y'); i++) {
+	for(i = lines; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
 	infoBar(chars, lines, baseFilename);
