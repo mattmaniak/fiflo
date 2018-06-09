@@ -2,17 +2,20 @@
 
 // Memory && IO operations.
 
-void memError(void) {
+void memError(void) // TODO: merge funcs.
+{
 	fputs("\nCannot allocate memory!\n", stderr);
 	exit(1);
 }
 
-void fileError(void) {
+void fileError(void)
+{
 	fputs("\nCannot open the file!\n", stderr);
 	exit(1);
 }
 
-char unixGetch(void) { // https://stackoverflow.com/questions/12710582/
+char unixGetch(void) // https://stackoverflow.com/questions/12710582/
+{
 	char key;
 	struct termios oldt, newt;
 	tcgetattr(STDIN_FILENO, &oldt);

@@ -1,18 +1,21 @@
 #include "ui.h"
 #include "hardware.h"
 
-// All rendered elements.
+// All rendered elements except chars you type.
 uint16_t i;
 
-void cursor(void) { // Blinking floor.
+void cursor(void) // Blinking floor.
+{
 	printf("%s", BLINK);
 	printf("%c", '_');
 	printf("%s", RESET);
 }
 
-int8_t decimalIntLen(int8_t chars) { // Return len of decimal charchars.
+int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
+{
 	int8_t len = 1;
-	while(chars > 9) {
+	while(chars > 9)
+	{
 		len++;
 		chars /= 10;
 	}
@@ -20,7 +23,8 @@ int8_t decimalIntLen(int8_t chars) { // Return len of decimal charchars.
 }
 
  // Lower border with a text.
-void infoBar(int8_t chars, int8_t lines, char baseFilename[]) {
+void infoBar(int8_t chars, int8_t lines, char baseFilename[])
+{
 	char programName[10] = " Fiflo | \0";
 	char charsText[8] = "chars: \0";
 	char linesText[11] = " | lines: \0";
@@ -28,21 +32,25 @@ void infoBar(int8_t chars, int8_t lines, char baseFilename[]) {
 
 	uint16_t whitespace = strlen(programName) + strlen(baseFilename)
 	+ decimalIntLen(chars) + strlen(charsText) +  strlen(linesText)
-	+ strlen(stdinText) + 1; // 1 - stdin place.
+	+ strlen(stdinText) + 1; // 1 - stdin indicator (blinking cursor).
 
 	char* barBuffer = malloc(windowSize('x'));
-	if(barBuffer == NULL) {
+	if(barBuffer == NULL)
+	{
 		memError();
 	}
 
 	printf("%s%s", BOLD, programName);
 
-	if(strlen(programName) > whitespace) {
-		for(i = 0; i < whitespace; i++) {
+	if(strlen(programName) > whitespace)
+	{
+		for(i = 0; i < whitespace; i++)
+		{
 			printf("%c", baseFilename[i]);
 		}
 	}
-	for(i = 0; i < windowSize('x') - whitespace; i++) {
+	for(i = 0; i < windowSize('x') - whitespace; i++)
+	{
 		printf("%c", ' ');
 	}
 

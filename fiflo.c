@@ -8,22 +8,29 @@
 
 int8_t charsAmount = 1, linesAmount = 1;
 
-void programRound(char baseFilename[256]) {
-	while(1) {
+void programRound(char baseFilename[256])
+{
+	while(1)
+	{
 		char pressedKey = unixGetch();
 
-		if(pressedKey == BACKSPACE) {
+		if(pressedKey == BACKSPACE)
+		{
 			charsAmount--;
-			if(charsAmount <= 0) {
+			if(charsAmount <= 0)
+			{
 				charsAmount = 0;
 			}
 		}
-		else if(pressedKey == CTRL_X) {
+		else if(pressedKey == CTRL_X)
+		{
 			exit(0);
 		}
-		else {
+		else
+		{
 			charsAmount++;
-			if(charsAmount >= 80) { // TODO: the last char is overwritten.
+			if(charsAmount >= 80)
+			{ // TODO: the last char is overwritten.
 				charsAmount = 80;
 			}
 		}
@@ -34,15 +41,18 @@ void programRound(char baseFilename[256]) {
 
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(int argc, char* argv[]) {
-	if(argc > 2) {
+	if(argc > 2)
+	{
 		fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
 		exit(1);
 	}
-	if(argv[1] == NULL) {
+	if(argv[1] == NULL)
+	{
 		fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
 		exit(1);
 	}
-	if(strlen(argv[1]) > 255) {
+	if(strlen(argv[1]) > 255)
+	{
 		fputs("Maximum base filename length: 255 chars.\n", stderr);
 		exit(1);
 	}
