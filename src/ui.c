@@ -2,7 +2,7 @@
 #include "hardware.h"
 
 // All rendered elements except chars you type.
-uint16_t i;
+static uint16_t i;
 
 void cursor(void) // Blinking floor.
 {
@@ -11,7 +11,7 @@ void cursor(void) // Blinking floor.
 	printf("%s", RESET);
 }
 
-int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
+static int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
 {
 	int8_t len = 1;
 	while(chars > 9)

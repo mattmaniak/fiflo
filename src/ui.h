@@ -11,7 +11,7 @@
 #define BLINK "\033[5m\0"
 
 void cursor(void);
-int8_t decimalIntLen(int8_t chars);
+static int8_t decimalIntLen(int8_t chars);
 void infoBar(int8_t chars, int8_t lines, char baseFilename[]);
 void help(void);
 

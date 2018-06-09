@@ -2,9 +2,9 @@
 #include "ui.c"
 
 // Drawing funcions.
-char text[1][81];
+static char text[1][81];
 
-uint16_t windowSize(char axis) // Check term size and return width or height.
+static uint16_t windowSize(char axis) // Check term size and return width or height.
 {
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -50,7 +50,7 @@ void writeToFile(char charToWrite)
 	fclose(selectedFile);
 }
 
-void allocateChars(int8_t chars, int8_t lines, char key)
+static void allocateChars(int8_t chars, int8_t lines, char key)
 {
 	uint16_t charPos;
 	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
