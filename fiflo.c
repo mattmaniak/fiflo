@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	window(charsAmount, linesAmount, 'N', argv[1]);
+	window(charsAmount, linesAmount, ':', argv[1]);
 	programRound(argv[1]);
 	return 0;
 }

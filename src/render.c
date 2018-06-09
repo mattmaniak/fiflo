@@ -51,7 +51,7 @@ void window(int8_t chars, int8_t lines, char key, char baseFilename[]) {
 	if(key != BACKSPACE) { // To prevent double 'backspace'.
 		text[lines - 1][chars - 1] = key; // TODO: allocates only 79 char.
 	}
-	text[lines - 1][chars] = 'N';
+	text[lines - 1][chars] = '\0';
 	/*
 	Integration of variables: "chars" and "charPos" is highly required TODO.
 	They means the same so there is no need to split.
@@ -62,9 +62,11 @@ void window(int8_t chars, int8_t lines, char key, char baseFilename[]) {
 	}
 
 	cursor();
+
 	for(i = lines; i < windowSize('y'); i++) {
 		printf("%c", '\n');
 	}
+
 	infoBar(chars, lines, baseFilename);
 	free(lineBuffer);
 }

@@ -35,7 +35,13 @@ void infoBar(int8_t chars, int8_t lines, char baseFilename[]) {
 		memError();
 	}
 
-	printf("%s%s%s", BOLD, programName, baseFilename);
+	printf("%s%s", BOLD, programName);
+
+	if(strlen(programName) > whitespace) {
+		for(i = 0; i < whitespace; i++) {
+			printf("%c", baseFilename[i]);
+		}
+	}
 	for(i = 0; i < windowSize('x') - whitespace; i++) {
 		printf("%c", ' ');
 	}
