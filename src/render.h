@@ -8,9 +8,9 @@
 #include <sys/ioctl.h>
 
 #define MIN_WIDTH 80
-#define MIN_HEIGHT 20
-#define MAX_WIDTH 500
-#define MAX_HEIGHT 300
+#define MIN_HEIGHT 10
+#define MAX_WIDTH 600
+#define MAX_HEIGHT 400
 
 static uint16_t windowSize(char axis);
 void cleanFrame(void);

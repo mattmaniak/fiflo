@@ -30,9 +30,13 @@ void infoBar(int8_t chars, int8_t lines, char baseFilename[])
 	char linesText[11] = " | lines: \0";
 	char stdinText[10] = " | stdin<\0";
 
-	uint16_t whitespace = strlen(programName) + strlen(baseFilename)
-	+ decimalIntLen(chars) + strlen(charsText) +  strlen(linesText)
-	+ strlen(stdinText) + 1; // 1 - stdin indicator (blinking cursor).
+	uint16_t whitespace
+	= strlen(programName)
+	+ strlen(baseFilename)
+	+ decimalIntLen(chars)
+	+ strlen(charsText)
+	+ strlen(linesText)
+	+ strlen(stdinText) + 2;
 
 	char* barBuffer = malloc(windowSize('x'));
 	if(barBuffer == NULL)
@@ -40,15 +44,8 @@ void infoBar(int8_t chars, int8_t lines, char baseFilename[])
 		memError();
 	}
 
-	printf("%s%s", BOLD, programName);
+	printf("%s%s%s", BOLD, programName, baseFilename);
 
-	if(strlen(programName) > whitespace)
-	{
-		for(i = 0; i < whitespace; i++)
-		{
-			printf("%c", baseFilename[i]);
-		}
-	}
 	for(i = 0; i < windowSize('x') - whitespace; i++)
 	{
 		printf("%c", ' ');

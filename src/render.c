@@ -52,7 +52,7 @@ void writeToFile(char charToWrite)
 
 static void allocateChars(int8_t chars, int8_t lines, char key)
 {
-	uint16_t charPos;
+	int8_t charPos;
 	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
 	if(lineBuffer == NULL)
 	{
@@ -72,9 +72,17 @@ static void allocateChars(int8_t chars, int8_t lines, char key)
 		printf("%c", text[lines - 1][charPos - 1]);
 		writeToFile(text[lines - 1][charPos - 1]);
 	}
-
 	cursor();
-
+	if(key == ENTER)
+	{
+		printf("%s", "\033[F\033[K");
+		lines++;
+	}
+	else if(key == BACKSPACE)
+	{
+		printf("%s", "\033[F\033[K");
+		lines--;
+	}
 	free(lineBuffer);
 }
 
