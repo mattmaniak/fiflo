@@ -2,7 +2,7 @@
 #include "ui.c"
 
 // Drawing funcions.
-static char text[1][81];
+static char text[10][81];
 
 static uint16_t windowSize(char axis) // Check term size and return width or height.
 {
@@ -39,17 +39,6 @@ void cleanFrame(void) // To provide rendering in a one frame.
 	}
 }
 
-void writeToFile(char charToWrite)
-{
-	FILE* selectedFile = fopen("textfile.asdf", "a+");
-	if(selectedFile == NULL)
-	{
-		fileError();
-	}
-	fprintf(selectedFile, "%c", charToWrite);
-	fclose(selectedFile);
-}
-
 static void allocateChars(int8_t chars, int8_t lines, char key)
 {
 	int8_t charPos;
@@ -70,19 +59,8 @@ static void allocateChars(int8_t chars, int8_t lines, char key)
 	for(charPos = 1; charPos <= chars; charPos++)
 	{
 		printf("%c", text[lines - 1][charPos - 1]);
-		writeToFile(text[lines - 1][charPos - 1]);
 	}
 	cursor();
-	if(key == ENTER)
-	{
-		printf("%s", "\033[F\033[K");
-		lines++;
-	}
-	else if(key == BACKSPACE)
-	{
-		printf("%s", "\033[F\033[K");
-		lines--;
-	}
 	free(lineBuffer);
 }
 

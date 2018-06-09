@@ -13,29 +13,35 @@ void programRound(char baseFilename[256])
 	while(1)
 	{
 		char pressedKey = unixGetch();
-
 		if(pressedKey == BACKSPACE)
 		{
 			charsAmount--;
 			if(charsAmount <= 0)
-			{
 				charsAmount = 0;
-			}
 		}
 		else if(pressedKey == CTRL_X)
-		{
 			exit(0);
-		}
+
 		else
 		{
 			charsAmount++;
 			if(charsAmount >= 80)
-			{ // TODO: the last char is overwritten.
-				charsAmount = 80;
-			}
+				charsAmount = 80; // TODO: the last char is overwritten.
+
+			if(linesAmount >= 10)
+				linesAmount = 10;
 		}
 		cleanFrame();
 		window(charsAmount, linesAmount, pressedKey, baseFilename);
+
+		if(pressedKey == ENTER)
+		{
+			linesAmount++;
+		}
+		else if(pressedKey == BACKSPACE)
+		{
+			linesAmount--;
+		}
 	}
 }
 
