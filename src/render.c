@@ -43,10 +43,7 @@ static void allocateChars(int8_t chars, int8_t lines, char key)
 {
 	int8_t charPos;
 	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
-	if(lineBuffer == NULL)
-	{
-		memError();
-	}
+	memCheck(lineBuffer);
 	if(key != BACKSPACE) // To prevent double 'backspace'.
 	{
 		text[lines - 1][chars - 1] = key; // TODO: allocates only 79 char.

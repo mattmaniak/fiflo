@@ -16,8 +16,7 @@
 #define ARROW_LEFT 68
 #define BACKSPACE 127
 
-void memError(void);
-void fileError(void);
+void memErrorCheck(void* pointer);
 char unixGetch(void);
 
 #endif

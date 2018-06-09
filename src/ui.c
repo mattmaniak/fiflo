@@ -39,10 +39,7 @@ void infoBar(int8_t chars, int8_t lines, char baseFilename[])
 	+ strlen(stdinText) + 2;
 
 	char* barBuffer = malloc(windowSize('x'));
-	if(barBuffer == NULL)
-	{
-		memError();
-	}
+	memCheck(barBuffer);
 
 	printf("%s%s%s", BOLD, programName, baseFilename);
 

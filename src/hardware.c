@@ -2,16 +2,13 @@
 
 // Memory && IO operations.
 
-void memError(void) // TODO: merge funcs.
+void memCheck(void* pointer)
 {
-	fputs("\nCannot allocate memory!\n", stderr);
-	exit(1);
-}
-
-void fileError(void)
-{
-	fputs("\nCannot open the file!\n", stderr);
-	exit(1);
+	if(pointer == NULL)
+	{
+		fputs("Pointer error!\n", stderr);
+		exit(1);
+	}
 }
 
 char unixGetch(void) // https://stackoverflow.com/questions/12710582/
