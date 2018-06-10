@@ -19,7 +19,7 @@ static int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
 }
 
  // Lower border with a text.
-void infoBar(int8_t chars, int8_t lines, char base_filename[])
+void infoBar(int8_t lines, int8_t chars, char base_filename[])
 {
 	uint8_t char_pos;
 	uint16_t width;

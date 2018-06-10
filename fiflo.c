@@ -6,7 +6,7 @@
 // Chars amount: from 0 to signed int8/16/32_t - 1.
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
-int8_t chars_amount = 1, lines_amount = 1;
+int8_t lines_amount = 1, chars_amount = 1;
 
 void keyCheck(char key) // TODO: simplify these ifs!
 {
@@ -43,7 +43,7 @@ void programRound(char base_filename[])
 		char pressed_key = unixGetch();
 		keyCheck(pressed_key);
 		cleanFrame();
-		window(chars_amount, lines_amount, pressed_key, base_filename);
+		window(lines_amount, chars_amount, pressed_key, base_filename);
 	}
 }
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	window(chars_amount, lines_amount, '>', argv[1]);
+	window(lines_amount, chars_amount, '>', argv[1]);
 	programRound(argv[1]);
 	return 0;
 }

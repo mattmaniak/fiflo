@@ -2,7 +2,7 @@
 #include "ui.c"
 
 // Drawing funcions.
-static char text[10][81];
+static char text[9][81];
 
 static uint16_t windowSize(char axis) // Check term size.
 {
@@ -37,9 +37,9 @@ void cleanFrame(void) // To provide rendering in a one frame.
 		printf("%s", "\033[F\033[K");
 }
 
-static void allocateChars(int8_t chars, int8_t lines, char key)
+static void allocateChars(int8_t lines, int8_t chars, char key)
 {
-	int8_t char_pos;
+	int8_t line_pos, char_pos;
 	char* line_buffer = malloc(chars * lines * sizeof(char) + 1);
 	memCheck(line_buffer);
 
@@ -48,17 +48,17 @@ static void allocateChars(int8_t chars, int8_t lines, char key)
 
 	text[lines - 1][chars] = '\0';
 
-	for(char_pos = 1; char_pos <= chars; char_pos++) // String rendering.
-		printf("%c", text[lines - 1][char_pos - 1]);
-
+	for(line_pos = 1; line_pos <= lines; line_pos++)
+		for(char_pos = 1; char_pos <= chars; char_pos++) // String rendering.
+			printf("%c", text[lines - 1][char_pos - 1]);
 	cursor();
 	free(line_buffer);
 }
 
-void window(int8_t chars, int8_t lines, char key, char base_filename[])
+void window(int8_t lines, int8_t chars, char key, char base_filename[])
 {
 	uint16_t height;
-	allocateChars(chars, lines, key);
+	allocateChars(lines, chars, key);
 
 	for(height = lines; height < windowSize('y'); height++)
 		printf("%c", '\n');

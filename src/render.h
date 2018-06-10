@@ -14,8 +14,8 @@
 
 static uint16_t windowSize(char axis);
 void cleanFrame(void);
-static void allocateChars(int8_t chars, int8_t lines, char key);
-void window(int8_t chars, int8_t lines, char key, char base_filename[]);
+static void allocateChars(int8_t lines, int8_t chars, char key);
+void window(int8_t lines, int8_t chars, char key, char base_filename[]);
 
 #endif
 
