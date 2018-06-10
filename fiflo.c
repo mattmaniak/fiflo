@@ -6,32 +6,32 @@
 // Chars amount: from 0 to signed int8/16/32_t - 1.
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
-int8_t charsAmount = 1, linesAmount = 1;
+int8_t chars_amount = 1, lines_amount = 1;
 
-void programRound(char baseFilename[256])
+void programRound(char base_filename[])
 {
 	while(1)
 	{
-		char pressedKey = unixGetch();
-		if(pressedKey == BACKSPACE)
+		char pressed_key = unixGetch();
+		if(pressed_key == BACKSPACE)
 		{
-			charsAmount--;
-			if(charsAmount <= 0)
-				charsAmount = 0;
+			chars_amount--;
+			if(chars_amount <= 0)
+				chars_amount = 0;
 		}
-		else if(pressedKey == CTRL_X)
+		else if(pressed_key == CTRL_X)
 		{
 			cleanFrame();
 			exit(0);
 		}
 		else
 		{
-			charsAmount++;
-			if(charsAmount >= 80)
-				charsAmount = 80; // TODO: the last char is overwritten.
+			chars_amount++;
+			if(chars_amount >= 80)
+				chars_amount = 80; // TODO: the last char is overwritten.
 		}
 		cleanFrame();
-		window(charsAmount, linesAmount, pressedKey, baseFilename);
+		window(chars_amount, lines_amount, pressed_key, base_filename);
 	}
 }
 
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	window(charsAmount, linesAmount, '>', argv[1]);
+	window(chars_amount, lines_amount, '>', argv[1]);
 	programRound(argv[1]);
 	return 0;
 }

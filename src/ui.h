@@ -12,7 +12,7 @@
 
 void cursor(void);
 static int8_t decimalIntLen(int8_t chars);
-void infoBar(int8_t chars, int8_t lines, char baseFilename[]);
+void infoBar(int8_t chars, int8_t lines, char base_filename[]);
 void help(void);
 
 #endif

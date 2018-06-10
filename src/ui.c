@@ -19,33 +19,46 @@ static int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
 }
 
  // Lower border with a text.
-void infoBar(int8_t chars, int8_t lines, char baseFilename[])
+void infoBar(int8_t chars, int8_t lines, char base_filename[])
 {
+	uint8_t char_pos;
 	uint16_t width;
-	char programName[10] = " Fiflo | \0";
-	char charsText[8] = "chars: \0";
-	char linesText[11] = " | lines: \0";
-	char stdinText[10] = " | stdin<\0";
+	char program_name[10] = " Fiflo | \0";
+	char chars_text[8] = "chars: \0";
+	char lines_text[11] = " | lines: \0";
+	char stdin_text[10] = " | stdin<\0";
 
 	uint16_t whitespace
-	= strlen(programName)
-	+ strlen(baseFilename)
+	= strlen(program_name)
 	+ decimalIntLen(chars)
-	+ strlen(charsText)
-	+ strlen(linesText)
-	+ strlen(stdinText) + 2;
+	+ strlen(chars_text)
+	+ strlen(lines_text)
+	+ strlen(stdin_text) + 35 + 2;
 
-	char* barBuffer = malloc(windowSize('x'));
-	memCheck(barBuffer);
+	char* bar_buffer = malloc(windowSize('x'));
+	memCheck(bar_buffer);
 
-	printf("%s%s%s", BOLD, programName, baseFilename);
+	printf("%s%s", BOLD, program_name);
+
+	if(strlen(base_filename) >= 32) // Max rendered first 32 chars.
+	{
+		for(char_pos = 0; char_pos < 32; char_pos++)
+			printf("%c", base_filename[char_pos]);
+		printf("%s", "..."); // strlen is 3.
+	}
+	else
+	{
+		printf("%s", base_filename);
+		for(char_pos = 0; char_pos < 35 - strlen(base_filename); char_pos++)
+			printf("%c", ' ');
+	}
 
 	for(width = 0; width < windowSize('x') - whitespace; width++)
 		printf("%c", ' ');
 
-	printf("%s%d%s%d%s%s", charsText, chars, linesText, lines, stdinText,
+	printf("%s%d%s%d%s%s", chars_text, chars, lines_text, lines, stdin_text,
 	RESET);
 
-	free(barBuffer);
+	free(bar_buffer);
 }
 

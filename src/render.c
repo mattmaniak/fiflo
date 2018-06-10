@@ -39,32 +39,30 @@ void cleanFrame(void) // To provide rendering in a one frame.
 
 static void allocateChars(int8_t chars, int8_t lines, char key)
 {
-	int8_t charPos;
-	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
-	memCheck(lineBuffer);
+	int8_t char_pos;
+	char* line_buffer = malloc(chars * lines * sizeof(char) + 1);
+	memCheck(line_buffer);
 
 	if(key != BACKSPACE) // To prevent double 'backspace'.
-		text[lines - 1][chars - 1] = key;
+		text[lines - 1][chars - 1] = key; // Allocation.
 
 	text[lines - 1][chars] = '\0';
-	/*
-	Integration of variables: "chars" and "charPos" is highly required TODO.
-	They means the same so there is no need to split.
-	*/
-	for(charPos = 1; charPos <= chars; charPos++)
-		printf("%c", text[lines - 1][charPos - 1]);
+
+	for(char_pos = 1; char_pos <= chars; char_pos++) // String rendering.
+		printf("%c", text[lines - 1][char_pos - 1]);
 
 	cursor();
-	free(lineBuffer);
+	free(line_buffer);
 }
 
-void window(int8_t chars, int8_t lines, char key, char baseFilename[])
+void window(int8_t chars, int8_t lines, char key, char base_filename[])
 {
 	uint16_t height;
 	allocateChars(chars, lines, key);
+
 	for(height = lines; height < windowSize('y'); height++)
 		printf("%c", '\n');
 
-	infoBar(chars, lines, baseFilename);
+	infoBar(chars, lines, base_filename);
 }
 
