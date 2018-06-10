@@ -8,7 +8,7 @@ files use diff-like tools or "git log".
 
 ## Versions:
 ### v0.4.0 (WIP):
-- Rendering a whole lines of typed chars/strings.
+- Rendering a single line of typed chars/strings.
 - UI redesigned.
 - Cursor added.
 - Makefile && similar ones improved.

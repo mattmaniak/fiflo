@@ -2,13 +2,9 @@
 #include "hardware.h"
 
 // All rendered elements except chars you type.
-static uint16_t i;
-
 void cursor(void) // Blinking floor.
 {
-	printf("%s", BLINK);
-	printf("%c", '_');
-	printf("%s", RESET);
+	printf("%s%c%s", BLINK, '_', RESET);
 }
 
 static int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
@@ -25,6 +21,7 @@ static int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
  // Lower border with a text.
 void infoBar(int8_t chars, int8_t lines, char baseFilename[])
 {
+	uint16_t width;
 	char programName[10] = " Fiflo | \0";
 	char charsText[8] = "chars: \0";
 	char linesText[11] = " | lines: \0";
@@ -43,10 +40,8 @@ void infoBar(int8_t chars, int8_t lines, char baseFilename[])
 
 	printf("%s%s%s", BOLD, programName, baseFilename);
 
-	for(i = 0; i < windowSize('x') - whitespace; i++)
-	{
+	for(width = 0; width < windowSize('x') - whitespace; width++)
 		printf("%c", ' ');
-	}
 
 	printf("%s%d%s%d%s%s", charsText, chars, linesText, lines, stdinText,
 	RESET);

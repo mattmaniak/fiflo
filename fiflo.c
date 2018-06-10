@@ -20,50 +20,39 @@ void programRound(char baseFilename[256])
 				charsAmount = 0;
 		}
 		else if(pressedKey == CTRL_X)
+		{
+			cleanFrame();
 			exit(0);
-
+		}
 		else
 		{
 			charsAmount++;
 			if(charsAmount >= 80)
 				charsAmount = 80; // TODO: the last char is overwritten.
-
-			if(linesAmount >= 10)
-				linesAmount = 10;
 		}
 		cleanFrame();
 		window(charsAmount, linesAmount, pressedKey, baseFilename);
-
-		if(pressedKey == ENTER)
-		{
-			linesAmount++;
-		}
-		else if(pressedKey == BACKSPACE)
-		{
-			linesAmount--;
-		}
 	}
+}
+
+void usage(void)
+{
+	fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
+	exit(1);
 }
 
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(int argc, char* argv[]) {
-	if(argc > 2)
-	{
-		fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
-		exit(1);
-	}
-	if(argv[1] == NULL)
-	{
-		fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
-		exit(1);
-	}
+	if(argc > 2 || argv[1] == NULL)
+		usage();
+
 	if(strlen(argv[1]) > 255)
 	{
 		fputs("Maximum base filename length: 255 chars.\n", stderr);
 		exit(1);
 	}
 
-	window(charsAmount, linesAmount, ':', argv[1]);
+	window(charsAmount, linesAmount, '>', argv[1]);
 	programRound(argv[1]);
 	return 0;
 }

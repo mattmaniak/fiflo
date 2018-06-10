@@ -4,7 +4,7 @@
 // Drawing funcions.
 static char text[10][81];
 
-static uint16_t windowSize(char axis) // Check term size and return width or height.
+static uint16_t windowSize(char axis) // Check term size.
 {
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -34,9 +34,7 @@ void cleanFrame(void) // To provide rendering in a one frame.
 {
 	uint16_t lines;
 	for(lines = 0; lines < windowSize('y'); lines++)
-	{
 		printf("%s", "\033[F\033[K");
-	}
 }
 
 static void allocateChars(int8_t chars, int8_t lines, char key)
@@ -44,19 +42,18 @@ static void allocateChars(int8_t chars, int8_t lines, char key)
 	int8_t charPos;
 	char* lineBuffer = malloc(chars * lines * sizeof(char) + 1);
 	memCheck(lineBuffer);
+
 	if(key != BACKSPACE) // To prevent double 'backspace'.
-	{
-		text[lines - 1][chars - 1] = key; // TODO: allocates only 79 char.
-	}
+		text[lines - 1][chars - 1] = key;
+
 	text[lines - 1][chars] = '\0';
 	/*
 	Integration of variables: "chars" and "charPos" is highly required TODO.
 	They means the same so there is no need to split.
 	*/
 	for(charPos = 1; charPos <= chars; charPos++)
-	{
 		printf("%c", text[lines - 1][charPos - 1]);
-	}
+
 	cursor();
 	free(lineBuffer);
 }
@@ -66,9 +63,8 @@ void window(int8_t chars, int8_t lines, char key, char baseFilename[])
 	uint16_t height;
 	allocateChars(chars, lines, key);
 	for(height = lines; height < windowSize('y'); height++)
-	{
 		printf("%c", '\n');
-	}
+
 	infoBar(chars, lines, baseFilename);
 }
 

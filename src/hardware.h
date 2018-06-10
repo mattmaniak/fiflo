@@ -20,3 +20,4 @@ void memErrorCheck(void* pointer);
 char unixGetch(void);
 
 #endif
+
