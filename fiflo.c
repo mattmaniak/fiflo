@@ -1,43 +1,59 @@
-#include "src/input.c"
+#include "src/hardware.c"
 #include "src/render.c"
+
+// File with the main logic.
 
 // Chars amount: from 0 to signed int8/16/32_t - 1.
 #define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
 
-int8_t charBuffer = 0;
+int8_t chars_amount = 1, lines_amount = 1;
 
-void typeAndPrint() {
-	while(1) {
-		char pressedKey = unixGetch();
-
-		if(pressedKey == 127) { // Backspace.
-			charBuffer--;
-			if(charBuffer <= 0) {
-				charBuffer = 0;
-			}
+void programRound(char base_filename[])
+{
+	while(1)
+	{
+		char pressed_key = unixGetch();
+		if(pressed_key == BACKSPACE)
+		{
+			chars_amount--;
+			if(chars_amount <= 0)
+				chars_amount = 0;
 		}
-		else {
-			charBuffer++;
-			if(charBuffer >= CHAR_BUFFER_SIZE) {
-				charBuffer = CHAR_BUFFER_SIZE;
-			}
+		else if(pressed_key == CTRL_X)
+		{
+			cleanFrame();
+			exit(0);
 		}
-		clearWindow();
-		window(pressedKey, charBuffer);
+		else
+		{
+			chars_amount++;
+			if(chars_amount >= 80)
+				chars_amount = 80; // TODO: the last char is overwritten.
+		}
+		cleanFrame();
+		window(chars_amount, lines_amount, pressed_key, base_filename);
 	}
 }
 
+void usage(void)
+{
+	fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
+	exit(1);
+}
+
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
-int main(int argc, char *argv[]) {
-	if(argc != 2) {
-		puts("Pass certainly 1 arg (filename) to Fiflo.");
+int main(int argc, char* argv[]) {
+	if(argc > 2 || argv[1] == NULL)
+		usage();
+
+	if(strlen(argv[1]) > 255)
+	{
+		fputs("Maximum base filename length: 255 chars.\n", stderr);
 		exit(1);
 	}
-	printf("%s", "\033[F\033[K");
-	printf("Filename: %s", argv[1]);
-	window(' ', charBuffer);
 
-	typeAndPrint();
+	window(chars_amount, lines_amount, '>', argv[1]);
+	programRound(argv[1]);
 	return 0;
 }
 
