@@ -7,6 +7,9 @@ Changelog contains only new tangible features. To see what's new in source
 files use diff-like tools or "git log".
 
 ## Versions:
+### v0.4.1 (June 10, 2018):
+- Docs update.
+
 ### v0.4.0 (June 10, 2018):
 - Rendering a single line of typed chars/strings.
 - UI redesigned.

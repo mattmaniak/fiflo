@@ -1,7 +1,7 @@
 # Fiflo - simple terminal-based text editor.
 
 ## Description
-Nano-inspired. Currently unsafe && unusable because WIP.
+Nano-inspired. Currently without support for files. Basic writing only.
 
 ## Configuration
 ```
