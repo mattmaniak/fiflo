@@ -1,9 +1,5 @@
 compile:
 	gcc fiflo.c -o fiflo \
-	-lasan \
-	-fsanitize=address \
-	-fsanitize=undefined \
-	-fsanitize=signed-integer-overflow \
 	-Wall \
 	-Wextra \
 	-Wpedantic
