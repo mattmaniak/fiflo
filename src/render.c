@@ -11,7 +11,7 @@ static uint16_t windowSize(char axis) // Check term size.
 
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
 	{
-		fputs("Minimal terminal size is 40x20.\n", stderr);
+		fputs("Minimal terminal size is 80x20.\n", stderr);
 		exit(1);
 	}
 	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)

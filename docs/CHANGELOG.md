@@ -7,6 +7,9 @@ Changelog contains only new tangible features. To see what's new in source
 files use diff-like tools or "git log".
 
 ## Versions:
+### v0.4.3 (June 10, 2018):
+- Info about min term size fix.
+
 ### v0.4.2 (June 10, 2018):
 - Makefile update.
 
