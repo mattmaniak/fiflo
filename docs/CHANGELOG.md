@@ -10,6 +10,9 @@ files use diff-like tools or "git log".
 ### v0.5.0 (WIP):
 - Multiple lines writing.
 
+### v0.4.3 (June 10, 2018):
+- Info about min term size fix.
+
 ### v0.4.2 (June 10, 2018):
 - Makefile update.
 

@@ -8,20 +8,27 @@
 
 int8_t chars_amount = 1, lines_amount = 1;
 
-void keyCheck(char key)
+void keyCheck(char key) // TODO: simplify these ifs!
 {
+	if(key == CTRL_X)
+	{
+		cleanFrame();
+		exit(0);
+	}
+
+	if(key == ENTER)
+	{
+		lines_amount++;
+		if(lines_amount >= 9) // 10 only for testing.
+			lines_amount = 9;
+	}
 	if(key == BACKSPACE)
 	{
 		chars_amount--;
 		if(chars_amount <= 0)
 			chars_amount = 0;
 	}
-	else if(key == CTRL_X)
-	{
-		cleanFrame();
-		exit(0);
-	}
-	else
+	else if(key != ENTER)
 	{
 		chars_amount++;
 		if(chars_amount >= 80)
