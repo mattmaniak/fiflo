@@ -37,24 +37,27 @@ void cleanFrame(void) // To provide rendering in a one frame.
 		printf("%s", "\033[F\033[K");
 }
 
+// Pressed keys to rendered chars in proper order.
 static void allocateChars(int8_t lines, int8_t chars, char key)
 {
 	int8_t line_pos, char_pos;
-	char* line_buffer = malloc(chars * lines * sizeof(char) + 1);
-	memCheck(line_buffer);
+	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
+	memCheck(text_buffer);
 
 	if(key != BACKSPACE && key != ENTER) // To prevent double 'backspace'.
 		text[lines - 1][chars - 1] = key; // Allocation.
 
 	text[lines - 1][chars] = '\0';
 
-	for(line_pos = 1; line_pos <= lines; line_pos++)
+	for(line_pos = 1; line_pos <= lines; line_pos++) // TODO: sth wrong.
 		for(char_pos = 1; char_pos <= chars; char_pos++) // String rendering.
 			printf("%c", text[lines - 1][char_pos - 1]);
+
 	cursor();
-	free(line_buffer);
+	free(text_buffer);
 }
 
+// Terminal filler that shows chars and another stupid things.
 void window(int8_t lines, int8_t chars, char key, char base_filename[])
 {
 	uint16_t height;
@@ -63,6 +66,6 @@ void window(int8_t lines, int8_t chars, char key, char base_filename[])
 	for(height = lines; height < windowSize('y'); height++)
 		printf("%c", '\n');
 
-	infoBar(chars, lines, base_filename);
+	infoBar(lines, chars, base_filename);
 }
 

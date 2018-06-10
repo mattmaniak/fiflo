@@ -28,7 +28,7 @@ void infoBar(int8_t lines, int8_t chars, char base_filename[])
 	char lines_text[11] = " | lines: \0";
 	char stdin_text[10] = " | stdin<\0";
 
-	uint16_t whitespace
+	uint16_t whitespace // Between base filename and chars.
 	= strlen(program_name)
 	+ decimalIntLen(chars)
 	+ strlen(chars_text)
