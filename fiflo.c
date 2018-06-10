@@ -1,10 +1,59 @@
-#include "src/render.h"
+#include "src/hardware.c"
+#include "src/render.c"
 
-// *argv[] - table of pointers, (*argv)[] pointer to table.
-int main(unsigned char argc, char *argv[]) {
-	if(argc > 2) {
-		exit(1); }
+// File with the main logic.
 
-	window();
-	return 0; }
+// Chars amount: from 0 to signed int8/16/32_t - 1.
+#define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
+
+int8_t chars_amount = 1, lines_amount = 1;
+
+void programRound(char base_filename[])
+{
+	while(1)
+	{
+		char pressed_key = unixGetch();
+		if(pressed_key == BACKSPACE)
+		{
+			chars_amount--;
+			if(chars_amount <= 0)
+				chars_amount = 0;
+		}
+		else if(pressed_key == CTRL_X)
+		{
+			cleanFrame();
+			exit(0);
+		}
+		else
+		{
+			chars_amount++;
+			if(chars_amount >= 80)
+				chars_amount = 80; // TODO: the last char is overwritten.
+		}
+		cleanFrame();
+		window(chars_amount, lines_amount, pressed_key, base_filename);
+	}
+}
+
+void usage(void)
+{
+	fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
+	exit(1);
+}
+
+// *asdf[] - table of pointers, (*asdf)[] pointer to table.
+int main(int argc, char* argv[]) {
+	if(argc > 2 || argv[1] == NULL)
+		usage();
+
+	if(strlen(argv[1]) > 255)
+	{
+		fputs("Maximum base filename length: 255 chars.\n", stderr);
+		exit(1);
+	}
+
+	window(chars_amount, lines_amount, '>', argv[1]);
+	programRound(argv[1]);
+	return 0;
+}
 

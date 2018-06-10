@@ -1,4 +1,5 @@
 fiflo
 *.swp
-**/__pycache__/
-
+*.save
+*.out
+textfile.asdf

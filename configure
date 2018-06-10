@@ -1,0 +1,18 @@
+#! /bin/bash
+
+function checkHeader {
+	ls /usr/include/$1
+}
+
+type gcc
+checkHeader stdio.h
+checkHeader stdint.h
+checkHeader stdlib.h
+checkHeader string.h
+checkHeader sys/ioctl.h
+checkHeader linux/ioctl.h
+checkHeader unistd.h
+checkHeader termios.h
+
+echo "If you haven't got any other header compilation will fail!"
+echo "One 'ioctl.h' found is enough."

@@ -1,5 +1,28 @@
-# Fiflo
-## Terminal-based text editor.
+# Fiflo - simple terminal-based text editor.
 
-Version naming: semver.org.
+## Description
+Nano-inspired. Currently unsafe && unusable because WIP.
 
+## Configuration
+```
+./configure
+```
+
+## Compilation
+```
+make
+```
+
+## Installation
+```
+sudo make install
+```
+
+## Uninstallation
+```
+sudo make uninstall
+```
+
+## FAQ
+Will you ever port it into a Windows?
+- No.
