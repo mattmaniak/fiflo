@@ -8,6 +8,10 @@ files use diff-like tools or "git log".
 
 ## Versions:
 ### v0.5.0 (WIP):
+- Multiple lines writing.
+
+### v0.4.2 (June 10, 2018):
+- Makefile update.
 
 ### v0.4.1 (June 10, 2018):
 - Docs update.

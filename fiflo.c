@@ -8,28 +8,33 @@
 
 int8_t chars_amount = 1, lines_amount = 1;
 
+void keyCheck(char key)
+{
+	if(key == BACKSPACE)
+	{
+		chars_amount--;
+		if(chars_amount <= 0)
+			chars_amount = 0;
+	}
+	else if(key == CTRL_X)
+	{
+		cleanFrame();
+		exit(0);
+	}
+	else
+	{
+		chars_amount++;
+		if(chars_amount >= 80)
+			chars_amount = 80; // TODO: the last char is overwritten.
+	}
+}
+
 void programRound(char base_filename[])
 {
 	while(1)
 	{
 		char pressed_key = unixGetch();
-		if(pressed_key == BACKSPACE)
-		{
-			chars_amount--;
-			if(chars_amount <= 0)
-				chars_amount = 0;
-		}
-		else if(pressed_key == CTRL_X)
-		{
-			cleanFrame();
-			exit(0);
-		}
-		else
-		{
-			chars_amount++;
-			if(chars_amount >= 80)
-				chars_amount = 80; // TODO: the last char is overwritten.
-		}
+		keyCheck(pressed_key);
 		cleanFrame();
 		window(chars_amount, lines_amount, pressed_key, base_filename);
 	}
