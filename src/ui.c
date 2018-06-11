@@ -43,18 +43,24 @@ void infoBar(int8_t lines, int8_t chars, char base_filename[])
 	if(strlen(base_filename) >= 32) // Max rendered first 32 chars.
 	{
 		for(char_pos = 0; char_pos < 32; char_pos++)
+		{
 			printf("%c", base_filename[char_pos]);
+		}
 		printf("%s", "..."); // strlen is 3.
 	}
 	else
 	{
 		printf("%s", base_filename);
 		for(char_pos = 0; char_pos < 35 - strlen(base_filename); char_pos++)
+		{
 			printf("%c", ' ');
+		}
 	}
 
 	for(width = 0; width < windowSize('x') - whitespace; width++)
+	{
 		printf("%c", ' ');
+	}
 
 	printf("%s%d%s%d%s%s", chars_text, chars, lines_text, lines, stdin_text,
 	RESET);

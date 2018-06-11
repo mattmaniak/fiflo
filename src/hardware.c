@@ -2,7 +2,7 @@
 
 // Memory && IO operations.
 
-void memCheck(void* pointer)
+void memCheck(void* pointer) // Empty pointer checker.
 {
 	if(pointer == NULL)
 	{
