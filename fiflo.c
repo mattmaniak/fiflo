@@ -62,7 +62,7 @@ void usage(void)
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(int argc, char* argv[])
 {
-	if(argc > 2 || argv[1] == NULL)
+	if(argv[1] == NULL || argc > 2)
 	{
 		usage();
 	}

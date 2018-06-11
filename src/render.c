@@ -34,13 +34,15 @@ void cleanFrame(void) // To provide rendering in a one frame.
 {
 	uint16_t lines;
 	for(lines = 0; lines < windowSize('y'); lines++)
+	{
 		printf("%s", "\033[F\033[K");
+	}
 }
 
 // Pressed keys to rendered chars in proper order. TODO: key handling.
 static void allocateChars(int8_t lines, int8_t chars, char key)
 {
-	int8_t line_pos, char_pos;
+	int8_t line_pos, char_pos; // Iterators.
 	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
 	memCheck(text_buffer);
 
@@ -59,7 +61,7 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 	{
 		for(char_pos = 1; char_pos <= chars; char_pos++) // String rendering.
 		{
-			printf("%c", text[lines - 1][char_pos - 1]);
+			printf("%c", text[line_pos - 1][char_pos - 1]);
 		}
 	}
 	cursor();
