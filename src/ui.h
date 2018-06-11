@@ -7,8 +7,7 @@
 
 // ANSI escape codes.
 #define RESET "\033[0m\0"
-#define BOLD "\033[1m\0"
-#define BLINK "\033[5m\0"
+#define REVERSE "\033[7m\0"
 
 void cursor(void);
 static int8_t decimalIntLen(int8_t chars);

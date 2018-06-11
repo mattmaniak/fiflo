@@ -2,26 +2,21 @@
 #include "src/render.c"
 
 // File with the main logic.
-
-// Chars amount: from 0 to signed int8/16/32_t - 1.
-#define CHAR_BUFFER_SIZE 0x7F - 0x1 // Scope: <0; 126>.
-
 int8_t lines_amount = 1, chars_amount = 1; // text = lines + chars
 
-void keyCheck(char key) // TODO: simplify these ifs!
+void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 {
 	if(key == CTRL_X) // Check if exit key is pressed.
 	{
 		cleanFrame();
 		exit(0);
 	}
-
 	if(key == ENTER) // Check if newline should be inserted.
 	{
 		lines_amount++;
-		if(lines_amount >= 9) // 9 only for testing.
+		if(lines_amount >= 19) // 19 only for testing.
 		{
-			lines_amount = 9;
+			lines_amount = 19;
 		}
 	}
 	if(key == BACKSPACE) // Check if user want to remove a last char.
@@ -53,9 +48,9 @@ void programRound(char base_filename[])
 	}
 }
 
-void usage(void)
+void usageInfo(void)
 {
-	fputs("Usage: fiflo [base filename-only-for-WIP]\n", stderr);
+	fputs("usageInfo: fiflo [base filename-only-for-WIP]\n", stderr);
 	exit(1);
 }
 
@@ -64,7 +59,7 @@ int main(int argc, char* argv[])
 {
 	if(argv[1] == NULL || argc > 2)
 	{
-		usage();
+		usageInfo();
 	}
 
 	// TODO: null terminator for a base filename.

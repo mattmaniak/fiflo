@@ -1,9 +1,8 @@
 #include "render.h"
+#include "keys.c"
 #include "ui.c"
 
 // Drawing funcions.
-static char text[9][81];
-
 static uint16_t windowSize(char axis) // Check terminal size.
 {
 	struct winsize win;
@@ -46,16 +45,7 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
 	memCheck(text_buffer);
 
-	if(key != BACKSPACE) // To prevent double 'backspace'.
-	{
-		text[lines - 1][chars - 1] = key; // Allocation.
-		text[lines - 1][chars] = '\0';
-	}
-
-	else if(key == ENTER)
-	{
-		text[lines - 1][chars] = '\n';
-	}
+	keyHandling(lines, chars, key);
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // TODO: sth wrong.
 	{

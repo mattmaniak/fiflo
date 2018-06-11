@@ -4,7 +4,7 @@
 // All rendered elements except chars you type.
 void cursor(void) // Blinking floor.
 {
-	printf("%s%c%s", BLINK, '_', RESET);
+	printf("%s%c%s", REVERSE, ' ', RESET);
 }
 
 static int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
@@ -24,7 +24,7 @@ void infoBar(int8_t lines, int8_t chars, char base_filename[])
 	uint8_t char_pos;
 	uint16_t width;
 	char program_name[10] = " Fiflo | \0";
-	char chars_text[8] = "chars: \0";
+	char chars_text[10] = "| chars: \0";
 	char lines_text[11] = " | lines: \0";
 	char stdin_text[10] = " | stdin<\0";
 
@@ -38,7 +38,7 @@ void infoBar(int8_t lines, int8_t chars, char base_filename[])
 	char* bar_buffer = malloc(windowSize('x'));
 	memCheck(bar_buffer);
 
-	printf("%s%s", BOLD, program_name);
+	printf("%s%s", REVERSE, program_name);
 
 	if(strlen(base_filename) >= 32) // Max rendered first 32 chars.
 	{
