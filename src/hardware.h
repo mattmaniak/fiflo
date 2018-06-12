@@ -7,8 +7,9 @@
 #include <unistd.h>
 #include <termios.h>
 
-void memErrorCheck(void* pointer);
+void pointerCheck(void* pointer);
 char unixGetch(void);
+void saveToFile(char base_filename[]);
 
 #endif
 

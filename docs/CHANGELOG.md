@@ -9,6 +9,7 @@ files use diff-like tools or "git log".
 ## Versions:
 ### v0.5.0 (WIP):
 - Multiple lines writing.
+- File I/O operations.
 
 ### v0.4.3 (June 10, 2018):
 - Info about min term size fix.

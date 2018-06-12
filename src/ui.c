@@ -36,7 +36,7 @@ void infoBar(int8_t lines, int8_t chars, char base_filename[])
 	+ strlen(stdin_text) + 35 + 2;
 
 	char* bar_buffer = malloc(windowSize('x'));
-	memCheck(bar_buffer);
+	pointerCheck(bar_buffer);
 
 	printf("%s%s", REVERSE, program_name);
 

@@ -43,7 +43,7 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 {
 	int8_t line_pos, char_pos; // Iterators.
 	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
-	memCheck(text_buffer);
+	pointerCheck(text_buffer);
 
 	keyHandling(lines, chars, key);
 

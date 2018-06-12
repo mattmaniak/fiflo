@@ -2,7 +2,7 @@
 
 // Memory && IO operations.
 
-void memCheck(void* pointer) // Empty pointer checker.
+void pointerCheck(void* pointer) // Empty pointer checker.
 {
 	if(pointer == NULL)
 	{
@@ -22,5 +22,15 @@ char unixGetch(void) // https://stackoverflow.com/questions/12710582/
 	key = getchar();
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return key;
+}
+
+void saveToFile(char base_filename[])
+{
+	FILE* textfile = fopen(base_filename, "rw");
+	pointerCheck(textfile);
+
+	// TODO
+
+	fclose(textfile);
 }
 
