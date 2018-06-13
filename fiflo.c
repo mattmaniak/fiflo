@@ -1,3 +1,4 @@
+#include "src/errors.c"
 #include "src/hardware.c"
 #include "src/render.c"
 
@@ -48,26 +49,16 @@ void programRound(char base_filename[])
 	}
 }
 
-void usageInfo(void)
-{
-	fputs("usageInfo: fiflo [base filename-only-for-WIP]\n", stderr);
-	exit(1);
-}
-
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
 int main(int argc, char* argv[])
 {
-	if(argv[1] == NULL || argc > 2)
+	if(argv[1] == NULL)
 	{
-		usageInfo();
+		argv[1] = "null.asdf";
 	}
+	baseFilenameLenCheck(argv[1]);
+	argcCheck(argc);
 
-	// TODO: null terminator for a base filename.
-	if(strlen(argv[1]) > 256) // Max. base filename len for *nix is 255.
-	{
-		fputs("Maximum base filename length: 255 chars.\n", stderr);
-		exit(1);
-	}
 	window(lines_amount, chars_amount, '>', argv[1]);
 	programRound(argv[1]);
 	return 0;

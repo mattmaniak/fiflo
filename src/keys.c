@@ -12,7 +12,7 @@ void keyHandling(int8_t lines, int8_t chars, char key)
 	}
 	else if(key == ENTER)
 	{
-		text[lines - 1][chars] = '\n';
+		text[lines - 1][chars] = '\n'; // Linefeed.
 	}
 }
 
