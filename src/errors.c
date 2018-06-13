@@ -1,6 +1,6 @@
 #include "errors.h"
 
-// Wrong case possibilities: just errors et al.
+// Most of separated wrong case possibilities: just errors et al.
 
 void usageInfo(void)
 {

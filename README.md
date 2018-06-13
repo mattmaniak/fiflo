@@ -3,7 +3,7 @@
 ## Description
 Nano-inspired. Currently unsafe && unusable because WIP.
 
-## Configuration
+## Configuration - system compatibility check.
 ```
 ./configure
 ```
