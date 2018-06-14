@@ -7,11 +7,12 @@
 
 // ANSI escape codes.
 #define RESET "\033[0m\0"
-#define REVERSE "\033[7m\0"
+#define INVERT "\033[7m\0"
 
 void cursor(void);
 static int8_t decimalIntLen(int8_t chars);
-void infoBar(int8_t lines, int8_t chars, char base_filename[]);
+void upperBar(void);
+void lowerBar(int8_t lines, int8_t chars, char base_filename[]);
 void help(void);
 
 #endif

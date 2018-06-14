@@ -61,13 +61,14 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 // Terminal filler that shows chars and another stupid things.
 void window(int8_t lines, int8_t chars, char key, char base_filename[])
 {
+	upperBar();
 	uint16_t height;
 	allocateChars(lines, chars, key);
 
-	for(height = lines; height < windowSize('y'); height++)
+	for(height = lines; height <= windowSize('y') - 2; height++)
 	{
 		printf("%c", '\n');
 	}
-	infoBar(lines, chars, base_filename);
+	lowerBar(lines, chars, base_filename);
 }
 
