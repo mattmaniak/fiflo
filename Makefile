@@ -6,7 +6,8 @@ compile:
 	-fsanitize=signed-integer-overflow \
 	-Wall \
 	-Wextra \
-	-Wpedantic
+	-Wpedantic \
+	-g
 
 install:
 	cp fiflo /usr/bin/fiflo

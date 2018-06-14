@@ -7,13 +7,13 @@ void cursor(void) // Blinking floor.
 	printf("%s%c%s", INVERT, ' ', RESET);
 }
 
-static int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
+static int8_t decimalIntLen(int8_t number) // Return len of decimal charchars.
 {
 	int8_t len = 1;
-	while(chars > 9)
+	while(number > 9)
 	{
 		len++;
-		chars /= 10;
+		number /= 10;
 	}
 	return len;
 }
@@ -34,6 +34,7 @@ void lowerBar(int8_t lines, int8_t chars, char base_filename[])
 {
 	uint8_t char_pos;
 	uint16_t width;
+
 	char program_name[10] = " Fiflo | \0";
 	char chars_text[10] = "| chars: \0";
 	char lines_text[11] = " | lines: \0";
