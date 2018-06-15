@@ -30,19 +30,22 @@ void upperBar(void)
 }
 
  // Lower border with a text.
-void lowerBar(int8_t lines, int8_t chars, char base_filename[])
+void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[])
 {
 	uint8_t char_pos;
 	uint16_t width;
 
 	char program_name[10] = " Fiflo | \0";
-	char chars_text[10] = "| chars: \0";
+	char chars_text[11] = " | chars: \0";
 	char lines_text[11] = " | lines: \0";
+	char ascii_code_text[22] = "| Last char (ASCII): \0";
 
 	uint16_t whitespace // Between base filename and chars.
 	= strlen(program_name)
-	+ decimalIntLen(chars)
+	+ strlen(ascii_code_text)
+	+ decimalIntLen(key)
 	+ strlen(chars_text)
+	+ decimalIntLen(chars)
 	+ strlen(lines_text)
 	+ decimalIntLen(lines) + 35;
 
@@ -73,7 +76,8 @@ void lowerBar(int8_t lines, int8_t chars, char base_filename[])
 		printf("%c", ' ');
 	}
 
-	printf("%s%d%s%d%s", chars_text, chars, lines_text, lines, RESET);
+	printf("%s%i%s%i%s%i%s", ascii_code_text, key, chars_text, chars,
+	lines_text, lines, RESET);
 
 	free(bar_buffer);
 }

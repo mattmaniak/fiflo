@@ -69,6 +69,6 @@ void window(int8_t lines, int8_t chars, char key, char base_filename[])
 	{
 		printf("%c", '\n');
 	}
-	lowerBar(lines, chars, base_filename);
+	lowerBar(lines, chars, key, base_filename);
 }
 

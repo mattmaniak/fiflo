@@ -12,7 +12,7 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 		cleanFrame();
 		exit(0);
 	}
-	if(key == ENTER) // Check if newline should be inserted.
+	if(key == CTRL_N) // Check if newline should be inserted.
 	{
 		lines_amount++;
 		if(lines_amount >= 19) // 19 only for testing.
@@ -20,7 +20,7 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 			lines_amount = 19;
 		}
 	}
-	if(key == BACKSPACE) // Check if user want to remove a last char.
+	if(key == CTRL_B) // Check if user want to remove a last char.
 	{
 		chars_amount--;
 		if(chars_amount <= 0)
