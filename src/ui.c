@@ -47,16 +47,16 @@ void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[])
 	+ strlen(chars_text)
 	+ decimalIntLen(chars)
 	+ strlen(lines_text)
-	+ decimalIntLen(lines) + 35;
+	+ decimalIntLen(lines) + 19;
 
 	char* bar_buffer = malloc(windowSize('x'));
 	pointerCheck(bar_buffer);
 
 	printf("%s%s", INVERT, program_name);
 
-	if(strlen(base_filename) >= 32) // Max rendered first 32 chars.
+	if(strlen(base_filename) >= 16) // Max rendered first 32 chars.
 	{
-		for(char_pos = 0; char_pos < 32; char_pos++)
+		for(char_pos = 0; char_pos < 16; char_pos++)
 		{
 			printf("%c", base_filename[char_pos]);
 		}
@@ -65,7 +65,7 @@ void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[])
 	else
 	{
 		printf("%s", base_filename);
-		for(char_pos = 0; char_pos < 35 - strlen(base_filename); char_pos++)
+		for(char_pos = 0; char_pos < 19 - strlen(base_filename); char_pos++)
 		{
 			printf("%c", ' ');
 		}

@@ -9,6 +9,7 @@
 #define ARROW_DOWN 66
 #define ARROW_RIGHT 67
 #define ARROW_LEFT 68
+#define BACKSPACE 127
 
 void keyHandling(int8_t lines, int8_t chars, char key);
 

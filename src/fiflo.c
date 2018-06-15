@@ -1,39 +1,42 @@
-#include "src/errors.c"
-#include "src/hardware.c"
-#include "src/render.c"
+#include "errors.c"
+#include "hardware.c"
+#include "render.c"
 
 // File with the main logic.
 int8_t lines_amount = 1, chars_amount = 1; // text = lines + chars
 
 void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 {
-	if(key == CTRL_X) // Check if exit key is pressed.
+	if(key != BACKSPACE)
 	{
-		cleanFrame();
-		exit(0);
-	}
-	if(key == CTRL_N) // Check if newline should be inserted.
-	{
-		lines_amount++;
-		if(lines_amount >= 19) // 19 only for testing.
+		if(key == CTRL_X) // Check if exit key is pressed.
 		{
-			lines_amount = 19;
+			cleanFrame();
+			exit(0);
 		}
-	}
-	if(key == CTRL_B) // Check if user want to remove a last char.
-	{
-		chars_amount--;
-		if(chars_amount <= 0)
+		if(key == CTRL_N) // Check if newline should be inserted.
 		{
-			chars_amount = 0;
+			lines_amount++;
+			if(lines_amount >= 19) // 19 only for testing.
+			{
+				lines_amount = 19;
+			}
 		}
-	}
-	else
-	{
-		chars_amount++;
-		if(chars_amount >= 80)
+		if(key == CTRL_B) // Check if user want to remove a last char.
 		{
-			chars_amount = 80; // TODO: the last char is overwritten.
+			chars_amount--;
+			if(chars_amount <= 0)
+			{
+				chars_amount = 0;
+			}
+		}
+		else
+		{
+			chars_amount++;
+			if(chars_amount >= 80)
+			{
+				chars_amount = 80; // TODO: the last char is overwritten.
+			}
 		}
 	}
 }

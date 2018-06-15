@@ -1,5 +1,5 @@
 compile:
-	gcc fiflo.c -o fiflo \
+	gcc src/fiflo.c -o fiflo \
 	-lasan \
 	-fsanitize=address \
 	-fsanitize=undefined \
