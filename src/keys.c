@@ -10,9 +10,5 @@ void keyHandling(int8_t lines, int8_t chars, char key)
 		text[lines - 1][chars - 1] = key; // Allocation.
 		text[lines - 1][chars] = '\b';
 	}
-	else if(key == CTRL_N)
-	{
-		text[lines - 1][chars] = '\n'; // Linefeed.
-	}
 }
 
