@@ -16,7 +16,7 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 		lines_amount++;
 		if(lines_amount >= 19) // 19 only for testing.
 		{
-			lines_amount = 19;
+			lines_amount = 19; // Will be BUFFER_SIZE.
 		}
 	}
 	if(key == BACKSPACE) // Check if user want to remove a last char.
@@ -30,9 +30,9 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 	else if(key != CTRL_N)
 	{
 		chars_amount++;
-		if(chars_amount >= 80)
+		if(chars_amount >= BUFFER_SIZE)
 		{
-			chars_amount = 80; // TODO: the last char is overwritten.
+			chars_amount = BUFFER_SIZE; // TODO: the last char is overwritten.
 		}
 	}
 }
@@ -45,12 +45,12 @@ static uint16_t windowSize(char axis) // Check terminal size.
 
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
 	{
-		fputs("Minimal terminal size is 80x20.\n", stderr);
+		fputs("Min. term size is 80x20.\n", stderr);
 		exit(1);
 	}
 	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
 	{
-		fputs("Maximum terminal size is 500x300.\n", stderr);
+		fputs("Max. term size is 500x300.\n", stderr);
 		exit(1);
 	}
 
@@ -81,11 +81,6 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 
 	pointerCheck(text_buffer);
 	keyHandling(lines, chars, key);
-
-		if(lines_amount > 1 && text[lines_amount - 1][chars_amount - 1] == '\0')
-		{
-			lines_amount--;
-		}
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // TODO: sth wrong.
 	{

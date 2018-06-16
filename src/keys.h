@@ -12,6 +12,8 @@
 #define ARROW_LEFT 68
 #define BACKSPACE 127
 
+#define BUFFER_SIZE 126 // Always [TYPE]_MAX - 1.
+
 extern char text[19][80];
 
 void keyHandling(int8_t lines, int8_t chars, char key);

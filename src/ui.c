@@ -1,10 +1,11 @@
+// All rendered elements except chars you type.
+
 #include "ui.h"
 #include "hardware.h"
 
-// All rendered elements except chars you type.
 void cursor(void) // Blinking floor.
 {
-	printf("%s%c%s", INVERT, ' ', RESET);
+	printf("%s%s%c%s", BOLD, BLINK, '|', RESET);
 }
 
 static int8_t decimalIntLen(int8_t number) // Return len of decimal charchars.
