@@ -1,9 +1,8 @@
+// File with the main logic.
+
 #include "errors.c"
 #include "hardware.c"
 #include "render.c"
-
-// File with the main logic.
-
 
 void programRound(char base_filename[])
 {
@@ -26,7 +25,7 @@ int main(int argc, char* argv[])
 	baseFilenameLenCheck(argv[1]);
 	argcCheck(argc);
 
-	window(lines_amount, chars_amount, ' ', argv[1]);
+	window(lines_amount, chars_amount, '>', argv[1]);
 	programRound(argv[1]);
 	return 0;
 }

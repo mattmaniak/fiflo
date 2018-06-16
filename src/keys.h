@@ -12,6 +12,8 @@
 #define ARROW_LEFT 68
 #define BACKSPACE 127
 
+extern char text[19][80];
+
 void keyHandling(int8_t lines, int8_t chars, char key);
 
 #endif

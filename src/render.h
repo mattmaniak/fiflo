@@ -12,6 +12,8 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
+extern int8_t lines_amount, chars_amount;
+
 static uint16_t windowSize(char axis);
 void cleanFrame(void);
 static void allocateChars(int8_t lines, int8_t chars, char key);
