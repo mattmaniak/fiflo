@@ -11,7 +11,7 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 		cleanFrame();
 		exit(0);
 	}
-	if(key == ENTER) // Change to ENTER will render old strings.
+	else if(key == ENTER) // Change to ENTER will render old strings.
 	{
 		lines_amount++;
 		if(lines_amount >= 19) // 19 only for testing.
@@ -19,7 +19,15 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 			lines_amount = 19; // Will be BUFFER_SIZE.
 		}
 	}
-	if(key == BACKSPACE) // Check if user want to remove a last char.
+	else if(key == BACKSPACE && text[lines_amount - 1][chars_amount - 1] == '\0')
+	{
+		lines_amount--;
+		if(lines_amount <= 1)
+		{
+			lines_amount = 1;
+		}
+	}
+	else if(key == BACKSPACE) // Check if user want to remove a last char.
 	{
 		chars_amount--;
 		if(chars_amount <= 0)
@@ -73,7 +81,7 @@ void cleanFrame(void) // To provide rendering in a one frame.
 	}
 }
 
-// Pressed keys to rendered chars in proper order. TODO: key handling.
+// Pressed keys to rendered chars in proper order. TODO: all keys handling.
 static void allocateChars(int8_t lines, int8_t chars, char key)
 {
 	int8_t line_pos, char_pos; // Iterators.
@@ -82,9 +90,9 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 	pointerCheck(text_buffer);
 	keyHandling(lines, chars, key);
 
-	for(line_pos = 1; line_pos <= lines; line_pos++) // TODO: sth wrong.
+	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
-		for(char_pos = 1; char_pos <= chars; char_pos++) // String rendering.
+		for(char_pos = 1; char_pos <= chars; char_pos++) // X rendering.
 		{
 			printf("%c", text[line_pos - 1][char_pos - 1]);
 		}
@@ -96,8 +104,9 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 // Terminal filler that shows chars and another stupid things.
 void window(int8_t lines, int8_t chars, char key, char base_filename[])
 {
-	upperBar();
 	uint16_t height;
+
+	upperBar();
 	allocateChars(lines, chars, key);
 
 	for(height = lines; height <= windowSize('y') - 2; height++)

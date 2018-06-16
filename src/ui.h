@@ -14,6 +14,7 @@
 void cursor(void);
 static int8_t decimalIntLen(int8_t chars);
 void upperBar(void);
+static void dynamicLen(char base_filename[]);
 void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[]);
 void help(void);
 

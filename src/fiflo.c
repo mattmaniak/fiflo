@@ -9,12 +9,9 @@ void programRound(char base_filename[])
 	while(1)
 	{
 		char pressed_key = unixGetch();
-		if(pressed_key > 0)
-		{
-			keyCheck(pressed_key); // Is it ENTER, BACKSPACE...? More specific.
-			cleanFrame(); // Provide "one-window" rendering in a terminal.
-			window(lines_amount, chars_amount, pressed_key, base_filename);
-		}
+		keyCheck(pressed_key); // Is it ENTER, BACKSPACE...? More specific.
+		cleanFrame(); // Provide "one-window" rendering in a terminal.
+		window(lines_amount, chars_amount, pressed_key, base_filename);
 	}
 }
 

@@ -30,30 +30,9 @@ void upperBar(void)
 	printf("%s", RESET);
 }
 
- // Lower border with a text.
-void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[])
+static void dynamicLen(char base_filename[])
 {
 	uint8_t char_pos;
-	uint16_t width;
-
-	char program_name[10] = " Fiflo | \0";
-	char chars_text[11] = " | chars: \0";
-	char lines_text[11] = " | lines: \0";
-	char ascii_code_text[22] = "| Last char (ASCII): \0";
-
-	uint16_t whitespace // Between base filename and chars.
-	= strlen(program_name)
-	+ strlen(ascii_code_text)
-	+ decimalIntLen(key)
-	+ strlen(chars_text)
-	+ decimalIntLen(chars)
-	+ strlen(lines_text)
-	+ decimalIntLen(lines) + 19;
-
-	char* bar_buffer = malloc(windowSize('x'));
-	pointerCheck(bar_buffer);
-
-	printf("%s%s", INVERT, program_name);
 
 	if(strlen(base_filename) >= 16) // Max rendered first 32 chars.
 	{
@@ -71,6 +50,28 @@ void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[])
 			printf("%c", ' ');
 		}
 	}
+}
+
+// Lower border with a text.
+void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[])
+{
+	uint16_t width;
+
+	char program_name[10] = " Fiflo | \0";
+	char chars_text[11] = " | chars: \0";
+	char lines_text[11] = " | lines: \0";
+	char ascii_code_text[22] = "| Last char (ASCII): \0";
+
+	uint16_t whitespace = strlen(program_name) + strlen(ascii_code_text)
+	+ decimalIntLen(key) + strlen(chars_text) + decimalIntLen(chars)
+	+ strlen(lines_text) + decimalIntLen(lines) + 19;
+
+	char* bar_buffer = malloc(windowSize('x'));
+	pointerCheck(bar_buffer);
+
+	printf("%s%s", INVERT, program_name);
+
+	dynamicLen(base_filename);
 
 	for(width = 0; width < windowSize('x') - whitespace; width++)
 	{
