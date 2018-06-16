@@ -3,40 +3,7 @@
 #include "render.c"
 
 // File with the main logic.
-int8_t lines_amount = 1, chars_amount = 1; // text = lines + chars
 
-void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
-{
-	if(key == CTRL_X) // Check if exit key is pressed.
-	{
-		cleanFrame();
-		exit(0);
-	}
-	if(key == ENTER) // Change to ENTER will render old strings.
-	{
-		lines_amount++;
-		if(lines_amount >= 19) // 19 only for testing.
-		{
-			lines_amount = 19;
-		}
-	}
-	if(key == BACKSPACE) // Check if user want to remove a last char.
-	{
-		chars_amount--;
-		if(chars_amount <= 0)
-		{
-			chars_amount = 0;
-		}
-	}
-	else if(key != CTRL_N)
-	{
-		chars_amount++;
-		if(chars_amount >= 80)
-		{
-			chars_amount = 80; // TODO: the last char is overwritten.
-		}
-	}
-}
 
 void programRound(char base_filename[])
 {
