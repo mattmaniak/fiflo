@@ -12,7 +12,7 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 		cleanFrame();
 		exit(0);
 	}
-	if(key == CTRL_N) // Change to ENTER will render old strings.
+	if(key == ENTER) // Change to ENTER will render old strings.
 	{
 		lines_amount++;
 		if(lines_amount >= 19) // 19 only for testing.
@@ -28,7 +28,7 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 			chars_amount = 0;
 		}
 	}
-	else
+	else if(key != CTRL_N)
 	{
 		chars_amount++;
 		if(chars_amount >= 80)
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 	baseFilenameLenCheck(argv[1]);
 	argcCheck(argc);
 
-	window(lines_amount, chars_amount, '>', argv[1]);
+	window(lines_amount, chars_amount, ' ', argv[1]);
 	programRound(argv[1]);
 	return 0;
 }
