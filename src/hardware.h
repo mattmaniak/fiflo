@@ -9,7 +9,6 @@
 
 void pointerCheck(void* pointer);
 char unixGetch(void);
-void saveToFile(char base_filename[]);
 
 #endif
 

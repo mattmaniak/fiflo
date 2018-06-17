@@ -1,6 +1,6 @@
-#include "errors.h"
-
 // Most of separated wrong case possibilities: just errors et al.
+
+#include "errors.h"
 
 void usageInfo(void)
 {
@@ -8,11 +8,11 @@ void usageInfo(void)
 	exit(1);
 }
 
-void baseFilenameLenCheck(char base_filename[])
+void filenameLenCheck(char filename[])
 {
-	if(strlen(base_filename) > 256) // Max. base filename len for *nix is 255.
+	if(strlen(filename) > 255) // Max. base filename len for ext4 is 255.
 	{
-		fputs("Maximum base filename length: 255 chars.\n", stderr);
+		fputs("Max filename length is 255 chars.\n", stderr);
 		exit(1);
 	}
 }

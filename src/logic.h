@@ -1,6 +1,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -15,10 +16,12 @@
 extern int8_t lines_amount, chars_amount;
 
 void keyCheck(char key);
-static uint16_t windowSize(char axis);
+uint16_t windowSize(char axis);
 void cleanFrame(void);
-static void allocateChars(int8_t lines, int8_t chars, char key, char base_filename[]);
-void window(int8_t lines, int8_t chars, char key, char base_filename[]);
+
+void allocChars(int8_t lines, int8_t chars, char key, char filename[]);
+void initWindow(int8_t lines, int8_t chars, char filename[]);
+void window(int8_t lines, int8_t chars, char key, char filename[]);
 
 #endif
 

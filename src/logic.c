@@ -1,4 +1,4 @@
-#include "render.h"
+#include "logic.h"
 
 #include "keys.c"
 #include "ui.c"
@@ -47,7 +47,7 @@ void keyCheck(char key)
 }
 
 // Drawing funcions.
-static uint16_t windowSize(char axis) // Check terminal size.
+uint16_t windowSize(char axis) // Check terminal size.
 {
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -83,16 +83,17 @@ void cleanFrame(void) // To provide rendering in a one frame.
 }
 
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
-static void allocateChars(int8_t lines, int8_t chars, char key, char base_filename[])
+void allocChars(int8_t lines, int8_t chars, char key, char filename[])
 {
 	int8_t line_pos, char_pos; // Iterators.
-	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
 
-	pointerCheck(text_buffer);
-	keyHandling(lines, chars, key);
-
-	FILE* file = fopen(base_filename, "w");
+	FILE* file = fopen(filename, "w");
 	pointerCheck(file);
+
+	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
+	pointerCheck(text_buffer);
+
+	keyHandling(lines, chars, key);
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
@@ -103,22 +104,38 @@ static void allocateChars(int8_t lines, int8_t chars, char key, char base_filena
 		}
 	}
 	cursor();
-	free(text_buffer);
+
+//	fprintf(file, "%c", '\n'); // POSIX 3.206 Line. Should be optional.
 	fclose(file);
+	free(text_buffer);
 }
 
-// Terminal filler that shows chars and another stupid things.
-void window(int8_t lines, int8_t chars, char key, char base_filename[])
+void initWindow(int8_t lines, int8_t chars, char filename[])
 {
 	uint16_t height;
 
 	upperBar();
-	allocateChars(lines, chars, key, base_filename);
+	cursor();
 
 	for(height = lines; height <= windowSize('y') - 2; height++)
 	{
 		printf("%c", '\n');
 	}
-	lowerBar(lines, chars, key, base_filename);
+	lowerBar(lines, chars, '\0', filename);
+}
+
+// Terminal filler that shows chars and another stupid things.
+void window(int8_t lines, int8_t chars, char key, char filename[])
+{
+	uint16_t height;
+
+	upperBar();
+	allocChars(lines, chars, key, filename);
+
+	for(height = lines; height <= windowSize('y') - 2; height++)
+	{
+		printf("%c", '\n');
+	}
+	lowerBar(lines, chars, key, filename);
 }
 

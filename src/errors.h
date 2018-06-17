@@ -6,7 +6,7 @@
 #include <string.h>
 
 void usageInfo(void);
-void baseFilenameLenCheck(char base_filename[]);
+void filenameLenCheck(char filename[]);
 void argcCheck(int arg_count);
 
 #endif

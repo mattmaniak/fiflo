@@ -8,9 +8,10 @@ files use diff-like tools or "git log".
 
 ## Versions:
 ### v0.5.0 (WIP):
-- Multiple lines writing.
-- File I/O operations.
+- Multiple lines writing && rendering.
+- File output operations.
 - Man page added.
+- Upper bar is back.
 
 ### v0.4.3 (June 10, 2018):
 - Info about min term size fix.

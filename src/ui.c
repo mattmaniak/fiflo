@@ -3,20 +3,46 @@
 #include "ui.h"
 #include "hardware.h"
 
-void cursor(void) // Blinking floor.
+void cursor(void)
 {
 	printf("%s%s%c%s", BOLD, BLINK, '|', RESET);
 }
 
-static int8_t decimalIntLen(int8_t number) // Return len of decimal charchars.
+int8_t decimalIntLen(int8_t number)
 {
+	// Return a length of decimal integer. Eg. 2 from number = 12.
 	int8_t len = 1;
+
 	while(number > 9)
 	{
 		len++;
 		number /= 10;
 	}
 	return len;
+}
+
+void dynamicLen(char filename[])
+{
+	// If a filename is longer than 16. Only first 16 chars will be printed
+	// and 3 dots at the end will be added.
+	uint8_t char_pos;
+
+	if(strlen(filename) > 16) // Max rendered first 32 chars.
+	{
+		for(char_pos = 0; char_pos < 16; char_pos++)
+		{
+			printf("%c", filename[char_pos]);
+		}
+		printf("%s", "..."); // strlen is 3.
+	}
+	else
+	{
+		printf("%s", filename);
+		for(char_pos = 0; char_pos < 19 - strlen(filename); char_pos++)
+		{
+			printf("%c", ' ');
+		}
+	}
 }
 
 void upperBar(void)
@@ -30,37 +56,15 @@ void upperBar(void)
 	printf("%s", RESET);
 }
 
-static void dynamicLen(char base_filename[])
-{
-	uint8_t char_pos;
-
-	if(strlen(base_filename) >= 16) // Max rendered first 32 chars.
-	{
-		for(char_pos = 0; char_pos < 16; char_pos++)
-		{
-			printf("%c", base_filename[char_pos]);
-		}
-		printf("%s", "..."); // strlen is 3.
-	}
-	else
-	{
-		printf("%s", base_filename);
-		for(char_pos = 0; char_pos < 19 - strlen(base_filename); char_pos++)
-		{
-			printf("%c", ' ');
-		}
-	}
-}
-
 // Lower border with a text.
-void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[])
+void lowerBar(int8_t lines, int8_t chars, char key, char filename[])
 {
 	uint16_t width;
 
 	char program_name[10] = " Fiflo | \0";
 	char chars_text[11] = " | chars: \0";
 	char lines_text[11] = " | lines: \0";
-	char ascii_code_text[22] = "| Last char (ASCII): \0";
+	char ascii_code_text[19] = "| Last char code: \0";
 
 	uint16_t whitespace = strlen(program_name) + strlen(ascii_code_text)
 	+ decimalIntLen(key) + strlen(chars_text) + decimalIntLen(chars)
@@ -71,7 +75,7 @@ void lowerBar(int8_t lines, int8_t chars, char key, char base_filename[])
 
 	printf("%s%s", INVERT, program_name);
 
-	dynamicLen(base_filename);
+	dynamicLen(filename);
 
 	for(width = 0; width < windowSize('x') - whitespace; width++)
 	{
