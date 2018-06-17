@@ -19,7 +19,7 @@ void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
 			lines_amount = 19; // Will be BUFFER_SIZE.
 		}
 	}
-	else if(key == BACKSPACE && text[lines_amount - 1][chars_amount - 1] == '\0')
+	else if(key == BACKSPACE && text[lines_amount - 1][chars_amount - 1] == '\n')
 	{
 		lines_amount--;
 		if(lines_amount <= 1)
@@ -92,6 +92,10 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
+//		if(text[line_pos - 1][char_pos - 1] == '\n')
+//		{
+//			lines--;
+//		}
 		for(char_pos = 1; char_pos <= chars; char_pos++) // X rendering.
 		{
 			printf("%c", text[line_pos - 1][char_pos - 1]);
