@@ -5,12 +5,12 @@
 
 int8_t lines_amount = 1, chars_amount = 1; // text = lines + chars
 
-void keyCheck(char key) // TODO: simplify these ifs! Move it to the keys.c!
+void keyCheck(char key)
 {
 	if(key == CTRL_X) // Check if exit key is pressed.
 	{
 		cleanFrame();
-		exit(0);
+		exit(1);
 	}
 	else if(key == ENTER) // Change to ENTER will render old strings.
 	{
@@ -83,7 +83,7 @@ void cleanFrame(void) // To provide rendering in a one frame.
 }
 
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
-static void allocateChars(int8_t lines, int8_t chars, char key)
+static void allocateChars(int8_t lines, int8_t chars, char key, char base_filename[])
 {
 	int8_t line_pos, char_pos; // Iterators.
 	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
@@ -91,19 +91,20 @@ static void allocateChars(int8_t lines, int8_t chars, char key)
 	pointerCheck(text_buffer);
 	keyHandling(lines, chars, key);
 
+	FILE* file = fopen(base_filename, "w");
+	pointerCheck(file);
+
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
-//		if(text[line_pos - 1][char_pos - 1] == '\n')
-//		{
-//			lines--;
-//		}
 		for(char_pos = 1; char_pos <= chars; char_pos++) // X rendering.
 		{
 			printf("%c", text[line_pos - 1][char_pos - 1]);
+			fprintf(file, "%c", text[line_pos - 1][char_pos - 1]);
 		}
 	}
 	cursor();
 	free(text_buffer);
+	fclose(file);
 }
 
 // Terminal filler that shows chars and another stupid things.
@@ -112,7 +113,7 @@ void window(int8_t lines, int8_t chars, char key, char base_filename[])
 	uint16_t height;
 
 	upperBar();
-	allocateChars(lines, chars, key);
+	allocateChars(lines, chars, key, base_filename);
 
 	for(height = lines; height <= windowSize('y') - 2; height++)
 	{

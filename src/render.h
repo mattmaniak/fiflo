@@ -17,7 +17,7 @@ extern int8_t lines_amount, chars_amount;
 void keyCheck(char key);
 static uint16_t windowSize(char axis);
 void cleanFrame(void);
-static void allocateChars(int8_t lines, int8_t chars, char key);
+static void allocateChars(int8_t lines, int8_t chars, char key, char base_filename[]);
 void window(int8_t lines, int8_t chars, char key, char base_filename[]);
 
 #endif
