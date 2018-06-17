@@ -1,7 +1,6 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -13,15 +12,18 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
+#define LINES_CHARS_KEY_FILENAME int8_t lines, int8_t chars, char key, \
+char filename[]
+
 extern int8_t lines_amount, chars_amount;
 
 void keyCheck(char key);
 uint16_t windowSize(char axis);
 void cleanFrame(void);
 
-void allocChars(int8_t lines, int8_t chars, char key, char filename[]);
+void allocChars(LINES_CHARS_KEY_FILENAME);
 void initWindow(int8_t lines, int8_t chars, char filename[]);
-void window(int8_t lines, int8_t chars, char key, char filename[]);
+void window(LINES_CHARS_KEY_FILENAME);
 
 #endif
 

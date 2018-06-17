@@ -83,7 +83,7 @@ void cleanFrame(void) // To provide rendering in a one frame.
 }
 
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
-void allocChars(int8_t lines, int8_t chars, char key, char filename[])
+void allocChars(LINES_CHARS_KEY_FILENAME)
 {
 	int8_t line_pos, char_pos; // Iterators.
 
@@ -125,14 +125,24 @@ void initWindow(int8_t lines, int8_t chars, char filename[])
 }
 
 // Terminal filler that shows chars and another stupid things.
-void window(int8_t lines, int8_t chars, char key, char filename[])
+void window(LINES_CHARS_KEY_FILENAME)
 {
 	uint16_t height;
+	uint16_t vertical_filler = 2;
 
 	upperBar();
 	allocChars(lines, chars, key, filename);
 
-	for(height = lines; height <= windowSize('y') - 2; height++)
+	if(chars % windowSize('x') >= 0)
+	{
+		vertical_filler++;
+	}
+	else if(chars % windowSize('x') <= 0)
+	{
+		vertical_filler--;
+	}
+
+	for(height = lines; height <= windowSize('y') - vertical_filler; height++)
 	{
 		printf("%c", '\n');
 	}

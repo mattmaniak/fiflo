@@ -6,7 +6,7 @@
 
 void programRound(char filename[])
 {
-	while(1)
+	for(;;)
 	{
 		char pressed_key = unixGetch();
 		keyCheck(pressed_key); // Is it ENTER, BACKSPACE...? More specific.

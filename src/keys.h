@@ -14,7 +14,7 @@
 
 #define BUFFER_SIZE 126 // Always [TYPE]_MAX - 1.
 
-extern char text[19][80];
+extern char text[19][BUFFER_SIZE];
 
 void keyHandling(int8_t lines, int8_t chars, char key);
 

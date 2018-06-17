@@ -1,7 +1,6 @@
 // All rendered elements except chars you type.
 
 #include "ui.h"
-#include "hardware.h"
 
 void cursor(void)
 {

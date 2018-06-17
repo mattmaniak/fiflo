@@ -1,6 +1,6 @@
 #include "keys.h"
 
-char text[19][80];
+char text[19][BUFFER_SIZE];
 
 void keyHandling(int8_t lines, int8_t chars, char key)
 {
