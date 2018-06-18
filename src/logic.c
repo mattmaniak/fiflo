@@ -3,8 +3,8 @@
 #include "keys.c"
 #include "ui.c"
 
-BUFF_T lines_amount = 1;
-BUFF_T chars_amount = 1; // text = lines + chars
+BUFF_T lines_c = 1;
+BUFF_T chars_c = 1; // text = lines + chars
 
 void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 {
@@ -33,34 +33,34 @@ void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	}
 	else if(key == ENTER) // Change to ENTER will render old strings.
 	{
-		lines_amount++;
-		if(lines_amount >= 19) // 19 only for testing.
+		lines_c++;
+		if(lines_c >= 19) // 19 only for testing.
 		{
-			lines_amount = 19; // Will be BUFF_SIZE.
+			lines_c = 19; // Will be BUFF_SZ.
 		}
 	}
-	else if(key == BACKSPACE && text[lines_amount - 1][chars_amount - 1] == '\n')
+	else if(key == BACKSPACE && text[lines_c - 1][chars_c - 1] == '\n')
 	{
-		lines_amount--;
-		if(lines_amount <= 1)
+		lines_c--;
+		if(lines_c <= 1)
 		{
-			lines_amount = 1;
+			lines_c = 1;
 		}
 	}
 	else if(key == BACKSPACE) // Check if user want to remove a last char.
 	{
-		chars_amount--;
-		if(chars_amount <= 0)
+		chars_c--;
+		if(chars_c <= 0)
 		{
-			chars_amount = 0;
+			chars_c = 0;
 		}
 	}
 	else if(key != CTRL_N)
 	{
-		chars_amount++;
-		if(chars_amount >= BUFF_SIZE)
+		chars_c++;
+		if(chars_c >= BUFF_SZ)
 		{
-			chars_amount = BUFF_SIZE; // TODO: the last char is overwritten.
+			chars_c = BUFF_SZ; // TODO: the last char is overwritten.
 		}
 	}
 }

@@ -12,10 +12,10 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
-typedef int8_t BUFF_T;
+typedef int8_t BUFF_T; // Text buffer.
 
-extern BUFF_T lines_amount;
-extern BUFF_T chars_amount;
+extern BUFF_T lines_c;
+extern BUFF_T chars_c;
 
 void saveToFile(BUFF_T lines, BUFF_T chars, char filename[]);
 void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[]);
