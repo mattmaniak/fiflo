@@ -12,20 +12,20 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
-#define LINES_CHARS_KEY_FILENAME int8_t lines, int8_t chars, char key, \
-char filename[]
+typedef int8_t BUFF_T;
 
-extern int8_t lines_amount, chars_amount;
+extern BUFF_T lines_amount;
+extern BUFF_T chars_amount;
 
-void saveToFile(LINES_CHARS_KEY_FILENAME);
-
-void keyCheck(LINES_CHARS_KEY_FILENAME);
+void saveToFile(BUFF_T lines, BUFF_T chars, char filename[]);
+void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[]);
 uint16_t windowSize(char axis);
-void cleanFrame(void);
 
-void allocChars(LINES_CHARS_KEY_FILENAME);
-void initWindow(int8_t lines, int8_t chars, char filename[]);
-void window(LINES_CHARS_KEY_FILENAME);
+void cleanFrame(void);
+void allocChars(BUFF_T lines, BUFF_T chars, char key);
+void initWindow(BUFF_T lines, BUFF_T chars, char filename[]);
+
+void window(BUFF_T lines, BUFF_T chars, char key, char filename[]);
 
 #endif
 

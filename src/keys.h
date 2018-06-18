@@ -12,11 +12,12 @@
 #define ARROW_LEFT 68
 #define BACKSPACE 127
 
-#define BUFFER_SIZE 126 // Always [TYPE]_MAX - 1.
+typedef int8_t BUFF_T;
+#define BUFF_SIZE 126 // Always [TYPE]_MAX - 1.
 
-extern char text[19][BUFFER_SIZE];
+extern char text[19][BUFF_SIZE];
 
-void keyHandling(int8_t lines, int8_t chars, char key);
+void keyHandling(BUFF_T lines, BUFF_T chars, char key);
 
 #endif
 

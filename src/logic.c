@@ -3,12 +3,13 @@
 #include "keys.c"
 #include "ui.c"
 
-int8_t lines_amount = 1, chars_amount = 1; // text = lines + chars
+BUFF_T lines_amount = 1;
+BUFF_T chars_amount = 1; // text = lines + chars
 
-void saveToFile(LINES_CHARS_KEY_FILENAME)
+void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 {
-	int8_t line_pos;
-	int8_t char_pos;
+	BUFF_T line_pos;
+	BUFF_T char_pos;
 
 	FILE* file = fopen(filename, "w");
 	pointerCheck(file);
@@ -23,11 +24,11 @@ void saveToFile(LINES_CHARS_KEY_FILENAME)
 	fclose(file);
 }
 
-void keyCheck(LINES_CHARS_KEY_FILENAME)
+void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	if(key == CTRL_X) // Check if exit key is pressed.
 	{
-		saveToFile(lines, chars, key, filename);
+		saveToFile(lines, chars, filename);
 		exit(1);
 	}
 	else if(key == ENTER) // Change to ENTER will render old strings.
@@ -35,7 +36,7 @@ void keyCheck(LINES_CHARS_KEY_FILENAME)
 		lines_amount++;
 		if(lines_amount >= 19) // 19 only for testing.
 		{
-			lines_amount = 19; // Will be BUFFER_SIZE.
+			lines_amount = 19; // Will be BUFF_SIZE.
 		}
 	}
 	else if(key == BACKSPACE && text[lines_amount - 1][chars_amount - 1] == '\n')
@@ -57,9 +58,9 @@ void keyCheck(LINES_CHARS_KEY_FILENAME)
 	else if(key != CTRL_N)
 	{
 		chars_amount++;
-		if(chars_amount >= BUFFER_SIZE)
+		if(chars_amount >= BUFF_SIZE)
 		{
-			chars_amount = BUFFER_SIZE; // TODO: the last char is overwritten.
+			chars_amount = BUFF_SIZE; // TODO: the last char is overwritten.
 		}
 	}
 }
@@ -101,13 +102,13 @@ void cleanFrame(void) // To provide rendering in a one frame.
 }
 
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
-void allocChars(LINES_CHARS_KEY_FILENAME)
+void allocChars(BUFF_T lines, BUFF_T chars, char key)
 {
-	int8_t line_pos;
-	int8_t char_pos;
+	BUFF_T line_pos;
+	BUFF_T char_pos;
 
-	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
-	pointerCheck(text_buffer);
+	char* text_BUFF = malloc(chars * lines * sizeof(char) + 1);
+	pointerCheck(text_BUFF);
 
 	keyHandling(lines, chars, key);
 
@@ -119,10 +120,10 @@ void allocChars(LINES_CHARS_KEY_FILENAME)
 		}
 	}
 	cursor();
-	free(text_buffer);
+	free(text_BUFF);
 }
 
-void initWindow(int8_t lines, int8_t chars, char filename[])
+void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 {
 	uint16_t height;
 
@@ -137,13 +138,13 @@ void initWindow(int8_t lines, int8_t chars, char filename[])
 }
 
 // Terminal filler that shows chars and another stupid things.
-void window(LINES_CHARS_KEY_FILENAME)
+void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	uint16_t height;
 	uint16_t vertical_filler = 2;
 
 	upperBar();
-	allocChars(lines, chars, key, filename);
+	allocChars(lines, chars, key);
 
 	if(chars % windowSize('x') >= 0)
 	{

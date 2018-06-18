@@ -69,8 +69,8 @@ void lowerBar(int8_t lines, int8_t chars, char key, char filename[])
 	+ decimalIntLen(key) + strlen(chars_text) + decimalIntLen(chars)
 	+ strlen(lines_text) + decimalIntLen(lines) + 19;
 
-	char* bar_buffer = malloc(windowSize('x'));
-	pointerCheck(bar_buffer);
+	char* bar_BUFF = malloc(windowSize('x'));
+	pointerCheck(bar_BUFF);
 
 	printf("%s%s", INVERT, program_name);
 
@@ -84,6 +84,6 @@ void lowerBar(int8_t lines, int8_t chars, char key, char filename[])
 	printf("%s%i%s%i%s%i%s", ascii_code_text, key, chars_text, chars,
 	lines_text, lines, RESET);
 
-	free(bar_buffer);
+	free(bar_BUFF);
 }
 

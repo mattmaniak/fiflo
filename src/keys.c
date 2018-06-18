@@ -1,8 +1,8 @@
 #include "keys.h"
 
-char text[19][BUFFER_SIZE];
+char text[19][BUFF_SIZE];
 
-void keyHandling(int8_t lines, int8_t chars, char key)
+void keyHandling(BUFF_T lines, BUFF_T chars, char key)
 {
 	if(key == BACKSPACE) // To prevent double 'backspace'.
 	{
