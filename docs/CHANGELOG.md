@@ -12,6 +12,7 @@ files use diff-like tools or "git log".
 - File output operations.
 - Man page added.
 - Upper bar is back.
+- Line numbers.
 
 ### v0.4.3 (June 10, 2018):
 - Info about min term size fix.
