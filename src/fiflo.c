@@ -9,7 +9,7 @@ void programRound(char filename[])
 	for(;;)
 	{
 		char pressed_key = unixGetch();
-		keyCheck(pressed_key); // Is it ENTER, BACKSPACE...? More specific.
+		keyCheck(lines_amount, chars_amount, pressed_key, filename);
 		cleanFrame(); // Provide "one-window" rendering in a terminal.
 		window(lines_amount, chars_amount, pressed_key, filename);
 	}
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 {
 	if(argv[1] == NULL)
 	{
-		argv[1] = "null.asdf";
+		argv[1] = "noname.asdf";
 	}
 	filenameLenCheck(argv[1]);
 	argcCheck(argc);

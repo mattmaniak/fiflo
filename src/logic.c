@@ -5,11 +5,29 @@
 
 int8_t lines_amount = 1, chars_amount = 1; // text = lines + chars
 
-void keyCheck(char key)
+void saveToFile(LINES_CHARS_KEY_FILENAME)
+{
+	int8_t line_pos;
+	int8_t char_pos;
+
+	FILE* file = fopen(filename, "w");
+	pointerCheck(file);
+
+	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
+	{
+		for(char_pos = 1; char_pos <= chars; char_pos++) // X rendering.
+		{
+			fprintf(file, "%c", text[line_pos - 1][char_pos - 1]);
+		}
+	}
+	fclose(file);
+}
+
+void keyCheck(LINES_CHARS_KEY_FILENAME)
 {
 	if(key == CTRL_X) // Check if exit key is pressed.
 	{
-		cleanFrame();
+		saveToFile(lines, chars, key, filename);
 		exit(1);
 	}
 	else if(key == ENTER) // Change to ENTER will render old strings.
@@ -85,10 +103,8 @@ void cleanFrame(void) // To provide rendering in a one frame.
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
 void allocChars(LINES_CHARS_KEY_FILENAME)
 {
-	int8_t line_pos, char_pos; // Iterators.
-
-	FILE* file = fopen(filename, "w");
-	pointerCheck(file);
+	int8_t line_pos;
+	int8_t char_pos;
 
 	char* text_buffer = malloc(chars * lines * sizeof(char) + 1);
 	pointerCheck(text_buffer);
@@ -100,13 +116,9 @@ void allocChars(LINES_CHARS_KEY_FILENAME)
 		for(char_pos = 1; char_pos <= chars; char_pos++) // X rendering.
 		{
 			printf("%c", text[line_pos - 1][char_pos - 1]);
-			fprintf(file, "%c", text[line_pos - 1][char_pos - 1]);
 		}
 	}
 	cursor();
-
-//	fprintf(file, "%c", '\n'); // POSIX 3.206 Line. Should be optional.
-	fclose(file);
 	free(text_buffer);
 }
 
