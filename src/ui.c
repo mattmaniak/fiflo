@@ -12,7 +12,7 @@ int8_t decimalIntLen(int8_t number)
 	// Return a length of decimal integer. Eg. 2 from number = 12.
 	int8_t len = 1;
 
-	while(number > 9)
+	while(number >= 9)
 	{
 		len++;
 		number /= 10;

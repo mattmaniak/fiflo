@@ -1,10 +1,24 @@
 #include "logic.h"
 
-#include "keys.c"
 #include "ui.c"
 
 BUFF_T lines_c = 1;
 BUFF_T chars_c = 1; // text = lines + chars
+
+char text[19][BUFF_SZ];
+
+void keyHandling(BUFF_T lines, BUFF_T chars, char key)
+{
+	if(key == BACKSPACE) // To prevent double 'backspace'.
+	{
+		text[lines - 1][chars] = '\0';
+	}
+	else
+	{
+		text[lines - 1][chars - 1] = key; // Allocation.
+		text[lines - 1][chars] = '\0';
+	}
+}
 
 void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 {
@@ -131,14 +145,26 @@ void allocChars(BUFF_T lines, BUFF_T chars, char key)
 
 void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 {
-	uint16_t height;
+	uint16_t current;
+	int8_t longestLineNum = decimalIntLen(lines);
+	int8_t lineNumLen;
+	int8_t i;
 
-	upperBar();
+	upperBar();	
+
+	printf("%c%i%c", ' ', 1, ' ');
 	cursor();
+	printf("%c", '\n');
 
-	for(height = lines; height <= windowSize('y') - 2; height++)
+	for(current = lines; current <= windowSize('y') - 3; current++)
 	{
-		printf("%c", '\n');
+		lineNumLen = decimalIntLen(current);
+
+		for(i = 0; i <= longestLineNum - lineNumLen; i++)
+		{
+			printf("%c", ' ');
+		}
+		printf("%i%s", current + 1, " \n");
 	}
 	lowerBar(lines, chars, '\0', filename);
 }
