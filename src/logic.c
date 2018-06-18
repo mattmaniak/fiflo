@@ -128,12 +128,6 @@ void allocChars(BUFF_T lines, BUFF_T chars, char key)
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
-		if(line_pos == 1)
-		{
-			printf("%i", line_pos);
-		}
-		// TODO: lines numeration.
-
 		for(char_pos = 1; char_pos <= chars; char_pos++) // X rendering.
 		{
 			printf("%c", text[line_pos - 1][char_pos - 1]);
@@ -148,7 +142,7 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 	uint16_t current;
 	int8_t longestLineNum = decimalIntLen(lines);
 	int8_t lineNumLen;
-	int8_t i;
+	int8_t i; // ALL TEMPONARY
 
 	upperBar();	
 
@@ -182,7 +176,11 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	{
 		vertical_filler++;
 	}
-
+/*	else if(key == BACKSPACE && chars % windowSize('x') != 0)
+	{
+		vertical_filler--;
+	}
+*/
 	for(height = lines; height <= windowSize('y') - vertical_filler; height++)
 	{
 		printf("%c", '\n');
