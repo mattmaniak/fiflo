@@ -10,7 +10,7 @@ void cursor(void)
 int8_t decimalIntLen(int8_t number)
 {
 	// Return a length of decimal integer. Eg. 2 from number = 12.
-	int8_t len = 1;
+	BUFF_T len = 1;
 
 	while(number >= 9)
 	{
@@ -56,7 +56,7 @@ void upperBar(void)
 }
 
 // Lower border with a text.
-void lowerBar(int8_t lines, int8_t chars, char key, char filename[])
+void lowerBar(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	uint16_t width;
 

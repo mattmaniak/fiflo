@@ -9,9 +9,7 @@
 #include <sys/ioctl.h>
 
 // Some special ASCII decimal codes.
-#define CTRL_B 2
 #define ENTER 10 // Linefeed
-#define CTRL_N 14
 #define CTRL_X 24
 #define ARROW_UP 65
 #define ARROW_DOWN 66
@@ -24,10 +22,10 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
-typedef int8_t BUFF_T; // Text buffer.
-#define BUFF_SZ SCHAR_MAX - 1 // Always [TYPE]_MAX - 1.
+typedef int16_t BUFF_T; // Text buffer type.
+#define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 
-extern char text[19][BUFF_SZ];
+extern char text[BUFF_SZ][BUFF_SZ];
 extern BUFF_T lines_c;
 extern BUFF_T chars_c;
 

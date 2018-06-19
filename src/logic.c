@@ -5,7 +5,7 @@
 BUFF_T lines_c = 1;
 BUFF_T chars_c = 1; // text = lines + chars
 
-char text[19][BUFF_SZ];
+char text[BUFF_SZ][BUFF_SZ];
 
 void keyHandling(BUFF_T lines, BUFF_T chars, char key)
 {
@@ -40,20 +40,30 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 
 void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
-	if(key == CTRL_X) // Check if exit key is pressed.
+	switch(key)
 	{
-		saveToFile(lines, chars, filename);
-		exit(1);
+		case CTRL_X:
+			saveToFile(lines, chars, filename);
+			cleanFrame();
+			exit(1);
+
+		case ENTER:
+			lines_c++;
+			if(lines_c >= windowSize('y') - 2)
+			{
+				lines_c = windowSize('y') - 2;
+			}
+			break;
+
+		case BACKSPACE:
+			chars_c--;
+			if(chars_c <= 0)
+			{
+				chars_c = 0;
+			}
+			break;
 	}
-	else if(key == ENTER) // Change to ENTER will render old strings.
-	{
-		lines_c++;
-		if(lines_c >= 19) // 19 only for testing.
-		{
-			lines_c = 19; // Will be BUFF_SZ.
-		}
-	}
-	else if(key == BACKSPACE && text[lines_c - 1][chars_c - 1] == '\n')
+	if(key == BACKSPACE && text[lines_c - 1][chars_c - 1] == '\n')
 	{
 		lines_c--;
 		if(lines_c <= 1)
@@ -61,15 +71,7 @@ void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[])
 			lines_c = 1;
 		}
 	}
-	else if(key == BACKSPACE) // Check if user want to remove a last char.
-	{
-		chars_c--;
-		if(chars_c <= 0)
-		{
-			chars_c = 0;
-		}
-	}
-	else if(key != CTRL_N)
+	else if(key != BACKSPACE && key != ENTER)
 	{
 		chars_c++;
 		if(chars_c >= BUFF_SZ)
@@ -100,8 +102,11 @@ uint16_t windowSize(char axis) // Check terminal size.
 	{
 		case 'x':
 			return win.ws_col;
+			break;
+
 		case 'y':
 			return win.ws_row;
+			break;
 	}
 	return 0; // Protection from the -Wreturn-type warning.
 }
@@ -140,25 +145,14 @@ void allocChars(BUFF_T lines, BUFF_T chars, char key)
 void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 {
 	uint16_t current;
-	int8_t longestLineNum = decimalIntLen(lines);
-	int8_t lineNumLen;
-	int8_t i; // ALL TEMPONARY
 
 	upperBar();	
-
-	printf("%c%i%c", ' ', 1, ' ');
 	cursor();
 	printf("%c", '\n');
 
 	for(current = lines; current <= windowSize('y') - 3; current++)
 	{
-		lineNumLen = decimalIntLen(current);
-
-		for(i = 0; i <= longestLineNum - lineNumLen; i++)
-		{
-			printf("%c", ' ');
-		}
-		printf("%i%s", current + 1, " \n");
+		printf("%c", '\n');
 	}
 	lowerBar(lines, chars, '\0', filename);
 }
@@ -167,20 +161,20 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	uint16_t height;
-	uint16_t vertical_filler = 2;
+	uint16_t vertical_filler = 2; // Two bars.
 
 	upperBar();
 	allocChars(lines, chars, key);
 
-	if(key != BACKSPACE && chars % windowSize('x') == 0)
+	if(key != BACKSPACE && chars % windowSize('x') >= 0)
 	{
 		vertical_filler++;
 	}
-/*	else if(key == BACKSPACE && chars % windowSize('x') != 0)
+	else if(key == BACKSPACE && chars % windowSize('x') <= 0)
 	{
 		vertical_filler--;
 	}
-*/
+
 	for(height = lines; height <= windowSize('y') - vertical_filler; height++)
 	{
 		printf("%c", '\n');
