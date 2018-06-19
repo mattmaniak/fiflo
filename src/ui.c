@@ -76,7 +76,7 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key, char filename[])
 
 	dynamicLen(filename);
 
-	for(width = 0; width < windowSize('x') - whitespace; width++)
+	for(width = 0; width < windowSize('x') - whitespace - 1; width++)
 	{
 		printf("%c", ' ');
 	}

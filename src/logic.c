@@ -161,7 +161,7 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	uint16_t height;
-	uint16_t vertical_filler = 2; // Two bars.
+	uint16_t vertical_filler = 1; // Two bars.
 
 	upperBar();
 	allocChars(lines, chars, key);
