@@ -81,8 +81,8 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key, char filename[])
 		printf("%c", ' ');
 	}
 
-	printf("%s%i%s%i%s%i%s", ascii_code_text, key, chars_text, chars,
-	lines_text, lines, RESET);
+	printf("%s%i%s%i%s%i%c%s", ascii_code_text, key, chars_text, chars,
+	lines_text, lines, ' ', RESET);
 
 	free(bar_BUFF);
 }

@@ -2,7 +2,7 @@
 
 #include "ui.c"
 
-BUFF_T lines_c = 1;
+BUFF_T lines_c = 0;
 BUFF_T chars_c = 0; // text = lines + chars
 
 char text[BUFF_SZ][BUFF_SZ];
@@ -15,11 +15,11 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 	FILE* file = fopen(filename, "w");
 	pointerCheck(file);
 
-	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
+	for(line_pos = 0; line_pos <= lines; line_pos++) // Y rendering.
 	{
-		for(char_pos = 1; char_pos <= chars; char_pos++) // X rendering.
+		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
 		{
-			fprintf(file, "%c", text[line_pos - 1][char_pos - 1]);
+			fprintf(file, "%c", text[line_pos][char_pos]);
 		}
 	}
 	fclose(file);
@@ -35,6 +35,7 @@ void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	}
 	else if(key == ENTER)
 	{
+		text[lines][chars] = '\n';
 		lines_c++;
 		if(lines_c >= windowSize('y') - 2)
 		{
@@ -44,25 +45,25 @@ void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	else if(key == BACKSPACE)
 	{
 		chars_c--;
-		text[lines - 1][chars] = '\0';
+		text[lines][chars + 1] = '\0';
 		if(chars_c <= 0)
 		{
 			chars_c = 0;
 		}
 	}
-	else if(key == BACKSPACE && text[lines_c - 1][chars_c - 1] == '\n')
+	else if(key == BACKSPACE && text[lines_c][chars_c] == '\n')
 	{
 		lines_c--;
-		if(lines_c <= 1)
+		if(lines_c <= 0)
 		{
-			lines_c = 1;
+			lines_c = 0;
 		}
 	}
 	else if(key != BACKSPACE && key != ENTER)
 	{
+		text[lines][chars] = key; // Allocation.
+		text[lines][chars + 1] = '\0';
 		chars_c++;
-		text[lines - 1][chars - 1] = key; // Allocation.
-		text[lines - 1][chars] = '\0';
 		if(chars_c >= BUFF_SZ)
 		{
 			chars_c = BUFF_SZ; // TODO: the last char is overwritten.
@@ -115,18 +116,18 @@ void renderText(BUFF_T lines, BUFF_T chars)
 	BUFF_T line_pos;
 	BUFF_T char_pos;
 
-	char* text_BUFF = malloc(chars * lines * sizeof(char) + 1);
-	pointerCheck(text_BUFF);
+	char* text_buff = malloc(chars * lines * sizeof(char) + 1);
+	pointerCheck(text_buff);
 
-	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
+	for(line_pos = 0; line_pos <= lines; line_pos++) // Y rendering.
 	{
-		for(char_pos = 1; char_pos <= chars; char_pos++) // X rendering.
+		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
 		{
-			printf("%c", text[line_pos - 1][char_pos - 1]);
+			printf("%c", text[line_pos][char_pos]);
 		}
 	}
 	cursor();
-	free(text_BUFF);
+	free(text_buff);
 }
 
 void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
