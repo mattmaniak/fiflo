@@ -3,22 +3,9 @@
 #include "ui.c"
 
 BUFF_T lines_c = 1;
-BUFF_T chars_c = 1; // text = lines + chars
+BUFF_T chars_c = 0; // text = lines + chars
 
 char text[BUFF_SZ][BUFF_SZ];
-
-void keyHandling(BUFF_T lines, BUFF_T chars, char key)
-{
-	if(key == BACKSPACE) // To prevent double 'backspace'.
-	{
-		text[lines - 1][chars] = '\0';
-	}
-	else
-	{
-		text[lines - 1][chars - 1] = key; // Allocation.
-		text[lines - 1][chars] = '\0';
-	}
-}
 
 void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 {
@@ -38,32 +25,32 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 	fclose(file);
 }
 
-void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[])
+void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
-	switch(key)
+	if(key == CTRL_X)
 	{
-		case CTRL_X:
-			saveToFile(lines, chars, filename);
-			cleanFrame();
-			exit(1);
-
-		case ENTER:
-			lines_c++;
-			if(lines_c >= windowSize('y') - 2)
-			{
-				lines_c = windowSize('y') - 2;
-			}
-			break;
-
-		case BACKSPACE:
-			chars_c--;
-			if(chars_c <= 0)
-			{
-				chars_c = 0;
-			}
-			break;
+		saveToFile(lines, chars, filename);
+		cleanFrame();
+		exit(1);
 	}
-	if(key == BACKSPACE && text[lines_c - 1][chars_c - 1] == '\n')
+	else if(key == ENTER)
+	{
+		lines_c++;
+		if(lines_c >= windowSize('y') - 2)
+		{
+			lines_c = windowSize('y') - 2;
+		}
+	}
+	else if(key == BACKSPACE)
+	{
+		chars_c--;
+		text[lines - 1][chars] = '\0';
+		if(chars_c <= 0)
+		{
+			chars_c = 0;
+		}
+	}
+	else if(key == BACKSPACE && text[lines_c - 1][chars_c - 1] == '\n')
 	{
 		lines_c--;
 		if(lines_c <= 1)
@@ -74,6 +61,8 @@ void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	else if(key != BACKSPACE && key != ENTER)
 	{
 		chars_c++;
+		text[lines - 1][chars - 1] = key; // Allocation.
+		text[lines - 1][chars] = '\0';
 		if(chars_c >= BUFF_SZ)
 		{
 			chars_c = BUFF_SZ; // TODO: the last char is overwritten.
@@ -121,15 +110,13 @@ void cleanFrame(void) // To provide rendering in a one frame.
 }
 
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
-void allocChars(BUFF_T lines, BUFF_T chars, char key)
+void renderText(BUFF_T lines, BUFF_T chars)
 {
 	BUFF_T line_pos;
 	BUFF_T char_pos;
 
 	char* text_BUFF = malloc(chars * lines * sizeof(char) + 1);
 	pointerCheck(text_BUFF);
-
-	keyHandling(lines, chars, key);
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
@@ -164,7 +151,7 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	uint16_t vertical_filler = 1; // Two bars.
 
 	upperBar();
-	allocChars(lines, chars, key);
+	renderText(lines, chars);
 
 	if(key != BACKSPACE && chars % windowSize('x') >= 0)
 	{

@@ -29,13 +29,12 @@ extern char text[BUFF_SZ][BUFF_SZ];
 extern BUFF_T lines_c;
 extern BUFF_T chars_c;
 
-void keyHandling(BUFF_T lines, BUFF_T chars, char key);
 void saveToFile(BUFF_T lines, BUFF_T chars, char filename[]);
-void keyCheck(BUFF_T lines, BUFF_T chars, char key, char filename[]);
+void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[]);
 
 uint16_t windowSize(char axis);
 void cleanFrame(void);
-void allocChars(BUFF_T lines, BUFF_T chars, char key);
+void renderText(BUFF_T lines, BUFF_T chars);
 
 void initWindow(BUFF_T lines, BUFF_T chars, char filename[]);
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[]);

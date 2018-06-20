@@ -9,7 +9,7 @@ void programRound(char filename[])
 	for(;;)
 	{
 		char pressed_key = unixGetch();
-		keyCheck(lines_c, chars_c, pressed_key, filename);
+		keyHandling(lines_c, chars_c, pressed_key, filename);
 		cleanFrame(); // Provide "one-window" rendering in a terminal.
 		window(lines_c, chars_c, pressed_key, filename);
 	}
@@ -25,7 +25,6 @@ int main(int argc, char* argv[])
 	filenameLenCheck(argv[1]);
 	argcCheck(argc);
 
-	chars_c--;
 	initWindow(lines_c, chars_c, argv[1]);
 	programRound(argv[1]);
 	return 0;
