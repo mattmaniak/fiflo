@@ -45,7 +45,7 @@ void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	else if(key == BACKSPACE)
 	{
 		chars_c--;
-		text[lines][chars + 1] = '\0';
+		text[lines][chars] = '\0';
 		if(chars_c <= 0)
 		{
 			chars_c = 0;
@@ -138,7 +138,7 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 	cursor();
 	printf("%c", '\n');
 
-	for(current = lines; current <= windowSize('y') - 3; current++)
+	for(current = lines; current <= windowSize('y') - 4; current++)
 	{
 		printf("%c", '\n');
 	}
@@ -149,7 +149,7 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	uint16_t height;
-	uint16_t vertical_filler = 1; // Two bars.
+	uint16_t vertical_filler = 2; // Two bars.
 
 	upperBar();
 	renderText(lines, chars);
@@ -163,7 +163,7 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 		vertical_filler--;
 	}
 
-	for(height = lines; height <= windowSize('y') - vertical_filler; height++)
+	for(height = lines; height < windowSize('y') - vertical_filler; height++)
 	{
 		printf("%c", '\n');
 	}
