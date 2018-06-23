@@ -19,7 +19,7 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 	{
 		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
 		{
-			fprintf(file, "%c", text[line_pos][char_pos]);
+			fprintf(file, "%c", text[line_pos - 1][char_pos]);
 		}
 	}
 	fclose(file);
@@ -35,34 +35,35 @@ void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	}
 	else if(key == ENTER)
 	{
-		text[lines][chars] = '\n';
+		text[lines - 1][chars] = '\n';
 		lines_c++;
 		if(lines_c >= windowSize('y') - 2)
 		{
 			lines_c = windowSize('y') - 2;
+			text[lines][chars] = '\0';
 		}
 	}
 	else if(key == BACKSPACE)
 	{
 		chars_c--;
-		text[lines][chars] = '\0';
 		if(chars_c <= 0)
 		{
 			chars_c = 0;
 		}
+		text[lines - 1][chars] = '\0';
 	}
 	else if(key == BACKSPACE && text[lines_c][chars_c] == '\n')
 	{
 		lines_c--;
-		if(lines_c <= 0)
+		if(lines_c <= 1)
 		{
-			lines_c = 0;
+			lines_c = 1;
 		}
 	}
-	else if(key != BACKSPACE && key != ENTER)
+	else if(key != ENTER)
 	{
-		text[lines][chars] = key; // Allocation.
-		text[lines][chars + 1] = '\0';
+		text[lines - 1][chars] = key; // Allocation.
+		text[lines - 1][chars + 1] = '\0';
 		chars_c++;
 		if(chars_c >= BUFF_SZ)
 		{
@@ -123,10 +124,10 @@ void renderText(BUFF_T lines, BUFF_T chars)
 	{
 		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
 		{
-			printf("%c", text[line_pos][char_pos]);
+			printf("%c", text[line_pos - 1][char_pos]);
 		}
 	}
-	cursor();
+//	cursor();
 	free(text_buff);
 }
 
@@ -154,15 +155,19 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	upperBar();
 	renderText(lines, chars);
 
-/*	if(key != BACKSPACE && chars % windowSize('x') >= 0)
+	if(key != BACKSPACE && chars % windowSize('x') == 0)
 	{
+		text[lines - 1][windowSize('x')] = '\n';
+		lines_c++;
 		vert_filler++;
 	}
-	else if(key == BACKSPACE && chars % windowSize('x') <= 0)
+	else if(key == BACKSPACE && chars % windowSize('x') == 0)
 	{
+		text[lines - 1][windowSize('x')] = '\0';
+		lines_c--;
 		vert_filler--;
 	}
-*/
+
 	for(height = lines; height <= windowSize('y') - vert_filler; height++)
 	{
 		printf("%c", '\n');
