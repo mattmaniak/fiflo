@@ -2,11 +2,6 @@
 
 #include "ui.h"
 
-void cursor(void)
-{
-	printf("%s%s%c%s", BOLD, BLINK, '|', RESET);
-}
-
 int8_t decimalIntLen(int8_t number)
 {
 	// Return a length of decimal integer. Eg. 2 from number = 12.

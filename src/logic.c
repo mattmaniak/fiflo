@@ -35,7 +35,7 @@ void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	}
 	else if(key == ENTER)
 	{
-		text[lines - 1][chars] = '\n';
+		text[lines - 1][chars + 1] = '\n';
 		lines_c++;
 		if(lines_c >= windowSize('y') - 2)
 		{
@@ -124,10 +124,17 @@ void renderText(BUFF_T lines, BUFF_T chars)
 	{
 		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
 		{
-			printf("%c", text[line_pos - 1][char_pos]);
+			// Invert last char color as a integrated cursor.
+			if(line_pos == lines && char_pos == chars - 1)
+			{
+				printf("%s%c%s", INVERT, text[line_pos - 1][char_pos], RESET);
+			}
+			else
+			{
+				printf("%c", text[line_pos - 1][char_pos]);
+			}
 		}
 	}
-//	cursor();
 	free(text_buff);
 }
 
@@ -136,10 +143,9 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 	uint16_t current;
 
 	upperBar();	
-	cursor();
 	printf("%c", '\n');
 
-	for(current = lines; current < windowSize('y') - 2; current++)
+	for(current = lines; current <= windowSize('y') - 2; current++)
 	{
 		printf("%c", '\n');
 	}
