@@ -25,32 +25,32 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 	fclose(file);
 }
 
-void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[])
+void keyHandling(char key, char filename[])
 {
 	if(key == CTRL_X)
 	{
-		saveToFile(lines, chars, filename);
+		saveToFile(lines_c, chars_c, filename);
 		cleanFrame();
 		exit(1);
 	}
 	else if(key == ENTER)
 	{
-		text[lines - 1][chars + 1] = '\n';
+		text[lines_c - 1][chars_c] = '\n';
 		lines_c++;
 		if(lines_c >= windowSize('y') - 2)
 		{
 			lines_c = windowSize('y') - 2;
-			text[lines][chars] = '\0';
+			text[lines_c - 1][chars_c] = '\0';
 		}
 	}
 	else if(key == BACKSPACE)
 	{
+		text[lines_c - 1][chars_c] = '\0';
 		chars_c--;
 		if(chars_c <= 0)
 		{
 			chars_c = 0;
 		}
-		text[lines - 1][chars] = '\0';
 	}
 	else if(key == BACKSPACE && text[lines_c][chars_c] == '\n')
 	{
@@ -62,8 +62,8 @@ void keyHandling(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	}
 	else if(key != ENTER)
 	{
-		text[lines - 1][chars] = key; // Allocation.
-		text[lines - 1][chars + 1] = '\0';
+		text[lines_c - 1][chars_c] = key; // Allocation.
+		text[lines_c - 1][chars_c + 1] = '\0';
 		chars_c++;
 		if(chars_c >= BUFF_SZ)
 		{
@@ -93,11 +93,9 @@ uint16_t windowSize(char axis) // Check terminal size.
 	{
 		case 'x':
 			return win.ws_col;
-			break;
 
 		case 'y':
 			return win.ws_row;
-			break;
 	}
 	return 0; // Protection from the -Wreturn-type warning.
 }
@@ -117,7 +115,7 @@ void renderText(BUFF_T lines, BUFF_T chars)
 	BUFF_T line_pos;
 	BUFF_T char_pos;
 
-	char* text_buff = malloc(chars * lines * sizeof(char) + 1);
+	char* text_buff = malloc(chars * lines * (sizeof(char) + 1));
 	pointerCheck(text_buff);
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
@@ -152,32 +150,33 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 	lowerBar(lines, chars, '\0', filename);
 }
 
-// Terminal filler that shows chars and another stupid things.
+// Terminal fill that shows chars and another stupid things.
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	uint16_t height;
-	uint16_t vert_filler = 2; // Two bars.
+	uint16_t vert_fill = 2; // Two bars.
 
 	upperBar();
 	renderText(lines, chars);
 
-	if(key != BACKSPACE && chars % windowSize('x') == 0)
+/*	if(key != BACKSPACE && chars % windowSize('x') == 0)
 	{
 		text[lines - 1][windowSize('x')] = '\n';
 		lines_c++;
-		vert_filler++;
+		vert_fill++;
 	}
 	else if(key == BACKSPACE && chars % windowSize('x') == 0)
 	{
 		text[lines - 1][windowSize('x')] = '\0';
 		lines_c--;
-		vert_filler--;
+		vert_fill--;
 	}
+*/
 
-	for(height = lines; height <= windowSize('y') - vert_filler; height++)
+	for(height = lines; height <= windowSize('y') - vert_fill; height++)
 	{
 		printf("%c", '\n');
 	}
-	lowerBar(lines, chars, key, filename);
+	lowerBar(lines_c, chars_c - 1, key, filename); // chars - 1 - current index.
 }
 
