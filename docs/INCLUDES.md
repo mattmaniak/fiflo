@@ -1,7 +1,7 @@
-Shows how *.c files are included to each other.
+Shows how *.c files are connected to each other.
 
-    -- hardware.c    keymap.c
-   |                   |
+    -- hardware.c
+   |
 fiflo.c ------------ logic.c -- ui.c
    |
     -- errors.c

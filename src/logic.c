@@ -2,7 +2,7 @@
 
 #include "ui.c"
 
-BUFF_T lines_c = 0;
+BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
 
 char text[BUFF_SZ][BUFF_SZ];
@@ -15,7 +15,7 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 	FILE* file = fopen(filename, "w");
 	pointerCheck(file);
 
-	for(line_pos = 0; line_pos <= lines; line_pos++) // Y rendering.
+	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
 		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
 		{
@@ -119,7 +119,7 @@ void renderText(BUFF_T lines, BUFF_T chars)
 	char* text_buff = malloc(chars * lines * sizeof(char) + 1);
 	pointerCheck(text_buff);
 
-	for(line_pos = 0; line_pos <= lines; line_pos++) // Y rendering.
+	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
 		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
 		{
@@ -138,7 +138,7 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 	cursor();
 	printf("%c", '\n');
 
-	for(current = lines; current <= windowSize('y') - 4; current++)
+	for(current = lines; current < windowSize('y') - 2; current++)
 	{
 		printf("%c", '\n');
 	}
@@ -149,21 +149,21 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	uint16_t height;
-	uint16_t vertical_filler = 2; // Two bars.
+	uint16_t vert_filler = 2; // Two bars.
 
 	upperBar();
 	renderText(lines, chars);
 
-	if(key != BACKSPACE && chars % windowSize('x') >= 0)
+/*	if(key != BACKSPACE && chars % windowSize('x') >= 0)
 	{
-		vertical_filler++;
+		vert_filler++;
 	}
 	else if(key == BACKSPACE && chars % windowSize('x') <= 0)
 	{
-		vertical_filler--;
+		vert_filler--;
 	}
-
-	for(height = lines; height < windowSize('y') - vertical_filler; height++)
+*/
+	for(height = lines; height <= windowSize('y') - vert_filler; height++)
 	{
 		printf("%c", '\n');
 	}
