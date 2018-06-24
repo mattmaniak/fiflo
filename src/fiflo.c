@@ -25,6 +25,7 @@ int main(int argc, char* argv[])
 	}
 	filenameLenCheck(argv[1]);
 
+	keyHandling('>', argv[1]);
 	window(lines_c, chars_c, '>', argv[1]);
 //	initWindow(lines_c, chars_c, argv[1]);
 	programRound(argv[1]);

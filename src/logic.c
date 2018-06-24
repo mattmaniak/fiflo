@@ -30,34 +30,30 @@ void keyHandling(char key, char filename[])
 	if(key == CTRL_X)
 	{
 		saveToFile(lines_c, chars_c, filename);
-		cleanFrame();
-		exit(1);
 	}
 	else if(key == ENTER)
 	{
 		text[lines_c - 1][chars_c] = '\n';
 		lines_c++;
-		if(lines_c >= windowSize('y') - 2)
-		{
-			lines_c = windowSize('y') - 2;
-			text[lines_c - 1][chars_c] = '\0';
-		}
+		// TODO: SCREEN LIMIT OR SCROLLING.
 	}
 	else if(key == BACKSPACE)
 	{
 		text[lines_c - 1][chars_c] = '\0';
 		chars_c--;
+		
 		if(chars_c <= 0)
 		{
 			chars_c = 0;
 		}
-	}
-	else if(key == BACKSPACE && text[lines_c][chars_c] == '\n')
-	{
-		lines_c--;
-		if(lines_c <= 1)
+		if(lines_c > 1 && text[lines_c - 2][chars_c] == '\n') // Delete line.
 		{
-			lines_c = 1;
+			text[lines_c - 1][chars_c] = '\0';
+			lines_c--;
+			if(lines_c <= 1)
+			{
+				lines_c = 1;
+			}
 		}
 	}
 	else if(key != ENTER)
@@ -67,7 +63,7 @@ void keyHandling(char key, char filename[])
 		chars_c++;
 		if(chars_c >= BUFF_SZ)
 		{
-			chars_c = BUFF_SZ; // TODO: the last char is overwritten.
+			chars_c = BUFF_SZ; // TODO: THE LAST CHAR IS OVERWRITTEN.
 		}
 	}
 }
@@ -150,7 +146,7 @@ void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
 	lowerBar(lines, chars, '\0', filename);
 }
 
-// Terminal fill that shows chars and another stupid things.
+// Terminal fill that shows chars and other stupid things.
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
 	uint16_t height;
@@ -173,10 +169,14 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	}
 */
 
+	if(chars_c == 0)
+	{
+		vert_fill--;
+	}
 	for(height = lines; height <= windowSize('y') - vert_fill; height++)
 	{
 		printf("%c", '\n');
 	}
-	lowerBar(lines_c, chars_c - 1, key, filename); // chars - 1 - current index.
+	lowerBar(lines_c, chars_c, key, filename); // chars - 1 - current index.
 }
 

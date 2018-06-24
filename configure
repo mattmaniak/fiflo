@@ -5,6 +5,7 @@ function checkHeader {
 }
 
 type gcc
+type make
 checkHeader stdio.h
 checkHeader stdint.h
 checkHeader stdlib.h
