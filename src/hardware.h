@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <termios.h>
 
-void pointerCheck(void* pointer);
+void pointerCheck(void *pointer);
 char unixGetch(void);
 
 #endif

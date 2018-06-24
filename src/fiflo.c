@@ -10,13 +10,13 @@ void programRound(char filename[])
 	{
 		char pressed_key = unixGetch();
 		keyHandling(pressed_key, filename);
-		cleanFrame(); // Provide "one-window" rendering in a terminal.
+//		cleanFrame(); // Provide "one-window" rendering in a terminal.
 		window(lines_c, chars_c, pressed_key, filename);
 	}
 }
 
 // *asdf[] - table of pointers, (*asdf)[] pointer to table.
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	argcCheck(argc);
 	if(argv[1] == NULL)
@@ -27,7 +27,6 @@ int main(int argc, char* argv[])
 
 	keyHandling('>', argv[1]);
 	window(lines_c, chars_c, '>', argv[1]);
-//	initWindow(lines_c, chars_c, argv[1]);
 	programRound(argv[1]);
 	return 0;
 }

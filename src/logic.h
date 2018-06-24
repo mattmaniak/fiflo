@@ -8,6 +8,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 
+
 // Some special ASCII decimal codes.
 #define ENTER 10 // Linefeed
 #define CTRL_X 24
@@ -26,16 +27,18 @@ typedef int16_t BUFF_T; // Text buffer type.
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 
 extern char text[BUFF_SZ][BUFF_SZ];
+extern char base_filename[510];
 extern BUFF_T lines_c;
 extern BUFF_T chars_c;
 
+void setBaseFilename(char filename[]);
 void saveToFile(BUFF_T lines, BUFF_T chars, char filename[]);
 void keyHandling(char key, char filename[]);
 uint16_t windowSize(char axis);
-void cleanFrame(void);
 void renderText(BUFF_T lines, BUFF_T chars);
 void initWindow(BUFF_T lines, BUFF_T chars, char filename[]);
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[]);
+void cleanFrame(void);
 
 #endif
 

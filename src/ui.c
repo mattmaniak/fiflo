@@ -32,7 +32,7 @@ void dynamicLen(char filename[])
 	else
 	{
 		printf("%s", filename);
-		for(char_pos = 0; char_pos < 19 - strlen(filename); char_pos++)
+		for(char_pos = 0; char_pos < 16 + 3 - strlen(filename); char_pos++)
 		{
 			printf("%c", ' ');
 		}
@@ -64,7 +64,7 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	+ decimalIntLen(key) + strlen(chars_text) + decimalIntLen(chars)
 	+ strlen(lines_text) + decimalIntLen(lines) + 19;
 
-	char* bar_BUFF = malloc(windowSize('x'));
+	char *bar_BUFF = malloc(windowSize('x'));
 	pointerCheck(bar_BUFF);
 
 	printf("%s%s", INVERT, program_name);

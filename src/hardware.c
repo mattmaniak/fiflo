@@ -2,7 +2,7 @@
 
 #include "hardware.h"
 
-void pointerCheck(void* pointer) // Eg. malloc or FILE*.
+void pointerCheck(void *pointer) // Eg. malloc or FILE*.
 {
 	if(pointer == NULL)
 	{

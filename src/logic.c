@@ -6,13 +6,44 @@ BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
 
 char text[BUFF_SZ][BUFF_SZ];
+char base_filename[510];
+
+void setBaseFilename(char filename[])
+{
+	uint8_t char_pos;
+	char cwd[255];
+
+	if(getcwd(cwd, sizeof(cwd)) == NULL)
+	{
+	fputs("Cannot get your current absolute dir.", stderr);
+		exit(1);
+	}
+	if(strlen(cwd) > 255)
+	{
+		fputs("Max. absolute path length: 255.", stderr);
+		exit(1);
+	}
+
+	for(char_pos = 0; char_pos < strlen(cwd); char_pos++) // Copy absolute path.
+	{
+		base_filename[char_pos] = cwd[char_pos];
+	}
+	base_filename[strlen(cwd)] = '/'; // Add a slash between.
+
+	for(char_pos = 0; char_pos < strlen(filename); char_pos++) // Copy filename.
+	{
+		base_filename[char_pos + strlen(cwd) + 1] = filename[char_pos];
+	}
+}
 
 void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 {
 	BUFF_T line_pos;
 	BUFF_T char_pos;
 
-	FILE* file = fopen(filename, "w");
+	setBaseFilename(filename);
+
+	FILE *file = fopen(base_filename, "w");
 	pointerCheck(file);
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
@@ -96,22 +127,13 @@ uint16_t windowSize(char axis) // Check terminal size.
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
-void cleanFrame(void) // To provide rendering in a one frame.
-{
-	uint16_t lines;
-	for(lines = 0; lines < windowSize('y'); lines++)
-	{
-		printf("%s", "\033[F\033[K");
-	}
-}
-
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
 void renderText(BUFF_T lines, BUFF_T chars)
 {
 	BUFF_T line_pos;
 	BUFF_T char_pos;
 
-	char* text_buff = malloc(chars * lines * (sizeof(char) + 1));
+	char *text_buff = malloc(chars * lines * (sizeof(char) + 1));
 	pointerCheck(text_buff);
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
@@ -132,20 +154,6 @@ void renderText(BUFF_T lines, BUFF_T chars)
 	free(text_buff);
 }
 
-void initWindow(BUFF_T lines, BUFF_T chars, char filename[])
-{
-	uint16_t current;
-
-	upperBar();	
-	printf("%c", '\n');
-
-	for(current = lines; current <= windowSize('y') - 2; current++)
-	{
-		printf("%c", '\n');
-	}
-	lowerBar(lines, chars, '\0', filename);
-}
-
 // Terminal fill that shows chars and other stupid things.
 void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
@@ -154,20 +162,6 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 
 	upperBar();
 	renderText(lines, chars);
-
-/*	if(key != BACKSPACE && chars % windowSize('x') == 0)
-	{
-		text[lines - 1][windowSize('x')] = '\n';
-		lines_c++;
-		vert_fill++;
-	}
-	else if(key == BACKSPACE && chars % windowSize('x') == 0)
-	{
-		text[lines - 1][windowSize('x')] = '\0';
-		lines_c--;
-		vert_fill--;
-	}
-*/
 
 	if(chars_c == 0)
 	{
@@ -178,5 +172,14 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 		printf("%c", '\n');
 	}
 	lowerBar(lines_c, chars_c, key, filename); // chars - 1 - current index.
+}
+
+void cleanFrame(void) // To provide rendering in a one frame.
+{
+	uint16_t lines;
+	for(lines = 0; lines < windowSize('y'); lines++)
+	{
+		printf("%s", "\033[F\033[K");
+	}
 }
 
