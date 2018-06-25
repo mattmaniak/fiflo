@@ -10,7 +10,7 @@ void programRound(char filename[])
 	{
 		char pressed_key = unixGetch();
 		keyHandling(pressed_key, filename);
-//		cleanFrame(); // Provide "one-window" rendering in a terminal.
+		cleanFrame(); // Provide one-frame rendering in a terminal window.
 		window(lines_c, chars_c, pressed_key, filename);
 	}
 }

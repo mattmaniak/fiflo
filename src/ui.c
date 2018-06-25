@@ -7,7 +7,7 @@ int8_t decimalIntLen(int8_t number)
 	// Return a length of decimal integer. Eg. 2 from number = 12.
 	BUFF_T len = 1;
 
-	while(number >= 9)
+	while(number > 9)
 	{
 		len++;
 		number /= 10;
@@ -39,11 +39,16 @@ void dynamicLen(char filename[])
 	}
 }
 
-void upperBar(void)
+void upperBar(char *base_fn) // TODO: PATH + FN IN THE UPPER BAR.
 {
+	const char *program = " Fiflo \0";
+
 	uint16_t width;
-	printf("%s", INVERT);
-	for(width = 0; width < windowSize('x'); width++)
+	uint16_t whitespace = strlen(program) + strlen(base_fn);
+
+	printf("%s%s%s", INVERT, program, base_fn);
+
+	for(width = 0; width < windowSize('x') - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}
@@ -53,25 +58,24 @@ void upperBar(void)
 // Lower border with a text.
 void lowerBar(BUFF_T lines, BUFF_T chars, char key, char filename[])
 {
+//	const char *program = " Fiflo | \0";
+	const char *chars_text = " | chars: \0";
+	const char *lines_text = " | lines: \0";
+	const char *ascii_code_text = "| Last char code: \0";
+
 	uint16_t width;
-
-	char program_name[10] = " Fiflo | \0";
-	char chars_text[11] = " | chars: \0";
-	char lines_text[11] = " | lines: \0";
-	char ascii_code_text[19] = "| Last char code: \0";
-
-	uint16_t whitespace = strlen(program_name) + strlen(ascii_code_text)
+	uint16_t whitespace = strlen(ascii_code_text)
 	+ decimalIntLen(key) + strlen(chars_text) + decimalIntLen(chars)
-	+ strlen(lines_text) + decimalIntLen(lines) + 19;
+	+ strlen(lines_text) + decimalIntLen(lines) + 20;
 
-	char *bar_BUFF = malloc(windowSize('x'));
-	pointerCheck(bar_BUFF);
-
-	printf("%s%s", INVERT, program_name);
+	printf("%s", INVERT);
 
 	dynamicLen(filename);
 
-	for(width = 0; width < windowSize('x') - whitespace - 1; width++)
+	char *bar_buff = malloc(windowSize('x')); // TODO: PLACE MALLOCS.
+	pointerCheck(bar_buff);
+
+	for(width = 0; width < windowSize('x') - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}
@@ -79,6 +83,6 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	printf("%s%i%s%i%s%i%c%s", ascii_code_text, key, chars_text, chars,
 	lines_text, lines, ' ', RESET);
 
-	free(bar_BUFF);
+	free(bar_buff);
 }
 

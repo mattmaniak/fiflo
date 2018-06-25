@@ -2,9 +2,9 @@
 
 #include "hardware.h"
 
-void pointerCheck(void *pointer) // Eg. malloc or FILE*.
+void pointerCheck(void *ptr) // Eg. malloc or FILE*.
 {
-	if(pointer == NULL)
+	if(ptr == NULL)
 	{
 		fputs("Memory pointer error.\n", stderr);
 		exit(1);

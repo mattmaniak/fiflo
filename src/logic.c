@@ -160,7 +160,7 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	uint16_t height;
 	uint16_t vert_fill = 2; // Two bars.
 
-	upperBar();
+	upperBar(base_filename);
 	renderText(lines, chars);
 
 	if(chars_c == 0)
@@ -171,7 +171,7 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	{
 		printf("%c", '\n');
 	}
-	lowerBar(lines_c, chars_c, key, filename); // chars - 1 - current index.
+	lowerBar(lines_c, chars_c, key, filename); // chars - 1 - last char index.
 }
 
 void cleanFrame(void) // To provide rendering in a one frame.
