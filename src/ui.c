@@ -15,24 +15,24 @@ int8_t decimalIntLen(int8_t number)
 	return len;
 }
 
-void dynamicLen(char filename[])
+void dynamicLen(char *filename)
 {
 	// If a filename is longer than 16. Only first 16 chars will be printed
 	// and 3 dots at the end will be added.
-	uint8_t char_pos;
+	uint8_t chr_num;
 
 	if(strlen(filename) > 16) // Max rendered first 32 chars.
 	{
-		for(char_pos = 0; char_pos < 16; char_pos++)
+		for(chr_num = 0; chr_num < 16; chr_num++)
 		{
-			printf("%c", filename[char_pos]);
+			printf("%c", filename[chr_num]);
 		}
 		printf("%s", "..."); // strlen is 3.
 	}
 	else
 	{
 		printf("%s", filename);
-		for(char_pos = 0; char_pos < 16 + 3 - strlen(filename); char_pos++)
+		for(chr_num = 0; chr_num < 16 + 3 - strlen(filename); chr_num++)
 		{
 			printf("%c", ' ');
 		}
@@ -41,12 +41,12 @@ void dynamicLen(char filename[])
 
 void upperBar(char *base_fn) // TODO: PATH + FN IN THE UPPER BAR.
 {
-	const char *text = " Fiflo | file: \0";
+	const char *program = " Fiflo | file: \0";
 
 	uint16_t width;
-	uint16_t whitespace = strlen(text) + strlen(base_fn);
+	uint16_t whitespace = strlen(program) + strlen(base_fn);
 
-	printf("%s%s%s", INVERT, text, base_fn);
+	printf("%s%s%s", INVERT, program, base_fn);
 
 	for(width = 0; width < windowSize('x') - whitespace; width++)
 	{
@@ -64,12 +64,12 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key)
 
 	uint16_t width;
 	uint16_t whitespace =
-	+ strlen(lines_text) + decimalIntLen(lines)
+	strlen(lines_text) + decimalIntLen(lines)
 	+ strlen(chars_text) + decimalIntLen(chars) 
 	+ strlen(ascii_code_text) + decimalIntLen(key);
 
-	printf("%s%s%i%s%i%s%i", INVERT, lines_text,
-	lines, chars_text, chars, ascii_code_text, key);
+	printf("%s%s%i%s%i%s%i", INVERT, lines_text, lines, chars_text, chars,
+	ascii_code_text, key);
 
 	char *bar_buff = malloc(windowSize('x')); // TODO: PLACE MALLOCS.
 	pointerCheck(bar_buff);

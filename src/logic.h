@@ -31,9 +31,9 @@ extern char base_filename[510];
 extern BUFF_T lines_c;
 extern BUFF_T chars_c;
 
-void setBaseFilename(char filename[]);
-void saveToFile(BUFF_T lines, BUFF_T chars, char filename[]);
-void keyHandling(char key, char filename[]);
+void setBaseFilename(char *filename);
+void saveToFile(BUFF_T lines, BUFF_T chars, char *filename);
+void keyHandling(char key, char *filename);
 uint16_t windowSize(char axis);
 void renderText(BUFF_T lines, BUFF_T chars);
 void window(BUFF_T lines, BUFF_T chars, char key);

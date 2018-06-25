@@ -4,13 +4,14 @@
 #include "hardware.c"
 #include "logic.c"
 
-void programRound(char filename[])
+void programRound(char* filename)
 {
 	for(;;)
 	{
 		char pressed_key = unixGetch();
 		keyHandling(pressed_key, filename);
 		cleanFrame(); // Provide one-frame rendering in a terminal window.
+		fflush(stdout);
 		window(lines_c, chars_c, pressed_key);
 	}
 }
@@ -21,7 +22,7 @@ int main(int argc, char *argv[])
 	argcCheck(argc);
 	if(argv[1] == NULL)
 	{
-		argv[1] = "noname.asdf";
+		argv[1] = "noname.asdf\0";
 	}
 	filenameLenCheck(argv[1]);
 

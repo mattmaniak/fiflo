@@ -15,7 +15,7 @@ typedef int16_t BUFF_T;
 
 int8_t decimalIntLen(int8_t chars);
 void upperBar(char *base_fn);
-void dynamicLen(char base_filename[]);
+void dynamicLen(char *filename);
 void lowerBar(BUFF_T lines, BUFF_T chars, char key);
 void help(void);
 

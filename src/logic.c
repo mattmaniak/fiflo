@@ -8,19 +8,19 @@ BUFF_T chars_c = 0; // text = lines + chars
 char text[BUFF_SZ][BUFF_SZ];
 char base_filename[510];
 
-void setBaseFilename(char filename[])
+void setBaseFilename(char *filename)
 {
 	uint8_t chr_num;
 	char cwd[255];
 
 	if(getcwd(cwd, sizeof(cwd)) == NULL)
 	{
-	fputs("Cannot get your current absolute dir.", stderr);
+		fputs("Cannot get your current absolute dir.\0", stderr);
 		exit(1);
 	}
 	if(strlen(cwd) > 255)
 	{
-		fputs("Max. absolute path length: 255.", stderr);
+		fputs("Max. absolute path length: 255.\0", stderr);
 		exit(1);
 	}
 
@@ -36,7 +36,7 @@ void setBaseFilename(char filename[])
 	}
 }
 
-void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
+void saveToFile(BUFF_T lines, BUFF_T chars, char *filename)
 {
 	BUFF_T line_pos;
 	BUFF_T chr_num;
@@ -56,7 +56,7 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 	fclose(file);
 }
 
-void keyHandling(char key, char filename[])
+void keyHandling(char key, char *filename)
 {
 	if(key == CTRL_X)
 	{
@@ -133,9 +133,6 @@ void renderText(BUFF_T lines, BUFF_T chars)
 	BUFF_T line_pos;
 	BUFF_T chr_num;
 
-	char *text_buff = malloc(chars * lines * (sizeof(char) + 1));
-	pointerCheck(text_buff);
-
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
 		for(chr_num = 0; chr_num < chars; chr_num++) // X rendering.
@@ -151,7 +148,6 @@ void renderText(BUFF_T lines, BUFF_T chars)
 			}
 		}
 	}
-	free(text_buff);
 }
 
 // Terminal fill that shows chars and other stupid things.
@@ -167,6 +163,7 @@ void window(BUFF_T lines, BUFF_T chars, char key)
 	{
 		vert_fill--;
 	}
+
 	for(height = lines; height <= windowSize('y') - vert_fill; height++)
 	{
 		printf("%c", '\n');
@@ -179,7 +176,7 @@ void cleanFrame(void) // To provide rendering in a one frame.
 	uint16_t lines;
 	for(lines = 0; lines < windowSize('y'); lines++)
 	{
-		printf("%s", "\033[F\033[K");
+		printf("%s", "\033[F\033[K\0");
 	}
 }
 
