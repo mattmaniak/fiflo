@@ -10,7 +10,7 @@ char base_filename[510];
 
 void setBaseFilename(char filename[])
 {
-	uint8_t char_pos;
+	uint8_t chr_num;
 	char cwd[255];
 
 	if(getcwd(cwd, sizeof(cwd)) == NULL)
@@ -24,22 +24,22 @@ void setBaseFilename(char filename[])
 		exit(1);
 	}
 
-	for(char_pos = 0; char_pos < strlen(cwd); char_pos++) // Copy absolute path.
+	for(chr_num = 0; chr_num < strlen(cwd); chr_num++) // Copy absolute path.
 	{
-		base_filename[char_pos] = cwd[char_pos];
+		base_filename[chr_num] = cwd[chr_num];
 	}
 	base_filename[strlen(cwd)] = '/'; // Add a slash between.
 
-	for(char_pos = 0; char_pos < strlen(filename); char_pos++) // Copy filename.
+	for(chr_num = 0; chr_num < strlen(filename); chr_num++) // Copy filename.
 	{
-		base_filename[char_pos + strlen(cwd) + 1] = filename[char_pos];
+		base_filename[chr_num + strlen(cwd) + 1] = filename[chr_num];
 	}
 }
 
 void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 {
 	BUFF_T line_pos;
-	BUFF_T char_pos;
+	BUFF_T chr_num;
 
 	setBaseFilename(filename);
 
@@ -48,9 +48,9 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char filename[])
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
-		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
+		for(chr_num = 0; chr_num < chars; chr_num++) // X rendering.
 		{
-			fprintf(file, "%c", text[line_pos - 1][char_pos]);
+			fprintf(file, "%c", text[line_pos - 1][chr_num]);
 		}
 	}
 	fclose(file);
@@ -131,23 +131,23 @@ uint16_t windowSize(char axis) // Check terminal size.
 void renderText(BUFF_T lines, BUFF_T chars)
 {
 	BUFF_T line_pos;
-	BUFF_T char_pos;
+	BUFF_T chr_num;
 
 	char *text_buff = malloc(chars * lines * (sizeof(char) + 1));
 	pointerCheck(text_buff);
 
 	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
 	{
-		for(char_pos = 0; char_pos < chars; char_pos++) // X rendering.
+		for(chr_num = 0; chr_num < chars; chr_num++) // X rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(line_pos == lines && char_pos == chars - 1)
+			if(line_pos == lines && chr_num == chars - 1)
 			{
-				printf("%s%c%s", INVERT, text[line_pos - 1][char_pos], RESET);
+				printf("%s%c%s", INVERT, text[line_pos - 1][chr_num], RESET);
 			}
 			else
 			{
-				printf("%c", text[line_pos - 1][char_pos]);
+				printf("%c", text[line_pos - 1][chr_num]);
 			}
 		}
 	}
@@ -155,7 +155,7 @@ void renderText(BUFF_T lines, BUFF_T chars)
 }
 
 // Terminal fill that shows chars and other stupid things.
-void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
+void window(BUFF_T lines, BUFF_T chars, char key)
 {
 	uint16_t height;
 	uint16_t vert_fill = 2; // Two bars.
@@ -171,7 +171,7 @@ void window(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	{
 		printf("%c", '\n');
 	}
-	lowerBar(lines_c, chars_c, key, filename); // chars - 1 - last char index.
+	lowerBar(lines_c, chars_c, key); // chars - 1 - last char index.
 }
 
 void cleanFrame(void) // To provide rendering in a one frame.

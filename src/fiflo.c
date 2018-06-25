@@ -11,7 +11,7 @@ void programRound(char filename[])
 		char pressed_key = unixGetch();
 		keyHandling(pressed_key, filename);
 		cleanFrame(); // Provide one-frame rendering in a terminal window.
-		window(lines_c, chars_c, pressed_key, filename);
+		window(lines_c, chars_c, pressed_key);
 	}
 }
 
@@ -25,8 +25,9 @@ int main(int argc, char *argv[])
 	}
 	filenameLenCheck(argv[1]);
 
+	setBaseFilename(argv[1]);
 	keyHandling('>', argv[1]);
-	window(lines_c, chars_c, '>', argv[1]);
+	window(lines_c, chars_c, '>');
 	programRound(argv[1]);
 	return 0;
 }

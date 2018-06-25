@@ -41,12 +41,12 @@ void dynamicLen(char filename[])
 
 void upperBar(char *base_fn) // TODO: PATH + FN IN THE UPPER BAR.
 {
-	const char *program = " Fiflo \0";
+	const char *text = " Fiflo | file: \0";
 
 	uint16_t width;
-	uint16_t whitespace = strlen(program) + strlen(base_fn);
+	uint16_t whitespace = strlen(text) + strlen(base_fn);
 
-	printf("%s%s%s", INVERT, program, base_fn);
+	printf("%s%s%s", INVERT, text, base_fn);
 
 	for(width = 0; width < windowSize('x') - whitespace; width++)
 	{
@@ -56,21 +56,20 @@ void upperBar(char *base_fn) // TODO: PATH + FN IN THE UPPER BAR.
 }
 
 // Lower border with a text.
-void lowerBar(BUFF_T lines, BUFF_T chars, char key, char filename[])
+void lowerBar(BUFF_T lines, BUFF_T chars, char key)
 {
-//	const char *program = " Fiflo | \0";
+	const char *lines_text = " lines: \0";
 	const char *chars_text = " | chars: \0";
-	const char *lines_text = " | lines: \0";
-	const char *ascii_code_text = "| Last char code: \0";
+	const char *ascii_code_text = " | last char code: \0";
 
 	uint16_t width;
-	uint16_t whitespace = strlen(ascii_code_text)
-	+ decimalIntLen(key) + strlen(chars_text) + decimalIntLen(chars)
-	+ strlen(lines_text) + decimalIntLen(lines) + 20;
+	uint16_t whitespace =
+	+ strlen(lines_text) + decimalIntLen(lines)
+	+ strlen(chars_text) + decimalIntLen(chars) 
+	+ strlen(ascii_code_text) + decimalIntLen(key);
 
-	printf("%s", INVERT);
-
-	dynamicLen(filename);
+	printf("%s%s%i%s%i%s%i", INVERT, lines_text,
+	lines, chars_text, chars, ascii_code_text, key);
 
 	char *bar_buff = malloc(windowSize('x')); // TODO: PLACE MALLOCS.
 	pointerCheck(bar_buff);
@@ -79,9 +78,7 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key, char filename[])
 	{
 		printf("%c", ' ');
 	}
-
-	printf("%s%i%s%i%s%i%c%s", ascii_code_text, key, chars_text, chars,
-	lines_text, lines, ' ', RESET);
+	printf("%s", RESET);
 
 	free(bar_buff);
 }
