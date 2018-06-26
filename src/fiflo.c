@@ -6,12 +6,12 @@
 
 void programRound(char* filename)
 {
+	char pressed_key;
 	for(;;)
 	{
-		char pressed_key = unixGetch();
+		pressed_key = unixGetch(); // TODO: FLUSHING.
 		keyHandling(pressed_key, filename);
 		cleanFrame(); // Provide one-frame rendering in a terminal window.
-		fflush(stdout);
 		window(lines_c, chars_c, pressed_key);
 	}
 }

@@ -38,7 +38,7 @@ void setBaseFilename(char *filename)
 
 void saveToFile(BUFF_T lines, BUFF_T chars, char *filename)
 {
-	BUFF_T line_pos;
+	BUFF_T ln_num;
 	BUFF_T chr_num;
 
 	setBaseFilename(filename);
@@ -46,11 +46,11 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char *filename)
 	FILE *file = fopen(base_filename, "w");
 	pointerCheck(file);
 
-	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
+	for(ln_num = 1; ln_num <= lines; ln_num++) // Y rendering.
 	{
 		for(chr_num = 0; chr_num < chars; chr_num++) // X rendering.
 		{
-			fprintf(file, "%c", text[line_pos - 1][chr_num]);
+			fprintf(file, "%c", text[ln_num - 1][chr_num]);
 		}
 	}
 	fclose(file);
@@ -130,21 +130,21 @@ uint16_t windowSize(char axis) // Check terminal size.
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
 void renderText(BUFF_T lines, BUFF_T chars)
 {
-	BUFF_T line_pos;
+	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	for(line_pos = 1; line_pos <= lines; line_pos++) // Y rendering.
+	for(ln_num = 1; ln_num <= lines; ln_num++) // Y rendering.
 	{
 		for(chr_num = 0; chr_num < chars; chr_num++) // X rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(line_pos == lines && chr_num == chars - 1)
+			if(ln_num == lines && chr_num == chars - 1)
 			{
-				printf("%s%c%s", INVERT, text[line_pos - 1][chr_num], RESET);
+				printf("%s%c%s", INVERT, text[ln_num - 1][chr_num], RESET);
 			}
 			else
 			{
-				printf("%c", text[line_pos - 1][chr_num]);
+				printf("%c", text[ln_num - 1][chr_num]);
 			}
 		}
 	}
@@ -163,7 +163,6 @@ void window(BUFF_T lines, BUFF_T chars, char key)
 	{
 		vert_fill--;
 	}
-
 	for(height = lines; height <= windowSize('y') - vert_fill; height++)
 	{
 		printf("%c", '\n');
@@ -178,5 +177,6 @@ void cleanFrame(void) // To provide rendering in a one frame.
 	{
 		printf("%s", "\033[F\033[K\0");
 	}
+	fflush(stdout);
 }
 
