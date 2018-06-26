@@ -8,7 +8,6 @@
 #include <string.h>
 #include <sys/ioctl.h>
 
-
 // Some special ASCII decimal codes.
 #define ENTER 10 // Linefeed
 #define CTRL_X 24
@@ -32,11 +31,11 @@ extern BUFF_T lines_c;
 extern BUFF_T chars_c;
 
 void setBaseFilename(char *filename);
-void saveToFile(BUFF_T lines, BUFF_T chars, char *filename);
+void saveToFile(char *filename);
 void keyHandling(char key, char *filename);
 uint16_t windowSize(char axis);
-void renderText(BUFF_T lines, BUFF_T chars);
-void window(BUFF_T lines, BUFF_T chars, char key);
+void renderText(void);
+void window(char key);
 void cleanFrame(void);
 
 #endif

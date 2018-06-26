@@ -1,14 +1,15 @@
-#include "logic.h"
+// File with the all elements needed to a runtime.
 
+#include "logic.h"
 #include "ui.c"
 
 BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
 
 char text[BUFF_SZ][BUFF_SZ];
-char base_filename[510];
+char base_filename[510]; // TODO: IS NULL-TERMINATED? AND LEN CHECK.
 
-void setBaseFilename(char *filename)
+void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
 {
 	uint8_t chr_num;
 	char cwd[255];
@@ -36,7 +37,7 @@ void setBaseFilename(char *filename)
 	}
 }
 
-void saveToFile(BUFF_T lines, BUFF_T chars, char *filename)
+void saveToFile(char *filename) // TODO: A LOT OF NULLS IN A FILE.
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
@@ -46,9 +47,9 @@ void saveToFile(BUFF_T lines, BUFF_T chars, char *filename)
 	FILE *file = fopen(base_filename, "w");
 	pointerCheck(file);
 
-	for(ln_num = 1; ln_num <= lines; ln_num++) // Y rendering.
+	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Y rendering.
 	{
-		for(chr_num = 0; chr_num < chars; chr_num++) // X rendering.
+		for(chr_num = 0; chr_num < chars_c; chr_num++) // X rendering.
 		{
 			fprintf(file, "%c", text[ln_num - 1][chr_num]);
 		}
@@ -60,7 +61,7 @@ void keyHandling(char key, char *filename)
 {
 	if(key == CTRL_X)
 	{
-		saveToFile(lines_c, chars_c, filename);
+		saveToFile(filename);
 	}
 	else if(key == ENTER)
 	{
@@ -70,8 +71,8 @@ void keyHandling(char key, char *filename)
 	}
 	else if(key == BACKSPACE)
 	{
-		text[lines_c - 1][chars_c] = '\0';
 		chars_c--;
+		text[lines_c - 1][chars_c] = '\0';
 		
 		if(chars_c <= 0)
 		{
@@ -79,12 +80,12 @@ void keyHandling(char key, char *filename)
 		}
 		if(lines_c > 1 && text[lines_c - 2][chars_c] == '\n') // Delete line.
 		{
-			text[lines_c - 1][chars_c] = '\0';
 			lines_c--;
 			if(lines_c <= 1)
 			{
 				lines_c = 1;
 			}
+			text[lines_c - 1][chars_c] = '\0';
 		}
 	}
 	else if(key != ENTER)
@@ -128,17 +129,17 @@ uint16_t windowSize(char axis) // Check terminal size.
 }
 
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
-void renderText(BUFF_T lines, BUFF_T chars)
+void renderText(void) // TODO: BACKSPACE LINE_C-- FIX.
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	for(ln_num = 1; ln_num <= lines; ln_num++) // Y rendering.
+	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Y rendering.
 	{
-		for(chr_num = 0; chr_num < chars; chr_num++) // X rendering.
+		for(chr_num = 0; chr_num <= chars_c; chr_num++) // X rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(ln_num == lines && chr_num == chars - 1)
+			if(ln_num == lines_c && chr_num == chars_c - 1)
 			{
 				printf("%s%c%s", INVERT, text[ln_num - 1][chr_num], RESET);
 			}
@@ -151,19 +152,19 @@ void renderText(BUFF_T lines, BUFF_T chars)
 }
 
 // Terminal fill that shows chars and other stupid things.
-void window(BUFF_T lines, BUFF_T chars, char key)
+void window(char key)
 {
 	uint16_t height;
-	uint16_t vert_fill = 2; // Two bars.
+	uint16_t fill = 2; // Two bars.
 
 	upperBar(base_filename);
-	renderText(lines, chars);
+	renderText();
 
 	if(chars_c == 0)
 	{
-		vert_fill--;
+		fill = 1;
 	}
-	for(height = lines; height <= windowSize('y') - vert_fill; height++)
+	for(height = lines_c; height <= windowSize('y') - fill; height++)
 	{
 		printf("%c", '\n');
 	}
