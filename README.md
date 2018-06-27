@@ -3,9 +3,11 @@
 ## Description
 Nano-inspired. Currently unsafe && unusable because WIP.
 
-## Needed tools for building:
+## Needed tools for building and installation:
 - gcc,
-- make.
+- gzip,
+- make,
+- valgrind [if you want to test].
 
 ## Compilation
 ```

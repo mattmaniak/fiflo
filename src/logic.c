@@ -37,6 +37,18 @@ void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
 	}
 }
 
+void readFromFile(void)
+{
+	FILE *textfile = fopen(base_filename, "r");
+	pointerCheck(textfile);
+
+	while(getc(textfile) != EOF)
+	{
+		printf("%c", getc(textfile));
+	}
+	fclose(textfile);
+}
+
 void saveToFile(void) // TODO: A LOT OF NULLS IN A FILE.
 {
 	BUFF_T ln_num;
@@ -49,7 +61,10 @@ void saveToFile(void) // TODO: A LOT OF NULLS IN A FILE.
 	{
 		for(chr_num = 0; chr_num < chars_c; chr_num++) // X rendering.
 		{
-			fprintf(textfile, "%c", text[ln_num - 1][chr_num]);
+			if(text[ln_num - 1][chr_num] != '\0')
+			{
+				fprintf(textfile, "%c", text[ln_num - 1][chr_num]);
+			}
 		}
 	}
 	fclose(textfile);
@@ -57,43 +72,45 @@ void saveToFile(void) // TODO: A LOT OF NULLS IN A FILE.
 
 void keyHandling(char key)
 {
-	if(key == CTRL_X)
+	switch(key)
 	{
-		saveToFile();
-	}
-	else if(key == ENTER)
-	{
-		text[CURRENT_LINE][chars_c] = '\n';
-		lines_c++;
-		// TODO: SCREEN LIMIT OR SCROLLING.
-	}
-	else if(key == BACKSPACE)
-	{
-		chars_c--;
-		text[CURRENT_LINE][chars_c] = '\0';
-		
-		if(chars_c <= 0)
-		{
-			chars_c = 0;
-		}
-		if(lines_c > 1 && text[lines_c - 2][chars_c] == '\n') // Delete line.
-		{
-			lines_c--;
-			if(lines_c <= 1)
+		default:
+			text[CURRENT_LINE][chars_c] = key; // Allocation.
+			chars_c++;
+			if(chars_c >= BUFF_SZ)
 			{
-				lines_c = 1;
+				chars_c = BUFF_SZ; // TODO: THE LAST CHAR IS OVERWRITTEN.
 			}
+		break;
+
+		case ENTER:
+			text[CURRENT_LINE][chars_c] = '\n';
+			lines_c++;
+			// TODO: SCREEN LIMIT OR SCROLLING.
+		break;
+
+		case BACKSPACE:
+			chars_c--;
 			text[CURRENT_LINE][chars_c] = '\0';
-		}
-	}
-	else if(key != ENTER)
-	{
-		text[CURRENT_LINE][chars_c] = key; // Allocation.
-		chars_c++;
-		if(chars_c >= BUFF_SZ)
-		{
-			chars_c = BUFF_SZ; // TODO: THE LAST CHAR IS OVERWRITTEN.
-		}
+
+			if(chars_c <= 0)
+			{
+				chars_c = 0;
+			}
+			if(lines_c > 1 && text[lines_c - 2][chars_c] == '\n') // Delete line.
+			{
+				lines_c--;
+				if(lines_c <= 1)
+				{
+					lines_c = 1;
+				}
+				text[CURRENT_LINE][chars_c] = '\0';
+			}
+		break;
+
+		case CTRL_X:
+			saveToFile();
+		break;
 	}
 }
 

@@ -29,6 +29,9 @@ int main(int argc, char *argv[])
 	filenameLenCheck(argv[1]);
 	setBaseFilename(argv[1]);
 
+	readFromFile();
+	puts(" < DEBUG");
+
 	keyHandling('>');
 	window('>');
 	programRound();

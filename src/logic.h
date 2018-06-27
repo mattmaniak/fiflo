@@ -33,6 +33,7 @@ extern BUFF_T lines_c;
 extern BUFF_T chars_c;
 
 void setBaseFilename(char *filename);
+void readFromFile(void);
 void saveToFile(void);
 void keyHandling(char key);
 uint16_t windowSize(char axis);
