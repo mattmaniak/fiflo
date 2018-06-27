@@ -5,6 +5,7 @@
 void usageInfo(void)
 {
 	fputs("Usage: fiflo [filename or nothing].\n", stderr);
+	exit(1);
 }
 
 void filenameLenCheck(char filename[])

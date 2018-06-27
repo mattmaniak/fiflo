@@ -1,13 +1,28 @@
+CC = gcc
+
+CFLAGS = -Wall -Wextra -Wpedantic
+
+DEBUG_FLAGS = -g -lasan \
+-fsanitize=address \
+-fsanitize=undefined \
+-fsanitize=signed-integer-overflow \
+
 compile:
-	gcc src/fiflo.c -o fiflo \
-	-lasan \
-	-fsanitize=address \
-	-fsanitize=undefined \
-	-fsanitize=signed-integer-overflow \
-	-Wall \
-	-Wextra \
-	-Wpedantic \
-	-g
+	$(CC) src/fiflo.c -o fiflo \
+	$(CFLAGS) \
+	$(DEBUG_FLAGS)
+
+test: # ONLY FOR THE WIP
+	$(CC) src/fiflo.c -o fiflo \
+	$(CFLAGS)
+
+	valgrind \
+	--tool=memcheck \
+	--leak-check=yes \
+	--show-reachable=yes \
+	--num-callers=20 \
+	--track-fds=yes \
+	./fiflo
 
 install:
 	cp fiflo /usr/bin/fiflo

@@ -3,10 +3,9 @@
 ## Description
 Nano-inspired. Currently unsafe && unusable because WIP.
 
-## Configuration - system compatibility check.
-```
-./configure
-```
+## Needed tools for building:
+- gcc,
+- make.
 
 ## Compilation
 ```

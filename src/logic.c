@@ -37,42 +37,40 @@ void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
 	}
 }
 
-void saveToFile(char *filename) // TODO: A LOT OF NULLS IN A FILE.
+void saveToFile(void) // TODO: A LOT OF NULLS IN A FILE.
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	setBaseFilename(filename);
-
-	FILE *file = fopen(base_filename, "w");
-	pointerCheck(file);
+	FILE *textfile = fopen(base_filename, "w");
+	pointerCheck(textfile);
 
 	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Y rendering.
 	{
 		for(chr_num = 0; chr_num < chars_c; chr_num++) // X rendering.
 		{
-			fprintf(file, "%c", text[ln_num - 1][chr_num]);
+			fprintf(textfile, "%c", text[ln_num - 1][chr_num]);
 		}
 	}
-	fclose(file);
+	fclose(textfile);
 }
 
-void keyHandling(char key, char *filename)
+void keyHandling(char key)
 {
 	if(key == CTRL_X)
 	{
-		saveToFile(filename);
+		saveToFile();
 	}
 	else if(key == ENTER)
 	{
-		text[lines_c - 1][chars_c] = '\n';
+		text[CURRENT_LINE][chars_c] = '\n';
 		lines_c++;
 		// TODO: SCREEN LIMIT OR SCROLLING.
 	}
 	else if(key == BACKSPACE)
 	{
 		chars_c--;
-		text[lines_c - 1][chars_c] = '\0';
+		text[CURRENT_LINE][chars_c] = '\0';
 		
 		if(chars_c <= 0)
 		{
@@ -85,13 +83,12 @@ void keyHandling(char key, char *filename)
 			{
 				lines_c = 1;
 			}
-			text[lines_c - 1][chars_c] = '\0';
+			text[CURRENT_LINE][chars_c] = '\0';
 		}
 	}
 	else if(key != ENTER)
 	{
-		text[lines_c - 1][chars_c] = key; // Allocation.
-		text[lines_c - 1][chars_c + 1] = '\0';
+		text[CURRENT_LINE][chars_c] = key; // Allocation.
 		chars_c++;
 		if(chars_c >= BUFF_SZ)
 		{
