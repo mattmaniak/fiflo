@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
 		usageInfo(); // TODO: AND EXIT.
 	}
 */	
-	filenameLenCheck(argv[1]);
 	setBaseFilename(argv[1]);
 
 	readFromFile();

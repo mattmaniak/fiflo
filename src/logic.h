@@ -30,7 +30,7 @@ typedef int16_t BUFF_T; // Text buffer type.
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 
 extern char text[BUFF_SZ][BUFF_SZ];
-extern char base_filename[510];
+extern char base_filename[512];
 extern BUFF_T lines_c;
 extern BUFF_T chars_c;
 

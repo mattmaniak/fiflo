@@ -4,6 +4,7 @@
 
 void pointerCheck(void *ptr) // Eg. malloc or FILE*.
 {
+	// TODO: MORE SPECIFIC ERRORS.
 	if(ptr == NULL)
 	{
 		fputs("Memory pointer error.\n", stderr);

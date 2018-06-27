@@ -7,21 +7,23 @@ BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
 
 char text[BUFF_SZ][BUFF_SZ];
-char base_filename[510]; // TODO: IS NULL-TERMINATED? AND LEN CHECK.
+char base_filename[512]; // 255 (cwd) + 1 (slash) + 255 (filename) + 1 (null).
 
 void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
 {
 	uint8_t chr_num;
-	char cwd[255];
+	char cwd[256];
+
+	cwd[strlen(cwd)] = TERMINATOR;
 
 	if(getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		fputs("Cannot get your current absolute dir.", stderr);
 		exit(1);
 	}
-	if(strlen(cwd) > 255)
+	if(strlen(cwd) > 255 || strlen(filename) > 255)
 	{
-		fputs("Max. absolute path length: 255.", stderr);
+		fputs("Max. absolute path or filename length is 255.", stderr);
 		exit(1);
 	}
 
@@ -35,6 +37,7 @@ void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
 	{
 		base_filename[chr_num + strlen(cwd) + 1] = filename[chr_num];
 	}
+	base_filename[strlen(cwd) + strlen(filename) + 1] = TERMINATOR;
 }
 
 void readFromFile(void) // TODO
