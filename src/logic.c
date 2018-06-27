@@ -16,12 +16,12 @@ void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
 
 	if(getcwd(cwd, sizeof(cwd)) == NULL)
 	{
-		fputs("Cannot get your current absolute dir.\0", stderr);
+		fputs("Cannot get your current absolute dir.", stderr);
 		exit(1);
 	}
 	if(strlen(cwd) > 255)
 	{
-		fputs("Max. absolute path length: 255.\0", stderr);
+		fputs("Max. absolute path length: 255.", stderr);
 		exit(1);
 	}
 
@@ -37,7 +37,7 @@ void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
 	}
 }
 
-void readFromFile(void)
+void readFromFile(void) // TODO
 {
 	FILE *textfile = fopen(base_filename, "r");
 	pointerCheck(textfile);
@@ -49,7 +49,7 @@ void readFromFile(void)
 	fclose(textfile);
 }
 
-void saveToFile(void) // TODO: A LOT OF NULLS IN A FILE.
+void saveToFile(void)
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
@@ -57,11 +57,11 @@ void saveToFile(void) // TODO: A LOT OF NULLS IN A FILE.
 	FILE *textfile = fopen(base_filename, "w");
 	pointerCheck(textfile);
 
-	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Y rendering.
+	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Lines rendering.
 	{
-		for(chr_num = 0; chr_num < chars_c; chr_num++) // X rendering.
+		for(chr_num = 0; chr_num <= chars_c; chr_num++) // Chars in lines.
 		{
-			if(text[ln_num - 1][chr_num] != '\0')
+			if(text[ln_num - 1][chr_num] != TERMINATOR)
 			{
 				fprintf(textfile, "%c", text[ln_num - 1][chr_num]);
 			}
@@ -74,8 +74,8 @@ void keyHandling(char key)
 {
 	switch(key)
 	{
-		default:
-			text[CURRENT_LINE][chars_c] = key; // Allocation.
+		default:  // Just convert pressed key into a char in the string.
+			text[CURRENT_LINE][chars_c] = key;
 			chars_c++;
 			if(chars_c >= BUFF_SZ)
 			{
@@ -83,28 +83,28 @@ void keyHandling(char key)
 			}
 		break;
 
-		case ENTER:
-			text[CURRENT_LINE][chars_c] = '\n';
+		case NEWLINE: // NEWLINE by default.
+			text[CURRENT_LINE][chars_c] = NEWLINE;
 			lines_c++;
 			// TODO: SCREEN LIMIT OR SCROLLING.
 		break;
 
 		case BACKSPACE:
 			chars_c--;
-			text[CURRENT_LINE][chars_c] = '\0';
+			text[CURRENT_LINE][chars_c] = TERMINATOR;
 
 			if(chars_c <= 0)
 			{
 				chars_c = 0;
 			}
-			if(lines_c > 1 && text[lines_c - 2][chars_c] == '\n') // Delete line.
+			if(lines_c > 1 && text[UPPER_LINE][chars_c] == NEWLINE)
 			{
 				lines_c--;
 				if(lines_c <= 1)
 				{
 					lines_c = 1;
 				}
-				text[CURRENT_LINE][chars_c] = '\0';
+				text[CURRENT_LINE][chars_c] = TERMINATOR;
 			}
 		break;
 
@@ -174,13 +174,14 @@ void window(char key)
 	upperBar(base_filename);
 	renderText();
 
-	if(chars_c == 0)
+	if(chars_c == 0 || text[0][0] == NEWLINE) // No visible char.
 	{
 		fill = 1;
 	}
+
 	for(height = lines_c; height <= windowSize('y') - fill; height++)
 	{
-		printf("%c", '\n');
+		printf("%c", NEWLINE);
 	}
 	lowerBar(lines_c, chars_c, key); // chars - 1 - last char index.
 }
@@ -190,7 +191,7 @@ void cleanFrame(void) // To provide rendering in a one frame.
 	uint16_t lines;
 	for(lines = 0; lines < windowSize('y'); lines++)
 	{
-		printf("%s", "\033[F\033[K\0");
+		printf("%s", "\033[F\033[K");
 	}
 	fflush(stdout);
 }

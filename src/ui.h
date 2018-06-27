@@ -6,10 +6,10 @@
 #include <string.h>
 
 // ANSI escape codes.
-#define RESET "\033[0m\0"
-#define BOLD "\033[1m\0"
-#define BLINK "\033[5m\0"
-#define INVERT "\033[7m\0"
+#define RESET "\033[0m"
+#define BOLD "\033[1m"
+#define BLINK "\033[5m"
+#define INVERT "\033[7m"
 
 typedef int16_t BUFF_T;
 

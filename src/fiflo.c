@@ -2,7 +2,15 @@
 #include "hardware.c"
 #include "logic.c"
 
-void programRound()
+void init(void)
+{
+	// Chars_c cannot be 0 because out of index error so will be reset.
+	keyHandling(' ');
+	chars_c--;
+	text[0][0] = TERMINATOR;
+}
+
+void programRound(void)
 {
 	char pressed_key;
 	for(;;)
@@ -32,8 +40,8 @@ int main(int argc, char *argv[])
 	readFromFile();
 	puts(" < DEBUG");
 
-	keyHandling('>');
-	window('>');
+	init();
+	window(TERMINATOR);
 	programRound();
 	return 0;
 }

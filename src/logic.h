@@ -13,10 +13,12 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
+#define UPPER_LINE lines_c - 2
 #define CURRENT_LINE lines_c - 1
 
 // Some special ASCII decimal codes.
-#define ENTER 10 // Linefeed
+#define TERMINATOR 0
+#define NEWLINE 10 // Linefeed (LF)
 #define CTRL_X 24
 #define ARROW_UP 65
 #define ARROW_DOWN 66
