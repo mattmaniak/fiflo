@@ -7,42 +7,43 @@ BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
 
 char text[BUFF_SZ][MAX_WIDTH + 1];
-char base_filename[512]; // 255 (cwd) + 1 (slash) + 255 (filename) + 1 (null).
+char filename[512]; // 255 (cwd) + 1 (slash) + 255 (base_fn) + 1 (null).
 
-void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
+void setFilename(const char *base_fn) // TODO: SIMPLIFY NAMING.
 {
+	// Filename = absolutae path + base filename eg. "/home/user/my_file".
+	// Base filename (base_fn) eg. "my_file".
 	uint8_t chr_num;
 	char cwd[256];
-
-	cwd[strlen(cwd)] = TERMINATOR;
 
 	if(getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		fputs("Cannot get your current absolute dir.", stderr);
 		exit(1);
 	}
-	if(strlen(cwd) > 255 || strlen(filename) > 255)
+	if(strlen(cwd) > 255 || strlen(base_fn) > 255)
 	{
-		fputs("Max. absolute path or filename length is 255.", stderr);
+		fputs("Max. absolute path or base_fn length is 255.", stderr);
 		exit(1);
 	}
+	cwd[strlen(cwd)] = TERMINATOR;
 
-	for(chr_num = 0; chr_num < strlen(cwd); chr_num++) // Copy absolute path.
+	for(chr_num = 0; chr_num < strlen(cwd); chr_num++) // Copy filename.
 	{
-		base_filename[chr_num] = cwd[chr_num];
+		filename[chr_num] = cwd[chr_num];
 	}
-	base_filename[strlen(cwd)] = '/'; // Add a slash between.
+	filename[strlen(cwd)] = '/'; // Add a slash between.
 
-	for(chr_num = 0; chr_num < strlen(filename); chr_num++) // Copy filename.
+	for(chr_num = 0; chr_num < strlen(base_fn); chr_num++) // Copy base_fn.
 	{
-		base_filename[chr_num + strlen(cwd) + 1] = filename[chr_num];
+		filename[chr_num + strlen(cwd) + 1] = base_fn[chr_num];
 	}
-	base_filename[strlen(cwd) + strlen(filename) + 1] = TERMINATOR;
+	filename[strlen(cwd) + strlen(base_fn) + 1] = TERMINATOR;
 }
 
 void readFromFile(void) // TODO
 {
-	FILE *textfile = fopen(base_filename, "ab+");
+	FILE *textfile = fopen(filename, "ab+");
 	pointerCheck(textfile, "Cannot open the file, exit.\0");
 
 	while(getc(textfile) != EOF)
@@ -57,7 +58,7 @@ void saveToFile(void)
 	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	FILE *textfile = fopen(base_filename, "w");
+	FILE *textfile = fopen(filename, "w");
 	pointerCheck(textfile, "Cannot write to the file, exit.\0");
 
 	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Lines rendering.
@@ -92,9 +93,9 @@ void keyHandling(char key)
 		case NEWLINE:
 			text[CURRENT_LINE][chars_c] = NEWLINE;
 			lines_c++;
-			if(lines_c > windowSize('y') - 1)
+			if(lines_c > termSize('y') - 1)
 			{
-				lines_c = windowSize('y') - 1;
+				lines_c = termSize('y') - 1;
 			}
 			// TODO: SCREEN LIMIT OR SCROLLING.
 		break;
@@ -125,7 +126,7 @@ void keyHandling(char key)
 }
 
 // Drawing funcions.
-uint16_t windowSize(char axis) // Check terminal size.
+uint16_t termSize(char axis) // Check terminal size.
 {
 	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -181,15 +182,14 @@ void window(char key)
 	uint16_t height;
 	uint16_t fill = 2; // Two bars.
 
-	upperBar(base_filename);
-	renderText();
-
 	if(chars_c == 0 || text[0][0] == NEWLINE) // No visible char.
 	{
 		fill = 1;
 	}
+	upperBar(filename);
+	renderText();
 
-	for(height = lines_c; height <= windowSize('y') - fill; height++)
+	for(height = lines_c; height <= termSize('y') - fill; height++)
 	{
 		printf("%c", NEWLINE);
 	}
@@ -199,7 +199,7 @@ void window(char key)
 void cleanFrame(void) // To provide rendering in a one frame.
 {
 	uint16_t lines;
-	for(lines = 0; lines < windowSize('y'); lines++)
+	for(lines = 0; lines < termSize('y'); lines++)
 	{
 		printf("%s", "\033[F\033[K");
 	}

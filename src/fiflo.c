@@ -1,3 +1,5 @@
+#ifdef __linux__
+
 #include "errors.c"
 #include "hardware.c"
 #include "logic.c"
@@ -17,7 +19,7 @@ void programRound(void)
 	{
 		pressed_key = unixGetch(); // TODO: FLUSHING.
 		keyHandling(pressed_key);
-		cleanFrame(); // Provide one-frame rendering in a terminal window.
+		cleanFrame();
 		window(pressed_key);
 	}
 }
@@ -27,14 +29,13 @@ int main(int argc, char *argv[])
 	argcCheck(argc);
 	if(argv[1] == NULL)
 	{
-		argv[1] = "noname.asdf\0";
+		argv[1] = "noname.asdf\0"; // TODO: IS CORRECT?
 	}
-/*	else if(argv[1] == "-h" || argv[1] == "--help")
+	else if(strcmp(argv[1], "-h\0") == 0 || strcmp(argv[1], "--help\0") == 0)
 	{
-		usageInfo(); // TODO: AND EXIT.
+		usageInfo();
 	}
-*/
-	setBaseFilename(argv[1]);
+	setFilename(argv[1]);
 
 	readFromFile();
 	puts(" < DEBUG");
@@ -44,4 +45,16 @@ int main(int argc, char *argv[])
 	programRound();
 	return 0;
 }
+
+#else
+
+#include <stdio.h>
+
+int main(void)
+{
+	fputs("Only Linux-based systems are supported, exit.\n", stderr);
+	return 0;
+}
+
+#endif
 

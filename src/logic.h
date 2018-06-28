@@ -29,16 +29,16 @@
 typedef int16_t BUFF_T; // Text buffer type.
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 
-extern char text[BUFF_SZ][MAX_WIDTH + 1];
-extern char base_filename[512];
+extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
+extern char filename[512];
 extern BUFF_T lines_c;
 extern BUFF_T chars_c;
 
-void setBaseFilename(char *filename);
+void setFilename(const char *base_fn);
 void readFromFile(void);
 void saveToFile(void);
 void keyHandling(char key);
-uint16_t windowSize(char axis);
+uint16_t termSize(char axis);
 void renderText(void);
 void window(char key);
 void cleanFrame(void);

@@ -4,7 +4,7 @@
 
 void usageInfo(void)
 {
-	fputs("Usage: fiflo [filename or nothing].\n", stderr);
+	puts("Usage: fiflo [filename or nothing].");
 	exit(1);
 }
 

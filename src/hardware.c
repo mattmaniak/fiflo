@@ -4,7 +4,6 @@
 
 void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
 {
-	// TODO: MORE SPECIFIC ERRORS.
 	if(ptr == NULL)
 	{
 		fprintf(stderr, "%s\n", errmsg);

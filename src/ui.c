@@ -15,31 +15,31 @@ int8_t decimalIntLen(int8_t number)
 	return len;
 }
 
-void dynamicLen(char *filename)
+void dynamicLen(const char *base_fn)
 {
-	// If a filename is longer than 16. Only first 16 chars will be printed
+	// If a base_fn is longer than 16. Only first 16 chars will be printed
 	// and 3 dots at the end will be added.
 	uint8_t chr_num;
 
-	if(strlen(filename) > 16) // Max rendered first 32 chars.
+	if(strlen(base_fn) > 16) // Max rendered first 32 chars.
 	{
 		for(chr_num = 0; chr_num < 16; chr_num++)
 		{
-			printf("%c", filename[chr_num]);
+			printf("%c", base_fn[chr_num]);
 		}
 		printf("%s", "..."); // strlen is 3.
 	}
 	else
 	{
-		printf("%s", filename);
-		for(chr_num = 0; chr_num < 16 + 3 - strlen(filename); chr_num++)
+		printf("%s", base_fn);
+		for(chr_num = 0; chr_num < 16 + 3 - strlen(base_fn); chr_num++)
 		{
 			printf("%c", ' ');
 		}
 	}
 }
 
-void upperBar(char *base_fn) // TODO: PATH + FN IN THE UPPER BAR.
+void upperBar(const char *base_fn) // TODO: PATH + FN IN THE UPPER BAR.
 {
 	const char *program = " Fiflo | file: \0";
 
@@ -48,7 +48,7 @@ void upperBar(char *base_fn) // TODO: PATH + FN IN THE UPPER BAR.
 
 	printf("%s%s%s", INVERT, program, base_fn);
 
-	for(width = 0; width < windowSize('x') - whitespace; width++)
+	for(width = 0; width < termSize('x') - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}
@@ -71,10 +71,10 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key)
 	printf("%s%s%i%s%i%s%i", INVERT, lines_text, lines, chars_text, chars,
 	ascii_code_text, key);
 
-	char *bar_buff = malloc(windowSize('x')); // TODO: PLACE MALLOCS.
+	char *bar_buff = malloc(termSize('x')); // TODO: PLACE MALLOCS.
 	pointerCheck(bar_buff, "Cannot allocate memory for lower bar, exit.\0");
 
-	for(width = 0; width < windowSize('x') - whitespace; width++)
+	for(width = 0; width < termSize('x') - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}

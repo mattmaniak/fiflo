@@ -1,5 +1,5 @@
-fiflo
-*.swp
-*.save
-*.out
 *.asdf
+fiflo
+*.out
+*.save
+*.swp
