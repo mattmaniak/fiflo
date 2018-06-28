@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
 }
 
 #else
-
 #include <stdio.h>
 
 int main(void)
@@ -55,6 +54,5 @@ int main(void)
 	fputs("Only Linux-based systems are supported, exit.\n", stderr);
 	return 0;
 }
-
 #endif
 

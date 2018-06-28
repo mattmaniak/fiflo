@@ -6,7 +6,7 @@ Everything happens on three branches:
 - develop,
 - hotfix.
 
-## Description
+## Branches description
 Everything connected with the development, tests etc. happens on the "develop"
 branch. When everything is ok and the changelog is up-to-date content is merged
 without fast-forwarding ("--no-ff" to make branches visualisation cleaner) to
@@ -23,3 +23,10 @@ commits to provide updated code on the "develop" branch.
 - https://semver.org/,
 - https://nvie.com/posts/a-successful-git-branching-model/ and between,
 - https://guides.github.com/introduction/flow/.
+
+## Coding rules:
+- use Allman-style indentation,
+- comment, comment, comment,
+- write TODOs near thing to fix as uppercase comment.
+- name longer variables with an underscore, functions with camelCase,
+- #define as much as you can.

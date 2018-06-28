@@ -13,7 +13,7 @@
 
 typedef int16_t BUFF_T;
 
-int8_t decimalIntLen(int8_t chars);
+int8_t decimalUintLen(int8_t chars);
 void upperBar(const char *base_fn);
 void dynamicLen(const char *base_fn);
 void lowerBar(BUFF_T lines, BUFF_T chars, char key);

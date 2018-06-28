@@ -2,10 +2,10 @@
 
 #include "ui.h"
 
-int8_t decimalIntLen(int8_t number)
+int8_t decimalUintLen(int8_t number)
 {
 	// Return a length of decimal integer. Eg. 2 from number = 12.
-	BUFF_T len = 1;
+	int8_t len = 1;
 
 	while(number > 9)
 	{
@@ -39,15 +39,14 @@ void dynamicLen(const char *base_fn)
 	}
 }
 
-void upperBar(const char *base_fn) // TODO: PATH + FN IN THE UPPER BAR.
+void upperBar(const char *filename)
 {
 	const char *program = " Fiflo | file: \0";
 
 	uint16_t width;
-	uint16_t whitespace = strlen(program) + strlen(base_fn);
+	uint16_t whitespace = strlen(program) + strlen(filename);
 
-	printf("%s%s%s", INVERT, program, base_fn);
-
+	printf("%s%s%s", INVERT, program, filename); // TODO: RENDERING LIMIT
 	for(width = 0; width < termSize('x') - whitespace; width++)
 	{
 		printf("%c", ' ');
@@ -63,10 +62,10 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key)
 	const char *ascii_code_text = " | last char code: \0";
 
 	uint16_t width;
-	uint16_t whitespace =
-	strlen(lines_text) + decimalIntLen(lines)
-	+ strlen(chars_text) + decimalIntLen(chars) 
-	+ strlen(ascii_code_text) + decimalIntLen(key);
+	uint16_t whitespace
+	= strlen(lines_text) + decimalUintLen(lines)
+	+ strlen(chars_text) + decimalUintLen(chars) 
+	+ strlen(ascii_code_text) + decimalUintLen(key);
 
 	printf("%s%s%i%s%i%s%i", INVERT, lines_text, lines, chars_text, chars,
 	ascii_code_text, key);

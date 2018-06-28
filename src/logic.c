@@ -5,11 +5,12 @@
 
 BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
+BUFF_T cursor_pos = 1;
 
 char text[BUFF_SZ][MAX_WIDTH + 1];
 char filename[512]; // 255 (cwd) + 1 (slash) + 255 (base_fn) + 1 (null).
 
-void setFilename(const char *base_fn) // TODO: SIMPLIFY NAMING.
+void setFilename(const char *base_fn)
 {
 	// Filename = absolutae path + base filename eg. "/home/user/my_file".
 	// Base filename (base_fn) eg. "my_file".
@@ -28,7 +29,7 @@ void setFilename(const char *base_fn) // TODO: SIMPLIFY NAMING.
 	}
 	cwd[strlen(cwd)] = TERMINATOR;
 
-	for(chr_num = 0; chr_num < strlen(cwd); chr_num++) // Copy filename.
+	for(chr_num = 0; chr_num < strlen(cwd); chr_num++) // Copy cwd.
 	{
 		filename[chr_num] = cwd[chr_num];
 	}
@@ -78,7 +79,7 @@ void keyHandling(char key)
 {
 	switch(key)
 	{
-		default:  // Just convert pressed key into a char in the string.
+		default: // Just convert pressed key into a char in the string.
 			chars_c++;
 			if(chars_c > MAX_WIDTH)
 			{
@@ -93,11 +94,11 @@ void keyHandling(char key)
 		case NEWLINE:
 			text[CURRENT_LINE][chars_c] = NEWLINE;
 			lines_c++;
-			if(lines_c > termSize('y') - 1)
+			if(lines_c > termSize('y') - 2)
 			{
-				lines_c = termSize('y') - 1;
+				lines_c = termSize('y') - 2;
+				text[CURRENT_LINE][chars_c] = TERMINATOR; // Prevent double bar.
 			}
-			// TODO: SCREEN LIMIT OR SCROLLING.
 		break;
 
 		case BACKSPACE:
@@ -119,8 +120,21 @@ void keyHandling(char key)
 			}
 		break;
 
+		// More special.
 		case CTRL_X:
 			saveToFile();
+		break;
+
+		case ARROW_LEFT:
+			cursor_pos++;
+		break;
+
+		case ARROW_RIGHT:
+			cursor_pos--;
+			if(cursor_pos < 1)
+			{
+				cursor_pos = 1;
+			}
 		break;
 	}
 }
@@ -154,7 +168,7 @@ uint16_t termSize(char axis) // Check terminal size.
 }
 
 // Pressed keys to rendered chars in proper order. TODO: all keys handling.
-void renderText(void) // TODO: BACKSPACE LINE_C-- FIX.
+void renderText(void)
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
@@ -164,7 +178,7 @@ void renderText(void) // TODO: BACKSPACE LINE_C-- FIX.
 		for(chr_num = 0; chr_num <= chars_c; chr_num++) // X rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(ln_num == lines_c && chr_num == chars_c - 1)
+			if(ln_num == lines_c && chr_num == chars_c - cursor_pos)
 			{
 				printf("%s%c%s", INVERT, text[ln_num - 1][chr_num], RESET);
 			}
@@ -176,8 +190,7 @@ void renderText(void) // TODO: BACKSPACE LINE_C-- FIX.
 	}
 }
 
-// Terminal fill that shows chars and other stupid things.
-void window(char key)
+void window(char key) // Terminal fill that shows chars and other stupid things.
 {
 	uint16_t height;
 	uint16_t fill = 2; // Two bars.

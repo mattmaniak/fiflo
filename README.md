@@ -27,3 +27,6 @@ sudo make uninstall
 ## FAQ
 Will you ever port it into a Windows?
 - No.
+
+How can I contribute?
+- Go into docs/, read and send request.
