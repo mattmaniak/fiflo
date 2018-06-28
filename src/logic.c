@@ -6,7 +6,7 @@
 BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
 
-char text[BUFF_SZ][BUFF_SZ];
+char text[BUFF_SZ][MAX_WIDTH + 1];
 char base_filename[512]; // 255 (cwd) + 1 (slash) + 255 (filename) + 1 (null).
 
 void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
@@ -42,8 +42,8 @@ void setBaseFilename(char *filename) // TODO: SIMPLIFY NAMING.
 
 void readFromFile(void) // TODO
 {
-	FILE *textfile = fopen(base_filename, "r");
-	pointerCheck(textfile);
+	FILE *textfile = fopen(base_filename, "ab+");
+	pointerCheck(textfile, "Cannot open the file, exit.\0");
 
 	while(getc(textfile) != EOF)
 	{
@@ -58,7 +58,7 @@ void saveToFile(void)
 	BUFF_T chr_num;
 
 	FILE *textfile = fopen(base_filename, "w");
-	pointerCheck(textfile);
+	pointerCheck(textfile, "Cannot write to the file, exit.\0");
 
 	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Lines rendering.
 	{
@@ -78,17 +78,24 @@ void keyHandling(char key)
 	switch(key)
 	{
 		default:  // Just convert pressed key into a char in the string.
-			text[CURRENT_LINE][chars_c] = key;
 			chars_c++;
-			if(chars_c >= BUFF_SZ)
+			if(chars_c > MAX_WIDTH)
 			{
-				chars_c = BUFF_SZ; // TODO: THE LAST CHAR IS OVERWRITTEN.
+				chars_c = MAX_WIDTH;
+			}
+			else
+			{
+				text[CURRENT_LINE][chars_c - 1] = key;
 			}
 		break;
 
-		case NEWLINE: // NEWLINE by default.
+		case NEWLINE:
 			text[CURRENT_LINE][chars_c] = NEWLINE;
 			lines_c++;
+			if(lines_c > windowSize('y') - 1)
+			{
+				lines_c = windowSize('y') - 1;
+			}
 			// TODO: SCREEN LIMIT OR SCROLLING.
 		break;
 
@@ -96,14 +103,14 @@ void keyHandling(char key)
 			chars_c--;
 			text[CURRENT_LINE][chars_c] = TERMINATOR;
 
-			if(chars_c <= 0)
+			if(chars_c < 0)
 			{
 				chars_c = 0;
 			}
 			if(lines_c > 1 && text[UPPER_LINE][chars_c] == NEWLINE)
 			{
 				lines_c--;
-				if(lines_c <= 1)
+				if(lines_c < 1)
 				{
 					lines_c = 1;
 				}

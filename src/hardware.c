@@ -2,12 +2,12 @@
 
 #include "hardware.h"
 
-void pointerCheck(void *ptr) // Eg. malloc or FILE*.
+void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
 {
 	// TODO: MORE SPECIFIC ERRORS.
 	if(ptr == NULL)
 	{
-		fputs("Memory pointer error.\n", stderr);
+		fprintf(stderr, "%s\n", errmsg);
 		exit(1);
 	}
 }

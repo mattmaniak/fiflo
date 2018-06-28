@@ -72,7 +72,7 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key)
 	ascii_code_text, key);
 
 	char *bar_buff = malloc(windowSize('x')); // TODO: PLACE MALLOCS.
-	pointerCheck(bar_buff);
+	pointerCheck(bar_buff, "Cannot allocate memory for lower bar, exit.\0");
 
 	for(width = 0; width < windowSize('x') - whitespace; width++)
 	{

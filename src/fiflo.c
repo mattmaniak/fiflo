@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	{
 		usageInfo(); // TODO: AND EXIT.
 	}
-*/	
+*/
 	setBaseFilename(argv[1]);
 
 	readFromFile();
