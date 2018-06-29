@@ -47,7 +47,7 @@ void upperBar(const char *filename)
 	uint16_t whitespace = strlen(program) + strlen(filename);
 
 	printf("%s%s%s", INVERT, program, filename); // TODO: RENDERING LIMIT
-	for(width = 0; width < termSize('x') - whitespace; width++)
+	for(width = 0; width < termSize('X') - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}
@@ -70,10 +70,10 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key)
 	printf("%s%s%i%s%i%s%i", INVERT, lines_text, lines, chars_text, chars,
 	ascii_code_text, key);
 
-	char *bar_buff = malloc(termSize('x')); // TODO: PLACE MALLOCS.
+	char *bar_buff = malloc(termSize('X')); // TODO: PLACE MALLOCS.
 	pointerCheck(bar_buff, "Cannot allocate memory for lower bar, exit.\0");
 
-	for(width = 0; width < termSize('x') - whitespace; width++)
+	for(width = 0; width < termSize('X') - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}

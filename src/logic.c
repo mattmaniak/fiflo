@@ -94,9 +94,9 @@ void keyHandling(char key)
 		case NEWLINE:
 			text[CURRENT_LINE][chars_c] = NEWLINE;
 			lines_c++;
-			if(lines_c > termSize('y') - 2)
+			if(lines_c > termSize('Y') - 2)
 			{
-				lines_c = termSize('y') - 2;
+				lines_c = termSize('Y') - 2;
 				text[CURRENT_LINE][chars_c] = TERMINATOR; // Prevent double bar.
 			}
 		break;
@@ -147,35 +147,37 @@ uint16_t termSize(char axis) // Check terminal size.
 
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
 	{
-		fputs("Min. term size is 80x20.\n", stderr);
+		fprintf(stderr, "%s%i%c%i%s", "Min. term size is ", MIN_WIDTH, 'x',
+		MIN_HEIGHT, ".\n");
 		exit(1);
 	}
 	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
 	{
-		fputs("Max. term size is 500x300.\n", stderr);
+		fprintf(stderr, "%s%i%c%i%s", "Max. term size is ", MAX_WIDTH, 'x',
+		MAX_HEIGHT, ".\n");
 		exit(1);
 	}
 
 	switch(axis)
 	{
-		case 'x':
+		case 'X':
 			return win.ws_col;
 
-		case 'y':
+		case 'Y':
 			return win.ws_row;
 	}
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
-// Pressed keys to rendered chars in proper order. TODO: all keys handling.
+// Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
 void renderText(void)
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Y rendering.
+	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Lines rendering.
 	{
-		for(chr_num = 0; chr_num <= chars_c; chr_num++) // X rendering.
+		for(chr_num = 0; chr_num <= chars_c; chr_num++) // Chars rendering.
 		{
 			// Invert last char color as a integrated cursor.
 			if(ln_num == lines_c && chr_num == chars_c - cursor_pos)
@@ -199,10 +201,20 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 	{
 		fill = 1;
 	}
+
+	if(chars_c > 0 && chars_c % termSize('X') == 0) // TODO: AUTO NEWLINE
+	{
+		lines_c++;
+	}
+	else if(chars_c > 0 && key == BACKSPACE && chars_c % termSize('X') == 0)
+	{
+		lines_c--;
+	}
+
 	upperBar(filename);
 	renderText();
 
-	for(height = lines_c; height <= termSize('y') - fill; height++)
+	for(height = lines_c; height <= termSize('Y') - fill; height++)
 	{
 		printf("%c", NEWLINE);
 	}
@@ -212,7 +224,7 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 void cleanFrame(void) // To provide rendering in a one frame.
 {
 	uint16_t lines;
-	for(lines = 0; lines < termSize('y'); lines++)
+	for(lines = 0; lines < termSize('Y'); lines++)
 	{
 		printf("%s", "\033[F\033[K");
 	}
