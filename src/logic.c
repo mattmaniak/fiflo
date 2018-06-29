@@ -42,26 +42,18 @@ void setFilename(const char *basename)
 	filename[strlen(path) + strlen(basename) + 1] = TERMINATOR;
 }
 
-void readFromFile(void) // TODO
+void readFromFile(void)
 {
-//	BUFF_T ln_num;
-	BUFF_T sz = 1;
+	char chr;
 
 	FILE *textfile = fopen(filename, "ab+");
 	pointerCheck(textfile, "Cannot open the file, exit.\0");
 
-	while(getc(textfile) != EOF) // Get size.
+	while((chr = getc(textfile)) != EOF)
 	{
-		sz++;
+		chars_c++;
+		text[CURRENT_LINE][chars_c - 1] = chr;
 	}
-
-	chars_c++;
-	for(; chars_c < sz; chars_c++)
-	{
-		text[CURRENT_LINE][chars_c - 1] = getc(textfile);
-	}
-
-	printf("%i", sz);
 	fclose(textfile);
 }
 

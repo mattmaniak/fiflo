@@ -20,8 +20,7 @@ void argcCheck(int arg_count)
 
 void initRound(void) // Chars_c can't be 0 because out of index. Will be reset.
 {
-	readFromFile(); // DEBUG
-	puts(" < DEBUG");
+	readFromFile();
 	window(TERMINATOR);
 }
 
