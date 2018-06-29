@@ -36,7 +36,7 @@ extern BUFF_T cursor_pos;
 extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
 extern char filename[512];
 
-void setFilename(const char *base_fn);
+void setFilename(const char *basename);
 void readFromFile(void);
 void saveToFile(void);
 void keyHandling(char key);

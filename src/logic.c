@@ -8,49 +8,60 @@ BUFF_T chars_c = 0; // text = lines + chars
 BUFF_T cursor_pos = 1;
 
 char text[BUFF_SZ][MAX_WIDTH + 1];
-char filename[512]; // 255 (cwd) + 1 (slash) + 255 (base_fn) + 1 (null).
+char filename[512]; // 255 (cwd) + 1 (slash) + 255 (basename) + 1 (null).
 
-void setFilename(const char *base_fn)
+void setFilename(const char *basename)
 {
-	// Filename = absolutae path + base filename eg. "/home/user/my_file".
-	// Base filename (base_fn) eg. "my_file".
+	// Filename = absolute path + basename eg. "/home/user/my_file".
+	// Base filename (basename) eg. "my_file".
 	uint8_t chr_num;
-	char cwd[256];
+	char path[256];
 
-	if(getcwd(cwd, sizeof(cwd)) == NULL)
+	if(getcwd(path, sizeof(path)) == NULL)
 	{
 		fputs("Cannot get your current absolute dir.", stderr);
 		exit(1);
 	}
-	if(strlen(cwd) > 255 || strlen(base_fn) > 255)
+	if(strlen(path) > 255 || strlen(basename) > 255)
 	{
-		fputs("Max. absolute path or base_fn length is 255.", stderr);
+		fputs("Max. absolute path or basename length is 255.", stderr);
 		exit(1);
 	}
-	cwd[strlen(cwd)] = TERMINATOR;
+	path[strlen(path)] = TERMINATOR;
 
-	for(chr_num = 0; chr_num < strlen(cwd); chr_num++) // Copy cwd.
+	for(chr_num = 0; chr_num < strlen(path); chr_num++) // Copy cwd.
 	{
-		filename[chr_num] = cwd[chr_num];
+		filename[chr_num] = path[chr_num];
 	}
-	filename[strlen(cwd)] = '/'; // Add a slash between.
+	filename[strlen(path)] = '/'; // Add a slash between.
 
-	for(chr_num = 0; chr_num < strlen(base_fn); chr_num++) // Copy base_fn.
+	for(chr_num = 0; chr_num < strlen(basename); chr_num++) // Copy basename.
 	{
-		filename[chr_num + strlen(cwd) + 1] = base_fn[chr_num];
+		filename[chr_num + strlen(path) + 1] = basename[chr_num];
 	}
-	filename[strlen(cwd) + strlen(base_fn) + 1] = TERMINATOR;
+	filename[strlen(path) + strlen(basename) + 1] = TERMINATOR;
 }
 
 void readFromFile(void) // TODO
 {
+//	BUFF_T ln_num;
+	BUFF_T sz = 1;
+
 	FILE *textfile = fopen(filename, "ab+");
 	pointerCheck(textfile, "Cannot open the file, exit.\0");
 
-	while(getc(textfile) != EOF)
+	while(getc(textfile) != EOF) // Get size.
 	{
-		printf("%c", getc(textfile));
+		sz++;
 	}
+
+	chars_c++;
+	for(; chars_c < sz; chars_c++)
+	{
+		text[CURRENT_LINE][chars_c - 1] = getc(textfile);
+	}
+
+	printf("%i", sz);
 	fclose(textfile);
 }
 

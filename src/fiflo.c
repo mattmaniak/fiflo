@@ -18,12 +18,10 @@ void argcCheck(int arg_count)
 	}
 }
 
-void initRound(void)
+void initRound(void) // Chars_c can't be 0 because out of index. Will be reset.
 {
-	// Chars_c cannot be 0 because out of index error so will be reset.
-	keyHandling(' ');
-	chars_c--;
-	text[0][0] = TERMINATOR;
+	readFromFile(); // DEBUG
+	puts(" < DEBUG");
 	window(TERMINATOR);
 }
 
@@ -43,20 +41,17 @@ int main(int argc, char *argv[])
 {
 	termSize(0);
 	argcCheck(argc);
-	const char *base_filename;
+	const char *basename;
 
 	if(argv[1] == NULL)
 	{
-		base_filename = "noname.asdf\0";
+		basename = "noname.asdf\0";
 	}
 	else if(strcmp(argv[1], "-h\0") == 0 || strcmp(argv[1], "--help\0") == 0)
 	{
 		usageInfo();
 	}
-	setFilename(base_filename);
-
-	readFromFile(); // DEBUG
-	puts(" < DEBUG");
+	setFilename(basename);
 
 	initRound();
 	programRound();

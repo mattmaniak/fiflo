@@ -15,24 +15,24 @@ int8_t decimalUintLen(int8_t number)
 	return len;
 }
 
-void dynamicLen(const char *base_fn)
+void dynamicLen(const char *basename)
 {
-	// If a base_fn is longer than 16. Only first 16 chars will be printed
+	// If the basename is longer than 16. Only first 16 chars will be printed
 	// and 3 dots at the end will be added.
 	uint8_t chr_num;
 
-	if(strlen(base_fn) > 16) // Max rendered first 32 chars.
+	if(strlen(basename) > 16) // Max rendered first 32 chars.
 	{
 		for(chr_num = 0; chr_num < 16; chr_num++)
 		{
-			printf("%c", base_fn[chr_num]);
+			printf("%c", basename[chr_num]);
 		}
 		printf("%s", "..."); // strlen is 3.
 	}
 	else
 	{
-		printf("%s", base_fn);
-		for(chr_num = 0; chr_num < 16 + 3 - strlen(base_fn); chr_num++)
+		printf("%s", basename);
+		for(chr_num = 0; chr_num < 16 + 3 - strlen(basename); chr_num++)
 		{
 			printf("%c", ' ');
 		}
