@@ -3,6 +3,8 @@
 #include "logic.h"
 #include "ui.c"
 
+// TODO: EACH LINE SHOULD HAVE OTHER CHARS PARAM INSTEAD OF UNIVERSAL CHARS_C.
+
 BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
 BUFF_T cursor_pos = 1;
@@ -51,8 +53,16 @@ void readFromFile(void)
 
 	while((chr = getc(textfile)) != EOF)
 	{
-		chars_c++;
-		text[CURRENT_LINE][chars_c - 1] = chr;
+		if(chr == NEWLINE)
+		{
+			lines_c++;
+			text[CURRENT_LINE][chars_c - 1] = chr;
+		}
+		else
+		{
+			chars_c++;
+			text[CURRENT_LINE][chars_c - 1] = chr;
+		}
 	}
 	fclose(textfile);
 }
