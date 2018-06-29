@@ -42,6 +42,7 @@ void saveToFile(void);
 void keyHandling(char key);
 uint16_t termSize(char axis);
 void renderText(void);
+void autoNewline(char key);
 void window(char key);
 void cleanFrame(void);
 
