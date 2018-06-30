@@ -13,8 +13,8 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
-#define UPPER_LINE lines_c - 2
-#define CURRENT_LINE lines_c - 1
+#define UPPER_LINE lines - 2
+#define CURRENT_LINE lines - 1
 
 // Some special ASCII decimal codes.
 #define TERMINATOR 0
@@ -29,8 +29,8 @@
 typedef int16_t BUFF_T; // Text buffer type.
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 
-extern BUFF_T lines_c;
-extern BUFF_T chars_c;
+extern BUFF_T lines;
+extern BUFF_T chars;
 extern BUFF_T cursor_pos;
 
 extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
@@ -39,7 +39,7 @@ extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
 void setFilename(const char *basename);
 void readFromFile(void);
 void saveToFile(void);
-void keyHandling(char key);
+BUFF_T keyHandling(char key);
 uint16_t termSize(char axis);
 void renderText(void);
 uint16_t autoFill(uint16_t fill, char key);

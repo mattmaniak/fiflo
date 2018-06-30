@@ -3,30 +3,31 @@
 #include "logic.h"
 #include "ui.c"
 
-// TODO: EACH LINE SHOULD HAVE OTHER CHARS PARAM INSTEAD OF UNIVERSAL CHARS_C.
+// TODO: EACH LINE SHOULD HAVE OTHER CHARS PARAM INSTEAD OF UNIVERSAL chars.
 
-BUFF_T lines_c = 1;
-BUFF_T chars_c = 0; // text = lines + chars
+BUFF_T lines = 1;
+BUFF_T chars = 0; // text = lines + chars
 BUFF_T cursor_pos = 1; // 0 is non-printed char eg. '\n'.
 
 char text[BUFF_SZ][MAX_WIDTH + 1];
-char filename[512]; // 255 (cwd) + 1 (slash) + 255 (basename) + 1 (null).
+char filename[4353]; // 4096 (path) + 1 (slash) + 255 (basename) + 1 (null).
+// TODO
 
 void setFilename(const char *basename) // TODO: SIMPLIFY!
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
 	uint8_t chr_num;
-	char path[256];
+	char path[4096];
 
 	if(getcwd(path, sizeof(path)) == NULL)
 	{
 		fputs("Cannot get your current absolute dir.", stderr);
 		exit(1);
 	}
-	if(strlen(path) > 255 || strlen(basename) > 255)
+	if(strlen(path) > 4096 || strlen(basename) > 255)
 	{
-		fputs("Max. absolute path or basename length is 255.", stderr);
+		fputs("Max. absolute path length is 4096, basename: 255.", stderr);
 		exit(1);
 	}
 	path[strlen(path)] = TERMINATOR;
@@ -55,13 +56,13 @@ void readFromFile(void)
 	{
 		if(chr == NEWLINE)
 		{
-			lines_c++;
-			text[CURRENT_LINE][chars_c - 1] = chr;
+			lines++;
+			text[CURRENT_LINE][chars - 1] = chr;
 		}
 		else
 		{
-			chars_c++;
-			text[CURRENT_LINE][chars_c - 1] = chr;
+			chars++;
+			text[CURRENT_LINE][chars - 1] = chr;
 		}
 	}
 	fclose(textfile);
@@ -75,9 +76,9 @@ void saveToFile(void)
 	FILE *textfile = fopen(filename, "w");
 	pointerCheck(textfile, "Cannot write to the file, exit.\0");
 
-	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Lines rendering.
+	for(ln_num = 1; ln_num <= lines; ln_num++) // Lines rendering.
 	{
-		for(chr_num = 0; chr_num <= chars_c; chr_num++) // Chars in lines.
+		for(chr_num = 0; chr_num <= chars; chr_num++) // Chars in lines.
 		{
 			if(text[ln_num - 1][chr_num] != TERMINATOR)
 			{
@@ -88,48 +89,51 @@ void saveToFile(void)
 	fclose(textfile);
 }
 
-void keyHandling(char key)
+BUFF_T keyHandling(char key)
 {
 	switch(key)
 	{
 		default: // Just convert pressed key into a char in the string.
-			chars_c++;
-			if(chars_c > MAX_WIDTH)
+			chars++;
+			if(chars > MAX_WIDTH)
 			{
-				chars_c = MAX_WIDTH;
+				chars = MAX_WIDTH;
 			}
 			else
 			{
-				text[CURRENT_LINE][chars_c - 1] = key;
+				text[CURRENT_LINE][chars - 1] = key;
 			}
+			return chars;
 		break;
 
 		case NEWLINE:
-			text[CURRENT_LINE][chars_c] = NEWLINE;
-			lines_c++;
-			if(lines_c > termSize('Y') - 2)
+			text[CURRENT_LINE][chars] = NEWLINE;
+			lines++;
+			if(lines > termSize('Y') - 2)
 			{
-				lines_c = termSize('Y') - 2;
-				text[CURRENT_LINE][chars_c] = TERMINATOR; // Prevent double bar.
+				lines = termSize('Y') - 2;
+				text[CURRENT_LINE][chars] = TERMINATOR; // Prevent double bar.
 			}
+			return lines;
 		break;
 
 		case BACKSPACE:
-			chars_c--;
-			text[CURRENT_LINE][chars_c] = TERMINATOR;
+			chars--;
+			text[CURRENT_LINE][chars] = TERMINATOR;
 
-			if(chars_c < 0)
+			if(chars < 0)
 			{
-				chars_c = 0;
+				chars = 0;
 			}
-			if(lines_c > 1 && text[UPPER_LINE][chars_c] == NEWLINE)
+			if(lines > 1 && text[UPPER_LINE][chars] == NEWLINE)
 			{
-				lines_c--;
-				if(lines_c < 1)
+				lines--;
+				if(lines < 1)
 				{
-					lines_c = 1;
+					lines = 1;
 				}
-				text[CURRENT_LINE][chars_c] = TERMINATOR;
+				text[CURRENT_LINE][chars] = TERMINATOR;
+				// return chars, lines;
 			}
 		break;
 
@@ -140,6 +144,12 @@ void keyHandling(char key)
 
 		case ARROW_LEFT:
 			cursor_pos++;
+			return cursor_pos;
+			if(cursor_pos > chars)
+			{
+				cursor_pos = chars;
+			}
+			return cursor_pos;
 		break;
 
 		case ARROW_RIGHT:
@@ -148,8 +158,10 @@ void keyHandling(char key)
 			{
 				cursor_pos = 1;
 			}
+			return cursor_pos;
 		break;
 	}
+	return 0;
 }
 
 // Drawing funcions.
@@ -188,12 +200,12 @@ void renderText(void)
 	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	for(ln_num = 1; ln_num <= lines_c; ln_num++) // Lines rendering.
+	for(ln_num = 1; ln_num <= lines; ln_num++) // Lines rendering.
 	{
-		for(chr_num = 0; chr_num <= chars_c; chr_num++) // Chars rendering.
+		for(chr_num = 0; chr_num <= chars; chr_num++) // Chars rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(ln_num == lines_c && chr_num == chars_c - cursor_pos)
+			if(ln_num == lines && chr_num == chars - cursor_pos)
 			{
 				printf("%s%c%s", INVERT, text[ln_num - 1][chr_num], RESET);
 			}
@@ -207,19 +219,19 @@ void renderText(void)
 
 uint16_t autoFill(uint16_t fill, char key)
 {
-	if(chars_c == 0 || text[0][0] == NEWLINE) // No visible char.
+	if(chars == 0 || text[0][0] == NEWLINE) // No visible char.
 	{
 		fill = 1;
 	}
-	else if(chars_c > 1)
+	else if(chars > 1)
 	{
-		if(key != BACKSPACE &&  chars_c % termSize('X') == 1)
+		if(key != BACKSPACE &&  chars % termSize('X') == 1)
 		{
-			lines_c++;
+			lines++;
 		}
-		else if(key == BACKSPACE && chars_c % termSize('X') == 0)
+		else if(key == BACKSPACE && chars % termSize('X') == 0)
 		{
-			lines_c--;
+			lines--;
 		}
 	}
 	return fill;
@@ -227,6 +239,16 @@ uint16_t autoFill(uint16_t fill, char key)
 
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
+	/* TODO: IMPLEMENTATION, NO GLOBALS
+	struct Buffers
+	{
+		BUFF_T lines;
+		BUFF_T chars;
+		BUFF_T cursor_pos;
+	};
+	struct Buffers buff;
+	*/
+
 	uint16_t height;
 	uint16_t fill = 2; // Two bars.
 	fill = autoFill(fill, key);
@@ -234,11 +256,11 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 	upperBar(filename);
 	renderText();
 
-	for(height = lines_c; height <= termSize('Y') - fill; height++)
+	for(height = lines; height <= termSize('Y') - fill; height++)
 	{
 		printf("%c", NEWLINE);
 	}
-	lowerBar(lines_c, chars_c, key); // chars - 1 - last char index.
+	lowerBar(lines, chars, key); // chars - 1 - last char index.
 }
 
 void cleanFrame(void) // To provide rendering in a one frame.
