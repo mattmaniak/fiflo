@@ -13,6 +13,7 @@
 #define INVERT "\033[7m"
 
 typedef int16_t BUFF_T;
+typedef uint16_t WIN_DIMENSION; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
 
 int8_t decUintLen(int8_t chars);
 void upperBar(const char *basename);

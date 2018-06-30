@@ -27,6 +27,7 @@
 #define BACKSPACE 127
 
 typedef int16_t BUFF_T; // Text buffer type.
+typedef uint16_t WIN_DIMENSION; // Unsigned short in the "sys/ioctl.h".
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 
 typedef struct
@@ -47,10 +48,10 @@ extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
 void setFilename(const char *basename);
 void readFromFile(void);
 void saveToFile(void);
-Buffer keyHandling(char key);
-uint16_t termSize(char axis);
+Buffer keyHandling(char key, Buffer);
+WIN_DIMENSION termSize(char axis);
 void renderText(char key);
-uint16_t autoFill(uint16_t fill, char key);
+WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key);
 void window(char key);
 void cleanFrame(void);
 

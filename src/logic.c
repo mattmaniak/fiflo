@@ -89,16 +89,20 @@ void saveToFile(void)
 	fclose(textfile);
 }
 
-Buffer keyHandling(char key)
+Buffer keyHandling(char key, Buffer)
 {
-	Buffer buff = {chars, lines, cursor_pos};
+/*	Buffer buff;
+	buff.chars = 0;
+	buff.lines = 1;
+	buff.cursor_pos = 1;
+*/
 	switch(key)
 	{
 		default: // Just convert pressed key into a char in the string.
-			chars++;
-			if(chars > MAX_WIDTH)
+			buff.chars++;
+			if(buff.chars > MAX_WIDTH)
 			{
-				chars = MAX_WIDTH;
+				buff.chars = MAX_WIDTH;
 			}
 			else
 			{
@@ -107,9 +111,9 @@ Buffer keyHandling(char key)
 		break;
 
 		case LINEFEED:
-			text[CURRENT_LINE][chars] = LINEFEED;
-			lines++;
-			if(lines > termSize('Y') - 2)
+			text[CURRENT_LINE][buff.chars] = LINEFEED;
+			buff.lines++;
+			if(buff.lines > termSize('Y') - 2)
 			{
 				lines = termSize('Y') - 2;
 				text[CURRENT_LINE][chars] = TERMINATOR; // Prevent double bar.
@@ -117,21 +121,21 @@ Buffer keyHandling(char key)
 		break;
 
 		case BACKSPACE:
-			chars--;
-			text[CURRENT_LINE][chars] = TERMINATOR;
+			buff.chars--;
+			text[CURRENT_LINE][buff.chars] = TERMINATOR;
 
-			if(chars < 0)
+			if(buff.chars < 0)
 			{
-				chars = 0;
+				buff.chars = 0;
 			}
-			if(lines > 1 && text[UPPER_LINE][chars] == LINEFEED)
+			if(buff.lines > 1 && text[UPPER_LINE][buff.chars] == LINEFEED)
 			{
-				lines--;
-				if(lines < 1)
+				buff.lines--;
+				if(buff.lines < 1)
 				{
-					lines = 1;
+					buff.lines = 1;
 				}
-				text[CURRENT_LINE][chars] = TERMINATOR;
+				text[CURRENT_LINE][buff.chars] = TERMINATOR;
 				// return chars, lines;
 			}
 		break;
@@ -143,17 +147,17 @@ Buffer keyHandling(char key)
 
 		case ARROW_LEFT:
 			cursor_pos++;
-			if(cursor_pos > chars)
+			if(buff.cursor_pos > buff.chars)
 			{
-				cursor_pos = chars;
+				buff.cursor_pos = buff.chars;
 			}
 		break;
 
 		case ARROW_RIGHT:
-			cursor_pos--;
-			if(cursor_pos < 1)
+			buff.cursor_pos--;
+			if(buff.cursor_pos < 1)
 			{
-				cursor_pos = 1;
+				buff.cursor_pos = 1;
 			}
 		break;
 	}
@@ -161,9 +165,9 @@ Buffer keyHandling(char key)
 }
 
 // Drawing funcions.
-uint16_t termSize(char axis) // Check terminal size.
+WIN_DIMENSION termSize(char axis) // Check terminal size.
 {
-	struct winsize win;
+	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
@@ -196,14 +200,18 @@ void renderText(char key)
 	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	Buffer buff = keyHandling(key);
+	Buffer buff;
+	buff.chars = 0;
+	buff.lines = 1;
+	buff.cursor_pos = 1;
+	buff = keyHandling(key, Buffer buff);
 
-	for(ln_num = 1; ln_num <= lines; ln_num++) // Lines rendering.
+	for(ln_num = 1; ln_num <= buff.lines; ln_num++) // Lines rendering.
 	{
-		for(chr_num = 0; chr_num <= chars; chr_num++) // Chars rendering.
+		for(chr_num = 0; chr_num <= buff.chars; chr_num++) // Chars rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(ln_num == lines && chr_num == chars - cursor_pos)
+			if(ln_num == buff.lines && chr_num == buff.chars - cursor_pos)
 			{
 				printf("%s%c%s", INVERT, text[ln_num - 1][chr_num], RESET);
 			}
@@ -215,7 +223,7 @@ void renderText(char key)
 	}
 }
 
-uint16_t autoFill(uint16_t fill, char key)
+WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key)
 {
 	if(chars == 0 || text[0][0] == LINEFEED) // No visible char.
 	{
@@ -237,18 +245,8 @@ uint16_t autoFill(uint16_t fill, char key)
 
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
-	/* TODO: IMPLEMENTATION, NO GLOBALS
-	struct Buffers
-	{
-		BUFF_T lines;
-		BUFF_T chars;
-		BUFF_T cursor_pos;
-	};
-	struct Buffers buff;
-	*/
-
-	uint16_t height;
-	uint16_t fill = 2; // Two bars.
+	WIN_DIMENSION height;
+	WIN_DIMENSION fill = 2; // Two bars.
 	fill = autoFill(fill, key);
 
 	upperBar(filename);
@@ -263,7 +261,7 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 
 void cleanFrame(void) // To provide rendering in a one frame.
 {
-	uint16_t lines;
+	WIN_DIMENSION lines;
 	for(lines = 0; lines < termSize('Y'); lines++)
 	{
 		printf("%s", "\033[F\033[K");
