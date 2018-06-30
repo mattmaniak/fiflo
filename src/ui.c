@@ -2,7 +2,7 @@
 
 #include "ui.h"
 
-int8_t decimalUintLen(int8_t number)
+int8_t decUintLen(int8_t number)
 {
 	// Return a length of decimal integer. Eg. 2 from number = 12.
 	int8_t len = 1;
@@ -13,30 +13,6 @@ int8_t decimalUintLen(int8_t number)
 		number /= 10;
 	}
 	return len;
-}
-
-void dynamicLen(const char *basename)
-{
-	// If the basename is longer than 16. Only first 16 chars will be printed
-	// and 3 dots at the end will be added.
-	uint8_t chr_num;
-
-	if(strlen(basename) > 16) // Max rendered first 32 chars.
-	{
-		for(chr_num = 0; chr_num < 16; chr_num++)
-		{
-			printf("%c", basename[chr_num]);
-		}
-		printf("%s", "..."); // strlen is 3.
-	}
-	else
-	{
-		printf("%s", basename);
-		for(chr_num = 0; chr_num < 16 + 3 - strlen(basename); chr_num++)
-		{
-			printf("%c", ' ');
-		}
-	}
 }
 
 void upperBar(const char *filename)
@@ -63,9 +39,9 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key)
 
 	uint16_t width;
 	uint16_t whitespace
-	= strlen(lines_text) + decimalUintLen(lines)
-	+ strlen(chars_text) + decimalUintLen(chars) 
-	+ strlen(ascii_code_text) + decimalUintLen(key);
+	= strlen(lines_text) + decUintLen(lines)
+	+ strlen(chars_text) + decUintLen(chars) 
+	+ strlen(ascii_code_text) + decUintLen(key);
 
 	printf("%s%s%i%s%i%s%i", INVERT, lines_text, lines, chars_text, chars,
 	ascii_code_text, key);

@@ -2,8 +2,8 @@
 #define RENDER_H
 
 #include <limits.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -34,7 +34,7 @@ extern BUFF_T chars_c;
 extern BUFF_T cursor_pos;
 
 extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
-extern char filename[512];
+//extern char *filename;
 
 void setFilename(const char *basename);
 void readFromFile(void);
@@ -42,7 +42,7 @@ void saveToFile(void);
 void keyHandling(char key);
 uint16_t termSize(char axis);
 void renderText(void);
-void autoNewline(char key);
+uint16_t autoFill(uint16_t fill, char key);
 void window(char key);
 void cleanFrame(void);
 

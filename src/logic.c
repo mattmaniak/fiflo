@@ -7,15 +7,15 @@
 
 BUFF_T lines_c = 1;
 BUFF_T chars_c = 0; // text = lines + chars
-BUFF_T cursor_pos = 1;
+BUFF_T cursor_pos = 1; // 0 is non-printed char eg. '\n'.
 
 char text[BUFF_SZ][MAX_WIDTH + 1];
 char filename[512]; // 255 (cwd) + 1 (slash) + 255 (basename) + 1 (null).
 
-void setFilename(const char *basename)
+void setFilename(const char *basename) // TODO: SIMPLIFY!
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
-	// Base filename (basename) eg. "my_file".
+	// Basename (base filename) eg. "my_file".
 	uint8_t chr_num;
 	char path[256];
 
@@ -205,9 +205,13 @@ void renderText(void)
 	}
 }
 
-void autoNewline(char key)
+uint16_t autoFill(uint16_t fill, char key)
 {
-	if(chars_c > 1)
+	if(chars_c == 0 || text[0][0] == NEWLINE) // No visible char.
+	{
+		fill = 1;
+	}
+	else if(chars_c > 1)
 	{
 		if(key != BACKSPACE &&  chars_c % termSize('X') == 1)
 		{
@@ -218,18 +222,14 @@ void autoNewline(char key)
 			lines_c--;
 		}
 	}
+	return fill;
 }
 
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
 	uint16_t height;
 	uint16_t fill = 2; // Two bars.
-
-	if(chars_c == 0 || text[0][0] == NEWLINE) // No visible char.
-	{
-		fill = 1;
-	}
-	autoNewline(key);
+	fill = autoFill(fill, key);
 
 	upperBar(filename);
 	renderText();

@@ -1,6 +1,7 @@
 #ifndef UI_H
 #define UI_H
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,9 +14,8 @@
 
 typedef int16_t BUFF_T;
 
-int8_t decimalUintLen(int8_t chars);
-void upperBar(const char *base_fn);
-void dynamicLen(const char *base_fn);
+int8_t decUintLen(int8_t chars);
+void upperBar(const char *basename);
 void lowerBar(BUFF_T lines, BUFF_T chars, char key);
 void help(void);
 
