@@ -30,7 +30,6 @@ void programRound(void)
 	for(;;)
 	{
 		pressed_key = unixGetch(); // TODO: FLUSHING.
-		keyHandling(pressed_key);
 		cleanFrame();
 		window(pressed_key);
 	}

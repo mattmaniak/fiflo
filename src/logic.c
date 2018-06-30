@@ -54,7 +54,7 @@ void readFromFile(void)
 
 	while((chr = getc(textfile)) != EOF)
 	{
-		if(chr == NEWLINE)
+		if(chr == LINEFEED)
 		{
 			lines++;
 			text[CURRENT_LINE][chars - 1] = chr;
@@ -89,8 +89,9 @@ void saveToFile(void)
 	fclose(textfile);
 }
 
-BUFF_T keyHandling(char key)
+Buffer keyHandling(char key)
 {
+	Buffer buff = {chars, lines, cursor_pos};
 	switch(key)
 	{
 		default: // Just convert pressed key into a char in the string.
@@ -103,18 +104,16 @@ BUFF_T keyHandling(char key)
 			{
 				text[CURRENT_LINE][chars - 1] = key;
 			}
-			return chars;
 		break;
 
-		case NEWLINE:
-			text[CURRENT_LINE][chars] = NEWLINE;
+		case LINEFEED:
+			text[CURRENT_LINE][chars] = LINEFEED;
 			lines++;
 			if(lines > termSize('Y') - 2)
 			{
 				lines = termSize('Y') - 2;
 				text[CURRENT_LINE][chars] = TERMINATOR; // Prevent double bar.
 			}
-			return lines;
 		break;
 
 		case BACKSPACE:
@@ -125,7 +124,7 @@ BUFF_T keyHandling(char key)
 			{
 				chars = 0;
 			}
-			if(lines > 1 && text[UPPER_LINE][chars] == NEWLINE)
+			if(lines > 1 && text[UPPER_LINE][chars] == LINEFEED)
 			{
 				lines--;
 				if(lines < 1)
@@ -144,12 +143,10 @@ BUFF_T keyHandling(char key)
 
 		case ARROW_LEFT:
 			cursor_pos++;
-			return cursor_pos;
 			if(cursor_pos > chars)
 			{
 				cursor_pos = chars;
 			}
-			return cursor_pos;
 		break;
 
 		case ARROW_RIGHT:
@@ -158,10 +155,9 @@ BUFF_T keyHandling(char key)
 			{
 				cursor_pos = 1;
 			}
-			return cursor_pos;
 		break;
 	}
-	return 0;
+	return buff;
 }
 
 // Drawing funcions.
@@ -195,10 +191,12 @@ uint16_t termSize(char axis) // Check terminal size.
 }
 
 // Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
-void renderText(void)
+void renderText(char key)
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
+
+	Buffer buff = keyHandling(key);
 
 	for(ln_num = 1; ln_num <= lines; ln_num++) // Lines rendering.
 	{
@@ -219,7 +217,7 @@ void renderText(void)
 
 uint16_t autoFill(uint16_t fill, char key)
 {
-	if(chars == 0 || text[0][0] == NEWLINE) // No visible char.
+	if(chars == 0 || text[0][0] == LINEFEED) // No visible char.
 	{
 		fill = 1;
 	}
@@ -254,11 +252,11 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 	fill = autoFill(fill, key);
 
 	upperBar(filename);
-	renderText();
+	renderText(key);
 
 	for(height = lines; height <= termSize('Y') - fill; height++)
 	{
-		printf("%c", NEWLINE);
+		printf("%c", LINEFEED);
 	}
 	lowerBar(lines, chars, key); // chars - 1 - last char index.
 }

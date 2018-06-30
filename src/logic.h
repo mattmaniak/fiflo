@@ -18,7 +18,7 @@
 
 // Some special ASCII decimal codes.
 #define TERMINATOR 0
-#define NEWLINE 10 // Linefeed (LF)
+#define LINEFEED 10 // Linefeed (LF)
 #define CTRL_X 24
 #define ARROW_UP 65
 #define ARROW_DOWN 66
@@ -28,6 +28,14 @@
 
 typedef int16_t BUFF_T; // Text buffer type.
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
+
+typedef struct
+{
+	BUFF_T chars;
+	BUFF_T lines;
+	BUFF_T cursor_pos;
+}
+Buffer;
 
 extern BUFF_T lines;
 extern BUFF_T chars;
@@ -39,9 +47,9 @@ extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
 void setFilename(const char *basename);
 void readFromFile(void);
 void saveToFile(void);
-BUFF_T keyHandling(char key);
+Buffer keyHandling(char key);
 uint16_t termSize(char axis);
-void renderText(void);
+void renderText(char key);
 uint16_t autoFill(uint16_t fill, char key);
 void window(char key);
 void cleanFrame(void);
