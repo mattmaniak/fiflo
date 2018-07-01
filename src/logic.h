@@ -26,9 +26,9 @@
 #define ARROW_LEFT 68
 #define BACKSPACE 127
 
+#define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 typedef int16_t BUFF_T; // Text Params type.
 typedef uint16_t WIN_DIMENSION; // Unsigned short in the "sys/ioctl.h".
-#define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 
 struct Params
 {
@@ -37,11 +37,11 @@ struct Params
 	BUFF_T cursor_pos;
 };
 
-extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
+extern char text[BUFF_SZ];
 //extern char *filename;
 
 void setFilename(const char *basename);
-void readFromFile(void);
+void readFromFile(struct Params buff);
 void saveToFile(struct Params buff);
 struct Params keyHandling(char key, struct Params buff);
 void renderText(struct Params buff);

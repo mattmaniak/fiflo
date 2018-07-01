@@ -3,7 +3,7 @@
 #include "logic.h"
 #include "ui.c"
 
-char text[BUFF_SZ][MAX_WIDTH + 1];
+char text[BUFF_SZ];
 char filename[4353]; // 4096 (path) + 1 (slash) + 255 (basename) + 1 (null).
 // TODO
 
@@ -11,7 +11,7 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
-	uint8_t chr_num;
+	uint16_t chr;
 	char path[4096];
 
 	if(getcwd(path, sizeof(path)) == NULL)
@@ -26,21 +26,21 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 	}
 	path[strlen(path)] = TERMINATOR;
 
-	for(chr_num = 0; chr_num < strlen(path); chr_num++) // Copy cwd.
+	for(chr = 0; chr < strlen(path); chr++) // Copy cwd.
 	{
-		filename[chr_num] = path[chr_num];
+		filename[chr] = path[chr];
 	}
 	filename[strlen(path)] = '/'; // Add a slash between.
 
-	for(chr_num = 0; chr_num < strlen(basename); chr_num++) // Copy basename.
+	for(chr = 0; chr < strlen(basename); chr++) // Copy basename.
 	{
-		filename[chr_num + strlen(path) + 1] = basename[chr_num];
+		filename[chr + strlen(path) + 1] = basename[chr];
 	}
 	filename[strlen(path) + strlen(basename) + 1] = TERMINATOR;
 }
 
-/*
-void readFromFile(void)
+
+void readFromFile(struct Params buff)
 {
 	char chr;
 
@@ -51,34 +51,33 @@ void readFromFile(void)
 	{
 		if(chr == LINEFEED)
 		{
-			lines++;
-			text[CURRENT_LINE][chars - 1] = chr;
+			buff.lines++;
+			text[buff.chars - 1] = chr;
 		}
 		else
 		{
-			chars++;
-			text[CURRENT_LINE][chars - 1] = chr;
+			buff.chars++;
+			text[buff.chars - 1] = chr;
 		}
 	}
 	fclose(textfile);
 }
-*/
 
 void saveToFile(struct Params buff)
 {
-	BUFF_T ln_num;
-	BUFF_T chr_num;
+	BUFF_T x;
+	BUFF_T y;
 
 	FILE *textfile = fopen(filename, "w");
 	pointerCheck(textfile, "Cannot write to the file, exit.\0");
 
-	for(ln_num = 1; ln_num <= buff.lines; ln_num++) // Lines rendering.
+	for(y = 1; y <= buff.lines; y++) // Lines rendering.
 	{
-		for(chr_num = 0; chr_num <= buff.chars; chr_num++) // Chars in lines.
+		for(x = 0; x <= buff.chars; x++) // Chars in lines.
 		{
-			if(text[ln_num - 1][chr_num] != TERMINATOR)
+			if(text[x] != TERMINATOR)
 			{
-				fprintf(textfile, "%c", text[ln_num - 1][chr_num]);
+				fprintf(textfile, "%c", text[x]);
 			}
 		}
 	}
@@ -97,37 +96,37 @@ struct Params keyHandling(char key, struct Params buff)
 			}
 			else
 			{
-				text[CURRENT_LINE][buff.chars - 1] = key;
+				text[buff.chars - 1] = key;
 			}
 		break;
 
 		case LINEFEED:
-			text[CURRENT_LINE][buff.chars] = LINEFEED;
+			text[buff.chars] = LINEFEED;
 			buff.lines++;
 			if(buff.lines > termSize(Y) - 2)
 			{
 				buff.lines = termSize(Y) - 2;
-				text[CURRENT_LINE][buff.chars] = TERMINATOR;
+				text[buff.chars] = TERMINATOR;
 				// Prevent double bar.
 			}
 		break;
 
 		case BACKSPACE:
 			buff.chars--;
-			text[CURRENT_LINE][buff.chars] = TERMINATOR;
+			text[buff.chars] = TERMINATOR;
 
 			if(buff.chars < 0)
 			{
 				buff.chars = 0;
 			}
-			if(buff.lines > 1 && text[UPPER_LINE][buff.chars] == LINEFEED)
+			if(buff.lines > 1 && text[buff.chars] == LINEFEED)
 			{
 				buff.lines--;
 				if(buff.lines < 1)
 				{
 					buff.lines = 1;
 				}
-				text[CURRENT_LINE][buff.chars] = TERMINATOR;
+				text[buff.chars] = TERMINATOR;
 				// return chars, lines;
 			}
 		break;
@@ -157,25 +156,24 @@ struct Params keyHandling(char key, struct Params buff)
 }
 
 // Drawing funcions.
-
 // Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
 void renderText(struct Params buff)
 {
-	BUFF_T ln_num;
-	BUFF_T chr_num;
+	BUFF_T x;
+	BUFF_T y;
 
-	for(ln_num = 1; ln_num <= buff.lines; ln_num++) // Lines rendering.
+	for(y = 1; y <= buff.lines; y++) // Lines rendering.
 	{
-		for(chr_num = 0; chr_num <= buff.chars; chr_num++) // Chars rendering.
+		for(x = 0; x <= buff.chars; x++) // Chars rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(ln_num == buff.lines && chr_num == buff.chars - buff.cursor_pos)
+			if(y == buff.lines && x == buff.chars - buff.cursor_pos)
 			{
-				printf("%s%c%s", INVERT, text[ln_num - 1][chr_num], RESET);
+				printf("%s%c%s", INVERT, text[x], RESET);
 			}
 			else
 			{
-				printf("%c", text[ln_num - 1][chr_num]);
+				printf("%c", text[x]);
 			}
 		}
 	}
@@ -184,6 +182,7 @@ void renderText(struct Params buff)
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
 	static struct Params buff = {0, 1, 1}; // Value initializer.
+	readFromFile(buff); // TODO: IS IN A LOOP?
 	buff = keyHandling(key, buff);
 
 	WIN_DIMENSION height;

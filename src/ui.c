@@ -61,7 +61,7 @@ void upperBar(const char *filename)
 
 WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Params buff)
 {
-	if(buff.chars == 0 || text[0][0] == LINEFEED) // No visible char.
+	if(buff.chars == 0 || text[0] == LINEFEED) // No visible char.
 	{
 		fill = 1;
 	}
