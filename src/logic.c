@@ -89,13 +89,8 @@ void saveToFile(void)
 	fclose(textfile);
 }
 
-Buffer keyHandling(char key, Buffer)
+struct Buffer keyHandling(char key, struct Buffer buff)
 {
-/*	Buffer buff;
-	buff.chars = 0;
-	buff.lines = 1;
-	buff.cursor_pos = 1;
-*/
 	switch(key)
 	{
 		default: // Just convert pressed key into a char in the string.
@@ -200,11 +195,11 @@ void renderText(char key)
 	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	Buffer buff;
+	struct Buffer buff;
 	buff.chars = 0;
 	buff.lines = 1;
 	buff.cursor_pos = 1;
-	buff = keyHandling(key, Buffer buff);
+	buff = keyHandling(key,buff);
 
 	for(ln_num = 1; ln_num <= buff.lines; ln_num++) // Lines rendering.
 	{

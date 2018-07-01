@@ -30,13 +30,12 @@ typedef int16_t BUFF_T; // Text buffer type.
 typedef uint16_t WIN_DIMENSION; // Unsigned short in the "sys/ioctl.h".
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 
-typedef struct
+struct Buffer
 {
 	BUFF_T chars;
 	BUFF_T lines;
 	BUFF_T cursor_pos;
-}
-Buffer;
+};
 
 extern BUFF_T lines;
 extern BUFF_T chars;
@@ -48,7 +47,7 @@ extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
 void setFilename(const char *basename);
 void readFromFile(void);
 void saveToFile(void);
-Buffer keyHandling(char key, Buffer);
+struct Buffer keyHandling(char key, struct Buffer buff);
 WIN_DIMENSION termSize(char axis);
 void renderText(char key);
 WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key);
