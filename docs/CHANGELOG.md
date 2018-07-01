@@ -7,7 +7,13 @@ Changelog contains only new tangible features. To see what's new in source
 files use diff-like tools or "git log".
 
 ## Versions:
-### v0.5.0 (WIP):
+### v1.0.0 (WIP):
+- Changed API.
+- Less memory usage.
+
+### v0.5.0-unstable (July 1, 2018):
+The last v0.y.z version and showup of the old program logic. Mostly insecure.
+Not merged with "master" so look for it with tags.
 - Multiple lines writing && rendering.
 - File input/output operations.
 - Man page added.

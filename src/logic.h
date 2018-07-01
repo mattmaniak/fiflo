@@ -48,11 +48,8 @@ void setFilename(const char *basename);
 void readFromFile(void);
 void saveToFile(void);
 struct Buffer keyHandling(char key, struct Buffer buff);
-WIN_DIMENSION termSize(char axis);
 void renderText(char key);
-WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key);
 void window(char key);
-void cleanFrame(void);
 
 #endif
 

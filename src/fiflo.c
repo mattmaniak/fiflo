@@ -66,5 +66,6 @@ int main(void)
 	fputs("Only Linux-based systems are supported, exit.\n", stderr);
 	return 0;
 }
+
 #endif
 

@@ -108,9 +108,9 @@ struct Buffer keyHandling(char key, struct Buffer buff)
 		case LINEFEED:
 			text[CURRENT_LINE][buff.chars] = LINEFEED;
 			buff.lines++;
-			if(buff.lines > termSize('Y') - 2)
+			if(buff.lines > termSize(Y) - 2)
 			{
-				lines = termSize('Y') - 2;
+				lines = termSize(Y) - 2;
 				text[CURRENT_LINE][chars] = TERMINATOR; // Prevent double bar.
 			}
 		break;
@@ -160,34 +160,6 @@ struct Buffer keyHandling(char key, struct Buffer buff)
 }
 
 // Drawing funcions.
-WIN_DIMENSION termSize(char axis) // Check terminal size.
-{
-	struct winsize win; // From "sys/ioctl.h".
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
-
-	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
-	{
-		fprintf(stderr, "%s%i%c%i%s",
-		"Min. term size is ", MIN_WIDTH, 'x', MIN_HEIGHT, ".\n");
-		exit(1);
-	}
-	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
-	{
-		fprintf(stderr, "%s%i%c%i%s",
-		"Max. term size is ", MAX_WIDTH, 'x', MAX_HEIGHT, ".\n");
-		exit(1);
-	}
-
-	switch(axis)
-	{
-		case 'X':
-			return win.ws_col;
-
-		case 'Y':
-			return win.ws_row;
-	}
-	return 0; // Protection from the -Wreturn-type warning.
-}
 
 // Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
 void renderText(char key)
@@ -218,26 +190,6 @@ void renderText(char key)
 	}
 }
 
-WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key)
-{
-	if(chars == 0 || text[0][0] == LINEFEED) // No visible char.
-	{
-		fill = 1;
-	}
-	else if(chars > 1)
-	{
-		if(key != BACKSPACE &&  chars % termSize('X') == 1)
-		{
-			lines++;
-		}
-		else if(key == BACKSPACE && chars % termSize('X') == 0)
-		{
-			lines--;
-		}
-	}
-	return fill;
-}
-
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
 	WIN_DIMENSION height;
@@ -247,20 +199,10 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 	upperBar(filename);
 	renderText(key);
 
-	for(height = lines; height <= termSize('Y') - fill; height++)
+	for(height = lines; height <= termSize(Y) - fill; height++)
 	{
 		printf("%c", LINEFEED);
 	}
 	lowerBar(lines, chars, key); // chars - 1 - last char index.
-}
-
-void cleanFrame(void) // To provide rendering in a one frame.
-{
-	WIN_DIMENSION lines;
-	for(lines = 0; lines < termSize('Y'); lines++)
-	{
-		printf("%s", "\033[F\033[K");
-	}
-	fflush(stdout);
 }
 
