@@ -28,7 +28,7 @@
 
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 typedef int16_t BUFF_T; // Text Params type.
-typedef uint16_t WIN_DIMENSION; // Unsigned short in the "sys/ioctl.h".
+typedef uint16_t TERM_SIZE; // Unsigned short in the "sys/ioctl.h".
 
 struct Params
 {

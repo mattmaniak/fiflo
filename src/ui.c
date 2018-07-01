@@ -15,7 +15,7 @@ int8_t decIntLen(int8_t number)
 	return len;
 }
 
-WIN_DIMENSION termSize(bool axis) // Check terminal size.
+TERM_SIZE getSize(bool axis) // Check terminal size.
 {
 	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -48,18 +48,18 @@ void upperBar(const char *filename)
 {
 	const char *program = " Fiflo | file: \0";
 
-	WIN_DIMENSION width;
-	WIN_DIMENSION whitespace = strlen(program) + strlen(filename);
+	TERM_SIZE width;
+	TERM_SIZE whitespace = strlen(program) + strlen(filename);
 
 	printf("%s%s%s", INVERT, program, filename); // TODO: RENDERING LIMIT
-	for(width = 0; width < termSize(X) - whitespace; width++)
+	for(width = 0; width < getSize(X) - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}
 	printf("%s", RESET);
 }
 
-WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Params buff)
+TERM_SIZE autoFill(TERM_SIZE fill, char key, struct Params buff)
 {
 	if(buff.chars == 0 || text[0] == LINEFEED) // No visible char.
 	{
@@ -67,11 +67,11 @@ WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Params buff)
 	}
 	else if(buff.chars > 1)
 	{
-		if(key != BACKSPACE &&  buff.chars % termSize(X) == 1)
+		if(key != BACKSPACE &&  buff.chars % getSize(X) == 1)
 		{
 			buff.lines++;
 		}
-		else if(key == BACKSPACE && buff.chars % termSize(X) == 0)
+		else if(key == BACKSPACE && buff.chars % getSize(X) == 0)
 		{
 			buff.lines--;
 		}
@@ -86,8 +86,8 @@ void lowerBar(char key, struct Params buff)
 	const char *chars_text = " | chars: \0";
 	const char *ascii_code_text = " | last char code: \0";
 
-	WIN_DIMENSION width;
-	WIN_DIMENSION whitespace
+	TERM_SIZE width;
+	TERM_SIZE whitespace
 	= strlen(lines_text) + decIntLen(buff.lines)
 	+ strlen(chars_text) + decIntLen(buff.chars) 
 	+ strlen(ascii_code_text) + decIntLen(key);
@@ -95,10 +95,10 @@ void lowerBar(char key, struct Params buff)
 	printf("%s%s%i%s%i%s%i", INVERT, lines_text, buff.lines, chars_text,
 	buff.chars, ascii_code_text, key);
 
-	char *bar_buff = malloc(termSize(X)); // TODO: PLACE MALLOCS.
+	char *bar_buff = malloc(getSize(X)); // TODO: PLACE MALLOCS.
 	pointerCheck(bar_buff, "Cannot allocate memory for lower bar, exit.\0");
 
-	for(width = 0; width < termSize(X) - whitespace; width++)
+	for(width = 0; width < getSize(X) - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}
@@ -109,8 +109,8 @@ void lowerBar(char key, struct Params buff)
 
 void cleanFrame(void) // To provide rendering in a one frame.
 {
-	WIN_DIMENSION lines;
-	for(lines = 0; lines < termSize(Y); lines++)
+	TERM_SIZE lines;
+	for(lines = 0; lines < getSize(Y); lines++)
 	{
 		printf("%s", "\033[F\033[K");
 	}

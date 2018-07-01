@@ -17,12 +17,12 @@
 #define Y 0
 
 typedef int16_t BUFF_T;
-typedef uint16_t WIN_DIMENSION; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
+typedef uint16_t WIN_SIZE; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
 
 int8_t decIntLen(int8_t chars);
-WIN_DIMENSION termSize(bool axis);
+WIN_SIZE getSize(bool axis);
 void upperBar(const char *basename);
-WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Params buff);
+WIN_SIZE autoFill(WIN_SIZE fill, char key, struct Params buff);
 void lowerBar(char key, struct Params buff);
 void cleanFrame(void);
 

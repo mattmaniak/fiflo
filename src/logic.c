@@ -52,12 +52,12 @@ void readFromFile(struct Params buff)
 		if(chr == LINEFEED)
 		{
 			buff.lines++;
-			text[buff.chars - 1] = chr;
+			text[buff.chars] = chr;
 		}
 		else
 		{
 			buff.chars++;
-			text[buff.chars - 1] = chr;
+			text[buff.chars] = chr;
 		}
 	}
 	fclose(textfile);
@@ -103,9 +103,9 @@ struct Params keyHandling(char key, struct Params buff)
 		case LINEFEED:
 			text[buff.chars] = LINEFEED;
 			buff.lines++;
-			if(buff.lines > termSize(Y) - 2)
+			if(buff.lines > getSize(Y) - 2)
 			{
-				buff.lines = termSize(Y) - 2;
+				buff.lines = getSize(Y) - 2;
 				text[buff.chars] = TERMINATOR;
 				// Prevent double bar.
 			}
@@ -185,14 +185,14 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 	readFromFile(buff); // TODO: IS IN A LOOP?
 	buff = keyHandling(key, buff);
 
-	WIN_DIMENSION height;
-	WIN_DIMENSION fill = 2; // Two bars.
+	TERM_SIZE height;
+	TERM_SIZE fill = 2; // Two bars.
 	fill = autoFill(fill, key, buff);
 
 	upperBar(filename);
 	renderText(buff);
 
-	for(height = buff.lines; height <= termSize(Y) - fill; height++)
+	for(height = buff.lines; height <= getSize(Y) - fill; height++)
 	{
 		printf("%c", LINEFEED);
 	}

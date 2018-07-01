@@ -36,7 +36,7 @@ void programRound(void)
 
 int main(int argc, char *argv[])
 {
-	termSize(0);
+	getSize(0); // Returns Y but doesn't matter for that case. Just a check.
 	argcCheck(argc);
 	const char *basename;
 
