@@ -5,9 +5,11 @@
 
 // TODO: EACH LINE SHOULD HAVE OTHER CHARS PARAM INSTEAD OF UNIVERSAL chars.
 
+/*
 BUFF_T lines = 1;
 BUFF_T chars = 0; // text = lines + chars
 BUFF_T cursor_pos = 1; // 0 is non-printed char eg. '\n'.
+*/
 
 char text[BUFF_SZ][MAX_WIDTH + 1];
 char filename[4353]; // 4096 (path) + 1 (slash) + 255 (basename) + 1 (null).
@@ -45,6 +47,7 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 	filename[strlen(path) + strlen(basename) + 1] = TERMINATOR;
 }
 
+/*
 void readFromFile(void)
 {
 	char chr;
@@ -67,8 +70,9 @@ void readFromFile(void)
 	}
 	fclose(textfile);
 }
+*/
 
-void saveToFile(void)
+void saveToFile(struct Buffer buff)
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
@@ -76,9 +80,9 @@ void saveToFile(void)
 	FILE *textfile = fopen(filename, "w");
 	pointerCheck(textfile, "Cannot write to the file, exit.\0");
 
-	for(ln_num = 1; ln_num <= lines; ln_num++) // Lines rendering.
+	for(ln_num = 1; ln_num <= buff.lines; ln_num++) // Lines rendering.
 	{
-		for(chr_num = 0; chr_num <= chars; chr_num++) // Chars in lines.
+		for(chr_num = 0; chr_num <= buff.chars; chr_num++) // Chars in lines.
 		{
 			if(text[ln_num - 1][chr_num] != TERMINATOR)
 			{
@@ -101,7 +105,7 @@ struct Buffer keyHandling(char key, struct Buffer buff)
 			}
 			else
 			{
-				text[CURRENT_LINE][chars - 1] = key;
+				text[CURRENT_LINE][buff.chars - 1] = key;
 			}
 		break;
 
@@ -110,8 +114,8 @@ struct Buffer keyHandling(char key, struct Buffer buff)
 			buff.lines++;
 			if(buff.lines > termSize(Y) - 2)
 			{
-				lines = termSize(Y) - 2;
-				text[CURRENT_LINE][chars] = TERMINATOR; // Prevent double bar.
+				buff.lines = termSize(Y) - 2;
+				text[CURRENT_LINE][buff.chars] = TERMINATOR; // Prevent double bar.
 			}
 		break;
 
@@ -137,11 +141,11 @@ struct Buffer keyHandling(char key, struct Buffer buff)
 
 		// More special.
 		case CTRL_X:
-			saveToFile();
+			saveToFile(buff);
 		break;
 
 		case ARROW_LEFT:
-			cursor_pos++;
+			buff.cursor_pos++;
 			if(buff.cursor_pos > buff.chars)
 			{
 				buff.cursor_pos = buff.chars;
@@ -162,23 +166,19 @@ struct Buffer keyHandling(char key, struct Buffer buff)
 // Drawing funcions.
 
 // Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
-void renderText(char key)
+void renderText(char key, struct Buffer buff)
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
 
-	struct Buffer buff;
-	buff.chars = 0;
-	buff.lines = 1;
-	buff.cursor_pos = 1;
-	buff = keyHandling(key,buff);
+	keyHandling(key, buff);
 
 	for(ln_num = 1; ln_num <= buff.lines; ln_num++) // Lines rendering.
 	{
 		for(chr_num = 0; chr_num <= buff.chars; chr_num++) // Chars rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(ln_num == buff.lines && chr_num == buff.chars - cursor_pos)
+			if(ln_num == buff.lines && chr_num == buff.chars - buff.cursor_pos)
 			{
 				printf("%s%c%s", INVERT, text[ln_num - 1][chr_num], RESET);
 			}
@@ -192,17 +192,19 @@ void renderText(char key)
 
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
+	struct Buffer buff = {0, 1, 0};
+
 	WIN_DIMENSION height;
 	WIN_DIMENSION fill = 2; // Two bars.
-	fill = autoFill(fill, key);
+	fill = autoFill(fill, key, buff);
 
 	upperBar(filename);
-	renderText(key);
+	renderText(key, buff);
 
-	for(height = lines; height <= termSize(Y) - fill; height++)
+	for(height = buff.lines; height <= termSize(Y) - fill; height++)
 	{
 		printf("%c", LINEFEED);
 	}
-	lowerBar(lines, chars, key); // chars - 1 - last char index.
+	lowerBar(key, buff);
 }
 

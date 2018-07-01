@@ -13,8 +13,8 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
-#define UPPER_LINE lines - 2
-#define CURRENT_LINE lines - 1
+#define UPPER_LINE buff.lines - 2
+#define CURRENT_LINE buff.lines - 1
 
 // Some special ASCII decimal codes.
 #define TERMINATOR 0
@@ -37,18 +37,20 @@ struct Buffer
 	BUFF_T cursor_pos;
 };
 
+/*
 extern BUFF_T lines;
 extern BUFF_T chars;
 extern BUFF_T cursor_pos;
+*/
 
 extern char text[BUFF_SZ][MAX_WIDTH + 1]; // + 1 for null or linefeed.
 //extern char *filename;
 
 void setFilename(const char *basename);
 void readFromFile(void);
-void saveToFile(void);
+void saveToFile(struct Buffer buff);
 struct Buffer keyHandling(char key, struct Buffer buff);
-void renderText(char key);
+void renderText(char key, struct Buffer buff);
 void window(char key);
 
 #endif

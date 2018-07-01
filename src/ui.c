@@ -59,28 +59,28 @@ void upperBar(const char *filename)
 	printf("%s", RESET);
 }
 
-WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key)
+WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Buffer buff)
 {
-	if(chars == 0 || text[0][0] == LINEFEED) // No visible char.
+	if(buff.chars == 0 || text[0][0] == LINEFEED) // No visible char.
 	{
 		fill = 1;
 	}
-	else if(chars > 1)
+	else if(buff.chars > 1)
 	{
-		if(key != BACKSPACE &&  chars % termSize(X) == 1)
+		if(key != BACKSPACE &&  buff.chars % termSize(X) == 1)
 		{
-			lines++;
+			buff.lines++;
 		}
-		else if(key == BACKSPACE && chars % termSize(X) == 0)
+		else if(key == BACKSPACE && buff.chars % termSize(X) == 0)
 		{
-			lines--;
+			buff.lines--;
 		}
 	}
 	return fill;
 }
 
 // Lower border with a text.
-void lowerBar(BUFF_T lines, BUFF_T chars, char key)
+void lowerBar(char key, struct Buffer buff)
 {
 	const char *lines_text = " lines: \0";
 	const char *chars_text = " | chars: \0";
@@ -88,12 +88,12 @@ void lowerBar(BUFF_T lines, BUFF_T chars, char key)
 
 	WIN_DIMENSION width;
 	WIN_DIMENSION whitespace
-	= strlen(lines_text) + decIntLen(lines)
-	+ strlen(chars_text) + decIntLen(chars) 
+	= strlen(lines_text) + decIntLen(buff.lines)
+	+ strlen(chars_text) + decIntLen(buff.chars) 
 	+ strlen(ascii_code_text) + decIntLen(key);
 
-	printf("%s%s%i%s%i%s%i", INVERT, lines_text, lines, chars_text, chars,
-	ascii_code_text, key);
+	printf("%s%s%i%s%i%s%i", INVERT, lines_text, buff.lines, chars_text,
+	buff.chars, ascii_code_text, key);
 
 	char *bar_buff = malloc(termSize(X)); // TODO: PLACE MALLOCS.
 	pointerCheck(bar_buff, "Cannot allocate memory for lower bar, exit.\0");
