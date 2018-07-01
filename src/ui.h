@@ -22,8 +22,8 @@ typedef uint16_t WIN_DIMENSION; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
 int8_t decIntLen(int8_t chars);
 WIN_DIMENSION termSize(bool axis);
 void upperBar(const char *basename);
-WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Buffer buff);
-void lowerBar(char key, struct Buffer buff);
+WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Params buff);
+void lowerBar(char key, struct Params buff);
 void cleanFrame(void);
 
 #endif

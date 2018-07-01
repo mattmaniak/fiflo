@@ -59,7 +59,7 @@ void upperBar(const char *filename)
 	printf("%s", RESET);
 }
 
-WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Buffer buff)
+WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Params buff)
 {
 	if(buff.chars == 0 || text[0][0] == LINEFEED) // No visible char.
 	{
@@ -80,7 +80,7 @@ WIN_DIMENSION autoFill(WIN_DIMENSION fill, char key, struct Buffer buff)
 }
 
 // Lower border with a text.
-void lowerBar(char key, struct Buffer buff)
+void lowerBar(char key, struct Params buff)
 {
 	const char *lines_text = " lines: \0";
 	const char *chars_text = " | chars: \0";

@@ -3,14 +3,6 @@
 #include "logic.h"
 #include "ui.c"
 
-// TODO: EACH LINE SHOULD HAVE OTHER CHARS PARAM INSTEAD OF UNIVERSAL chars.
-
-/*
-BUFF_T lines = 1;
-BUFF_T chars = 0; // text = lines + chars
-BUFF_T cursor_pos = 1; // 0 is non-printed char eg. '\n'.
-*/
-
 char text[BUFF_SZ][MAX_WIDTH + 1];
 char filename[4353]; // 4096 (path) + 1 (slash) + 255 (basename) + 1 (null).
 // TODO
@@ -72,7 +64,7 @@ void readFromFile(void)
 }
 */
 
-void saveToFile(struct Buffer buff)
+void saveToFile(struct Params buff)
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
@@ -93,7 +85,7 @@ void saveToFile(struct Buffer buff)
 	fclose(textfile);
 }
 
-struct Buffer keyHandling(char key, struct Buffer buff)
+struct Params keyHandling(char key, struct Params buff)
 {
 	switch(key)
 	{
@@ -115,7 +107,8 @@ struct Buffer keyHandling(char key, struct Buffer buff)
 			if(buff.lines > termSize(Y) - 2)
 			{
 				buff.lines = termSize(Y) - 2;
-				text[CURRENT_LINE][buff.chars] = TERMINATOR; // Prevent double bar.
+				text[CURRENT_LINE][buff.chars] = TERMINATOR;
+				// Prevent double bar.
 			}
 		break;
 
@@ -166,12 +159,10 @@ struct Buffer keyHandling(char key, struct Buffer buff)
 // Drawing funcions.
 
 // Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
-void renderText(char key, struct Buffer buff)
+void renderText(struct Params buff)
 {
 	BUFF_T ln_num;
 	BUFF_T chr_num;
-
-	keyHandling(key, buff);
 
 	for(ln_num = 1; ln_num <= buff.lines; ln_num++) // Lines rendering.
 	{
@@ -192,14 +183,15 @@ void renderText(char key, struct Buffer buff)
 
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
-	struct Buffer buff = {0, 1, 0};
+	static struct Params buff = {0, 1, 1}; // Value initializer.
+	buff = keyHandling(key, buff);
 
 	WIN_DIMENSION height;
 	WIN_DIMENSION fill = 2; // Two bars.
 	fill = autoFill(fill, key, buff);
 
 	upperBar(filename);
-	renderText(key, buff);
+	renderText(buff);
 
 	for(height = buff.lines; height <= termSize(Y) - fill; height++)
 	{
