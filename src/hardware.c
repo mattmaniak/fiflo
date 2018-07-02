@@ -2,7 +2,7 @@
 
 #include "hardware.h"
 
-// TODO: TAKE IT FROM HERE!
+// TODO: TAKE IT FROM HERE AND CHECK ERRMSG POINTER!
 void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
 {
 	if(ptr == NULL)

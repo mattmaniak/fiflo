@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
 
 #define MIN_WIDTH 80
 #define MIN_HEIGHT 20
@@ -16,9 +15,8 @@
 #define UPPER_LINE buff.lines - 2
 #define CURRENT_LINE buff.lines - 1
 
-// Some special ASCII decimal codes.
 #define TERMINATOR 0
-#define LINEFEED 10 // Linefeed (LF)
+#define LINEFEED 10
 #define CTRL_X 24
 #define ARROW_UP 65
 #define ARROW_DOWN 66

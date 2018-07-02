@@ -61,7 +61,7 @@ void upperBar(const char *filename)
 
 TERM_SIZE autoFill(TERM_SIZE fill, char key, struct Params buff)
 {
-	if(buff.chars == 0 || text[0] == LINEFEED) // No visible char.
+	if(buff.chars == 0) // No visible char.
 	{
 		fill = 1;
 	}

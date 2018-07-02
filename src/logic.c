@@ -39,7 +39,6 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 	filename[strlen(path) + strlen(basename) + 1] = TERMINATOR;
 }
 
-
 void readFromFile(struct Params buff)
 {
 	char chr;
@@ -49,17 +48,17 @@ void readFromFile(struct Params buff)
 
 	while((chr = getc(textfile)) != EOF)
 	{
-		if(chr == LINEFEED)
-		{
-			buff.lines++;
+//		if(chr == LINEFEED)
+//		{
+			buff.chars++;
 			text[buff.chars] = chr;
-		}
+/*		}
 		else
 		{
 			buff.chars++;
 			text[buff.chars] = chr;
 		}
-	}
+*/	}
 	fclose(textfile);
 }
 
@@ -75,10 +74,10 @@ void saveToFile(struct Params buff)
 	{
 		for(x = 0; x <= buff.chars; x++) // Chars in lines.
 		{
-			if(text[x] != TERMINATOR)
-			{
+//			if(text[x] != TERMINATOR)
+//			{
 				fprintf(textfile, "%c", text[x]);
-			}
+//			}
 		}
 	}
 	fclose(textfile);
@@ -89,15 +88,14 @@ struct Params keyHandling(char key, struct Params buff)
 	switch(key)
 	{
 		default: // Just convert pressed key into a char in the string.
+			text[buff.chars] = key;
+
 			buff.chars++;
 			if(buff.chars > MAX_WIDTH)
 			{
 				buff.chars = MAX_WIDTH;
 			}
-			else
-			{
-				text[buff.chars - 1] = key;
-			}
+
 		break;
 
 		case LINEFEED:
@@ -113,13 +111,13 @@ struct Params keyHandling(char key, struct Params buff)
 
 		case BACKSPACE:
 			buff.chars--;
-			text[buff.chars] = TERMINATOR;
 
 			if(buff.chars < 0)
 			{
 				buff.chars = 0;
 			}
-			if(buff.lines > 1 && text[buff.chars] == LINEFEED)
+			text[buff.chars] = TERMINATOR;
+/*			if(buff.lines > 1 && text[buff.chars] == LINEFEED)
 			{
 				buff.lines--;
 				if(buff.lines < 1)
@@ -127,9 +125,8 @@ struct Params keyHandling(char key, struct Params buff)
 					buff.lines = 1;
 				}
 				text[buff.chars] = TERMINATOR;
-				// return chars, lines;
 			}
-		break;
+*/		break;
 
 		// More special.
 		case CTRL_X:
@@ -160,14 +157,14 @@ struct Params keyHandling(char key, struct Params buff)
 void renderText(struct Params buff)
 {
 	BUFF_T x;
-	BUFF_T y;
+//	BUFF_T y;
 
-	for(y = 1; y <= buff.lines; y++) // Lines rendering.
-	{
+//	for(y = 1; y <= buff.lines; y++) // Lines rendering.
+//	{
 		for(x = 0; x <= buff.chars; x++) // Chars rendering.
 		{
 			// Invert last char color as a integrated cursor.
-			if(y == buff.lines && x == buff.chars - buff.cursor_pos)
+			if(/*y == buff.lines && */x == buff.chars - buff.cursor_pos)
 			{
 				printf("%s%c%s", INVERT, text[x], RESET);
 			}
@@ -176,23 +173,24 @@ void renderText(struct Params buff)
 				printf("%c", text[x]);
 			}
 		}
-	}
+//	}
 }
 
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
-	static struct Params buff = {0, 1, 1}; // Value initializer.
-	readFromFile(buff); // TODO: IS IN A LOOP?
-	buff = keyHandling(key, buff);
-
-	TERM_SIZE height;
+	TERM_SIZE y;
 	TERM_SIZE fill = 2; // Two bars.
+
+	static struct Params buff = {0, 1, 1}; // Value initializer.
+//	readFromFile(buff); // TODO: IS IN A LOOP?
+
+	buff = keyHandling(key, buff);
 	fill = autoFill(fill, key, buff);
 
 	upperBar(filename);
 	renderText(buff);
 
-	for(height = buff.lines; height <= getSize(Y) - fill; height++)
+	for(y = buff.lines + fill; y <= getSize(Y); y++)
 	{
 		printf("%c", LINEFEED);
 	}
