@@ -65,20 +65,13 @@ void readFromFile(struct Params buff)
 void saveToFile(struct Params buff)
 {
 	BUFF_T x;
-	BUFF_T y;
 
 	FILE *textfile = fopen(filename, "w");
 	pointerCheck(textfile, "Cannot write to the file, exit.\0");
 
-	for(y = 1; y <= buff.lines; y++) // Lines rendering.
+	for(x = 0; x <= buff.chars; x++)
 	{
-		for(x = 0; x <= buff.chars; x++) // Chars in lines.
-		{
-//			if(text[x] != TERMINATOR)
-//			{
-				fprintf(textfile, "%c", text[x]);
-//			}
-		}
+		fprintf(textfile, "%c", text[x]);
 	}
 	fclose(textfile);
 }
@@ -111,22 +104,12 @@ struct Params keyHandling(char key, struct Params buff)
 
 		case BACKSPACE:
 			buff.chars--;
-
 			if(buff.chars < 0)
 			{
 				buff.chars = 0;
 			}
 			text[buff.chars] = TERMINATOR;
-/*			if(buff.lines > 1 && text[buff.chars] == LINEFEED)
-			{
-				buff.lines--;
-				if(buff.lines < 1)
-				{
-					buff.lines = 1;
-				}
-				text[buff.chars] = TERMINATOR;
-			}
-*/		break;
+		break;
 
 		// More special.
 		case CTRL_X:
@@ -157,35 +140,43 @@ struct Params keyHandling(char key, struct Params buff)
 void renderText(struct Params buff)
 {
 	BUFF_T x;
-//	BUFF_T y;
 
-//	for(y = 1; y <= buff.lines; y++) // Lines rendering.
-//	{
-		for(x = 0; x <= buff.chars; x++) // Chars rendering.
+	for(x = 0; x <= buff.chars; x++) // Chars rendering.
+	{
+	// Invert last char color as a integrated cursor.
+		if(x == buff.chars - buff.cursor_pos)
 		{
-			// Invert last char color as a integrated cursor.
-			if(/*y == buff.lines && */x == buff.chars - buff.cursor_pos)
-			{
-				printf("%s%c%s", INVERT, text[x], RESET);
-			}
-			else
-			{
-				printf("%c", text[x]);
-			}
+			printf("%s%c%s", INVERT, text[x], RESET);
 		}
-//	}
+		else
+		{
+			printf("%c", text[x]);
+		}
+	}
+
+	for(x = 0; x < getSize(X) - buff.chars; x++)
+	{
+		if(text[x] == LINEFEED)
+		{
+			printf("%c", 'F');
+		}
+	}
 }
 
 void window(char key) // Terminal fill that shows chars and other stupid things.
 {
 	TERM_SIZE y;
-	TERM_SIZE fill = 2; // Two bars.
+	static TERM_SIZE fill = 2; // Two bars.
 
 	static struct Params buff = {0, 1, 1}; // Value initializer.
 //	readFromFile(buff); // TODO: IS IN A LOOP?
 
 	buff = keyHandling(key, buff);
 	fill = autoFill(fill, key, buff);
+	if(buff.chars % getSize(X) == 0)
+	{
+		fill++;
+	}
 
 	upperBar(filename);
 	renderText(buff);
