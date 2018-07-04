@@ -3,7 +3,6 @@
 #include "logic.h"
 #include "ui.c"
 
-char text[BUFF_SZ];
 char filename[4353]; // 4096 (path) + 1 (slash) + 255 (basename) + 1 (null).
 // TODO
 
@@ -51,7 +50,7 @@ void readFromFile(struct Params buff)
 //		if(chr == LINEFEED)
 //		{
 			buff.chars++;
-			text[buff.chars] = chr;
+			buff.text[buff.chars] = chr;
 /*		}
 		else
 		{
@@ -71,7 +70,7 @@ void saveToFile(struct Params buff)
 
 	for(x = 0; x <= buff.chars; x++)
 	{
-		fprintf(fd, "%c", text[x]);
+		fprintf(fd, "%c", buff.text[x]);
 	}
 	fclose(fd);
 }
@@ -83,10 +82,10 @@ struct Params keyHandling(char key, struct Params buff)
 		switch(key)
 		{
 			default: // Just convert pressed key into a char in the string.
-				text[buff.chars] = key;
+				buff.text[buff.chars] = key;
 
 				buff.chars++;
-	/*			if(buff.chars > MAX_CHARS)
+	/*			if(buff.chars > MAX_CHARS) TODO
 				{
 					buff.chars = MAX_CHARS;
 				}
@@ -94,12 +93,12 @@ struct Params keyHandling(char key, struct Params buff)
 			break;
 
 			case LINEFEED:
-				text[buff.chars] = LINEFEED;
+				buff.text[buff.chars] = LINEFEED;
 				buff.lines++;
 				if(buff.lines > getSize(Y) - 2)
 				{
 					buff.lines = getSize(Y) - 2;
-					text[buff.chars] = TERMINATOR;
+					buff.text[buff.chars] = TERMINATOR;
 					// Prevent double bar.
 				}
 			break;
@@ -110,7 +109,7 @@ struct Params keyHandling(char key, struct Params buff)
 				{
 					buff.chars = 0;
 				}
-				text[buff.chars] = TERMINATOR;
+				buff.text[buff.chars] = TERMINATOR;
 			break;
 
 			// More special.
@@ -149,11 +148,11 @@ void renderText(struct Params buff)
 	// Invert last char color as a integrated cursor.
 		if(x == buff.chars - buff.cursor_pos)
 		{
-			printf("%s%c%s", INVERT, text[x], RESET);
+			printf("%s%c%s", INVERT, buff.text[x], RESET);
 		}
 		else
 		{
-			printf("%c", text[x]);
+			printf("%c", buff.text[x]);
 		}
 	}
 	if(buff.cursor_pos == 0)
@@ -164,7 +163,7 @@ void renderText(struct Params buff)
 	// TODO: LINES HANDLING.
 	for(x = 0; x < getSize(X) - buff.chars; x++)
 	{
-		if(text[x] == LINEFEED)
+		if(buff.text[x] == LINEFEED)
 		{
 			printf("%c", 'F');
 		}
@@ -176,7 +175,7 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 	TERM_SIZE y;
 	static TERM_SIZE fill = 2; // Two bars.
 
-	static struct Params buff = {0, 1, 0}; // Value initializer.
+	static struct Params buff = {0, 1, 0, {'\0'}}; // Value initializer.
 //	readFromFile(buff); // TODO: IS IN A LOOP?
 
 	buff = keyHandling(key, buff);

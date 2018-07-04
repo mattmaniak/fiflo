@@ -31,10 +31,8 @@ struct Params
 	BUFF_T chars;
 	BUFF_T lines;
 	BUFF_T cursor_pos;
+	char text[BUFF_SZ];
 };
-
-extern char text[BUFF_SZ];
-//extern char *filename;
 
 void setFilename(const char *basename);
 void readFromFile(struct Params buff);
