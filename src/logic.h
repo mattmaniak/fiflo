@@ -12,10 +12,8 @@
 #define MAX_WIDTH 600
 #define MAX_HEIGHT 400
 
-#define UPPER_LINE buff.lines - 2
-#define CURRENT_LINE buff.lines - 1
-
 #define TERMINATOR 0
+#define TAB 9
 #define LINEFEED 10
 #define CTRL_X 24
 #define ARROW_UP 65

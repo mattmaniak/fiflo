@@ -43,10 +43,10 @@ void readFromFile(struct Params buff)
 {
 	char chr;
 
-	FILE *textfile = fopen(filename, "ab+");
-	pointerCheck(textfile, "Cannot open the file, exit.\0");
+	FILE *fd = fopen(filename, "ab+");
+	pointerCheck(fd, "Cannot open the file, exit.\0");
 
-	while((chr = getc(textfile)) != EOF)
+	while((chr = getc(fd)) != EOF)
 	{
 //		if(chr == LINEFEED)
 //		{
@@ -59,78 +59,81 @@ void readFromFile(struct Params buff)
 			text[buff.chars] = chr;
 		}
 */	}
-	fclose(textfile);
+	fclose(fd);
 }
 
 void saveToFile(struct Params buff)
 {
 	BUFF_T x;
 
-	FILE *textfile = fopen(filename, "w");
-	pointerCheck(textfile, "Cannot write to the file, exit.\0");
+	FILE *fd = fopen(filename, "w");
+	pointerCheck(fd, "Cannot write to the file, exit.\0");
 
 	for(x = 0; x <= buff.chars; x++)
 	{
-		fprintf(textfile, "%c", text[x]);
+		fprintf(fd, "%c", text[x]);
 	}
-	fclose(textfile);
+	fclose(fd);
 }
 
 struct Params keyHandling(char key, struct Params buff)
 {
-	switch(key)
+	if(key > 65 || key < 62)
 	{
-		default: // Just convert pressed key into a char in the string.
-			text[buff.chars] = key;
+		switch(key)
+		{
+			default: // Just convert pressed key into a char in the string.
+				text[buff.chars] = key;
 
-			buff.chars++;
-			if(buff.chars > MAX_WIDTH)
-			{
-				buff.chars = MAX_WIDTH;
-			}
+				buff.chars++;
+	/*			if(buff.chars > MAX_CHARS)
+				{
+					buff.chars = MAX_CHARS;
+				}
+	*/
+			break;
 
-		break;
+			case LINEFEED:
+				text[buff.chars] = LINEFEED;
+				buff.lines++;
+				if(buff.lines > getSize(Y) - 2)
+				{
+					buff.lines = getSize(Y) - 2;
+					text[buff.chars] = TERMINATOR;
+					// Prevent double bar.
+				}
+			break;
 
-		case LINEFEED:
-			text[buff.chars] = LINEFEED;
-			buff.lines++;
-			if(buff.lines > getSize(Y) - 2)
-			{
-				buff.lines = getSize(Y) - 2;
+			case BACKSPACE:
+				buff.chars--;
+				if(buff.chars < 0)
+				{
+					buff.chars = 0;
+				}
 				text[buff.chars] = TERMINATOR;
-				// Prevent double bar.
-			}
-		break;
+			break;
 
-		case BACKSPACE:
-			buff.chars--;
-			if(buff.chars < 0)
-			{
-				buff.chars = 0;
-			}
-			text[buff.chars] = TERMINATOR;
-		break;
+			// More special.
+			case CTRL_X:
+				saveToFile(buff);
+			break;
 
-		// More special.
-		case CTRL_X:
-			saveToFile(buff);
-		break;
+			case ARROW_LEFT:
+				buff.cursor_pos++;
+				if(buff.cursor_pos > buff.chars)
+				{
+					buff.cursor_pos = buff.chars;
+				}
+			break;
 
-		case ARROW_LEFT:
-			buff.cursor_pos++;
-			if(buff.cursor_pos > buff.chars)
-			{
-				buff.cursor_pos = buff.chars;
-			}
-		break;
-
-		case ARROW_RIGHT:
-			buff.cursor_pos--;
-			if(buff.cursor_pos < 1)
-			{
-				buff.cursor_pos = 1;
-			}
-		break;
+			case ARROW_RIGHT:
+				buff.cursor_pos--;
+				if(buff.cursor_pos < 1)
+				{
+					buff.cursor_pos = 1;
+				}
+			break;
+		}
 	}
 	return buff;
 }
@@ -153,7 +156,12 @@ void renderText(struct Params buff)
 			printf("%c", text[x]);
 		}
 	}
+	if(buff.cursor_pos == 0)
+	{
+		cursor();
+	}
 
+	// TODO: LINES HANDLING.
 	for(x = 0; x < getSize(X) - buff.chars; x++)
 	{
 		if(text[x] == LINEFEED)
@@ -168,15 +176,11 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 	TERM_SIZE y;
 	static TERM_SIZE fill = 2; // Two bars.
 
-	static struct Params buff = {0, 1, 1}; // Value initializer.
+	static struct Params buff = {0, 1, 0}; // Value initializer.
 //	readFromFile(buff); // TODO: IS IN A LOOP?
 
 	buff = keyHandling(key, buff);
 	fill = autoFill(fill, key, buff);
-	if(buff.chars % getSize(X) == 0)
-	{
-		fill++;
-	}
 
 	upperBar(filename);
 	renderText(buff);

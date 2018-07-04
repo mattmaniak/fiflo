@@ -20,7 +20,8 @@
 typedef int16_t BUFF_T;
 typedef uint16_t WIN_SIZE; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
 
-int8_t decIntLen(int8_t chars);
+void cursor(void);
+BUFF_T decIntLen(BUFF_T chars);
 WIN_SIZE getSize(bool axis);
 void upperBar(const char *basename);
 WIN_SIZE autoFill(WIN_SIZE fill, char key, struct Params buff);

@@ -2,7 +2,12 @@
 
 #include "ui.h"
 
-int8_t decIntLen(int8_t number)
+void cursor(void)
+{
+	printf("%s%c%s", INVERT, ' ', RESET);
+}
+
+BUFF_T decIntLen(BUFF_T number)
 {
 	// Return a length of decimal integer. Eg. 2 from number = 12.
 	int8_t len = 1;
@@ -61,20 +66,22 @@ void upperBar(const char *filename)
 
 TERM_SIZE autoFill(TERM_SIZE fill, char key, struct Params buff)
 {
-	if(buff.chars == 0) // No visible char.
+	switch(buff.chars)
 	{
-		fill = 1;
-	}
-	else if(buff.chars > 1)
-	{
-		if(key != BACKSPACE &&  buff.chars % getSize(X) == 1)
-		{
-			buff.lines++;
-		}
-		else if(key == BACKSPACE && buff.chars % getSize(X) == 0)
-		{
-			buff.lines--;
-		}
+		case 0:
+			fill = 2;
+		break;
+
+		default:
+			if(key != BACKSPACE && buff.chars % getSize(X) == 0)
+			{
+				fill++;
+			}
+			else if(key == BACKSPACE && buff.chars % getSize(X) == getSize(X) - 1)
+			{
+				fill--;
+			}
+		break;
 	}
 	return fill;
 }
@@ -95,16 +102,11 @@ void lowerBar(char key, struct Params buff)
 	printf("%s%s%i%s%i%s%i", INVERT, lines_text, buff.lines, chars_text,
 	buff.chars, ascii_code_text, key);
 
-	char *bar_buff = malloc(getSize(X)); // TODO: PLACE MALLOCS.
-	pointerCheck(bar_buff, "Cannot allocate memory for lower bar, exit.\0");
-
 	for(width = 0; width < getSize(X) - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}
 	printf("%s", RESET);
-
-	free(bar_buff);
 }
 
 void cleanFrame(void) // To provide rendering in a one frame.
