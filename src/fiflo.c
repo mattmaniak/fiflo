@@ -1,16 +1,14 @@
 #ifdef __linux__
 
-#include <signal.h>
+#include "fiflo.h"
 
 #include "hardware.c"
 #include "logic.c"
 
-void intHandler(int dummy);
-void usageInfo(void);
-void argcChceck(void);
-void programRound(void);
-
-void intHandler(int dummy) {}
+void sigHandler(int std_holder)
+{
+	if(std_holder == 0) {}
+}
 
 void usageInfo(void)
 {
@@ -31,6 +29,7 @@ void programRound(void)
 {
 	char pressed_key;
 	struct Params buff = {0, 1, 0, {'\0'}}; // Value initializer.
+	buff = readFromFile(buff);
 	window('\0', buff);
 
 	for(;;)
@@ -43,8 +42,7 @@ void programRound(void)
 
 int main(int argc, char *argv[])
 {
-//	signal(SIGINT, intHandler); // CTRL_C
-	signal(SIGTSTP, intHandler);// CTRL_X
+	signal(SIGTSTP, sigHandler); // CTRL_X
 
 	getSize(0); // Returns Y but doesn't matter for that case. Just a check.
 	argcCheck(argc);

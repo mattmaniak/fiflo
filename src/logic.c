@@ -40,6 +40,7 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 
 struct Params readFromFile(struct Params buff)
 {
+	buff.chars = 0;
 	char chr;
 
 	FILE *fd = fopen(filename, "ab+");
@@ -47,10 +48,9 @@ struct Params readFromFile(struct Params buff)
 
 	while((chr = getc(fd)) != EOF)
 	{
-		buff.chars++;
 		buff.text[buff.chars] = chr;
+		buff.chars++;
 	}
-
 	fclose(fd);
 	return buff;
 }
@@ -77,8 +77,10 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 		switch(key)
 		{
 			default: // Just convert pressed key into a char in the string.
-				buff.text[buff.chars] = key;
 				buff.chars++;
+				buff.text[buff.chars - 1] = key;
+				buff.text[buff.chars] = TERMINATOR;
+				
 	/*			if(buff.chars > MAX_CHARS) TODO
 				{
 					buff.chars = MAX_CHARS;
@@ -176,7 +178,6 @@ struct Params window(char key, struct Params buff)
 	TERM_SIZE y;
 	static TERM_SIZE fill = 2; // Two bars.
 
-	readFromFile(buff); // TODO: IS IN A LOOP?
 	buff = keyHandling(key, buff);
 	fill = autoFill(fill, key, buff);
 
