@@ -38,7 +38,7 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 	filename[strlen(path) + strlen(basename) + 1] = TERMINATOR;
 }
 
-void readFromFile(struct Params buff)
+struct Params readFromFile(struct Params buff)
 {
 	char chr;
 
@@ -47,18 +47,12 @@ void readFromFile(struct Params buff)
 
 	while((chr = getc(fd)) != EOF)
 	{
-//		if(chr == LINEFEED)
-//		{
-			buff.chars++;
-			buff.text[buff.chars] = chr;
-/*		}
-		else
-		{
-			buff.chars++;
-			text[buff.chars] = chr;
-		}
-*/	}
+		buff.chars++;
+		buff.text[buff.chars] = chr;
+	}
+
 	fclose(fd);
+	return buff;
 }
 
 void saveToFile(struct Params buff)
@@ -77,7 +71,13 @@ void saveToFile(struct Params buff)
 
 struct Params keyHandling(char key, struct Params buff)
 {
-	if(key > 65 || key < 62)
+	static bool init = 0;
+	if(buff.text[0] == '\0' && init == 0)
+	{
+		buff.chars = 0;
+		init = 1;
+	}
+	if(key < 62 || key > 65)
 	{
 		switch(key)
 		{
@@ -170,14 +170,13 @@ void renderText(struct Params buff)
 	}
 }
 
-void window(char key) // Terminal fill that shows chars and other stupid things.
+// Terminal fill that shows chars and other stupid things.
+struct Params window(char key, struct Params buff)
 {
 	TERM_SIZE y;
 	static TERM_SIZE fill = 2; // Two bars.
 
-	static struct Params buff = {0, 1, 0, {'\0'}}; // Value initializer.
-//	readFromFile(buff); // TODO: IS IN A LOOP?
-
+	readFromFile(buff); // TODO: IS IN A LOOP?
 	buff = keyHandling(key, buff);
 	fill = autoFill(fill, key, buff);
 
@@ -189,5 +188,7 @@ void window(char key) // Terminal fill that shows chars and other stupid things.
 		printf("%c", LINEFEED);
 	}
 	lowerBar(key, buff);
+
+	return buff;
 }
 

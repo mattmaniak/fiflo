@@ -35,11 +35,11 @@ struct Params
 };
 
 void setFilename(const char *basename);
-void readFromFile(struct Params buff);
+static struct Params readFromFile(struct Params buff);
 void saveToFile(struct Params buff);
 struct Params keyHandling(char key, struct Params buff);
 void renderText(struct Params buff);
-void window(char key);
+struct Params window(char key, struct Params buff);
 
 #endif
 

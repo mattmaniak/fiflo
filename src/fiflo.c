@@ -18,19 +18,15 @@ void argcCheck(int arg_count)
 	}
 }
 
-void initRound(void)
-{
-	window('\0');
-}
-
 void programRound(void)
 {
 	char pressed_key;
+	struct Params buff = {0, 1, 0, {'\0'}}; // Value initializer.
 	for(;;)
 	{
 		pressed_key = unixGetch(); // TODO: FLUSHING.
 		cleanFrame();
-		window(pressed_key);
+		buff = window(pressed_key, buff);
 	}
 }
 
@@ -50,7 +46,7 @@ int main(int argc, char *argv[])
 	}
 	setFilename(basename);
 
-	initRound();
+//	window('\0', {0, 1, 0, {'\0'}});
 	programRound();
 
 	return 0;
