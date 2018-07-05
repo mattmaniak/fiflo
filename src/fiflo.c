@@ -1,7 +1,16 @@
 #ifdef __linux__
 
+#include <signal.h>
+
 #include "hardware.c"
 #include "logic.c"
+
+void intHandler(int dummy);
+void usageInfo(void);
+void argcChceck(void);
+void programRound(void);
+
+void intHandler(int dummy) {}
 
 void usageInfo(void)
 {
@@ -34,6 +43,9 @@ void programRound(void)
 
 int main(int argc, char *argv[])
 {
+//	signal(SIGINT, intHandler); // CTRL_C
+	signal(SIGTSTP, intHandler);// CTRL_X
+
 	getSize(0); // Returns Y but doesn't matter for that case. Just a check.
 	argcCheck(argc);
 	const char *basename;

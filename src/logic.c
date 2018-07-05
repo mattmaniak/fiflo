@@ -71,14 +71,13 @@ void saveToFile(struct Params buff)
 
 struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 {
-	bool init = 0;
+	bool empty = 0;
 	if(key < 62 || key > 65)
 	{
 		switch(key)
 		{
 			default: // Just convert pressed key into a char in the string.
 				buff.text[buff.chars] = key;
-
 				buff.chars++;
 	/*			if(buff.chars > MAX_CHARS) TODO
 				{
@@ -129,11 +128,11 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 			break;
 		}
 	}
-	if(key == '\0' && init == 0) // Set control flag.
+	if(key == '\0' && empty == 0) // Set control flag.
 	{
+		empty = 1;
 		buff.chars = 0;
 		buff.text[buff.chars] = BACKSPACE;
-		init = 1;
 	}
 	return buff;
 }
