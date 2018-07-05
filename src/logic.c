@@ -69,14 +69,9 @@ void saveToFile(struct Params buff)
 	fclose(fd);
 }
 
-struct Params keyHandling(char key, struct Params buff)
+struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 {
-	static bool init = 0;
-	if(buff.text[0] == '\0' && init == 0)
-	{
-		buff.chars = 0;
-		init = 1;
-	}
+	bool init = 0;
 	if(key < 62 || key > 65)
 	{
 		switch(key)
@@ -133,6 +128,12 @@ struct Params keyHandling(char key, struct Params buff)
 				}
 			break;
 		}
+	}
+	if(key == '\0' && init == 0) // Set control flag.
+	{
+		buff.chars = 0;
+		buff.text[buff.chars] = BACKSPACE;
+		init = 1;
 	}
 	return buff;
 }

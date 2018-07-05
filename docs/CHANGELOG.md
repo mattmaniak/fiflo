@@ -8,8 +8,9 @@ files use diff-like tools or "git log".
 
 ## Versions:
 ### v1.0.0 (WIP):
-- Changed API.
+- Simplified API.
 - Less memory usage.
+- Better initialization.
 
 ### v0.5.0-unstable (July 1, 2018):
 The last v0.y.z version and showup of the old program logic. Mostly insecure.

@@ -22,6 +22,8 @@ void programRound(void)
 {
 	char pressed_key;
 	struct Params buff = {0, 1, 0, {'\0'}}; // Value initializer.
+	window('\0', buff);
+
 	for(;;)
 	{
 		pressed_key = unixGetch(); // TODO: FLUSHING.
@@ -46,7 +48,6 @@ int main(int argc, char *argv[])
 	}
 	setFilename(basename);
 
-//	window('\0', {0, 1, 0, {'\0'}});
 	programRound();
 
 	return 0;
