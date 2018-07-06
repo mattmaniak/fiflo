@@ -5,15 +5,16 @@
 #include "hardware.c"
 #include "logic.c"
 
-void sigHandler(int std_holder)
+void sigHandler(int nothing) // TODO: STTY ECHO.
 {
-	if(std_holder == 0) {}
+	nothing = 0;
+	exit(nothing);
 }
 
 void usageInfo(void)
 {
-	puts("Usage: fiflo [filename or nothing].");
-	exit(1);
+	puts("Usage: fiflo [option].");
+	exit(0);
 }
 
 void argcCheck(int arg_count)

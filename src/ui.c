@@ -52,6 +52,7 @@ TERM_SIZE getSize(bool axis) // Check terminal size.
 void upperBar(const char *filename)
 {
 	const char *program = " Fiflo | file: \0";
+	const char *shortcuts = " Exit: CTRL+Z or CTRL+C, save: CTRL+X.\0";
 
 	TERM_SIZE width;
 	TERM_SIZE whitespace = strlen(program) + strlen(filename);
@@ -61,6 +62,13 @@ void upperBar(const char *filename)
 	{
 		printf("%c", ' ');
 	}
+
+	printf("%s", shortcuts);
+	for(width = 0; width < getSize(X) - strlen(shortcuts); width++)
+	{
+		printf("%c", ' ');
+	}
+
 	printf("%s", RESET);
 }
 
@@ -69,7 +77,7 @@ TERM_SIZE autoFill(TERM_SIZE fill, char key, struct Params buff)
 	switch(buff.chars)
 	{
 		case 0:
-			fill = 2;
+			fill = BARS_AMOUNT;
 		break;
 
 		default:
@@ -111,8 +119,8 @@ void lowerBar(char key, struct Params buff)
 
 void cleanFrame(void) // To provide rendering in a one frame.
 {
-	TERM_SIZE lines;
-	for(lines = 0; lines < getSize(Y); lines++)
+	TERM_SIZE y;
+	for(y = 0; y < getSize(Y); y++)
 	{
 		printf("%s", "\033[F\033[K");
 	}

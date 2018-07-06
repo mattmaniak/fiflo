@@ -17,7 +17,7 @@ struct Params
 	char text[BUFF_SZ];
 };
 
-void sigHandler(int std_holder);
+void sigHandler(int nothing);
 void usageInfo(void);
 void argcChceck(void);
 void programRound(void);

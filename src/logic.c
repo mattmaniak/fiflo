@@ -163,20 +163,20 @@ void renderText(struct Params buff)
 	}
 
 	// TODO: LINES HANDLING.
-	for(x = 0; x < getSize(X) - buff.chars; x++)
+/*	for(x = 0; x < getSize(X) - buff.chars; x++)
 	{
 		if(buff.text[x] == LINEFEED)
 		{
 			printf("%c", 'F');
 		}
-	}
+	}*/
 }
 
 // Terminal fill that shows chars and other stupid things.
 struct Params window(char key, struct Params buff)
 {
 	TERM_SIZE y;
-	static TERM_SIZE fill = 2; // Two bars.
+	static TERM_SIZE fill = BARS_AMOUNT; // Three bars.
 
 	buff = keyHandling(key, buff);
 	fill = autoFill(fill, key, buff);

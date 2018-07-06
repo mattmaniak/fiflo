@@ -17,6 +17,8 @@
 #define X 1
 #define Y 0
 
+#define BARS_AMOUNT 3
+
 typedef int16_t BUFF_T;
 typedef uint16_t WIN_SIZE; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
 
