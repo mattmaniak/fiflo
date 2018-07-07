@@ -33,12 +33,12 @@ void programRound(void)
 	buff = readFromFile(buff);
 	window('\0', buff);
 
-	for(;;)
+/*	for(;;)
 	{
 		pressed_key = unixGetch(); // TODO: FLUSHING.
 		cleanFrame();
 		buff = window(pressed_key, buff);
-	}
+	}*/
 }
 
 int main(int argc, char *argv[])

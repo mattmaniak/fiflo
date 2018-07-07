@@ -40,7 +40,6 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 
 struct Params readFromFile(struct Params buff)
 {
-	buff.chars = 0;
 	char chr;
 
 	FILE *fd = fopen(filename, "ab+");
@@ -50,6 +49,7 @@ struct Params readFromFile(struct Params buff)
 	{
 		buff.text[buff.chars] = chr;
 		buff.chars++;
+		printf("%c\n", buff.text[buff.chars]);
 	}
 	fclose(fd);
 	return buff;

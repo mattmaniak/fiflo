@@ -1,34 +1,42 @@
 CC = gcc
-
 CFLAGS = -Wall -Wextra -Wpedantic
 
-DEBUG_FLAGS = -g -lasan \
+ASAN_FLAGS = -g -lasan \
 -fsanitize=address \
 -fsanitize=undefined \
 -fsanitize=signed-integer-overflow \
 
-compile:
-	$(CC) src/fiflo.c -o fiflo \
-	$(CFLAGS) \
-	$(DEBUG_FLAGS)
-
-test: # ONLY FOR THE WIP
-	$(CC) src/fiflo.c -o fiflo \
-	$(CFLAGS)
-
-	valgrind \
-	--tool=memcheck \
+VALGRIND_FLAGS = --tool=memcheck \
 	--leak-check=yes \
 	--show-reachable=yes \
 	--num-callers=20 \
 	--track-fds=yes \
-	./fiflo
+
+TARGET = fiflo
+INSTALL_ODIR = /usr/bin/$(TARGET)
+MAN_ODIR = /usr/share/man/man1/$(TARGET).1
+
+all:
+	$(CC) src/$(TARGET).c -o $(TARGET) \
+	$(CFLAGS) \
+	$(ASAN_FLAGS)
+
+test: # ONLY FOR THE WIP
+	$(CC) src/$(TARGET).c -o $(TARGET) \
+	$(CFLAGS)
+
+	valgrind \
+	$(VALGRIND_FLAGS) \
+	./$(TARGET)
 
 install:
-	cp fiflo /usr/bin/fiflo
-	cp man/fiflo.1 /usr/share/man/man1/fiflo.1
-	gzip /usr/share/man/man1/fiflo.1
+	cp $(TARGET) $(INSTALL_DIR)
+	cp man/$(TARGET).1 $(MAN_ODIR)
+	gzip $(MAN_ODIR)
 
 uninstall:
-	rm /usr/bin/fiflo
-	rm /usr/share/man/man1/fiflo.1.gz
+	$(RM) $(INSTALL_ODIR)
+	$(RM) $(MAN_ODIR).gz
+
+clean:
+	$(RM) $(TARGET)
