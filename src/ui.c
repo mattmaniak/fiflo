@@ -34,7 +34,7 @@ TERM_SIZE getSize(bool axis) // Check terminal size.
 	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
 	{
 		fprintf(stderr, "%s%i%c%i%s",
-		"Max. term size is ", MAX_WIDTH, X, MAX_HEIGHT, ".\n");
+		"Max. term size is ", MAX_WIDTH, X, MAX_HEIGHT, ", exited.\n");
 		exit(1);
 	}
 
@@ -42,7 +42,6 @@ TERM_SIZE getSize(bool axis) // Check terminal size.
 	{
 		case 1: // X
 			return win.ws_col;
-
 		case 0: // Y
 			return win.ws_row;
 	}
@@ -52,7 +51,7 @@ TERM_SIZE getSize(bool axis) // Check terminal size.
 void upperBar(const char *filename)
 {
 	const char *program = " Fiflo | file: \0";
-	const char *shortcuts = " Exit: CTRL+Z or CTRL+C, save: CTRL+X.\0";
+	const char *shortcuts = " Exit: CTRL+C, save: CTRL+X.\0";
 
 	TERM_SIZE width;
 	TERM_SIZE whitespace = strlen(program) + strlen(filename);

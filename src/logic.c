@@ -15,12 +15,13 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 
 	if(getcwd(path, sizeof(path)) == NULL)
 	{
-		fputs("Cannot get your current absolute dir.", stderr);
+		fputs("Cannot get your current absolute dir, exited.", stderr);
 		exit(1);
 	}
 	if(strlen(path) > 4096 || strlen(basename) > 255)
 	{
-		fputs("Max. absolute path length is 4096, basename: 255.", stderr);
+		fputs("Max. absolute path length is 4096, basename: 255, exited.",
+		stderr);
 		exit(1);
 	}
 	path[strlen(path)] = TERMINATOR;
@@ -43,7 +44,7 @@ struct Params readFromFile(struct Params buff)
 	char chr;
 
 	FILE *fd = fopen(filename, "ab+");
-	pointerCheck(fd, "Cannot open the file, exit.\0");
+	pointerCheck(fd, "Cannot open the file, exited.\0");
 
 	while((chr = getc(fd)) != EOF)
 	{
@@ -60,7 +61,7 @@ void saveToFile(struct Params buff)
 	BUFF_T x;
 
 	FILE *fd = fopen(filename, "w");
-	pointerCheck(fd, "Cannot write to the file, exit.\0");
+	pointerCheck(fd, "Cannot write to the file, exited.\0");
 
 	for(x = 0; x <= buff.chars; x++)
 	{
@@ -87,6 +88,9 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 				}
 	*/
 			break;
+
+			case TERMINATOR: // Protection from counting '\0'.
+				break;
 
 			case LINEFEED:
 				buff.text[buff.chars] = LINEFEED;
@@ -130,7 +134,7 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 			break;
 		}
 	}
-	if(key == '\0' && empty == 0) // Set control flag.
+	if(key == '\b' && empty == 0) // Set control flag.
 	{
 		empty = 1;
 		buff.chars = 0;

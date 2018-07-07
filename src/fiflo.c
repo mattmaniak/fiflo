@@ -5,10 +5,9 @@
 #include "hardware.c"
 #include "logic.c"
 
-void sigHandler(int nothing) // TODO: STTY ECHO.
+void sigHandler(int nothing)
 {
-	nothing = 0;
-	exit(nothing);
+	if(nothing == 0) {}
 }
 
 void usageInfo(void)
@@ -29,16 +28,16 @@ void argcCheck(int arg_count)
 void programRound(void)
 {
 	char pressed_key;
-	struct Params buff = {0, 1, 0, {'\0'}}; // Value initializer.
+	struct Params buff = {0, 1, 0, {'A'}}; // Value initializer.
 	buff = readFromFile(buff);
 	window('\0', buff);
 
-/*	for(;;)
+	for(;;)
 	{
 		pressed_key = unixGetch(); // TODO: FLUSHING.
 		cleanFrame();
 		buff = window(pressed_key, buff);
-	}*/
+	}
 }
 
 int main(int argc, char *argv[])
@@ -57,6 +56,10 @@ int main(int argc, char *argv[])
 	{
 		usageInfo();
 	}
+	else
+	{
+		basename = argv[1];
+	}
 	setFilename(basename);
 
 	programRound();
@@ -70,7 +73,7 @@ int main(int argc, char *argv[])
 
 int main(void)
 {
-	fputs("Only Linux-based systems are supported, exit.\n", stderr);
+	fputs("Only Linux-based systems are supported, exited.\n", stderr);
 	return 0;
 }
 
