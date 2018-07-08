@@ -64,7 +64,10 @@ void saveFile(struct Params buff)
 
 	for(x = 0; x <= buff.chars; x++)
 	{
-		fprintf(fd, "%c", buff.text[x]);
+		if(buff.text[x] != TERMINATOR)
+		{
+			fprintf(fd, "%c", buff.text[x]);
+		}
 	}
 	fclose(fd);
 }
@@ -81,11 +84,10 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 				{
 					buff.chars++;
 				}
-	/*			if(buff.chars > MAX_CHARS) TODO
+				if(buff.chars > MAX_CHARS)
 				{
 					buff.chars = MAX_CHARS;
 				}
-	*/
 			break;
 
 			case LINEFEED:

@@ -8,9 +8,11 @@
 #include <string.h>
 
 #define MIN_WIDTH 80
-#define MIN_HEIGHT 20
-#define MAX_WIDTH 600
-#define MAX_HEIGHT 400
+#define MIN_HEIGHT 10
+#define MAX_WIDTH 65534
+#define MAX_HEIGHT 65534
+
+#define MAX_CHARS (getSize(X) * (getSize(Y) - 3)) - 1
 
 #define TERMINATOR 0
 #define TAB 9

@@ -28,13 +28,13 @@ TERM_SIZE getSize(bool axis) // Check terminal size.
 	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
 	{
 		fprintf(stderr, "%s%i%c%i%s",
-		"Min. term size is ", MIN_WIDTH, X, MIN_HEIGHT, ".\n");
+		"Min. term size is ", MIN_WIDTH, 'x', MIN_HEIGHT, ".\n");
 		exit(1);
 	}
 	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
 	{
 		fprintf(stderr, "%s%i%c%i%s",
-		"Max. term size is ", MAX_WIDTH, X, MAX_HEIGHT, ", exited.\n");
+		"Max. term size is ", MAX_WIDTH, 'x', MAX_HEIGHT, ", exited.\n");
 		exit(1);
 	}
 
