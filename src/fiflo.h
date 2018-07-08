@@ -13,7 +13,6 @@ struct Params
 {
 	BUFF_T chars;
 	BUFF_T lines;
-	BUFF_T cursor_pos;
 	char text[BUFF_SZ];
 };
 

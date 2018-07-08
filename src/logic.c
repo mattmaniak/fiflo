@@ -39,11 +39,9 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 
 struct Params readFile(struct Params buff)
 {
-	char chr;
 	buff.chars = 0;
 	buff.lines = 1;
-
-	buff.cursor_pos = 0;
+	char chr;
 
 	FILE *fd = fopen(filename, "a+");
 	pointerCheck(fd, "Cannot open the file, exited.\0");
@@ -73,15 +71,16 @@ void saveFile(struct Params buff)
 
 struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 {
-	if(key < 62 || key > 65) // TODO: KEY IN KEYMAP.
+	if(KEYMAP)
 	{
 		switch(key)
 		{
 			default: // Just convert pressed key into a char in the string.
 				buff.text[buff.chars] = key;
-				buff.chars++;
-//				buff.text[buff.chars] = TERMINATOR;
-				
+				if(key != TERMINATOR)
+				{
+					buff.chars++;
+				}
 	/*			if(buff.chars > MAX_CHARS) TODO
 				{
 					buff.chars = MAX_CHARS;
@@ -113,22 +112,6 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 			case CTRL_X:
 				saveFile(buff);
 			break;
-
-			case ARROW_LEFT:
-				buff.cursor_pos++;
-				if(buff.cursor_pos > buff.chars)
-				{
-					buff.cursor_pos = buff.chars;
-				}
-			break;
-
-			case ARROW_RIGHT:
-				buff.cursor_pos--;
-				if(buff.cursor_pos < 1)
-				{
-					buff.cursor_pos = 1;
-				}
-			break;
 		}
 	}
 	return buff;
@@ -140,31 +123,12 @@ void renderText(struct Params buff)
 {
 	BUFF_T x;
 
-	for(x = 0; x <= buff.chars; x++) // Chars rendering.
+	for(x = 0; x < buff.chars; x++) // Chars rendering.
 	{
-	// Invert last char color as a integrated cursor.
-/*		if(x == buff.chars - buff.cursor_pos)
-		{
-			printf("%s%c%s", INVERT, buff.text[x], RESET);
-		}
-		else
-		{
-*/			printf("%c", buff.text[x]);
-//		}
+		printf("%c", buff.text[x]);
 	}
-	if(buff.cursor_pos == 0)
-	{
-		cursor();
-	}
-
 	// TODO: LINES HANDLING.
-/*	for(x = 0; x < getSize(X) - buff.chars; x++)
-	{
-		if(buff.text[x] == LINEFEED)
-		{
-			printf("%c", 'F');
-		}
-	}*/
+	cursor();
 }
 
 // Terminal fill that shows chars and other stupid things.

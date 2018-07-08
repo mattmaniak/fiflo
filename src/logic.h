@@ -22,6 +22,17 @@
 #define ARROW_LEFT 68
 #define BACKSPACE 127
 
+#define KEYMAP \
+key == TERMINATOR || \
+key == BACKSPACE || \
+key == LINEFEED || \
+key == CTRL_X || \
+key != ARROW_UP || \
+key != ARROW_DOWN || \
+key != ARROW_RIGHT || \
+key != ARROW_LEFT
+
+
 typedef int16_t BUFF_T; // Text Params type.
 typedef uint16_t TERM_SIZE; // Unsigned short as in the "sys/ioctl.h".
 
