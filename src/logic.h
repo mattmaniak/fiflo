@@ -26,8 +26,8 @@ typedef int16_t BUFF_T; // Text Params type.
 typedef uint16_t TERM_SIZE; // Unsigned short as in the "sys/ioctl.h".
 
 void setFilename(const char *basename);
-struct Params readFromFile(struct Params buff);
-void saveToFile(struct Params buff);
+struct Params readFile(struct Params buff);
+void saveFile(struct Params buff);
 struct Params keyHandling(char key, struct Params buff);
 void renderText(struct Params buff);
 struct Params window(char key, struct Params buff);

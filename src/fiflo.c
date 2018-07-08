@@ -28,9 +28,8 @@ void argcCheck(int arg_count)
 void programRound(void)
 {
 	char pressed_key;
-	struct Params buff = {0, 1, 0, {'A'}}; // Value initializer.
-	buff = readFromFile(buff);
-	window('\0', buff);
+	struct Params buff = readFile(buff);
+	window(buff.text[buff.chars], buff);
 
 	for(;;)
 	{

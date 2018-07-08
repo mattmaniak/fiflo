@@ -1,5 +1,3 @@
-// File with the all elements needed to a runtime.
-
 #include "logic.h"
 #include "ui.c"
 
@@ -39,24 +37,27 @@ void setFilename(const char *basename) // TODO: SIMPLIFY!
 	filename[strlen(path) + strlen(basename) + 1] = TERMINATOR;
 }
 
-struct Params readFromFile(struct Params buff)
+struct Params readFile(struct Params buff)
 {
 	char chr;
+	buff.chars = 0;
+	buff.lines = 1;
 
-	FILE *fd = fopen(filename, "ab+");
+	buff.cursor_pos = 0;
+
+	FILE *fd = fopen(filename, "a+");
 	pointerCheck(fd, "Cannot open the file, exited.\0");
 
 	while((chr = getc(fd)) != EOF)
 	{
 		buff.text[buff.chars] = chr;
 		buff.chars++;
-		printf("%c\n", buff.text[buff.chars]);
 	}
 	fclose(fd);
 	return buff;
 }
 
-void saveToFile(struct Params buff)
+void saveFile(struct Params buff)
 {
 	BUFF_T x;
 
@@ -72,15 +73,14 @@ void saveToFile(struct Params buff)
 
 struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 {
-	bool empty = 0;
-	if(key < 62 || key > 65)
+	if(key < 62 || key > 65) // TODO: KEY IN KEYMAP.
 	{
 		switch(key)
 		{
 			default: // Just convert pressed key into a char in the string.
+				buff.text[buff.chars] = key;
 				buff.chars++;
-				buff.text[buff.chars - 1] = key;
-				buff.text[buff.chars] = TERMINATOR;
+//				buff.text[buff.chars] = TERMINATOR;
 				
 	/*			if(buff.chars > MAX_CHARS) TODO
 				{
@@ -88,9 +88,6 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 				}
 	*/
 			break;
-
-			case TERMINATOR: // Protection from counting '\0'.
-				break;
 
 			case LINEFEED:
 				buff.text[buff.chars] = LINEFEED;
@@ -104,17 +101,17 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 			break;
 
 			case BACKSPACE:
+				buff.text[buff.chars] = TERMINATOR;
 				buff.chars--;
 				if(buff.chars < 0)
 				{
 					buff.chars = 0;
 				}
-				buff.text[buff.chars] = TERMINATOR;
 			break;
 
 			// More special.
 			case CTRL_X:
-				saveToFile(buff);
+				saveFile(buff);
 			break;
 
 			case ARROW_LEFT:
@@ -134,12 +131,6 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 			break;
 		}
 	}
-	if(key == '\b' && empty == 0) // Set control flag.
-	{
-		empty = 1;
-		buff.chars = 0;
-		buff.text[buff.chars] = BACKSPACE;
-	}
 	return buff;
 }
 
@@ -152,14 +143,14 @@ void renderText(struct Params buff)
 	for(x = 0; x <= buff.chars; x++) // Chars rendering.
 	{
 	// Invert last char color as a integrated cursor.
-		if(x == buff.chars - buff.cursor_pos)
+/*		if(x == buff.chars - buff.cursor_pos)
 		{
 			printf("%s%c%s", INVERT, buff.text[x], RESET);
 		}
 		else
 		{
-			printf("%c", buff.text[x]);
-		}
+*/			printf("%c", buff.text[x]);
+//		}
 	}
 	if(buff.cursor_pos == 0)
 	{
