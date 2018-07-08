@@ -4,7 +4,7 @@
 
 void cursor(void)
 {
-	printf("%s%c%s", INVERT, ' ', RESET);
+	printf("%s%c%s%c", INVERT, ' ', RESET, '\n');
 }
 
 BUFF_T decIntLen(BUFF_T number)

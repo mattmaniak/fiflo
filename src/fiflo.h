@@ -18,8 +18,8 @@ struct Params
 
 void sigHandler(int nothing);
 void usageInfo(void);
-void argcChceck(void);
 void programRound(void);
+void argcChceck(void);
 
 #endif
 

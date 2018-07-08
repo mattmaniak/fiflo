@@ -41,7 +41,7 @@ typedef uint16_t TERM_SIZE; // Unsigned short as in the "sys/ioctl.h".
 void setFilename(const char *basename);
 struct Params readFile(struct Params buff);
 void saveFile(struct Params buff);
-struct Params keyHandling(char key, struct Params buff);
+struct Params allocText(char key, struct Params buff);
 void renderText(struct Params buff);
 struct Params window(char key, struct Params buff);
 

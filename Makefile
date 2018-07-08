@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Wpedantic
 
-ASAN_FLAGS = -g -lasan \
+ASAN_FLAGS = -lasan \
 -fsanitize=address \
 -fsanitize=undefined \
 -fsanitize=signed-integer-overflow \
@@ -18,16 +18,13 @@ MAN_ODIR = /usr/share/man/man1/$(TARGET).1
 
 all:
 	$(CC) src/$(TARGET).c -o $(TARGET) \
-	$(CFLAGS) \
-	$(ASAN_FLAGS)
+	$(CFLAGS)
 
-test: # ONLY FOR THE WIP
+debug: # ONLY FOR THE WIP
 	$(CC) src/$(TARGET).c -o $(TARGET) \
 	$(CFLAGS)
 
-	valgrind \
-	$(VALGRIND_FLAGS) \
-	./$(TARGET)
+	-g $(ASAN_FLAGS)
 
 install:
 	cp $(TARGET) $(INSTALL_DIR)

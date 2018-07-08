@@ -48,8 +48,15 @@ struct Params readFile(struct Params buff)
 
 	while((chr = getc(fd)) != EOF)
 	{
-		buff.text[buff.chars] = chr;
-		buff.chars++;
+		if(chr != TERMINATOR)
+		{
+			buff.text[buff.chars] = chr;
+			buff.chars++;
+			if(chr == LINEFEED)
+			{
+				buff.lines++;
+			}
+		}
 	}
 	fclose(fd);
 	return buff;
@@ -72,7 +79,7 @@ void saveFile(struct Params buff)
 	fclose(fd);
 }
 
-struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
+struct Params allocText(char key, struct Params buff) // TODO: SHORTEN!
 {
 	if(KEYMAP)
 	{
@@ -108,6 +115,10 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 				{
 					buff.chars = 0;
 				}
+				if(buff.text[buff.chars] == LINEFEED)
+				{
+					buff.lines--;
+				}
 			break;
 
 			// More special.
@@ -116,7 +127,13 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 			break;
 		}
 	}
-	return buff;
+/*	if(buff.lines > getSize(Y) - 3)
+	{
+		fprintf(stderr, "%s%i%s%i%s", "Max. lines amount: ", getSize(Y) - 3,
+		", got: ", buff.lines, ". Stretch your terminal or sth.\n");
+		exit(1);
+	}
+*/	return buff;
 }
 
 // Drawing funcions.
@@ -124,11 +141,21 @@ struct Params keyHandling(char key, struct Params buff) // TODO: SHORTEN!
 void renderText(struct Params buff)
 {
 	BUFF_T x;
+	BUFF_T printed_lines = 0;
 
 	for(x = 0; x < buff.chars; x++) // Chars rendering.
 	{
 		printf("%c", buff.text[x]);
-	}
+
+/*		if(buff.text[buff.chars] == LINEFEED)
+		{
+			printed_lines++;
+		}
+		if(printed_lines > getSize(Y) - BARS_AMOUNT)
+		{
+			break;
+		}
+*/	}
 	// TODO: LINES HANDLING.
 	cursor();
 }
@@ -139,13 +166,13 @@ struct Params window(char key, struct Params buff)
 	TERM_SIZE y;
 	static TERM_SIZE fill = BARS_AMOUNT; // Three bars.
 
-	buff = keyHandling(key, buff);
+	buff = allocText(key, buff);
 	fill = autoFill(fill, key, buff);
 
 	upperBar(filename);
 	renderText(buff);
 
-	for(y = buff.lines + fill; y <= getSize(Y); y++)
+	for(y = buff.lines + fill; y < getSize(Y); y++)
 	{
 		printf("%c", LINEFEED);
 	}

@@ -16,20 +16,12 @@ void usageInfo(void)
 	exit(0);
 }
 
-void argcCheck(int arg_count)
-{
-	if(arg_count > 2)
-	{
-		usageInfo();
-		exit(1);
-	}
-}
 
 void programRound(void)
 {
 	char pressed_key;
 	struct Params buff = readFile(buff);
-	window(buff.text[buff.chars], buff);
+	window(TERMINATOR, buff);
 
 	for(;;)
 	{
@@ -39,13 +31,22 @@ void programRound(void)
 	}
 }
 
+void argcCheck(int arg_count)
+{
+	if(arg_count > 2)
+	{
+		fputs("Fiflo can handle max. one parameter.\n", stderr);
+		exit(1);
+	}
+}
+
 int main(int argc, char *argv[])
 {
-	signal(SIGTSTP, sigHandler); // CTRL_X
+	const char *basename;
 
+	signal(SIGTSTP, sigHandler); // CTRL_X
 	getSize(0); // Returns Y but doesn't matter for that case. Just a check.
 	argcCheck(argc);
-	const char *basename;
 
 	if(argv[1] == NULL)
 	{
