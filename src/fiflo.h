@@ -11,14 +11,15 @@ typedef int16_t BUFF_T;
 
 struct Params
 {
+	char *filename;
 	BUFF_T chars;
 	BUFF_T lines;
 	char text[BUFF_SZ];
 };
 
 void sigHandler(int nothing);
-void usageInfo(void);
-void programRound(void);
+void showHelp(void);
+void programRound(const char *bname);
 void argcChceck(void);
 
 #endif

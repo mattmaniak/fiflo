@@ -22,8 +22,7 @@ all:
 
 debug: # ONLY FOR THE WIP
 	$(CC) src/$(TARGET).c -o $(TARGET) \
-	$(CFLAGS)
-
+	$(CFLAGS) \
 	-g $(ASAN_FLAGS)
 
 install:

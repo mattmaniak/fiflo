@@ -10,22 +10,24 @@ void sigHandler(int nothing)
 	if(nothing == 0) {}
 }
 
-void usageInfo(void)
+void showHelp(void)
 {
 	puts("Usage: fiflo [option].");
-	exit(0);
+	putchar('\n');
+	puts("Options:    Description:");
+	puts("<NULL>      Create and open the default file - 'noname.asdf'.");
+	puts("<file>      Open the textfile named 'file'.");
+	puts("-h, --help  Show program help.");
 }
 
-
-void programRound(void)
+void programRound(const char *bname)
 {
-	char pressed_key;
-	struct Params buff = readFile(buff);
+	struct Params buff = readFile(buff, bname);
 	window(TERMINATOR, buff);
 
 	for(;;)
 	{
-		pressed_key = unixGetch(); // TODO: FLUSHING.
+		char pressed_key = unixGetch(); // TODO: FLUSHING.
 		cleanFrame();
 		buff = window(pressed_key, buff);
 	}
@@ -54,15 +56,14 @@ int main(int argc, char *argv[])
 	}
 	else if(strcmp(argv[1], "-h\0") == 0 || strcmp(argv[1], "--help\0") == 0)
 	{
-		usageInfo();
+		showHelp();
+		exit(0);
 	}
 	else
 	{
 		basename = argv[1];
 	}
-	setFilename(basename);
-
-	programRound();
+	programRound(basename);
 
 	return 0;
 }
