@@ -25,7 +25,8 @@ typedef uint16_t WIN_SIZE; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
 void cursor(void);
 BUFF_T decIntLen(BUFF_T chars);
 WIN_SIZE getSize(bool axis);
-void upperBar(const char *basename);
+void printDynamicString(const char *string, TERM_SIZE max_len);
+void upperBar(const char *fname);
 WIN_SIZE autoFill(WIN_SIZE fill, char key, struct Params buff);
 void lowerBar(char key, struct Params buff);
 void cleanFrame(void);

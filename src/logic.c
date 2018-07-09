@@ -59,7 +59,7 @@ struct Params readFile(struct Params buff, const char *bname)
 		}
 	}
 	fclose(fd);
-	free(buff.filename);
+//	free(buff.filename);
 
 	return buff;
 }

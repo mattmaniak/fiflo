@@ -4,18 +4,20 @@
 
 void cursor(void)
 {
-	printf("%s%c%s%c", INVERT, ' ', RESET, '\n');
+	printf("%s%c%s\n", INVERT, ' ', RESET);
 }
 
 BUFF_T decIntLen(BUFF_T number)
 {
 	// Return a length of decimal integer. Eg. 2 from number = 12.
 	int8_t len = 1;
-	// Works properly only for >= 0 numbers.
-	while(number > 9)
+	if(number >= 0) // Prevent from weird < 0 values.
 	{
-		len++;
-		number /= 10;
+		while(number > 9)
+		{
+			len++;
+			number /= 10;
+		}
 	}
 	return len;
 }
@@ -48,26 +50,46 @@ TERM_SIZE getSize(bool axis) // Check terminal size.
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
-void upperBar(const char *filename)
+// Cuts a string when is too long.
+void printDynamicString(const char *string, TERM_SIZE max_len)
+{
+	TERM_SIZE x;
+	TERM_SIZE whitespace = getSize(X) - strlen(string) - 15; // Program name.
+
+	if(strlen(string) > max_len)
+	{
+		for(x = 0; x < max_len; x++)
+		{
+			printf("%c", string[x]);
+		}
+		printf("%s", "... ");
+	}
+	else
+	{
+		printf("%s", string);
+		for(x = 0; x < whitespace; x++)
+		{
+			printf("%c", ' ');
+		}
+	}
+}
+
+void upperBar(const char *fname)
 {
 	const char *program = " Fiflo | file: \0";
 	const char *shortcuts = " Exit: CTRL+C, save: CTRL+X.\0";
-
 	TERM_SIZE width;
-	TERM_SIZE whitespace = strlen(program) + strlen(filename);
 
-	printf("%s%s%s", INVERT, program, filename); // TODO: RENDERING LIMIT
-	for(width = 0; width < getSize(X) - whitespace; width++)
-	{
-		printf("%c", ' ');
-	}
+	printf("%s%s", INVERT, program);
+	printDynamicString(fname, getSize(X) - strlen(program) - 4);
 
 	printf("%s", shortcuts);
+
+	// Lower part of the bar.
 	for(width = 0; width < getSize(X) - strlen(shortcuts); width++)
 	{
 		printf("%c", ' ');
 	}
-
 	printf("%s", RESET);
 }
 
