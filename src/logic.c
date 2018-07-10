@@ -9,7 +9,7 @@ void setFilename(struct Params buff, const char *bname) // TODO: SIMPLIFY!
 	// Filename = absolute path + bname eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
 	uint16_t chr;
-	char path[4096];
+	char path[4097];
 
 	if(getcwd(path, sizeof(path)) == NULL)
 	{
@@ -22,6 +22,7 @@ void setFilename(struct Params buff, const char *bname) // TODO: SIMPLIFY!
 		stderr);
 		exit(1);
 	}
+
 	path[strlen(path)] = TERMINATOR;
 
 	for(chr = 0; chr < strlen(path); chr++) // Copy cwd.
@@ -29,6 +30,11 @@ void setFilename(struct Params buff, const char *bname) // TODO: SIMPLIFY!
 		buff.filename[chr] = path[chr];
 	}
 	buff.filename[strlen(path)] = '/'; // Add a slash between.
+
+	if(bname[0] == '/')
+	{
+		memset(path, 0, sizeof(path));
+	}
 
 	for(chr = 0; chr < strlen(bname); chr++) // Copy bname.
 	{
@@ -129,10 +135,11 @@ struct Params allocText(char key, struct Params buff) // TODO: SHORTEN!
 			break;
 		}
 	}
-	if(buff.lines > getSize(Y) - 3)
+	if(buff.lines > getSize(Y) - BARS_SZ)
 	{
-		fprintf(stderr, "%s%i%s%i%s", "Max. lines amount: ", getSize(Y) - 3,
-		", got: ", buff.lines, ". Stretch your terminal or sth.\n");
+		fprintf(stderr, "%s%i%s%i%s",
+		"Max. lines amount: ", getSize(Y - BARS_SZ), ", got: ", buff.lines,
+		". Stretch your terminal or sth.\n");
 		exit(1);
 	}
 	return buff;
@@ -156,7 +163,7 @@ void renderText(struct Params buff)
 struct Params window(char key, struct Params buff)
 {
 	TERM_SIZE y;
-	static TERM_SIZE fill = BARS_AMOUNT; // Three bars.
+	static TERM_SIZE fill = BARS_SZ; // Three bars.
 
 	buff = allocText(key, buff);
 	fill = autoFill(fill, key, buff);

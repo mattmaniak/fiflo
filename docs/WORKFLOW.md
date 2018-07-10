@@ -30,4 +30,5 @@ commits to provide updated code on the "develop" branch.
 - write TODOs near thing to fix as uppercase comment,
 - name longer variables with an underscore, functions with camelCase,
 - #define as much as you can,
-- keep docs up-to-date with your code in stable releases.
+- keep docs up-to-date with your code in stable releases,
+- function's args names should be shorter than variables names.

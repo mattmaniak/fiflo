@@ -53,8 +53,9 @@ TERM_SIZE getSize(bool axis) // Check terminal size.
 // Cuts a string when is too long.
 void printDynamicString(const char *string, TERM_SIZE max_len)
 {
+	#define PROGRAM_LEN 15
 	TERM_SIZE x;
-	TERM_SIZE whitespace = getSize(X) - strlen(string) - 15; // Program name.
+	TERM_SIZE whitespace = getSize(X) - strlen(string) - PROGRAM_LEN;
 
 	if(strlen(string) > max_len)
 	{
@@ -79,9 +80,10 @@ void upperBar(const char *fname)
 	const char *program = " Fiflo | file: \0";
 	const char *shortcuts = " Exit: CTRL+C, save: CTRL+X.\0";
 	TERM_SIZE width;
+	#define DOTS_AND_SPACE 4
 
 	printf("%s%s", INVERT, program);
-	printDynamicString(fname, getSize(X) - strlen(program) - 4);
+	printDynamicString(fname, getSize(X) - strlen(program) - DOTS_AND_SPACE);
 
 	printf("%s", shortcuts);
 
@@ -98,7 +100,7 @@ TERM_SIZE autoFill(TERM_SIZE fill, char key, struct Params buff)
 	switch(buff.chars)
 	{
 		case 0:
-			fill = BARS_AMOUNT;
+			fill = BARS_SZ;
 		break;
 
 		default:
