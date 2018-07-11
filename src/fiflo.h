@@ -19,7 +19,7 @@ struct Params
 
 void sigHandler(int nothing);
 void showHelp(void);
-void programRound(const char *bname);
+void programRound(char *name);
 void argcChceck(void);
 
 #endif

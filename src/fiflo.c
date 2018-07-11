@@ -20,9 +20,9 @@ void showHelp(void)
 	puts("-h, --help  Show program help.");
 }
 
-void programRound(const char *bname)
+void programRound(char *name)
 {
-	struct Params buff = readFile(buff, bname);
+	struct Params buff = readFile(buff, name);
 	window(TERMINATOR, buff);
 
 	for(;;)
@@ -44,15 +44,13 @@ void argcCheck(int arg_count)
 
 int main(int argc, char *argv[])
 {
-	const char *basename;
-
 	signal(SIGTSTP, sigHandler); // CTRL_X
 	getSize(0); // Returns Y but doesn't matter for that case. Just a check.
 	argcCheck(argc);
 
 	if(argv[1] == NULL)
 	{
-		basename = "noname.asdf\0";
+		programRound("noname.asdf\0");
 	}
 	else if(strcmp(argv[1], "-h\0") == 0 || strcmp(argv[1], "--help\0") == 0)
 	{
@@ -61,10 +59,8 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		basename = argv[1];
+		programRound(argv[1]);
 	}
-	programRound(basename);
-
 	return 0;
 }
 

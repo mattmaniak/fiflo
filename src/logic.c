@@ -4,53 +4,51 @@
 //char filename[4353]; // 4096 (path) + 1 (slash) + 255 (bname) + 1 (null).
 // TODO
 
-void setFilename(struct Params buff, const char *bname) // TODO: SIMPLIFY!
+void setFilename(struct Params buff, char *name) // TODO: SIMPLIFY!
 {
-	// Filename = absolute path + bname eg. "/home/user/my_file".
+	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
 	uint16_t chr;
-	char path[4097];
 
-	if(getcwd(path, sizeof(path)) == NULL)
+	if(name[0] == '/')
 	{
-		fputs("Cannot get your current absolute dir, exited.\n", stderr);
-		exit(1);
+		strcpy(buff.filename, name);
+		buff.filename[strlen(buff.filename)] = TERMINATOR;
 	}
-	if(strlen(path) > 4096 || strlen(bname) > 255)
+	else
 	{
-		fputs("Max. absolute path length is 4096, bname: 255, exited.\n",
-		stderr);
-		exit(1);
-	}
+		char *path = malloc(4096);
+		if(getcwd(path, 4096) == NULL)
+		{
+			fputs("Cannot get your current dir, exited.\n", stderr);
+			exit(1);
+		}
+		path[strlen(path)] = TERMINATOR;
 
-	path[strlen(path)] = TERMINATOR;
+		puts(path); // DEBUG
 
-	for(chr = 0; chr < strlen(path); chr++) // Copy cwd.
-	{
-		buff.filename[chr] = path[chr];
-	}
-	buff.filename[strlen(path)] = '/'; // Add a slash between.
+		for(chr = 0; chr < strlen(path); chr++) // Copy cwd.
+		{
+			buff.filename[chr] = path[chr];
+		}
+		buff.filename[strlen(path)] = '/'; // Add a slash between.
 
-	if(bname[0] == '/')
-	{
-		memset(path, 0, sizeof(path));
+		for(chr = 0; chr < strlen(name); chr++) // Copy bname.
+		{
+			buff.filename[chr + strlen(path) + 1] = name[chr];
+		}
+		buff.filename[strlen(path) + strlen(name) + 1] = TERMINATOR;
 	}
-
-	for(chr = 0; chr < strlen(bname); chr++) // Copy bname.
-	{
-		buff.filename[chr + strlen(path) + 1] = bname[chr];
-	}
-	buff.filename[strlen(path) + strlen(bname) + 1] = TERMINATOR;
 }
 
-struct Params readFile(struct Params buff, const char *bname)
+struct Params readFile(struct Params buff, char *name)
 {
 	char chr;
 	buff.chars = 0;
 	buff.lines = 1;
 
-	buff.filename = malloc(4096 + 255 + 1);
-	setFilename(buff, bname);
+	buff.filename = malloc(4096 + 256);
+	setFilename(buff, name);
 
 	FILE *fd = fopen(buff.filename, "a+");
 	pointerCheck(fd, "Cannot open the file, exited.\0");
@@ -65,16 +63,14 @@ struct Params readFile(struct Params buff, const char *bname)
 		}
 	}
 	fclose(fd);
-//	free(buff.filename);
-
 	return buff;
 }
-/*
+
 void saveFile(struct Params buff)
 {
 	BUFF_T x;
 
-	FILE *fd = fopen(filename, "w");
+	FILE *fd = fopen(buff.filename, "w");
 	pointerCheck(fd, "Cannot write to the file, exited.\0");
 
 	for(x = 0; x <= buff.chars; x++)
@@ -85,8 +81,9 @@ void saveFile(struct Params buff)
 		}
 	}
 	fclose(fd);
+	free(buff.filename);
 }
-*/
+
 struct Params allocText(char key, struct Params buff) // TODO: SHORTEN!
 {
 	if(KEYMAP)

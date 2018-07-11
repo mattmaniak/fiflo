@@ -37,8 +37,8 @@ key != ARROW_LEFT
 typedef int16_t BUFF_T; // Text Params type.
 typedef uint16_t TERM_SIZE; // Unsigned short as in the "sys/ioctl.h".
 
-void setFilename(struct Params buff, const char *bname);
-struct Params readFile(struct Params buff, const char *bname);
+void setFilename(struct Params buff, char *name);
+struct Params readFile(struct Params buff, char *name);
 void saveFile(struct Params buff);
 struct Params allocText(char key, struct Params buff);
 void renderText(struct Params buff);
