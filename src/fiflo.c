@@ -5,15 +5,9 @@
 #include "hardware.c"
 #include "logic.c"
 
-void sigHandler(int nothing)
-{
-	if(nothing == 0) {}
-}
-
 void showHelp(void)
 {
-	puts("Usage: fiflo [option].");
-	putchar('\n');
+	puts("Usage: fiflo [option].\n");
 	puts("Options:    Description:");
 	puts("<NULL>      Create and open the default file - 'noname.asdf'.");
 	puts("<file>      Open the textfile named 'file'.");
@@ -33,6 +27,14 @@ void programRound(char *name)
 	}
 }
 
+void freeExit(int nothing)
+{
+	system("stty echo");
+	cleanFrame();
+	exit(0);
+	if(nothing == 0) {}
+}
+
 void argcCheck(int arg_count)
 {
 	if(arg_count > 2)
@@ -44,7 +46,9 @@ void argcCheck(int arg_count)
 
 int main(int argc, char *argv[])
 {
-	signal(SIGTSTP, sigHandler); // CTRL_X
+	signal(SIGTSTP, freeExit); // CTRL_X
+	signal(SIGINT, freeExit); // CTRL_C
+
 	getSize(0); // Returns Y but doesn't matter for that case. Just a check.
 	argcCheck(argc);
 

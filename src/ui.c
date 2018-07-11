@@ -1,4 +1,4 @@
-// All rendered elements except chars you type.
+// All rendered elements.
 
 #include "ui.h"
 
@@ -7,7 +7,7 @@ void cursor(void)
 	printf("%s%c%s\n", INVERT, ' ', RESET);
 }
 
-BUFF_T decIntLen(BUFF_T number)
+buff_t decIntLen(buff_t number)
 {
 	// Return a length of decimal integer. Eg. 2 from number = 12.
 	int8_t len = 1;
@@ -22,7 +22,7 @@ BUFF_T decIntLen(BUFF_T number)
 	return len;
 }
 
-TERM_SIZE getSize(bool axis) // Check terminal size.
+term_t getSize(bool axis) // Check terminal size.
 {
 	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -42,20 +42,20 @@ TERM_SIZE getSize(bool axis) // Check terminal size.
 
 	switch(axis)
 	{
-		case 1: // X
+		case X:
 			return win.ws_col;
-		case 0: // Y
+		case Y:
 			return win.ws_row;
 	}
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
 // Cuts a string when is too long.
-void printDynamicString(const char *string, TERM_SIZE max_len)
+void printDynamicString(const char *string, term_t max_len)
 {
 	#define PROGRAM_LEN 15
-	TERM_SIZE x;
-	TERM_SIZE whitespace = getSize(X) - strlen(string) - PROGRAM_LEN;
+	term_t x;
+	term_t whitespace = getSize(X) - strlen(string) - PROGRAM_LEN;
 
 	if(strlen(string) > max_len)
 	{
@@ -79,7 +79,7 @@ void upperBar(const char *fname)
 {
 	const char *program = " Fiflo | file: \0";
 	const char *shortcuts = " Exit: CTRL+C, save: CTRL+X.\0";
-	TERM_SIZE width;
+	term_t width;
 	#define DOTS_AND_SPACE 4
 
 	printf("%s%s", INVERT, program);
@@ -95,7 +95,7 @@ void upperBar(const char *fname)
 	printf("%s", RESET);
 }
 
-TERM_SIZE autoFill(TERM_SIZE fill, char key, struct Params buff)
+term_t autoFill(struct Params buff, char key, term_t fill)
 {
 	switch(buff.chars)
 	{
@@ -118,14 +118,14 @@ TERM_SIZE autoFill(TERM_SIZE fill, char key, struct Params buff)
 }
 
 // Lower border with a text.
-void lowerBar(char key, struct Params buff)
+void lowerBar(struct Params buff, char key)
 {
 	const char *lines_text = " lines: \0";
 	const char *chars_text = " | chars: \0";
 	const char *ascii_code_text = " | last char code: \0";
 
-	TERM_SIZE width;
-	TERM_SIZE whitespace
+	term_t width;
+	term_t whitespace
 	= strlen(lines_text) + decIntLen(buff.lines)
 	+ strlen(chars_text) + decIntLen(buff.chars) 
 	+ strlen(ascii_code_text) + decIntLen(key);
@@ -142,7 +142,7 @@ void lowerBar(char key, struct Params buff)
 
 void cleanFrame(void) // To provide rendering in a one frame.
 {
-	TERM_SIZE y;
+	term_t y;
 	for(y = 0; y < getSize(Y); y++)
 	{
 		printf("%s", "\033[F\033[K");

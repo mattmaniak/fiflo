@@ -2,6 +2,7 @@
 #define RENDER_H
 
 #include <limits.h>
+#include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,13 +35,13 @@ key != ARROW_DOWN || \
 key != ARROW_RIGHT || \
 key != ARROW_LEFT
 
-typedef int16_t BUFF_T; // Text Params type.
-typedef uint16_t TERM_SIZE; // Unsigned short as in the "sys/ioctl.h".
+typedef int16_t buff_t; // Text Params type.
+typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
 void setFilename(struct Params buff, char *name);
 struct Params readFile(struct Params buff, char *name);
 void saveFile(struct Params buff);
-struct Params allocText(char key, struct Params buff);
+struct Params allocText(struct Params buff, char key);
 void renderText(struct Params buff);
 struct Params window(char key, struct Params buff);
 

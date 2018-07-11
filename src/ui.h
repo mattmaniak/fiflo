@@ -14,21 +14,21 @@
 #define BLINK "\033[5m"
 #define INVERT "\033[7m"
 
-#define X 1
-#define Y 0
+#define X true
+#define Y false
 
 #define BARS_SZ 3
 
-typedef int16_t BUFF_T;
-typedef uint16_t WIN_SIZE; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
+typedef int16_t buff_t;
+typedef uint16_t term_t; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
 
 void cursor(void);
-BUFF_T decIntLen(BUFF_T chars);
-WIN_SIZE getSize(bool axis);
-void printDynamicString(const char *string, TERM_SIZE max_len);
+buff_t decIntLen(buff_t chars);
+term_t getSize(bool axis);
+void printDynamicString(const char *string, term_t max_len);
 void upperBar(const char *fname);
-WIN_SIZE autoFill(WIN_SIZE fill, char key, struct Params buff);
-void lowerBar(char key, struct Params buff);
+term_t autoFill(struct Params buff, char key, term_t fill);
+void lowerBar(struct Params buff, char key);
 void cleanFrame(void);
 
 #endif

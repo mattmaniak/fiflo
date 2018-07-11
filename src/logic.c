@@ -1,10 +1,9 @@
+// Shows how the program single round works.
+
 #include "logic.h"
 #include "ui.c"
 
-//char filename[4353]; // 4096 (path) + 1 (slash) + 255 (bname) + 1 (null).
-// TODO
-
-void setFilename(struct Params buff, char *name) // TODO: SIMPLIFY!
+void setFilename(struct Params buff, char *name)
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
@@ -15,7 +14,8 @@ void setFilename(struct Params buff, char *name) // TODO: SIMPLIFY!
 	else
 	{
 		uint16_t chr;
-		char *path = malloc(4097);
+		char *path = malloc(4097); // TODO: SIZE
+
 		if(getcwd(path, 4097) == NULL)
 		{
 			fputs("Cannot get your current dir, exited.\n", stderr);
@@ -39,9 +39,9 @@ void setFilename(struct Params buff, char *name) // TODO: SIMPLIFY!
 
 struct Params readFile(struct Params buff, char *name)
 {
-	char chr;
 	buff.chars = 0;
 	buff.lines = 1;
+	char chr;
 
 	buff.filename = malloc(4096 + 256);
 	setFilename(buff, name);
@@ -64,7 +64,7 @@ struct Params readFile(struct Params buff, char *name)
 
 void saveFile(struct Params buff)
 {
-	BUFF_T x;
+	buff_t x;
 
 	FILE *fd = fopen(buff.filename, "w");
 	pointerCheck(fd, "Cannot write to the file, exited.\0");
@@ -81,7 +81,7 @@ void saveFile(struct Params buff)
 	fclose(fd);
 }
 
-struct Params allocText(char key, struct Params buff) // TODO: SHORTEN!
+struct Params allocText(struct Params buff, char key) // TODO: SHORTEN!
 {
 	if(KEYMAP)
 	{
@@ -143,24 +143,24 @@ struct Params allocText(char key, struct Params buff) // TODO: SHORTEN!
 // Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
 void renderText(struct Params buff)
 {
-	BUFF_T x;
+	buff_t x;
 
 	for(x = 0; x < buff.chars; x++) // Chars rendering.
 	{
 		printf("%c", buff.text[x]);
 	}
-	// TODO: LINES HANDLING.
+	// TODO: WRITING LINES HANDLING.
 	cursor();
 }
 
 // Terminal fill that shows chars and other stupid things.
 struct Params window(char key, struct Params buff)
 {
-	TERM_SIZE y;
-	static TERM_SIZE fill = BARS_SZ; // Three bars.
+	term_t y;
+	static term_t fill = BARS_SZ; // Three bars.
 
-	buff = allocText(key, buff);
-	fill = autoFill(fill, key, buff);
+	buff = allocText(buff, key);
+	fill = autoFill(buff, key, fill);
 
 	upperBar(buff.filename);
 	renderText(buff);
@@ -169,7 +169,7 @@ struct Params window(char key, struct Params buff)
 	{
 		printf("%c", LINEFEED);
 	}
-	lowerBar(key, buff);
+	lowerBar(buff, key);
 
 	return buff;
 }
