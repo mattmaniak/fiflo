@@ -8,24 +8,20 @@ void setFilename(struct Params buff, char *name) // TODO: SIMPLIFY!
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
-	uint16_t chr;
-
 	if(name[0] == '/')
 	{
 		strcpy(buff.filename, name);
-		buff.filename[strlen(buff.filename)] = TERMINATOR;
 	}
 	else
 	{
-		char *path = malloc(4096);
-		if(getcwd(path, 4096) == NULL)
+		uint16_t chr;
+		char *path = malloc(4097);
+		if(getcwd(path, 4097) == NULL)
 		{
 			fputs("Cannot get your current dir, exited.\n", stderr);
 			exit(1);
 		}
 		path[strlen(path)] = TERMINATOR;
-
-		puts(path); // DEBUG
 
 		for(chr = 0; chr < strlen(path); chr++) // Copy cwd.
 		{
@@ -73,6 +69,8 @@ void saveFile(struct Params buff)
 	FILE *fd = fopen(buff.filename, "w");
 	pointerCheck(fd, "Cannot write to the file, exited.\0");
 
+	puts(buff.filename);
+
 	for(x = 0; x <= buff.chars; x++)
 	{
 		if(buff.text[x] != TERMINATOR)
@@ -81,7 +79,6 @@ void saveFile(struct Params buff)
 		}
 	}
 	fclose(fd);
-	free(buff.filename);
 }
 
 struct Params allocText(char key, struct Params buff) // TODO: SHORTEN!
@@ -128,7 +125,7 @@ struct Params allocText(char key, struct Params buff) // TODO: SHORTEN!
 
 			// More special.
 			case CTRL_X:
-				//saveFile(buff);
+				saveFile(buff);
 			break;
 		}
 	}
