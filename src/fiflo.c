@@ -7,11 +7,11 @@
 
 void showHelp(void)
 {
-	puts("Usage: fiflo [option].\n");
-	puts("Options:    Description:");
-	puts("<NULL>      Create and open the default file - 'noname.asdf'.");
-	puts("<file>      Open the textfile named 'file'.");
-	puts("-h, --help  Show program help.");
+	printf("%s%s%s%s%s", "Usage: fiflo [option].\n",
+	"Options:     Description:\n",
+	"<NULL>       Create and open the default file - 'noname.asdf'.\n",
+	"<file>       Open the textfile named 'file'.\n",
+	"-h, --help   Show program help.\n");
 }
 
 void programRound(char *name)
