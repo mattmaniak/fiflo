@@ -19,7 +19,7 @@ struct Params
 
 void showHelp(void);
 void programRound(char *name);
-void freeExit(int nothing);
+//void freeExit(int nothing);
 void argcChceck(void);
 
 #endif

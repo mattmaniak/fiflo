@@ -27,7 +27,7 @@ void programRound(char *name)
 	}
 }
 
-void freeExit(int nothing)
+void freeExit(int nothing) // TODO: FREEING MEMORY.
 {
 	system("stty echo");
 	cleanFrame();
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	signal(SIGTSTP, freeExit); // CTRL_X
 	signal(SIGINT, freeExit); // CTRL_C
 
-	getSize(0); // Returns Y but doesn't matter for that case. Just a check.
+	getSize(true); // Returns X but doesn't matter for that case. Just a check.
 	argcCheck(argc);
 
 	if(argv[1] == NULL)

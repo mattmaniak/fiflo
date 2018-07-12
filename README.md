@@ -1,13 +1,12 @@
-# Fiflo - simple terminal-based text editor.
+# fiflo
 
 ## Description
-Nano-inspired. Currently unsafe && unusable because WIP.
+Simple terminal-based text editor.
 
 ## Needed tools for building and installation:
 - gcc,
 - gzip,
-- make,
-- valgrind [if you want to test].
+- make.
 
 ## Compilation
 ```
@@ -24,9 +23,17 @@ sudo make install
 sudo make uninstall
 ```
 
+## Testing
+```
+make debug
+```
+This will link AdressSanitizer to better memory errors handling. Also you will
+be able to run fiflo under gdb. You can also compile it normally and use
+Valgrind.
+
 ## FAQ
-Will you ever port it into a Windows?
+Will you port it into a Windows?
 - No.
 
 How can I contribute?
-- Go into the docs/, read and send a request.
+- Read the docs/WORKFLOW.md, and send any request.

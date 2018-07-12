@@ -26,7 +26,7 @@ commits to provide updated code on the "develop" branch.
 
 ## Coding rules:
 - use Allman-style indentation,
-- comment, comment, comment,
+- comment,
 - write TODOs near thing to fix as uppercase comment,
 - name longer variables with an underscore, functions with camelCase,
 - #define as much as you can,
