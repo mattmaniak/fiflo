@@ -69,8 +69,6 @@ void saveFile(struct Params buff)
 	FILE *fd = fopen(buff.filename, "w");
 	pointerCheck(fd, "Cannot write to the file, exited.\0");
 
-	puts(buff.filename);
-
 	for(x = 0; x <= buff.chars; x++)
 	{
 		if(buff.text[x] != TERMINATOR)
@@ -101,6 +99,11 @@ struct Params allocText(struct Params buff, char key) // TODO: SHORTEN!
 
 			case LINEFEED:
 				buff.text[buff.chars] = LINEFEED;
+				buff.chars++;
+				if(buff.chars > MAX_CHARS)
+				{
+					buff.chars = MAX_CHARS;
+				}
 				buff.lines++;
 				if(buff.lines > getSize(Y) - 2)
 				{
@@ -149,15 +152,14 @@ void renderText(struct Params buff)
 	{
 		printf("%c", buff.text[x]);
 	}
-	// TODO: WRITING LINES HANDLING.
 	cursor();
 }
 
 // Terminal fill that shows chars and other stupid things.
 struct Params window(char key, struct Params buff)
 {
+	static term_t fill = BARS_SZ;
 	term_t y;
-	static term_t fill = BARS_SZ; // Three bars.
 
 	buff = allocText(buff, key);
 	fill = autoFill(buff, key, fill);

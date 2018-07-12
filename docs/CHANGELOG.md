@@ -10,7 +10,9 @@ files use diff-like tools or "git log".
 ### v1.0.0 (WIP):
 - Simplified API.
 - Less memory usage.
-- Better initialization.
+- Faster initialization.
+- Usable for the first time.
+- A lot of bugs removed.
 
 ### v0.5.0-unstable (July 1, 2018):
 The last v0.y.z version and showup of the old program logic. Mostly insecure.

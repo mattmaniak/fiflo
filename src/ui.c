@@ -125,9 +125,8 @@ void lowerBar(struct Params buff, char key)
 	const char *ascii_code_text = " | last char code: \0";
 
 	term_t width;
-	term_t whitespace
-	= strlen(lines_text) + decIntLen(buff.lines)
-	+ strlen(chars_text) + decIntLen(buff.chars) 
+	term_t whitespace = strlen(lines_text) + decIntLen(buff.lines)
+	+ strlen(chars_text) + decIntLen(buff.chars)
 	+ strlen(ascii_code_text) + decIntLen(key);
 
 	printf("%s%s%i%s%i%s%i", INVERT, lines_text, buff.lines, chars_text,

@@ -36,4 +36,4 @@ Will you port it into a Windows?
 - No.
 
 How can I contribute?
-- Read the docs/WORKFLOW.md, and send any request.
+- Read the docs/WORKFLOW.md and send any request.
