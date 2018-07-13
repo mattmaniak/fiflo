@@ -26,24 +26,19 @@
 #define BACKSPACE 127
 
 #define KEYMAP \
-key == TERMINATOR || \
-key == BACKSPACE || \
-key == LINEFEED || \
-key == CTRL_X || \
-key != ARROW_UP || \
-key != ARROW_DOWN || \
-key != ARROW_RIGHT || \
-key != ARROW_LEFT
+key == (LINEFEED || CTRL_X || BACKSPACE) \
+|| (key >= 32 && key < ARROW_UP) \
+|| (key > ARROW_LEFT)
 
-typedef int16_t buff_t; // Text Params type.
+typedef int16_t buff_t; // Text Data type.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
-void setFilename(struct Params buff, char *name);
-struct Params readFile(struct Params buff, char *name);
-void saveFile(struct Params buff);
-struct Params allocText(struct Params buff, char key);
-void renderText(struct Params buff);
-struct Params window(char key, struct Params buff);
+void setFilename(struct Data buff, char *name);
+struct Data readFile(struct Data buff, char *name);
+void saveFile(struct Data buff);
+struct Data allocText(struct Data buff, char key);
+void renderText(struct Data buff);
+struct Data window(char key, struct Data buff);
 
 #endif
 

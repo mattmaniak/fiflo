@@ -13,6 +13,7 @@ files use diff-like tools or "git log".
 - Faster initialization.
 - Usable for the first time.
 - A lot of bugs removed.
+- UI redesigned.
 
 ### v0.5.0-unstable (July 1, 2018):
 The last v0.y.z version and showup of the old program logic. Mostly insecure.

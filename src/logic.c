@@ -3,7 +3,7 @@
 #include "logic.h"
 #include "ui.c"
 
-void setFilename(struct Params buff, char *name)
+void setFilename(struct Data buff, char *name)
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
@@ -37,7 +37,7 @@ void setFilename(struct Params buff, char *name)
 	}
 }
 
-struct Params readFile(struct Params buff, char *name)
+struct Data readFile(struct Data buff, char *name)
 {
 	buff.chars = 0;
 	buff.lines = 1;
@@ -62,7 +62,7 @@ struct Params readFile(struct Params buff, char *name)
 	return buff;
 }
 
-void saveFile(struct Params buff)
+void saveFile(struct Data buff)
 {
 	buff_t x;
 
@@ -79,7 +79,7 @@ void saveFile(struct Params buff)
 	fclose(fd);
 }
 
-struct Params allocText(struct Params buff, char key) // TODO: SHORTEN!
+struct Data allocText(struct Data buff, char key) // TODO: SHORTEN!
 {
 	if(KEYMAP)
 	{
@@ -144,7 +144,7 @@ struct Params allocText(struct Params buff, char key) // TODO: SHORTEN!
 
 // Drawing funcions.
 // Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
-void renderText(struct Params buff)
+void renderText(struct Data buff)
 {
 	buff_t x;
 
@@ -156,7 +156,7 @@ void renderText(struct Params buff)
 }
 
 // Terminal fill that shows chars and other stupid things.
-struct Params window(char key, struct Params buff)
+struct Data window(char key, struct Data buff)
 {
 	static term_t fill = BARS_SZ;
 	term_t y;
@@ -164,15 +164,13 @@ struct Params window(char key, struct Params buff)
 	buff = allocText(buff, key);
 	fill = autoFill(buff, key, fill);
 
-	upperBar(buff.filename);
+	bar(buff, key);
 	renderText(buff);
 
 	for(y = buff.lines + fill; y < getSize(Y); y++)
 	{
 		printf("%c", LINEFEED);
 	}
-	lowerBar(buff, key);
-
 	return buff;
 }
 

@@ -16,7 +16,7 @@ void showHelp(void)
 
 void programRound(char *name)
 {
-	struct Params buff = readFile(buff, name);
+	struct Data buff = readFile(buff, name);
 	window(TERMINATOR, buff);
 
 	for(;;)

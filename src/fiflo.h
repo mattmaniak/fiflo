@@ -9,7 +9,7 @@
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 typedef int16_t buff_t;
 
-struct Params
+struct Data
 {
 	char *filename; // Eg. /home/user/basename.asdf
 	buff_t chars;

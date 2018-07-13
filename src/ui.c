@@ -75,32 +75,43 @@ void printDynamicString(const char *string, term_t max_len)
 	}
 }
 
-void upperBar(const char *fname)
+void bar(struct Data buff, char key)
 {
-	const char *program = " Fiflo | file: \0";
-	const char *shortcuts = " Exit: CTRL+C, save: CTRL+X.\0";
-	term_t width;
 	#define DOTS_AND_SPACE 4
+	const char *program = " fiflo | file: \0";
+	const char *lines_text = " | lines: \0";
+	const char *chars_text = " | chars: \0";
+	const char *ascii_code_text = " | last: \0";
+	const char *shortcuts = " save: CTRL+X | exit: CTRL+C \0";
+	term_t width;
 
 	printf("%s%s", INVERT, program);
-	printDynamicString(fname, getSize(X) - strlen(program) - DOTS_AND_SPACE);
-
-	printf("%s", shortcuts);
+	printDynamicString(buff.filename, getSize(X) - strlen(program)
+	- DOTS_AND_SPACE);
 
 	// Lower part of the bar.
-	for(width = 0; width < getSize(X) - strlen(shortcuts); width++)
+	term_t whitespace = strlen(shortcuts)
+	+ strlen(lines_text) + decIntLen(buff.lines)
+	+ strlen(chars_text) + decIntLen(buff.chars)
+	+ strlen(ascii_code_text) + decIntLen(key);
+
+	printf("%s%s%i%s%i%s%i", shortcuts, lines_text, buff.lines, chars_text,
+	buff.chars, ascii_code_text, key);
+
+	for(width = 0; width < getSize(X) - whitespace; width++)
 	{
 		printf("%c", ' ');
 	}
 	printf("%s", RESET);
+
 }
 
-term_t autoFill(struct Params buff, char key, term_t fill)
+term_t autoFill(struct Data buff, char key, term_t fill)
 {
 	switch(buff.chars)
 	{
 		case 0:
-			fill = BARS_SZ;
+			fill = BARS_SZ + 1; // 1 - cursor.
 		break;
 
 		default:
@@ -115,28 +126,6 @@ term_t autoFill(struct Params buff, char key, term_t fill)
 		break;
 	}
 	return fill;
-}
-
-// Lower border with a text.
-void lowerBar(struct Params buff, char key)
-{
-	const char *lines_text = " lines: \0";
-	const char *chars_text = " | chars: \0";
-	const char *ascii_code_text = " | last char code: \0";
-
-	term_t width;
-	term_t whitespace = strlen(lines_text) + decIntLen(buff.lines)
-	+ strlen(chars_text) + decIntLen(buff.chars)
-	+ strlen(ascii_code_text) + decIntLen(key);
-
-	printf("%s%s%i%s%i%s%i", INVERT, lines_text, buff.lines, chars_text,
-	buff.chars, ascii_code_text, key);
-
-	for(width = 0; width < getSize(X) - whitespace; width++)
-	{
-		printf("%c", ' ');
-	}
-	printf("%s", RESET);
 }
 
 void cleanFrame(void) // To provide rendering in a one frame.
