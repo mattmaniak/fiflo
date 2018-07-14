@@ -17,7 +17,6 @@
 #define X true
 #define Y false
 
-#define CURSOR_SZ 1
 #define BARS_SZ 2
 
 #define MIN_WIDTH 80
@@ -28,13 +27,11 @@
 typedef int16_t buff_t;
 typedef uint16_t term_t;
 
-void cursor(void);
 buff_t decIntLen(buff_t chars);
 term_t getSize(bool axis);
 void linesLimit(buff_t lines);
 void printDynamicFilename(const char *string, const char *prog, term_t max_len);
 void bar(struct Data buff, char key);
-term_t autoFill(struct Data buff, term_t fill, char key);
 void cleanFrame(void);
 
 #endif

@@ -4,7 +4,7 @@
 Below version numbers contains more detailed descriptions of annotated Git
 tags. Dates are not alternative version names. They are just release dates.
 Changelog contains only new tangible features. To see what's new in source
-files use diff-like tools or "git log".
+files use git-show or git-log.
 
 ## Versions:
 ### v1.0.0 (WIP):
@@ -14,6 +14,7 @@ files use diff-like tools or "git log".
 - Usable for the first time.
 - A lot of bugs removed.
 - UI redesigned.
+- 80 chars per line limit.
 
 ### v0.5.0-unstable (July 1, 2018):
 The last v0.y.z version and showup of the old program logic. Mostly insecure.

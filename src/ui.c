@@ -2,11 +2,6 @@
 
 #include "ui.h"
 
-void cursor(void)
-{
-	printf("%s%c%s\n", INVERT, ' ', RESET);
-}
-
 buff_t decIntLen(buff_t number)
 {
 	// Return a length of decimal integer. Eg. 2 from number = 12.
@@ -52,7 +47,7 @@ term_t getSize(bool axis) // Check terminal size.
 
 void linesLimit(buff_t lines)
 {
-	if(lines > getSize(Y) - (BARS_SZ + CURSOR_SZ))
+	if(lines > getSize(Y) - BARS_SZ)
 	{
 		fprintf(stderr, "%s%i%s%i%s",
 		"Max. lines amount: ", getSize(Y) - BARS_SZ, ", got: ", lines,
@@ -115,28 +110,6 @@ void bar(struct Data buff, char key)
 	}
 	printf("%s", RESET);
 
-}
-
-term_t autoFill(struct Data buff, term_t fill, char key)
-{
-	switch(buff.chars) // TODO: HORIZONTAL FILL
-	{
-		case 0:
-			fill = BARS_SZ + CURSOR_SZ;
-		break;
-
-		default:
-			if(key != BACKSPACE && buff.chars % getSize(X) == 0)
-			{
-				fill++;
-			}
-			else if(key == BACKSPACE && buff.chars % getSize(X) == getSize(X) - 1)
-			{
-				fill--;
-			}
-		break;
-	}
-	return fill;
 }
 
 void cleanFrame(void) // To provide rendering in a one frame.

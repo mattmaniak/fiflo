@@ -42,10 +42,34 @@ void setFilename(struct Data buff, char *name)
 	}
 }
 
+void punchedCard(struct Data buff, term_t limit, char key)
+{
+	static term_t x = 0;
+	if(key == LINEFEED)
+	{
+		x = 0;
+	}
+	else
+	{
+		if(key != BACKSPACE)
+		{
+			x++;
+		}
+		if(x > limit + 1)
+		{
+			fprintf(stderr, "%s%i%s%i%s\n",
+			"A single line cannot have more than ", limit,
+			" chars, exited.\nLine ", buff.lines, " has.");
+
+			free(buff.filename);
+			exit(1);
+		}
+	}
+}
+
 struct Data readFile(struct Data buff, char *name)
 {
 	char chr;
-	uint8_t punched_card;
 	const uint8_t terminator_sz = 1;
 
 	buff.chars = 0;
@@ -64,19 +88,8 @@ struct Data readFile(struct Data buff, char *name)
 		if(chr == LINEFEED)
 		{
 			buff.lines++;
-			punched_card = 1;
 		}
-		else
-		{
-			punched_card++;
-			if(punched_card > 80)
-			{
-				fprintf(stderr, "%s%i%s\n",
-				"Line cannot have more than 80 chars, exited.\nLine ",
-				buff.lines, " has.");
-				exit(1);
-			}
-		}
+		punchedCard(buff, 80, chr);
 	}
 	fclose(fd);
 	return buff;
@@ -149,7 +162,6 @@ struct Data allocText(struct Data buff, char key)
 				exit(0);
 		}
 	}
-	linesLimit(buff.lines);
 	return buff;
 }
 
@@ -165,24 +177,31 @@ void renderText(struct Data buff)
 	}
 	for(x = 0; x < buff.chars; x++) // Chars rendering.
 	{
-		printf("%c", buff.text[x]);
+		if(x == buff.chars - 1) // Invert a last char as a cursor.
+		{
+			printf("%s%c%s", INVERT, buff.text[x], RESET);
+		}
+		else
+		{
+			printf("%c", buff.text[x]);
+		}
 	}
-	cursor();
 }
 
 // Terminal fill that shows chars and other stupid things.
 struct Data window(struct Data buff, char key)
 {
-//	static term_t fill = BARS_SZ + CURSOR_SZ;
 	term_t y;
 
 	buff = allocText(buff, key);
-//	fill = autoFill(buff, fill, key);
+
+	punchedCard(buff, 80, key);
+	linesLimit(buff.lines);
 
 	bar(buff, key);
 	renderText(buff);
 
-	for(y = buff.lines + BARS_SZ + CURSOR_SZ; y < getSize(Y); y++)
+	for(y = buff.lines + BARS_SZ; y < getSize(Y); y++)
 	{
 		printf("%c", LINEFEED);
 	}
