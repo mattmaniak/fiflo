@@ -62,11 +62,10 @@ void linesLimit(buff_t lines)
 }
 
 // Cuts a string when is too long.
-void printDynamicString(const char *string, term_t max_len)
+void printDynamicFilename(const char *string, const char *prog, term_t max_len)
 {
-	#define PROGRAM_LEN 15
 	term_t x;
-	term_t whitespace = getSize(X) - strlen(string) - PROGRAM_LEN;
+	term_t whitespace = getSize(X) - strlen(string) - strlen(prog);
 
 	if(strlen(string) > max_len)
 	{
@@ -88,17 +87,18 @@ void printDynamicString(const char *string, term_t max_len)
 
 void bar(struct Data buff, char key)
 {
-	#define DOTS_AND_SPACE 4
 	const char *program = " fiflo | file: \0";
-	const char *lines_text = " | lines: \0";
+	const char *lines_text = " lines: \0";
 	const char *chars_text = " | chars: \0";
 	const char *ascii_code_text = " | last: \0";
-	const char *shortcuts = " save: CTRL+X | exit: CTRL+C \0";
+	const char *shortcuts = " | save: CTRL+D | exit: CTRL+X \0";
+
+	const uint8_t dots_and_space = 4;
 	term_t width;
 
 	printf("%s%s", INVERT, program);
-	printDynamicString(buff.filename, getSize(X) - strlen(program)
-	- DOTS_AND_SPACE);
+	printDynamicFilename(buff.filename, program, getSize(X) - strlen(program)
+	- dots_and_space);
 
 	// Lower part of the bar.
 	term_t whitespace = strlen(shortcuts)
@@ -106,8 +106,8 @@ void bar(struct Data buff, char key)
 	+ strlen(chars_text) + decIntLen(buff.chars)
 	+ strlen(ascii_code_text) + decIntLen(key);
 
-	printf("%s%s%i%s%i%s%i", shortcuts, lines_text, buff.lines, chars_text,
-	buff.chars, ascii_code_text, key);
+	printf("%s%i%s%i%s%i%s", lines_text, buff.lines, chars_text,
+	buff.chars, ascii_code_text, key, shortcuts);
 
 	for(width = 0; width < getSize(X) - whitespace; width++)
 	{
@@ -117,9 +117,9 @@ void bar(struct Data buff, char key)
 
 }
 
-term_t autoFill(struct Data buff, char key, term_t fill)
+term_t autoFill(struct Data buff, term_t fill, char key)
 {
-	switch(buff.chars)
+	switch(buff.chars) // TODO: HORIZONTAL FILL
 	{
 		case 0:
 			fill = BARS_SZ + CURSOR_SZ;

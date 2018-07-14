@@ -1,5 +1,6 @@
 *.asdf
 fiflo
+make
 *.out
 *.save
 *.swp

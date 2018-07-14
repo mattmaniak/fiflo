@@ -20,16 +20,21 @@
 #define CURSOR_SZ 1
 #define BARS_SZ 2
 
+#define MIN_WIDTH 80
+#define MIN_HEIGHT 10
+#define MAX_WIDTH 65534
+#define MAX_HEIGHT 65534
+
 typedef int16_t buff_t;
-typedef uint16_t term_t; // TODO: MERGE THESE TYPEDEF WITH LOGIC_H.
+typedef uint16_t term_t;
 
 void cursor(void);
 buff_t decIntLen(buff_t chars);
 term_t getSize(bool axis);
 void linesLimit(buff_t lines);
-void printDynamicString(const char *string, term_t max_len);
+void printDynamicFilename(const char *string, const char *prog, term_t max_len);
 void bar(struct Data buff, char key);
-term_t autoFill(struct Data buff, char key, term_t fill);
+term_t autoFill(struct Data buff, term_t fill, char key);
 void cleanFrame(void);
 
 #endif

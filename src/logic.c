@@ -7,6 +7,9 @@ void setFilename(struct Data buff, char *name)
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
+	const uint8_t terminator_sz = 1;
+	const uint8_t slash_sz = 1;
+
 	if(name[0] == '/')
 	{
 		strcpy(buff.filename, name);
@@ -14,9 +17,9 @@ void setFilename(struct Data buff, char *name)
 	else
 	{
 		uint16_t chr;
-		char *path = malloc(4097); // TODO: SIZE
+		char *path = malloc(PATH_MAX + terminator_sz); // TODO: SIZE
 
-		if(getcwd(path, 4097) == NULL)
+		if(getcwd(path, PATH_MAX + terminator_sz) == NULL)
 		{
 			fputs("Cannot get your current dir, exited.\n", stderr);
 			exit(1);
@@ -31,19 +34,24 @@ void setFilename(struct Data buff, char *name)
 
 		for(chr = 0; chr < strlen(name); chr++) // Copy bname.
 		{
-			buff.filename[chr + strlen(path) + 1] = name[chr];
+			buff.filename[chr + strlen(path) + slash_sz] = name[chr];
 		}
-		buff.filename[strlen(path) + strlen(name) + 1] = TERMINATOR;
+		buff.filename[strlen(path) + strlen(name) + slash_sz] = TERMINATOR;
+
+		free(path);
 	}
 }
 
 struct Data readFile(struct Data buff, char *name)
 {
+	char chr;
+	uint8_t punched_card;
+	const uint8_t terminator_sz = 1;
+
 	buff.chars = 0;
 	buff.lines = 1;
-	char chr;
 
-	buff.filename = malloc(4096 + 256);
+	buff.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
 	setFilename(buff, name);
 
 	FILE *fd = fopen(buff.filename, "a+");
@@ -56,6 +64,18 @@ struct Data readFile(struct Data buff, char *name)
 		if(chr == LINEFEED)
 		{
 			buff.lines++;
+			punched_card = 1;
+		}
+		else
+		{
+			punched_card++;
+			if(punched_card > 80)
+			{
+				fprintf(stderr, "%s%i%s\n",
+				"Line cannot have more than 80 chars, exited.\nLine ",
+				buff.lines, " has.");
+				exit(1);
+			}
 		}
 	}
 	fclose(fd);
@@ -81,7 +101,7 @@ void saveFile(struct Data buff)
 
 struct Data allocText(struct Data buff, char key)
 {
-	if(key == LINEFEED || key == CTRL_X || key >= 32)
+	if(key == CTRL_D || key == LINEFEED || key == CTRL_X || key >= 32)
 	{
 		switch(key)
 		{
@@ -120,9 +140,13 @@ struct Data allocText(struct Data buff, char key)
 				}
 			break;
 
-			case CTRL_X:
+			case CTRL_D:
 				saveFile(buff);
 			break;
+
+			case CTRL_X:
+				free(buff.filename);
+				exit(0);
 		}
 	}
 	linesLimit(buff.lines);
@@ -130,7 +154,7 @@ struct Data allocText(struct Data buff, char key)
 }
 
 // Drawing funcions.
-// Pressed keys to rendered chars in proper order. TODO: ALL KEYS HANDLING.
+// Pressed keys to rendered chars in proper order.
 void renderText(struct Data buff)
 {
 	buff_t x;
@@ -147,18 +171,18 @@ void renderText(struct Data buff)
 }
 
 // Terminal fill that shows chars and other stupid things.
-struct Data window(char key, struct Data buff)
+struct Data window(struct Data buff, char key)
 {
-	static term_t fill = BARS_SZ;
+//	static term_t fill = BARS_SZ + CURSOR_SZ;
 	term_t y;
 
 	buff = allocText(buff, key);
-	fill = autoFill(buff, key, fill);
+//	fill = autoFill(buff, fill, key);
 
 	bar(buff, key);
 	renderText(buff);
 
-	for(y = buff.lines + fill; y < getSize(Y); y++)
+	for(y = buff.lines + BARS_SZ + CURSOR_SZ; y < getSize(Y); y++)
 	{
 		printf("%c", LINEFEED);
 	}

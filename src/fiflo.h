@@ -9,7 +9,7 @@
 #define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
 typedef int16_t buff_t;
 
-struct Data
+struct Data // There is no typedef to provide better code readibility.
 {
 	char *filename; // Eg. /home/user/basename.asdf
 	char text[BUFF_SZ];
@@ -19,7 +19,7 @@ struct Data
 
 void showHelp(void);
 void programRound(char *name);
-//void freeExit(int nothing);
+void sigHandler(int nothing);
 void argcChceck(void);
 
 #endif

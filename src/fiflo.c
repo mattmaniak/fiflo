@@ -18,21 +18,18 @@ void showHelp(void)
 void programRound(char *name)
 {
 	struct Data buff = readFile(buff, name);
-	window(TERMINATOR, buff);
+	window(buff, TERMINATOR);
 
 	for(;;)
 	{
 		char pressed_key = unixGetch(); // TODO: FLUSHING.
 		cleanFrame();
-		buff = window(pressed_key, buff);
+		buff = window(buff, pressed_key);
 	}
 }
 
-void freeExit(int nothing) // TODO: FREEING MEMORY.
+void sigHandler(int nothing) // TODO: FREEING MEMORY.
 {
-	system("stty echo");
-	cleanFrame();
-	exit(0);
 	if(nothing == 0) {}
 }
 
@@ -47,8 +44,8 @@ void argcCheck(int arg_count)
 
 int main(int argc, char *argv[])
 {
-	signal(SIGTSTP, freeExit); // CTRL_X
-	signal(SIGINT, freeExit); // CTRL_C
+	signal(SIGTSTP, sigHandler); // CTRL_X
+	signal(SIGINT, sigHandler); // CTRL_C
 
 	argcCheck(argc);
 	if(argv[1] == NULL)
