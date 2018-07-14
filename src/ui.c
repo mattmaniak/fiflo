@@ -50,6 +50,17 @@ term_t getSize(bool axis) // Check terminal size.
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
+void linesLimit(buff_t lines)
+{
+	if(lines > getSize(Y) - (BARS_SZ + CURSOR_SZ))
+	{
+		fprintf(stderr, "%s%i%s%i%s",
+		"Max. lines amount: ", getSize(Y) - BARS_SZ, ", got: ", lines,
+		". Stretch your terminal or sth.\n");
+		exit(1);
+	}
+}
+
 // Cuts a string when is too long.
 void printDynamicString(const char *string, term_t max_len)
 {
@@ -111,7 +122,7 @@ term_t autoFill(struct Data buff, char key, term_t fill)
 	switch(buff.chars)
 	{
 		case 0:
-			fill = BARS_SZ + 1; // 1 - cursor.
+			fill = BARS_SZ + CURSOR_SZ;
 		break;
 
 		default:

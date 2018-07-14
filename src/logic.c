@@ -79,13 +79,13 @@ void saveFile(struct Data buff)
 	fclose(fd);
 }
 
-struct Data allocText(struct Data buff, char key) // TODO: SHORTEN!
+struct Data allocText(struct Data buff, char key)
 {
-	if(KEYMAP)
+	if(key == LINEFEED || key == CTRL_X || key >= 32)
 	{
 		switch(key)
 		{
-			default: // Just convert pressed key into a char in the string.
+			default: // Convert pressed key into a char in the string.
 				buff.text[buff.chars] = key;
 				if(key != TERMINATOR)
 				{
@@ -105,12 +105,6 @@ struct Data allocText(struct Data buff, char key) // TODO: SHORTEN!
 					buff.chars = MAX_CHARS;
 				}
 				buff.lines++;
-				if(buff.lines > getSize(Y) - 2)
-				{
-					buff.lines = getSize(Y) - 2;
-					buff.text[buff.chars] = TERMINATOR;
-					// Prevent double bar.
-				}
 			break;
 
 			case BACKSPACE:
@@ -126,19 +120,12 @@ struct Data allocText(struct Data buff, char key) // TODO: SHORTEN!
 				}
 			break;
 
-			// More special.
 			case CTRL_X:
 				saveFile(buff);
 			break;
 		}
 	}
-	if(buff.lines > getSize(Y) - BARS_SZ)
-	{
-		fprintf(stderr, "%s%i%s%i%s",
-		"Max. lines amount: ", getSize(Y - BARS_SZ), ", got: ", buff.lines,
-		". Stretch your terminal or sth.\n");
-		exit(1);
-	}
+	linesLimit(buff.lines);
 	return buff;
 }
 
@@ -148,6 +135,10 @@ void renderText(struct Data buff)
 {
 	buff_t x;
 
+	if(buff.text[0] == LINEFEED)
+	{
+		printf("%c", LINEFEED); // Necessary at least for LXTerminal.
+	}
 	for(x = 0; x < buff.chars; x++) // Chars rendering.
 	{
 		printf("%c", buff.text[x]);

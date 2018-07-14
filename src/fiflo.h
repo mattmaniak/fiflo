@@ -12,9 +12,9 @@ typedef int16_t buff_t;
 struct Data
 {
 	char *filename; // Eg. /home/user/basename.asdf
+	char text[BUFF_SZ];
 	buff_t chars;
 	buff_t lines;
-	char text[BUFF_SZ];
 };
 
 void showHelp(void);

@@ -7,7 +7,8 @@
 
 void showHelp(void)
 {
-	printf("%s%s%s%s%s", "Usage: fiflo [option].\n",
+	printf("%s%s%s%s%s",
+	"Usage: fiflo [option].\n",
 	"Options:     Description:\n",
 	"<NULL>       Create and open the default file - 'noname.asdf'.\n",
 	"<file>       Open the textfile named 'file'.\n",
@@ -49,9 +50,7 @@ int main(int argc, char *argv[])
 	signal(SIGTSTP, freeExit); // CTRL_X
 	signal(SIGINT, freeExit); // CTRL_C
 
-	getSize(true); // Returns X but doesn't matter for that case. Just a check.
 	argcCheck(argc);
-
 	if(argv[1] == NULL)
 	{
 		programRound("noname.asdf\0");
