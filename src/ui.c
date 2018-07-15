@@ -1,64 +1,124 @@
+// All rendered elements.
+
 #include "ui.h"
-#include "hardware.h"
 
-// All rendered elements except chars you type.
-void cursor(void) // Blinking floor.
-{
-	printf("%s%c%s", BLINK, '_', RESET);
-}
-
-static int8_t decimalIntLen(int8_t chars) // Return len of decimal charchars.
+// Return a length of decimal integer. Eg. 2 from number = 12.
+buff_t decIntLen(buff_t number)
 {
 	int8_t len = 1;
-	while(chars > 9)
+	if(number >= 0) // Prevent from weird < 0 values.
 	{
-		len++;
-		chars /= 10;
+		while(number > 9)
+		{
+			len++;
+			number /= 10;
+		}
 	}
 	return len;
 }
 
- // Lower border with a text.
-void infoBar(int8_t chars, int8_t lines, char base_filename[])
+term_t getSize(bool axis) // Check terminal size.
 {
-	uint8_t char_pos;
-	uint16_t width;
-	char program_name[10] = " Fiflo | \0";
-	char chars_text[8] = "chars: \0";
-	char lines_text[11] = " | lines: \0";
-	char stdin_text[10] = " | stdin<\0";
+	struct winsize win; // From "sys/ioctl.h".
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
-	uint16_t whitespace
-	= strlen(program_name)
-	+ decimalIntLen(chars)
-	+ strlen(chars_text)
-	+ strlen(lines_text)
-	+ strlen(stdin_text) + 35 + 2;
-
-	char* bar_buffer = malloc(windowSize('x'));
-	memCheck(bar_buffer);
-
-	printf("%s%s", BOLD, program_name);
-
-	if(strlen(base_filename) >= 32) // Max rendered first 32 chars.
+	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
 	{
-		for(char_pos = 0; char_pos < 32; char_pos++)
-			printf("%c", base_filename[char_pos]);
-		printf("%s", "..."); // strlen is 3.
+		fprintf(stderr, "%s%i%c%i%s",
+		"Min. term size is ", MIN_WIDTH, 'x', MIN_HEIGHT, ".\n");
+		exit(1);
+	}
+	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
+	{
+		fprintf(stderr, "%s%i%c%i%s",
+		"Max. term size is ", MAX_WIDTH, 'x', MAX_HEIGHT, ", exited.\n");
+		exit(1);
+	}
+
+	switch(axis)
+	{
+		case X:
+			return win.ws_col;
+		case Y:
+			return win.ws_row;
+	}
+	return 0; // Protection from the -Wreturn-type warning.
+}
+
+void linesLimit(buff_t lines)
+{
+	if(lines > getSize(Y) - BARS_SZ)
+	{
+		fprintf(stderr, "%s%i%s%i%s",
+		"Max. lines amount: ", getSize(Y) - BARS_SZ, ", got: ", lines,
+		". Stretch your terminal or sth.\n");
+		exit(1);
+	}
+}
+
+// Cuts a string when is too long.
+void printDynamicFilename(const char *string, const char *prog, term_t max_len)
+{
+	term_t x;
+	term_t whitespace = getSize(X) - strlen(string) - strlen(prog);
+
+	if(strlen(string) > max_len)
+	{
+		for(x = 0; x < max_len; x++)
+		{
+			printf("%c", string[x]);
+		}
+		printf("%s", "... ");
 	}
 	else
 	{
-		printf("%s", base_filename);
-		for(char_pos = 0; char_pos < 35 - strlen(base_filename); char_pos++)
+		printf("%s", string);
+		for(x = 0; x < whitespace; x++)
+		{
 			printf("%c", ' ');
+		}
 	}
+}
 
-	for(width = 0; width < windowSize('x') - whitespace; width++)
+void bar(struct Data buff, char key)
+{
+	const char *program = " fiflo | file: \0";
+	const char *lines_text = " lines: \0";
+	const char *chars_text = " | chars: \0";
+	const char *ascii_code_text = " | last: \0";
+	const char *shortcuts = " | save: CTRL+D | exit: CTRL+X \0";
+
+	const uint8_t dots_and_space = 4;
+	term_t width;
+
+	printf("%s%s", INVERT, program);
+	printDynamicFilename(buff.filename, program, getSize(X) - strlen(program)
+	- dots_and_space);
+
+	// Lower part of the bar.
+	term_t whitespace = strlen(shortcuts)
+	+ strlen(lines_text) + decIntLen(buff.lines)
+	+ strlen(chars_text) + decIntLen(buff.chars)
+	+ strlen(ascii_code_text) + decIntLen(key);
+
+	printf("%s%i%s%i%s%i%s", lines_text, buff.lines, chars_text,
+	buff.chars, ascii_code_text, key, shortcuts);
+
+	for(width = 0; width < getSize(X) - whitespace; width++)
+	{
 		printf("%c", ' ');
+	}
+	printf("%s", RESET);
 
-	printf("%s%d%s%d%s%s", chars_text, chars, lines_text, lines, stdin_text,
-	RESET);
+}
 
-	free(bar_buffer);
+void cleanFrame(void) // To provide rendering in a one frame.
+{
+	term_t y;
+	for(y = 0; y < getSize(Y); y++)
+	{
+		printf("%s", "\033[F\033[K");
+	}
+	fflush(stdout);
 }
 

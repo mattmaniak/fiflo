@@ -1,5 +1,5 @@
-Shows how *.c files are included to each other.
+Shows how *.c files are connected to each other.
 
-		keymap.c
-			|
-fiflo.c -- render.c -- ui.c
+    -- hardware.c
+   |
+fiflo.c ------------ logic.c -- ui.c
