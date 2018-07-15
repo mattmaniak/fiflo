@@ -11,6 +11,11 @@ void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
 	}
 }
 
+void sigHandler(int nothing)
+{
+	if(nothing == 0) {}
+}
+
 char unixGetch(void) // https://stackoverflow.com/questions/12710582/
 {
 	char key;

@@ -1,4 +1,4 @@
-# Fiflo - changelog
+# fiflo - changelog
 
 ## Description
 Below version numbers contains more detailed descriptions of annotated Git
@@ -10,18 +10,19 @@ files use git-show or git-log.
 ### v1.0.0 (WIP):
 - Simplified API.
 - Less memory usage.
+- Proper text allocation.
 - Faster initialization.
 - Usable for the first time.
 - A lot of bugs removed.
 - UI redesigned.
-- 80 chars per line limit.
+- 80 chars per line limit && auto newline.
 
 ### v0.5.0-unstable (July 1, 2018):
 The last v0.y.z version and showup of the old program logic. Mostly insecure.
 Not merged with "master" so look for it with tags.
 - Multiple lines writing && rendering.
 - File input/output operations.
-- Man page added.
+- Man-page added.
 - Upper bar is back.
 - Absolute paths support.
 - OS check.

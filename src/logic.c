@@ -17,7 +17,7 @@ void setFilename(struct Data buff, char *name)
 	else
 	{
 		uint16_t chr;
-		char *path = malloc(PATH_MAX + terminator_sz); // TODO: SIZE
+		char *path = malloc(PATH_MAX + terminator_sz);
 
 		if(getcwd(path, PATH_MAX + terminator_sz) == NULL)
 		{
@@ -42,29 +42,48 @@ void setFilename(struct Data buff, char *name)
 	}
 }
 
-void punchedCard(struct Data buff, term_t limit, char key)
+struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 {
 	static term_t x = 0;
 	if(key == LINEFEED)
 	{
 		x = 0;
 	}
-	else
+	else if(key == BACKSPACE)
 	{
-		if(key != BACKSPACE)
+		x--;
+		if(x == 0)
 		{
-			x++;
-		}
-		if(x > limit + 1)
-		{
-			fprintf(stderr, "%s%i%s%i%s\n",
-			"A single line cannot have more than ", limit,
-			" chars, exited.\nLine ", buff.lines, " has.");
-
-			free(buff.filename);
-			exit(1);
+			x = limit + 1;
 		}
 	}
+	else
+	{
+		if(x > limit)
+		{
+			switch(mode)
+			{
+				case R:
+					fprintf(stderr, "%s%i%s%i%s%i%c\n",
+					"A single line cannot have more than ", limit,
+					" chars, exited.\nLine ", buff.lines, " has got ", x, '.');
+
+					free(buff.filename);
+					exit(1);
+				break;
+
+				case W:
+					buff.text[buff.chars - 1] = LINEFEED;
+					buff.lines++;
+					x = 0;
+				break;
+			}
+		}
+		x++;
+
+		printf("%i\n", x); // DEBUG
+	}
+	return buff;
 }
 
 struct Data readFile(struct Data buff, char *name)
@@ -89,7 +108,7 @@ struct Data readFile(struct Data buff, char *name)
 		{
 			buff.lines++;
 		}
-		punchedCard(buff, 80, chr);
+		punchedCard(buff, 80, R, chr);
 	}
 	fclose(fd);
 	return buff;
@@ -194,10 +213,10 @@ struct Data window(struct Data buff, char key)
 	term_t y;
 
 	buff = allocText(buff, key);
-
-	punchedCard(buff, 80, key);
+	buff = punchedCard(buff, 80, W, key);
 	linesLimit(buff.lines);
 
+	// Renderable.
 	bar(buff, key);
 	renderText(buff);
 

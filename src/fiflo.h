@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define BUFF_SZ SHRT_MAX - 1 // Always [TYPE]_MAX - 1.
-typedef int16_t buff_t;
+#define BUFF_SZ SHRT_MAX - 1
+typedef int16_t buff_t; // > 16 makes stack error.
 
 struct Data // There is no typedef to provide better code readibility.
 {
@@ -19,8 +19,8 @@ struct Data // There is no typedef to provide better code readibility.
 
 void showHelp(void);
 void programRound(char *name);
-void sigHandler(int nothing);
 void argcChceck(void);
+int main(int argc, char *argv[]);
 
 #endif
 

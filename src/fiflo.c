@@ -28,11 +28,6 @@ void programRound(char *name)
 	}
 }
 
-void sigHandler(int nothing) // TODO: FREEING MEMORY.
-{
-	if(nothing == 0) {}
-}
-
 void argcCheck(int arg_count)
 {
 	if(arg_count > 2)

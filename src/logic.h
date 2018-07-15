@@ -3,12 +3,16 @@
 
 #include <limits.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define MAX_CHARS (getSize(X) * (getSize(Y) - 3)) - 1
+
+#define R true
+#define W false
 
 #define TERMINATOR 0
 #define CTRL_D 4
@@ -20,7 +24,7 @@ typedef int16_t buff_t;
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
 void setFilename(struct Data buff, char *name);
-void punchedCard(struct Data buff, term_t limit, char key);
+struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key);
 struct Data readFile(struct Data buff, char *name);
 void saveFile(struct Data buff);
 struct Data allocText(struct Data buff, char key);
