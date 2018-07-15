@@ -7,12 +7,12 @@
 
 void showHelp(void)
 {
-	printf("%s%s%s%s%s",
-	"Usage: fiflo [option].\n",
-	"Options:     Description:\n",
-	"<NULL>       Create and open the default file - 'noname.asdf'.\n",
-	"<file>       Open the textfile named 'file'.\n",
-	"-h, --help   Show program help.\n");
+	printf("%s\n%s\n%s\n%s\n%s\n",
+	"Usage: fiflo [option].",
+	"Options:     Description:",
+	"<NULL>       Create and open the default file - 'noname.asdf'.",
+	"<file>       Open the textfile named 'file'.",
+	"-h, --help   Show program help.");
 }
 
 void programRound(char *name)
@@ -22,7 +22,7 @@ void programRound(char *name)
 
 	for(;;)
 	{
-		char pressed_key = unixGetch(); // TODO: FLUSHING.
+		char pressed_key = unixGetch();
 		cleanFrame();
 		buff = window(buff, pressed_key);
 	}

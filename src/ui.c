@@ -2,9 +2,9 @@
 
 #include "ui.h"
 
+// Return a length of decimal integer. Eg. 2 from number = 12.
 buff_t decIntLen(buff_t number)
 {
-	// Return a length of decimal integer. Eg. 2 from number = 12.
 	int8_t len = 1;
 	if(number >= 0) // Prevent from weird < 0 values.
 	{

@@ -30,7 +30,7 @@ void setFilename(struct Data buff, char *name)
 		{
 			buff.filename[chr] = path[chr];
 		}
-		buff.filename[strlen(path)] = '/'; // Add a slash between.
+		buff.filename[strlen(path)] = '/'; // Add the slash between.
 
 		for(chr = 0; chr < strlen(name); chr++) // Copy bname.
 		{
@@ -42,24 +42,28 @@ void setFilename(struct Data buff, char *name)
 	}
 }
 
+// Limit chars per line to 80.
 struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 {
-	static term_t x = 0;
+	const uint8_t newline = 1;
+	static int8_t x;
+
 	if(key == LINEFEED)
 	{
-		x = 0;
+		x = 1;
 	}
 	else if(key == BACKSPACE)
 	{
 		x--;
-		if(x == 0)
+		if(x <= 1)
 		{
-			x = limit + 1;
+			x = limit + newline + 1;
 		}
 	}
 	else
 	{
-		if(x > limit)
+		x++;
+		if(x > limit + newline)
 		{
 			switch(mode)
 			{
@@ -72,16 +76,14 @@ struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 					exit(1);
 				break;
 
+				// Auto newline.
 				case W:
 					buff.text[buff.chars - 1] = LINEFEED;
 					buff.lines++;
-					x = 0;
+					x = 1;
 				break;
 			}
 		}
-		x++;
-
-		printf("%i\n", x); // DEBUG
 	}
 	return buff;
 }
@@ -131,13 +133,14 @@ void saveFile(struct Data buff)
 	fclose(fd);
 }
 
+// Convert pressed key into a char in the string.
 struct Data allocText(struct Data buff, char key)
 {
 	if(key == CTRL_D || key == LINEFEED || key == CTRL_X || key >= 32)
 	{
 		switch(key)
 		{
-			default: // Convert pressed key into a char in the string.
+			default:
 				buff.text[buff.chars] = key;
 				if(key != TERMINATOR)
 				{
@@ -184,11 +187,16 @@ struct Data allocText(struct Data buff, char key)
 	return buff;
 }
 
-// Drawing funcions.
 // Pressed keys to rendered chars in proper order.
 void renderText(struct Data buff)
 {
 	buff_t x;
+
+	if(buff.text[0] == TERMINATOR)
+	{
+		printf("%c", LINEFEED); // Necessary at least for LXTerminal.
+	}
+
 
 	if(buff.text[0] == LINEFEED)
 	{
