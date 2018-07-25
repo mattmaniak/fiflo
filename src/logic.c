@@ -67,7 +67,7 @@ struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 		{
 			switch(mode)
 			{
-				case R:
+				case READ:
 					fprintf(stderr, "%s%i%s%i%s%i%c\n",
 					"A single line cannot have more than ", limit,
 					" chars, exited.\nLine ", buff.lines, " has got ", x, '.');
@@ -77,7 +77,7 @@ struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 				break;
 
 				// Auto newline.
-				case W:
+				case WRITE:
 					buff.text[buff.chars - 1] = LINEFEED;
 					buff.lines++;
 					x = 1;
@@ -99,20 +99,25 @@ struct Data readFile(struct Data buff, char *name)
 	buff.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
 	setFilename(buff, name);
 
-	FILE *fd = fopen(buff.filename, "a+");
-	pointerCheck(fd, "Cannot open the file, exited.\0");
-
-	while((chr = getc(fd)) != EOF)
+	FILE *fd = fopen(buff.filename, "r");
+	if(fd != NULL)
 	{
-		buff.text[buff.chars] = chr;
-		buff.chars++;
-		if(chr == LINEFEED)
+		while((chr = getc(fd)) != EOF)
 		{
-			buff.lines++;
+			buff.text[buff.chars] = chr;
+			buff.chars++;
+			if(chr == LINEFEED)
+			{
+				buff.lines++;
+			}
+			punchedCard(buff, MAX_CHARS_PER_LINE, READ, chr);
 		}
-		punchedCard(buff, 80, R, chr);
+		fclose(fd);
 	}
-	fclose(fd);
+	else
+	{
+		buff.text[0] = TERMINATOR;
+	}
 	return buff;
 }
 
@@ -221,7 +226,7 @@ struct Data window(struct Data buff, char key)
 	term_t y;
 
 	buff = allocText(buff, key);
-	buff = punchedCard(buff, 80, W, key);
+	buff = punchedCard(buff, MAX_CHARS_PER_LINE, WRITE, key);
 	linesLimit(buff.lines);
 
 	// Renderable.

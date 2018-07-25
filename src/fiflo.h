@@ -18,7 +18,7 @@ struct Data // There is no typedef to provide better code readibility.
 };
 
 void showHelp(void);
-void programRound(char *name);
+void run(char *name);
 void argcChceck(void);
 int main(int argc, char *argv[]);
 

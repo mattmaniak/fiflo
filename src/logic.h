@@ -11,14 +11,16 @@
 
 #define MAX_CHARS (getSize(X) * (getSize(Y) - 3)) - 1
 
-#define R true
-#define W false
+#define READ true
+#define WRITE false
 
 #define TERMINATOR 0
 #define CTRL_D 4
 #define LINEFEED 10
 #define CTRL_X 24
 #define BACKSPACE 127
+
+#define MAX_CHARS_PER_LINE 80
 
 typedef int16_t buff_t;
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".

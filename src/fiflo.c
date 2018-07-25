@@ -15,7 +15,7 @@ void showHelp(void)
 	"-h, --help   Show program help.");
 }
 
-void programRound(char *name)
+void run(char *name)
 {
 	struct Data buff = readFile(buff, name);
 	window(buff, TERMINATOR);
@@ -32,7 +32,7 @@ void argcCheck(int arg_count)
 {
 	if(arg_count > 2)
 	{
-		fputs("Fiflo can handle max. one parameter.\n", stderr);
+		fputs("Fiflo can handle max. one additional arg.\n", stderr);
 		exit(1);
 	}
 }
@@ -45,16 +45,16 @@ int main(int argc, char *argv[])
 	argcCheck(argc);
 	if(argv[1] == NULL)
 	{
-		programRound("noname.asdf\0");
+		run("noname.asdf\0");
 	}
-	else if(strcmp(argv[1], "-h\0") == 0 || strcmp(argv[1], "--help\0") == 0)
+	else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
 	{
 		showHelp();
 		exit(0);
 	}
 	else
 	{
-		programRound(argv[1]);
+		run(argv[1]);
 	}
 	return 0;
 }
