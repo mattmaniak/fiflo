@@ -47,10 +47,10 @@ term_t getSize(bool axis) // Check terminal size.
 
 void linesLimit(buff_t lines)
 {
-	if(lines > getSize(Y) - BARS_SZ)
+	if(lines > getSize(Y) - BAR_SZ)
 	{
 		fprintf(stderr, "%s%i%s%i%s",
-		"Max. lines amount: ", getSize(Y) - BARS_SZ, ", got: ", lines,
+		"Max. lines amount: ", getSize(Y) - BAR_SZ, ", got: ", lines,
 		". Stretch your terminal or sth.\n");
 		exit(1);
 	}

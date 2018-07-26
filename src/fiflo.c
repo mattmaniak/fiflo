@@ -18,13 +18,18 @@ void showHelp(void)
 void run(char *name)
 {
 	struct Data buff = readFile(buff, name);
-	window(buff, TERMINATOR);
+	char pressed_key = TERMINATOR;
+
+	window(buff, pressed_key);
+	printf("%s%c%s", BLINK, '_', RESET); // Init cursor placeholder.
+	windowFill(buff.lines);
 
 	for(;;)
 	{
-		char pressed_key = unixGetch();
 		cleanFrame();
 		buff = window(buff, pressed_key);
+		pressed_key = unixGetch();
+		windowFill(buff.lines);
 	}
 }
 

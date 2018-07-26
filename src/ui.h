@@ -17,7 +17,7 @@
 #define X true
 #define Y false
 
-#define BARS_SZ 2
+#define BAR_SZ 2
 
 #define MIN_WIDTH 80
 #define MIN_HEIGHT 10

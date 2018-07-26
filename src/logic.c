@@ -76,7 +76,7 @@ struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 					exit(1);
 				break;
 
-				// Auto newline.
+				// Auto newline. TODO!!!
 				case WRITE:
 					buff.text[buff.chars - 1] = LINEFEED;
 					buff.lines++;
@@ -209,34 +209,36 @@ void renderText(struct Data buff)
 	}
 	for(x = 0; x < buff.chars; x++) // Chars rendering.
 	{
-		if(x == buff.chars - 1) // Invert a last char as a cursor.
+/*		if(x == buff.chars - 1) // Invert a last char as a cursor.
 		{
 			printf("%s%c%s", INVERT, buff.text[x], RESET);
 		}
 		else
 		{
-			printf("%c", buff.text[x]);
-		}
+*/			printf("%c", buff.text[x]);
+//		}
+	}
+}
+
+void windowFill(buff_t lines)
+{
+	term_t y;
+	for(y = lines + BAR_SZ; y < getSize(Y); y++)
+	{
+		printf("%c", LINEFEED);
 	}
 }
 
 // Terminal fill that shows chars and other stupid things.
 struct Data window(struct Data buff, char key)
 {
-	term_t y;
-
 	buff = allocText(buff, key);
 	buff = punchedCard(buff, MAX_CHARS_PER_LINE, WRITE, key);
 	linesLimit(buff.lines);
 
-	// Renderable.
 	bar(buff, key);
 	renderText(buff);
 
-	for(y = buff.lines + BARS_SZ; y < getSize(Y); y++)
-	{
-		printf("%c", LINEFEED);
-	}
 	return buff;
 }
 

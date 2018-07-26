@@ -31,6 +31,7 @@ struct Data readFile(struct Data buff, char *name);
 void saveFile(struct Data buff);
 struct Data allocText(struct Data buff, char key);
 void renderText(struct Data buff);
+void windowFill(buff_t lines);
 struct Data window(struct Data buff, char key);
 
 #endif
