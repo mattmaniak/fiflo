@@ -47,7 +47,7 @@ void argcCheck(int arg_count)
 
 int main(int argc, char *argv[])
 {
-	signal(SIGTSTP, sigHandler); // CTRL_X
+//	signal(SIGTSTP, sigHandler); // CTRL_Z
 	signal(SIGINT, sigHandler); // CTRL_C
 
 	argcCheck(argc);

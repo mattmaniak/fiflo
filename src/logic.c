@@ -97,9 +97,11 @@ struct Data readFile(struct Data buff, char *name)
 	buff.lines = 1;
 
 	buff.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
-	setFilename(buff, name);
+	buff.text = malloc(100); // TODO: dynamic allocation.
 
+	setFilename(buff, name);
 	FILE *fd = fopen(buff.filename, "r");
+
 	if(fd != NULL)
 	{
 		while((chr = getc(fd)) != EOF)
@@ -128,7 +130,7 @@ void saveFile(struct Data buff)
 	FILE *fd = fopen(buff.filename, "w");
 	pointerCheck(fd, "Cannot write to the file, exited.\0");
 
-	for(x = 0; x <= buff.chars; x++)
+	for(x = 0; x < buff.chars; x++)
 	{
 		if(buff.text[x] != TERMINATOR)
 		{
@@ -186,6 +188,7 @@ struct Data allocText(struct Data buff, char key)
 
 			case CTRL_X:
 				free(buff.filename);
+				free(buff.text);
 				exit(0);
 		}
 	}
