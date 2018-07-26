@@ -3,10 +3,9 @@
 ## Description
 Simple terminal-based text editor.
 
-## Needed tools for building and installation:
-- gcc,
-- gzip,
-- make.
+## Requirements:
+Linux-based OS with: gcc, make for compilation and optionally gzip to man-pages
+installation. Any terminal that supports ANSI escape codes.
 
 ## Compilation
 ```
@@ -27,9 +26,8 @@ sudo make uninstall
 ```
 make debug
 ```
-This will link AdressSanitizer to better memory errors handling. Also you will
-be able to run fiflo under gdb. You can also compile it normally and use
-Valgrind.
+This will link AdressSanitizer to memory errors handling. Also you will be able
+to run fiflo under gdb. You can also compile it normally and use Valgrind.
 
 ## FAQ
 Will you port it into a Windows?

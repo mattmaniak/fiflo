@@ -97,13 +97,19 @@ struct Data readFile(struct Data buff, char *name)
 	buff.lines = 1;
 
 	buff.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
-	buff.text = malloc(100); // TODO: dynamic allocation.
 
 	setFilename(buff, name);
 	FILE *fd = fopen(buff.filename, "r");
 
 	if(fd != NULL)
 	{
+		buff_t pos = ftell(fd); // Check size of the file.
+		fseek(fd, 0, SEEK_END);
+		buff_t fd_sz = ftell(fd);
+		fseek(fd, pos, SEEK_SET);
+
+		buff.text = malloc(fd_sz); // TODO: dynamic allocation.
+
 		while((chr = getc(fd)) != EOF)
 		{
 			buff.text[buff.chars] = chr;
@@ -148,6 +154,7 @@ struct Data allocText(struct Data buff, char key)
 		switch(key)
 		{
 			default:
+				buff.text = realloc(buff.text, buff.chars + 1); // TODO: CHEKCING
 				buff.text[buff.chars] = key;
 				if(key != TERMINATOR)
 				{
@@ -160,6 +167,7 @@ struct Data allocText(struct Data buff, char key)
 			break;
 
 			case LINEFEED:
+				buff.text = realloc(buff.text, buff.chars + 1); // TODO: CHEKCING
 				buff.text[buff.chars] = LINEFEED;
 				buff.chars++;
 				if(buff.chars > MAX_CHARS)
@@ -170,6 +178,7 @@ struct Data allocText(struct Data buff, char key)
 			break;
 
 			case BACKSPACE:
+				buff.text = realloc(buff.text, buff.chars + 1); // TODO: CHEKCING
 				buff.text[buff.chars] = TERMINATOR;
 				buff.chars--;
 				if(buff.chars < 0)
@@ -214,18 +223,22 @@ void renderText(struct Data buff)
 	}
 	else // More lines than the terminal can render - scrolling.
 	{
-		term_t first_line;
-		term_t y = 0;
+		term_t renderable_lines = 0;
+		term_t chars_offset;
 
 		for(x = 0; x < buff.chars; x++)
 		{
-			if(buff.text[x] == LINEFEED && y < first_line)
+			if(buff.text[x] == LINEFEED)
 			{
-				first_line = x;
-				y++;
+				renderable_lines++;
+				if(renderable_lines > getSize(Y) - BAR_SZ)
+				{
+					renderable_lines = getSize(Y) - BAR_SZ;
+					chars_offset = buff.chars;
+				}
 			}
 		}
-		for(x = first_line; x < buff.chars; x++) // Chars rendering.
+		for(x = chars_offset; x < buff.chars; x++) // Chars rendering.
 		{
 			printf("%c", buff.text[x]);
 		}
@@ -242,7 +255,6 @@ void windowFill(buff_t lines)
 			printf("%c", LINEFEED);
 		}
 	}
-//	printf("%s", "ssssssssss");
 }
 
 // Terminal fill that shows chars and other stupid things.
