@@ -15,6 +15,14 @@ void showHelp(void)
 	"-h, --help   Show program help.");
 }
 
+void showVersion(void)
+{
+	printf("%s\n%s\n%s\n",
+	"fiflo v1.1.0 (WIP)",
+	"(c) 2018 mattmaniak",
+	"https://gitlab.com/mattmaniak/fiflo");
+}
+
 void run(char *name)
 {
 	struct Data buff = readFile(buff, name);
@@ -58,6 +66,11 @@ int main(int argc, char *argv[])
 	else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
 	{
 		showHelp();
+		exit(0);
+	}
+	else if(strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)
+	{
+		showVersion();
 		exit(0);
 	}
 	else

@@ -7,6 +7,12 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
+### v1.1.0 (WIP):
+- Dynamically allocated text.
+- Real stdin (built-in terminal) cursor.
+- Version info.
+- Scrolling && no lines && chars limit.
+
 ### v1.0.0 (July 15, 2018):
 - Simplified API.
 - Less memory usage.

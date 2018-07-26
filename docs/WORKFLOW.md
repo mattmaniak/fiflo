@@ -1,5 +1,8 @@
 # fiflo - workflow
 
+## Remote repo
+https://gitlab.com/mattmaniak/fiflo
+
 ## Branches
 Everything happens on three branches:
 - stable (main branch),
