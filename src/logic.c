@@ -202,16 +202,16 @@ void renderText(struct Data buff)
 		printf("%c", LINEFEED); // Necessary at least for the LXTerminal.
 	}
 
-	if(buff.lines < getSize(Y) - BAR_SZ)
+	if(buff.lines <= getSize(Y) - BAR_SZ)
 	{
 		for(x = 0; x < buff.chars; x++) // Chars rendering.
 		{
 			printf("%c", buff.text[x]);
 		}
 	}
-	else // More lines than the terminal can render.
+	else // More lines than the terminal can render - scrolling.
 	{
-		term_t first_line = buff.lines - getSize(Y) - BAR_SZ;
+		term_t first_line;
 		term_t y = 0;
 
 		for(x = 0; x < buff.chars; x++)
@@ -232,11 +232,14 @@ void renderText(struct Data buff)
 void windowFill(buff_t lines)
 {
 	term_t y;
-	for(y = lines + BAR_SZ; y < getSize(Y); y++)
+	if(lines <= getSize(Y) + BAR_SZ)
 	{
-		printf("%c", LINEFEED);
+		for(y = lines + BAR_SZ; y < getSize(Y); y++)
+		{
+			printf("%c", LINEFEED);
+		}
 	}
-	printf("%s", "ssssssssss");
+//	printf("%s", "ssssssssss");
 }
 
 // Terminal fill that shows chars and other stupid things.
