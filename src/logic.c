@@ -197,26 +197,35 @@ void renderText(struct Data buff)
 {
 	buff_t x;
 
-	if(buff.text[0] == TERMINATOR)
+	if(buff.text[0] == TERMINATOR || LINEFEED)
 	{
-		printf("%c", LINEFEED); // Necessary at least for LXTerminal.
+		printf("%c", LINEFEED); // Necessary at least for the LXTerminal.
 	}
 
-
-	if(buff.text[0] == LINEFEED)
+	if(buff.lines < getSize(Y) - BAR_SZ)
 	{
-		printf("%c", LINEFEED); // Necessary at least for LXTerminal.
-	}
-	for(x = 0; x < buff.chars; x++) // Chars rendering.
-	{
-/*		if(x == buff.chars - 1) // Invert a last char as a cursor.
+		for(x = 0; x < buff.chars; x++) // Chars rendering.
 		{
-			printf("%s%c%s", INVERT, buff.text[x], RESET);
+			printf("%c", buff.text[x]);
 		}
-		else
+	}
+	else // More lines than the terminal can render.
+	{
+		term_t first_line = buff.lines - getSize(Y) - BAR_SZ;
+		term_t y = 0;
+
+		for(x = 0; x < buff.chars; x++)
 		{
-*/			printf("%c", buff.text[x]);
-//		}
+			if(buff.text[x] == LINEFEED && y < first_line)
+			{
+				first_line = x;
+				y++;
+			}
+		}
+		for(x = first_line; x < buff.chars; x++) // Chars rendering.
+		{
+			printf("%c", buff.text[x]);
+		}
 	}
 }
 
@@ -227,6 +236,7 @@ void windowFill(buff_t lines)
 	{
 		printf("%c", LINEFEED);
 	}
+	printf("%s", "ssssssssss");
 }
 
 // Terminal fill that shows chars and other stupid things.
@@ -234,7 +244,7 @@ struct Data window(struct Data buff, char key)
 {
 	buff = allocText(buff, key);
 	buff = punchedCard(buff, MAX_CHARS_PER_LINE, WRITE, key);
-	linesLimit(buff.lines);
+//	linesLimit(buff.lines);
 
 	bar(buff, key);
 	renderText(buff);

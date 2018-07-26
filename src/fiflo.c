@@ -29,7 +29,10 @@ void run(char *name)
 		cleanFrame();
 		buff = window(buff, pressed_key);
 		pressed_key = unixGetch();
-		windowFill(buff.lines);
+		if(buff.lines < getSize(Y) - BAR_SZ)
+		{
+			windowFill(buff.lines);
+		}
 	}
 }
 
