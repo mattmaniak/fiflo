@@ -7,12 +7,14 @@
 
 void showHelp(void)
 {
-	printf("%s\n%s\n%s\n%s\n%s\n",
+	printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
 	"Usage: fiflo [option].",
-	"Options:     Description:",
-	"<NULL>       Create and open the default file - 'noname.asdf'.",
-	"<file>       Open the textfile named 'file'.",
-	"-h, --help   Show program help.");
+	"Options:        Description:",
+	"<NULL>          Open and set the basename to 'noname.asdf'.",
+	"basename        Open the textfile named 'basename' using current path.",
+	"/path/basename  Open the textfile 'basename' located in the '/path'.",
+	"-h, --help      Show program help.",
+	"-v, --version   Display info about the current version.");
 }
 
 void showVersion(void)
@@ -28,16 +30,14 @@ void run(char *name)
 	struct Data buff = readFile(buff, name);
 	char pressed_key = TERMINATOR;
 
-	window(buff, pressed_key);
-	printf("%s%c%s", BLINK, '_', RESET); // Init cursor placeholder.
-	windowFill(buff.lines);
+	windowFill(-1); // This frame will be instantly cleaned.
 
 	for(;;)
 	{
 		cleanFrame();
 		buff = window(buff, pressed_key);
 		pressed_key = unixGetch();
-		if(buff.lines < getSize(Y) - BAR_SZ)
+		if(buff.lines < termSize(Y) - BAR_SZ)
 		{
 			windowFill(buff.lines);
 		}

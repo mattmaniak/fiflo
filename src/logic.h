@@ -9,8 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_CHARS (getSize(X) * (getSize(Y) - 3)) - 1
-
 #define READ true
 #define WRITE false
 
@@ -22,7 +20,7 @@
 
 #define MAX_CHARS_PER_LINE 80
 
-typedef int16_t buff_t;
+typedef int32_t buff_t;
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
 void setFilename(struct Data buff, char *name);

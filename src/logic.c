@@ -46,31 +46,32 @@ void setFilename(struct Data buff, char *name)
 struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 {
 	const uint8_t newline = 1;
-	static int8_t x;
+	static int8_t pos;
 
 	if(key == LINEFEED)
 	{
-		x = 1;
+		pos = 1;
 	}
 	else if(key == BACKSPACE)
 	{
-		x--;
-		if(x <= 1)
+		pos--;
+		if(pos <= 1)
 		{
-			x = limit + newline + 1;
+			pos = limit + newline + 1;
 		}
 	}
 	else
 	{
-		x++;
-		if(x > limit + newline)
+		pos++;
+		if(pos > limit + newline)
 		{
 			switch(mode)
 			{
 				case READ:
 					fprintf(stderr, "%s%i%s%i%s%i%c\n",
 					"A single line cannot have more than ", limit,
-					" chars, exited.\nLine ", buff.lines, " has got ", x, '.');
+					" chars, exited.\nLine ", buff.lines, " has got ", pos,
+					'.');
 
 					free(buff.filename);
 					exit(1);
@@ -80,7 +81,7 @@ struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 				case WRITE:
 					buff.text[buff.chars - 1] = LINEFEED;
 					buff.lines++;
-					x = 1;
+					pos = 1;
 				break;
 			}
 		}
@@ -108,7 +109,7 @@ struct Data readFile(struct Data buff, char *name)
 		buff_t fd_sz = ftell(fd);
 		fseek(fd, pos, SEEK_SET);
 
-		buff.text = malloc(fd_sz); // TODO: dynamic allocation.
+		buff.text = malloc(fd_sz);
 
 		while((chr = getc(fd)) != EOF)
 		{
@@ -124,6 +125,7 @@ struct Data readFile(struct Data buff, char *name)
 	}
 	else
 	{
+		buff.text = malloc(1);
 		buff.text[0] = TERMINATOR;
 	}
 	return buff;
@@ -131,16 +133,16 @@ struct Data readFile(struct Data buff, char *name)
 
 void saveFile(struct Data buff)
 {
-	buff_t x;
+	buff_t pos;
 
 	FILE *fd = fopen(buff.filename, "w");
 	pointerCheck(fd, "Cannot write to the file, exited.\0");
 
-	for(x = 0; x < buff.chars; x++)
+	for(pos = 0; pos < buff.chars; pos++)
 	{
-		if(buff.text[x] != TERMINATOR)
+		if(buff.text[pos] != TERMINATOR)
 		{
-			fprintf(fd, "%c", buff.text[x]);
+			fprintf(fd, "%c", buff.text[pos]);
 		}
 	}
 	fclose(fd);
@@ -207,40 +209,40 @@ struct Data allocText(struct Data buff, char key)
 // Pressed keys to rendered chars in proper order.
 void renderText(struct Data buff)
 {
-	buff_t x;
+	buff_t pos;
 
 	if(buff.text[0] == TERMINATOR || LINEFEED)
 	{
 		printf("%c", LINEFEED); // Necessary at least for the LXTerminal.
 	}
 
-	if(buff.lines <= getSize(Y) - BAR_SZ)
+	if(buff.lines <= termSize(Y) - BAR_SZ)
 	{
-		for(x = 0; x < buff.chars; x++) // Chars rendering.
+		for(pos = 0; pos < buff.chars; pos++) // Chars rendering.
 		{
-			printf("%c", buff.text[x]);
+			printf("%c", buff.text[pos]);
 		}
 	}
-	else // More lines than the terminal can render - scrolling.
+	else // More lines than the terminal can render - scrolling. TODO: MULTIPLE
 	{
 		static term_t renderable_lines = 0;
 		static term_t chars_offset;
 
-		for(x = 0; x < buff.chars; x++)
+		for(pos = 0; pos < buff.chars; pos++)
 		{
-			if(buff.text[x] == LINEFEED)
+			if(buff.text[pos] == LINEFEED)
 			{
 				renderable_lines++;
-				if(renderable_lines == getSize(Y) - BAR_SZ)
+				if(renderable_lines == termSize(Y) - BAR_SZ)
 				{
-					renderable_lines = getSize(Y) - BAR_SZ;
+					renderable_lines = termSize(Y) - BAR_SZ;
 					chars_offset = buff.chars;
 				}
 			}
 		}
-		for(x = chars_offset; x < buff.chars; x++) // Chars rendering.
+		for(pos = chars_offset; pos < buff.chars; pos++) // Chars rendering.
 		{
-			printf("%c", buff.text[x]);
+			printf("%c", buff.text[pos]);
 		}
 //		printf("%i", chars_offset);
 	}
@@ -249,9 +251,9 @@ void renderText(struct Data buff)
 void windowFill(buff_t lines)
 {
 	term_t y;
-	if(lines <= getSize(Y) + BAR_SZ)
+	if(lines <= termSize(Y) + BAR_SZ)
 	{
-		for(y = lines + BAR_SZ; y < getSize(Y); y++)
+		for(y = lines + BAR_SZ; y < termSize(Y); y++)
 		{
 			printf("%c", LINEFEED);
 		}
@@ -263,7 +265,7 @@ struct Data window(struct Data buff, char key)
 {
 	buff = allocText(buff, key);
 	buff = punchedCard(buff, MAX_CHARS_PER_LINE, WRITE, key);
-//	linesLimit(buff.lines);
+//	charsLimit(buff.chars);
 
 	bar(buff, key);
 	renderText(buff);

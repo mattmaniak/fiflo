@@ -17,7 +17,7 @@ buff_t decIntLen(buff_t number)
 	return len;
 }
 
-term_t getSize(bool axis) // Check terminal size.
+term_t termSize(bool axis) // Check terminal size.
 {
 	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -45,12 +45,12 @@ term_t getSize(bool axis) // Check terminal size.
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
-void linesLimit(buff_t lines)
+void charsLimit(buff_t chars)
 {
-	if(lines > getSize(Y) - BAR_SZ)
+	if(chars > MAX_CHARS)
 	{
 		fprintf(stderr, "%s%i%s%i%s",
-		"Max. lines amount: ", getSize(Y) - BAR_SZ, ", got: ", lines,
+		"Max. lines amount: ", MAX_CHARS, ", got: ", chars,
 		". Stretch your terminal or sth.\n");
 		exit(1);
 	}
@@ -59,21 +59,21 @@ void linesLimit(buff_t lines)
 // Cuts a string when is too long.
 void printDynamicFilename(const char *string, const char *prog, term_t max_len)
 {
-	term_t x;
-	term_t whitespace = getSize(X) - strlen(string) - strlen(prog);
+	term_t pos;
+	term_t whitespace = termSize(X) - strlen(string) - strlen(prog);
 
 	if(strlen(string) > max_len)
 	{
-		for(x = 0; x < max_len; x++)
+		for(pos = 0; pos < max_len; pos++)
 		{
-			printf("%c", string[x]);
+			printf("%c", string[pos]);
 		}
 		printf("%s", "... ");
 	}
 	else
 	{
 		printf("%s", string);
-		for(x = 0; x < whitespace; x++)
+		for(pos = 0; pos < whitespace; pos++)
 		{
 			printf("%c", ' ');
 		}
@@ -89,10 +89,10 @@ void bar(struct Data buff, char key)
 	const char *shortcuts = " | save: CTRL+D | exit: CTRL+X \0";
 
 	const uint8_t dots_and_space = 4;
-	term_t width;
+	term_t x;
 
 	printf("%s%s", INVERT, program);
-	printDynamicFilename(buff.filename, program, getSize(X) - strlen(program)
+	printDynamicFilename(buff.filename, program, termSize(X) - strlen(program)
 	- dots_and_space);
 
 	// Lower part of the bar.
@@ -104,7 +104,7 @@ void bar(struct Data buff, char key)
 	printf("%s%i%s%i%s%i%s", lines_text, buff.lines, chars_text,
 	buff.chars, ascii_code_text, key, shortcuts);
 
-	for(width = 0; width < getSize(X) - whitespace; width++)
+	for(x = 0; x < termSize(X) - whitespace; x++)
 	{
 		printf("%c", ' ');
 	}
@@ -115,7 +115,7 @@ void bar(struct Data buff, char key)
 void cleanFrame(void) // To provide rendering in a one frame.
 {
 	term_t y;
-	for(y = 0; y < getSize(Y); y++)
+	for(y = 0; y < termSize(Y); y++)
 	{
 		printf("%s", "\033[F\033[K");
 	}
