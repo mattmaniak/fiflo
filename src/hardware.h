@@ -8,7 +8,8 @@
 #include <termios.h>
 
 void pointerCheck(void *ptr, char *errmsg);
-void sigHandler(int nothing);
+void sigstpHandler(int nothing);
+//void emptyHandler(int nothing);
 char unixGetch(void);
 
 #endif

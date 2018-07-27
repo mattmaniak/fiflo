@@ -11,7 +11,13 @@ void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
 	}
 }
 
-void sigHandler(int nothing)
+void sigstpHandler(int nothing)
+{
+	puts("Process set to background, use 'fg', to get it back.");
+	if(nothing == 0) {}
+}
+
+void emptyHandler(int nothing) // For "‘__sighandler_t {aka void (*)(int)}".
 {
 	if(nothing == 0) {}
 }

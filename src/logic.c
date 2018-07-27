@@ -223,15 +223,15 @@ void renderText(struct Data buff)
 	}
 	else // More lines than the terminal can render - scrolling.
 	{
-		term_t renderable_lines = 0;
-		term_t chars_offset;
+		static term_t renderable_lines = 0;
+		static term_t chars_offset;
 
 		for(x = 0; x < buff.chars; x++)
 		{
 			if(buff.text[x] == LINEFEED)
 			{
 				renderable_lines++;
-				if(renderable_lines > getSize(Y) - BAR_SZ)
+				if(renderable_lines == getSize(Y) - BAR_SZ)
 				{
 					renderable_lines = getSize(Y) - BAR_SZ;
 					chars_offset = buff.chars;
@@ -242,6 +242,7 @@ void renderText(struct Data buff)
 		{
 			printf("%c", buff.text[x]);
 		}
+//		printf("%i", chars_offset);
 	}
 }
 

@@ -55,8 +55,8 @@ void argcCheck(int arg_count)
 
 int main(int argc, char *argv[])
 {
-//	signal(SIGTSTP, sigHandler); // CTRL_Z
-	signal(SIGINT, sigHandler); // CTRL_C
+	signal(SIGTSTP, sigstpHandler); // CTRL_Z
+	signal(SIGINT, emptyHandler); // CTRL_C
 
 	argcCheck(argc);
 	if(argv[1] == NULL)
