@@ -2,6 +2,15 @@
 
 #include "handling.h"
 
+buff_t get_file_sz(FILE *fd)
+{
+	buff_t pos = ftell(fd); // Check size of the file.
+	fseek(fd, 0, SEEK_END);
+	buff_t fd_sz = ftell(fd);
+	fseek(fd, pos, SEEK_SET);
+	return fd_sz;
+}
+
 char unixGetch(void) // https://stackoverflow.com/questions/12710582/
 {
 	char key;
@@ -135,18 +144,13 @@ struct Data readFile(struct Data buff, char *name)
 	buff.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
 
 	setFilename(buff, name);
-	FILE *fd = fopen(buff.filename, "r");
+	FILE *textfile = fopen(buff.filename, "r");
 
-	if(fd != NULL)
+	if(textfile != NULL)
 	{
-		buff_t pos = ftell(fd); // Check size of the file.
-		fseek(fd, 0, SEEK_END);
-		buff_t fd_sz = ftell(fd);
-		fseek(fd, pos, SEEK_SET);
+		buff.text = malloc(get_file_sz(textfile));
 
-		buff.text = malloc(fd_sz);
-
-		while((chr = getc(fd)) != EOF)
+		while((chr = getc(textfile)) != EOF)
 		{
 			buff.text[buff.chars] = chr;
 			buff.chars++;
@@ -156,7 +160,7 @@ struct Data readFile(struct Data buff, char *name)
 			}
 //			punchedCard(buff, MAX_CHARS_PER_LINE, READ, chr);
 		}
-		fclose(fd);
+		fclose(textfile);
 	}
 	else
 	{
@@ -170,17 +174,17 @@ void saveFile(struct Data buff)
 {
 	buff_t pos;
 
-	FILE *fd = fopen(buff.filename, "w");
-	pointerCheck(fd, "Cannot write to the file, exited.\0");
+	FILE *textfile = fopen(buff.filename, "w");
+	pointerCheck(textfile, "Cannot write to the file, exited.\0");
 
 	for(pos = 0; pos < buff.chars; pos++)
 	{
 		if(buff.text[pos] != TERMINATOR)
 		{
-			fprintf(fd, "%c", buff.text[pos]);
+			fprintf(textfile, "%c", buff.text[pos]);
 		}
 	}
-	fclose(fd);
+	fclose(textfile);
 }
 
 // Convert pressed key into a char in the string.

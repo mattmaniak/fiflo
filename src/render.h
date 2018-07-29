@@ -27,7 +27,6 @@
 
 void showHelp(void);
 void showVersion(void);
-buff_t decIntLen(buff_t chars);
 void printDynamicFilename(const char *string, const char *prog, term_t max_len);
 void bar(struct Data buff, char key);
 term_t termSize(bool axis);

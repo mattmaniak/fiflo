@@ -12,7 +12,7 @@
 typedef uint16_t term_t;
 typedef int32_t buff_t;
 
-#define MAX_CHARS (int) powf(2, sizeof(buff_t)) - 1
+#define MAX_CHARS (int) powf(2, (sizeof(buff_t) * 8)) - 1
 
 struct Data // There is no typedef to provide better code readability.
 {

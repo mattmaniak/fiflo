@@ -18,6 +18,7 @@
 #define CTRL_X 24
 #define BACKSPACE 127
 
+buff_t get_file_sz(FILE *fd);
 char unixGetch(void);
 void charsLimit(buff_t chars);
 void setFilename(struct Data buff, char *name);

@@ -22,21 +22,6 @@ void showVersion(void)
 	"https://gitlab.com/mattmaniak/fiflo");
 }
 
-// Return a length of decimal integer. Eg. 2 from number = 12.
-buff_t decIntLen(buff_t number)
-{
-	int8_t len = 1;
-	if(number >= 0) // Prevent from weird < 0 values.
-	{
-		while(number > 9)
-		{
-			len++;
-			number /= 10;
-		}
-	}
-	return len;
-}
-
 // Cuts a string when is too long. TODO
 void printDynamicFilename(const char *string, const char *prog, term_t max_len)
 {
@@ -63,34 +48,38 @@ void printDynamicFilename(const char *string, const char *prog, term_t max_len)
 
 void bar(struct Data buff, char key) // TODO: SIMPLIFY!
 {
-	const char *program = " fiflo | file: \0";
-	const char *lines_text = " lines: \0";
-	const char *chars_text = " | chars: \0";
-	const char *ascii_code_text = " | last: \0";
-	const char *shortcuts = " | save: CTRL+D | exit: CTRL+X \0";
+	const char *info[5] = {" fiflo | file: \0",
+	" lines: \0", " | chars: \0", " | last: \0",
+	" | save: CTRL+D | exit: CTRL+X \0"};
 
 	const uint8_t dots_and_space = 4;
 	term_t x;
 
-	printf("%s%s", INVERT, program);
-	printDynamicFilename(buff.filename, program, termSize(X) - strlen(program)
+	printf("%s%s", INVERT, info[0]);
+	printDynamicFilename(buff.filename, info[0], termSize(X) - strlen(info[0])
 	- dots_and_space);
 
+	char keycode[4];
+	sprintf(keycode, "%i", key);
+
+	char lines[11];
+	sprintf(lines, "%i", buff.lines);
+
+	char chars[11];
+	sprintf(chars, "%i", buff.chars);
+
 	// Lower part of the bar.
-	term_t whitespace = strlen(shortcuts)
-	+ strlen(lines_text) + decIntLen(buff.lines)
-	+ strlen(chars_text) + decIntLen(buff.chars)
-	+ strlen(ascii_code_text) + decIntLen(key);
+	term_t whitespace = strlen(info[4]) + strlen(info[1]) + strlen(lines)
+	+ strlen(info[2]) + strlen(chars) + strlen(info[3]) + strlen(keycode);
 
-	printf("%s%i%s%i%s%i%s", lines_text, buff.lines, chars_text,
-	buff.chars, ascii_code_text, key, shortcuts);
+	printf("%s%i%s%i%s%i%s", info[1], buff.lines, info[3],
+	buff.chars, info[3], key, info[4]);
 
-	for(x = 0; x < termSize(X) - whitespace; x++)
+	for(x = 0; x <= termSize(X) - whitespace; x++)
 	{
 		printf("%c", ' ');
 	}
 	printf("%s", RESET);
-
 }
 
 term_t termSize(bool axis) // Check terminal size.
