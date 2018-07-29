@@ -11,6 +11,9 @@
 #include <unistd.h>
 #include <termios.h>
 
+#define READ true
+#define WRITE false
+
 // Required keymap.
 #define TERMINATOR 0
 #define CTRL_D 4
@@ -22,7 +25,7 @@ buff_t get_file_sz(FILE *fd);
 char nix_getch(void);
 void chars_limit(buff_t chars);
 void set_filename(data buff, char *name);
-//data punched_card(data buff, term_t limit, bool mode, char key);
+data punched_card(data buff, term_t limit, bool mode, char key);
 data read_file(data buff, char *name);
 void save_file(data buff);
 data alloc_text(data buff, char key);

@@ -8,9 +8,6 @@
 #include <string.h>
 #include <sys/ioctl.h>
 
-#define READ 1
-#define WRITE 0
-
 #define X true
 #define Y false
 
@@ -27,7 +24,7 @@
 
 void help(void);
 void version(void);
-void print_dynamic_filename(const char *string, const char *prog, term_t max_len);
+void print_fname(const char *string, const char *prog, term_t max_len);
 void bar(data buff, char key);
 term_t get_term_sz(bool axis);
 void flush_window(void);

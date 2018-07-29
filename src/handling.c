@@ -4,11 +4,11 @@
 
 buff_t get_file_sz(FILE *fd)
 {
-	buff_t pos = ftell(fd); // Check size of the file.
+	buff_t pos = ftell(fd);
 	fseek(fd, 0, SEEK_END);
-	buff_t fd_sz = ftell(fd);
+	buff_t sz = ftell(fd);
 	fseek(fd, pos, SEEK_SET);
-	return fd_sz;
+	return sz;
 }
 
 char nix_getch(void) // https://stackoverflow.com/questions/12710582/
@@ -50,8 +50,8 @@ void set_filename(data buff, char *name)
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
-	const uint8_t terminator_sz = 1;
-	const uint8_t slash_sz = 1;
+	const bool terminator_sz = 1;
+	const bool slash_sz = 1;
 
 	if(name[0] == '/')
 	{
@@ -86,10 +86,9 @@ void set_filename(data buff, char *name)
 }
 
 // Limit chars per line to 80.
-/*
 data punched_card(data buff, term_t limit, bool mode, char key)
 {
-	const uint8_t newline = 1;
+	const bool newline = 1;
 	static int8_t pos;
 
 	if(key == LINEFEED)
@@ -131,12 +130,12 @@ data punched_card(data buff, term_t limit, bool mode, char key)
 		}
 	}
 	return buff;
-}*/
+}
 
 data read_file(data buff, char *name)
 {
 	char chr;
-	const uint8_t terminator_sz = 1;
+	const bool terminator_sz = 1;
 
 	buff.chars = 0;
 	buff.lines = 1;

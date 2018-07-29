@@ -1,6 +1,6 @@
 # fiflo - workflow
 
-## Remote repo
+## Remote repo (is upstream)
 https://gitlab.com/mattmaniak/fiflo
 
 ## Branches
@@ -9,7 +9,7 @@ Everything happens on three branches:
 - develop,
 - hotfix.
 
-## Branches description
+## Branches description && merging
 Everything connected with the development, tests etc. happens on the "develop"
 branch. When everything is ok and the changelog is up-to-date content is merged
 without fast-forwarding ("--no-ff" to make branches visualisation cleaner) to
@@ -33,6 +33,7 @@ commits to provide updated code on the "develop" branch.
 - comment a lot,
 - single line can't exceed 80 characters.
 - dont't use camelCase (is unreadable), only lower-case snake_case is allowed,
+- #defines have to be CAPITALIZED,
 - keep names short.
 - write short TODOs near thing to fix as uppercase comment,
 - #define as much as you can,

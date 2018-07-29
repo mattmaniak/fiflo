@@ -24,7 +24,7 @@ void version(void)
 }
 
 // Cuts a string when is too long. TODO: SHORTEN!
-void print_dynamic_filename(const char *string, const char *prog, term_t max_len)
+void print_fname(const char *string, const char *prog, term_t max_len)
 {
 	term_t pos;
 	term_t whitespace = get_term_sz(X) - strlen(string) - strlen(prog);
@@ -47,7 +47,7 @@ void print_dynamic_filename(const char *string, const char *prog, term_t max_len
 	}
 }
 
-void bar(data buff, char key) // TODO: SIMPLIFY!
+void bar(data buff, char key)
 {
 	const char *info[5] = {" fiflo | file: \0",
 	" lines: \0", " | chars: \0", " | last: \0",
@@ -56,18 +56,17 @@ void bar(data buff, char key) // TODO: SIMPLIFY!
 	const uint8_t dots_and_space = 4;
 	term_t x;
 
-	printf("%s%s", INVERT, info[0]);
-	print_dynamic_filename(buff.filename, info[0], get_term_sz(X) - strlen(info[0])
-	- dots_and_space);
-
 	char keycode[4];
-	sprintf(keycode, "%i", key);
-
 	char lines[11];
-	sprintf(lines, "%i", buff.lines);
-
 	char chars[11];
+
+	sprintf(keycode, "%i", key);
+	sprintf(lines, "%i", buff.lines);
 	sprintf(chars, "%i", buff.chars);
+
+	printf("%s%s", INVERT, info[0]);
+	print_fname(buff.filename, info[0], get_term_sz(X) - strlen(info[0])
+	- dots_and_space);
 
 	// Lower part of the bar.
 	term_t whitespace = strlen(info[4]) + strlen(info[1]) + strlen(lines)
