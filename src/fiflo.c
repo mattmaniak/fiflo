@@ -2,27 +2,8 @@
 
 #include "fiflo.h"
 
+#include "handling.c"
 #include "render.c"
-
-void showHelp(void)
-{
-	printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
-	"Usage: fiflo [option].",
-	"Options:        Description:",
-	"<NULL>          Open and set the basename to 'noname.asdf'.",
-	"basename        Open the textfile named 'basename' using current path.",
-	"/path/basename  Open the textfile 'basename' located in the '/path'.",
-	"-h, --help      Show program help.",
-	"-v, --version   Display info about the current version.");
-}
-
-void showVersion(void)
-{
-	printf("%s\n%s\n%s\n",
-	"fiflo v1.1.0 (WIP)",
-	"(c) 2018 mattmaniak",
-	"https://gitlab.com/mattmaniak/fiflo");
-}
 
 void run(char *name)
 {
@@ -43,6 +24,11 @@ void run(char *name)
 	}
 }
 
+void ignoreSig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
+{
+	if(nothing == 0) {}
+}
+
 void argcCheck(int arg_count)
 {
 	if(arg_count > 2)
@@ -54,8 +40,8 @@ void argcCheck(int arg_count)
 
 int main(int argc, char *argv[])
 {
-	signal(SIGTSTP, sigstpHandler); // CTRL_Z
-	signal(SIGINT, emptyHandler); // CTRL_C
+	signal(SIGTSTP, ignoreSig); // CTRL_Z
+	signal(SIGINT, ignoreSig); // CTRL_C
 
 	argcCheck(argc);
 	if(argv[1] == NULL)

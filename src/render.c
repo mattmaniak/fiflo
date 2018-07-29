@@ -1,23 +1,113 @@
+// TODO: DESCRIPTION!
+
 #include "render.h"
 
-#include "handling.c"
-#include "ui.c"
+void showHelp(void)
+{
+	printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
+	"Usage: fiflo [option].",
+	"Options:        Description:",
+	"<NULL>          Open and set the basename to 'noname.asdf'.",
+	"basename        Open the textfile named 'basename' using current path.",
+	"/path/basename  Open the textfile 'basename' located in the '/path'.",
+	"-h, --help      Show program help.",
+	"-v, --version   Display info about the current version.");
+}
+
+void showVersion(void)
+{
+	printf("%s\n%s\n%s\n",
+	"fiflo v1.1.0 (WIP)",
+	"(c) 2018 mattmaniak",
+	"https://gitlab.com/mattmaniak/fiflo");
+}
+
+// Return a length of decimal integer. Eg. 2 from number = 12.
+buff_t decIntLen(buff_t number)
+{
+	int8_t len = 1;
+	if(number >= 0) // Prevent from weird < 0 values.
+	{
+		while(number > 9)
+		{
+			len++;
+			number /= 10;
+		}
+	}
+	return len;
+}
+
+// Cuts a string when is too long. TODO
+void printDynamicFilename(const char *string, const char *prog, term_t max_len)
+{
+	term_t pos;
+	term_t whitespace = termSize(X) - strlen(string) - strlen(prog);
+
+	if(strlen(string) > max_len)
+	{
+		for(pos = 0; pos < max_len; pos++)
+		{
+			printf("%c", string[pos]);
+		}
+		printf("%s", "... ");
+	}
+	else
+	{
+		printf("%s", string);
+		for(pos = 0; pos < whitespace; pos++)
+		{
+			printf("%c", ' ');
+		}
+	}
+}
+
+void bar(struct Data buff, char key) // TODO: SIMPLIFY!
+{
+	const char *program = " fiflo | file: \0";
+	const char *lines_text = " lines: \0";
+	const char *chars_text = " | chars: \0";
+	const char *ascii_code_text = " | last: \0";
+	const char *shortcuts = " | save: CTRL+D | exit: CTRL+X \0";
+
+	const uint8_t dots_and_space = 4;
+	term_t x;
+
+	printf("%s%s", INVERT, program);
+	printDynamicFilename(buff.filename, program, termSize(X) - strlen(program)
+	- dots_and_space);
+
+	// Lower part of the bar.
+	term_t whitespace = strlen(shortcuts)
+	+ strlen(lines_text) + decIntLen(buff.lines)
+	+ strlen(chars_text) + decIntLen(buff.chars)
+	+ strlen(ascii_code_text) + decIntLen(key);
+
+	printf("%s%i%s%i%s%i%s", lines_text, buff.lines, chars_text,
+	buff.chars, ascii_code_text, key, shortcuts);
+
+	for(x = 0; x < termSize(X) - whitespace; x++)
+	{
+		printf("%c", ' ');
+	}
+	printf("%s", RESET);
+
+}
 
 term_t termSize(bool axis) // Check terminal size.
 {
 	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
-	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
+	if(win.ws_col < MIN_X || win.ws_row < MIN_Y)
 	{
-		fprintf(stderr, "%s%i%c%i%s",
-		"Min. term size is ", MIN_WIDTH, 'x', MIN_HEIGHT, ".\n");
+		fprintf(stderr, "%s%i%c%i%s\n",
+		"Min. term size is ", MIN_X, 'x', MIN_Y, ", exited.");
 		exit(1);
 	}
-	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
+	else if(win.ws_col > MAX_X || win.ws_row > MAX_Y)
 	{
-		fprintf(stderr, "%s%i%c%i%s",
-		"Max. term size is ", MAX_WIDTH, 'x', MAX_HEIGHT, ", exited.\n");
+		fprintf(stderr, "%s%i%c%i%s\n",
+		"Max. term size is ", MAX_X, 'x', MAX_Y, ", exited.");
 		exit(1);
 	}
 
@@ -36,7 +126,7 @@ void cleanFrame(void) // To provide rendering in a one frame.
 	term_t y;
 	for(y = 0; y < termSize(Y); y++)
 	{
-		printf("%s", "\033[F\033[K");
+		printf("%s", "\033[F\033[K"); // Go to the upper line and clean it.
 	}
 	fflush(stdout);
 }
@@ -99,7 +189,7 @@ void windowFill(buff_t lines)
 struct Data window(struct Data buff, char key)
 {
 	buff = allocText(buff, key);
-	buff = punchedCard(buff, MAX_CHARS_PER_LINE, WRITE, key);
+//	buff = punchedCard(buff, MAX_CHARS_PER_LINE, WRITE, key);
 //	charsLimit(buff.chars);
 
 	bar(buff, key);

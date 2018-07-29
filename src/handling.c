@@ -1,8 +1,21 @@
-// Shows how the program single round works.
+// Functions connected with the program API. Generally what's unseen.
 
 #include "handling.h"
 
-#include "hardware.c"
+char unixGetch(void) // https://stackoverflow.com/questions/12710582/
+{
+	char key;
+	struct termios oldt, newt;
+
+	tcgetattr(STDIN_FILENO, &oldt); // Get terminal attribiutes.
+	newt = oldt;
+	newt.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt); // Set terminal attribiutes.
+
+	key = getchar();
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // Set terminal attribiutes.
+	return key;
+}
 
 void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
 {
@@ -64,6 +77,7 @@ void setFilename(struct Data buff, char *name)
 }
 
 // Limit chars per line to 80.
+/*
 struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 {
 	const uint8_t newline = 1;
@@ -108,7 +122,7 @@ struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 		}
 	}
 	return buff;
-}
+}*/
 
 struct Data readFile(struct Data buff, char *name)
 {
@@ -140,7 +154,7 @@ struct Data readFile(struct Data buff, char *name)
 			{
 				buff.lines++;
 			}
-			punchedCard(buff, MAX_CHARS_PER_LINE, READ, chr);
+//			punchedCard(buff, MAX_CHARS_PER_LINE, READ, chr);
 		}
 		fclose(fd);
 	}

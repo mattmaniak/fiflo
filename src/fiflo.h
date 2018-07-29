@@ -2,14 +2,19 @@
 #define FIFLO_H
 
 #include <limits.h>
+#include <math.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
 
-#define BUFF_SZ SHRT_MAX - 1
-typedef int32_t buff_t; // > 16 makes stack error. TODO
+#define MAX_CHARS_PER_LINE 80
 
-struct Data // There is no typedef to provide better code readibility.
+typedef uint16_t term_t;
+typedef int32_t buff_t;
+
+#define MAX_CHARS (int) powf(2, sizeof(buff_t)) - 1
+
+struct Data // There is no typedef to provide better code readability.
 {
 	char *filename; // Eg. /home/user/basename
 	char *text;
@@ -17,9 +22,8 @@ struct Data // There is no typedef to provide better code readibility.
 	buff_t lines;
 };
 
-void showHelp(void);
-void showVersion(void);
 void run(char *name);
+void ignoreSig(int nothing);
 void argcChceck(void);
 int main(int argc, char *argv[]);
 
