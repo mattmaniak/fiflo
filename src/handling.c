@@ -1,7 +1,28 @@
 // Shows how the program single round works.
 
-#include "logic.h"
-#include "ui.c"
+#include "handling.h"
+
+#include "hardware.c"
+
+void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
+{
+	if(ptr == NULL)
+	{
+		fprintf(stderr, "%s\n", errmsg);
+		exit(1);
+	}
+}
+
+void charsLimit(buff_t chars)
+{
+	if(chars > MAX_CHARS)
+	{
+		fprintf(stderr, "%s%i%s%i%s",
+		"Max. lines amount: ", MAX_CHARS, ", got: ", chars,
+		". Stretch your terminal or sth.\n");
+		exit(1);
+	}
+}
 
 void setFilename(struct Data buff, char *name)
 {
@@ -203,73 +224,6 @@ struct Data allocText(struct Data buff, char key)
 				exit(0);
 		}
 	}
-	return buff;
-}
-
-// Pressed keys to rendered chars in proper order.
-void renderText(struct Data buff)
-{
-	buff_t pos;
-
-	if(buff.text[0] == TERMINATOR || LINEFEED)
-	{
-		printf("%c", LINEFEED); // Necessary at least for the LXTerminal.
-	}
-
-	if(buff.lines <= termSize(Y) - BAR_SZ)
-	{
-		for(pos = 0; pos < buff.chars; pos++) // Chars rendering.
-		{
-			printf("%c", buff.text[pos]);
-		}
-	}
-	else // More lines than the terminal can render - scrolling. TODO: MULTIPLE
-	{
-		static term_t renderable_lines = 0;
-		static term_t chars_offset;
-
-		for(pos = 0; pos < buff.chars; pos++)
-		{
-			if(buff.text[pos] == LINEFEED)
-			{
-				renderable_lines++;
-				if(renderable_lines == termSize(Y) - BAR_SZ)
-				{
-					renderable_lines = termSize(Y) - BAR_SZ;
-					chars_offset = buff.chars;
-				}
-			}
-		}
-		for(pos = chars_offset; pos < buff.chars; pos++) // Chars rendering.
-		{
-			printf("%c", buff.text[pos]);
-		}
-//		printf("%i", chars_offset);
-	}
-}
-
-void windowFill(buff_t lines)
-{
-	term_t y;
-	if(lines <= termSize(Y) + BAR_SZ)
-	{
-		for(y = lines + BAR_SZ; y < termSize(Y); y++)
-		{
-			printf("%c", LINEFEED);
-		}
-	}
-}
-
-// Terminal fill that shows chars and other stupid things.
-struct Data window(struct Data buff, char key)
-{
-	buff = allocText(buff, key);
-	buff = punchedCard(buff, MAX_CHARS_PER_LINE, WRITE, key);
-//	charsLimit(buff.chars);
-
-	bar(buff, key);
-	renderText(buff);
-
 	return buff;
 }
 

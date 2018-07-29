@@ -12,9 +12,6 @@
 #define RESET "\033[0m"
 #define INVERT "\033[7m"
 
-#define X true
-#define Y false
-
 #define BAR_SZ 2
 
 #define MIN_WIDTH 80
@@ -28,11 +25,8 @@ typedef int32_t buff_t;
 typedef uint16_t term_t;
 
 buff_t decIntLen(buff_t chars);
-term_t termSize(bool axis);
-void charsLimit(buff_t chars);
 void printDynamicFilename(const char *string, const char *prog, term_t max_len);
 void bar(struct Data buff, char key);
-void cleanFrame(void);
 
 #endif
 

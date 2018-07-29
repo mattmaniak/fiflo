@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <termios.h>
 
-void pointerCheck(void *ptr, char *errmsg);
 void sigstpHandler(int nothing);
 //void emptyHandler(int nothing);
 char unixGetch(void);

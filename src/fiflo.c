@@ -2,8 +2,7 @@
 
 #include "fiflo.h"
 
-#include "hardware.c"
-#include "logic.c"
+#include "render.c"
 
 void showHelp(void)
 {

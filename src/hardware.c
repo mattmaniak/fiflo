@@ -2,15 +2,6 @@
 
 #include "hardware.h"
 
-void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
-{
-	if(ptr == NULL)
-	{
-		fprintf(stderr, "%s\n", errmsg);
-		exit(1);
-	}
-}
-
 void sigstpHandler(int nothing)
 {
 	puts("Process set to background, use 'fg', to get it back.");

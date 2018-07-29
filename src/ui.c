@@ -17,46 +17,7 @@ buff_t decIntLen(buff_t number)
 	return len;
 }
 
-term_t termSize(bool axis) // Check terminal size.
-{
-	struct winsize win; // From "sys/ioctl.h".
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
-
-	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
-	{
-		fprintf(stderr, "%s%i%c%i%s",
-		"Min. term size is ", MIN_WIDTH, 'x', MIN_HEIGHT, ".\n");
-		exit(1);
-	}
-	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
-	{
-		fprintf(stderr, "%s%i%c%i%s",
-		"Max. term size is ", MAX_WIDTH, 'x', MAX_HEIGHT, ", exited.\n");
-		exit(1);
-	}
-
-	switch(axis)
-	{
-		case X:
-			return win.ws_col;
-		case Y:
-			return win.ws_row;
-	}
-	return 0; // Protection from the -Wreturn-type warning.
-}
-
-void charsLimit(buff_t chars)
-{
-	if(chars > MAX_CHARS)
-	{
-		fprintf(stderr, "%s%i%s%i%s",
-		"Max. lines amount: ", MAX_CHARS, ", got: ", chars,
-		". Stretch your terminal or sth.\n");
-		exit(1);
-	}
-}
-
-// Cuts a string when is too long.
+// Cuts a string when is too long. TODO
 void printDynamicFilename(const char *string, const char *prog, term_t max_len)
 {
 	term_t pos;
@@ -80,7 +41,7 @@ void printDynamicFilename(const char *string, const char *prog, term_t max_len)
 	}
 }
 
-void bar(struct Data buff, char key)
+void bar(struct Data buff, char key) // TODO: SIMPLIFY!
 {
 	const char *program = " fiflo | file: \0";
 	const char *lines_text = " lines: \0";
@@ -110,15 +71,5 @@ void bar(struct Data buff, char key)
 	}
 	printf("%s", RESET);
 
-}
-
-void cleanFrame(void) // To provide rendering in a one frame.
-{
-	term_t y;
-	for(y = 0; y < termSize(Y); y++)
-	{
-		printf("%s", "\033[F\033[K");
-	}
-	fflush(stdout);
 }
 
