@@ -7,29 +7,29 @@
 
 void run(char *name)
 {
-	struct Data buff = readFile(buff, name);
+	data buff = read_file(buff, name);
 	char pressed_key = TERMINATOR;
 
-	windowFill(-1); // This frame will be instantly cleaned.
+	fill_window(-1); // This frame will be instantly cleaned.
 
 	for(;;)
 	{
-		cleanFrame();
+		flush_window();
 		buff = window(buff, pressed_key);
-		pressed_key = unixGetch();
-		if(buff.lines < termSize(Y) - BAR_SZ)
+		pressed_key = nix_getch();
+		if(buff.lines < get_term_sz(Y) - BAR_SZ)
 		{
-			windowFill(buff.lines);
+			fill_window(buff.lines);
 		}
 	}
 }
 
-void ignoreSig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
+void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 {
 	if(nothing == 0) {}
 }
 
-void argcCheck(int arg_count)
+void argc_check(int arg_count)
 {
 	if(arg_count > 2)
 	{
@@ -40,22 +40,22 @@ void argcCheck(int arg_count)
 
 int main(int argc, char *argv[])
 {
-	signal(SIGTSTP, ignoreSig); // CTRL_Z
-	signal(SIGINT, ignoreSig); // CTRL_C
+	signal(SIGTSTP, ignore_sig); // CTRL_Z
+	signal(SIGINT, ignore_sig); // CTRL_C
 
-	argcCheck(argc);
+	argc_check(argc);
 	if(argv[1] == NULL)
 	{
 		run("noname.asdf\0");
 	}
 	else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
 	{
-		showHelp();
+		help();
 		exit(0);
 	}
 	else if(strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)
 	{
-		showVersion();
+		version();
 		exit(0);
 	}
 	else

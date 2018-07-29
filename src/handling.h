@@ -19,13 +19,13 @@
 #define BACKSPACE 127
 
 buff_t get_file_sz(FILE *fd);
-char unixGetch(void);
-void charsLimit(buff_t chars);
-void setFilename(struct Data buff, char *name);
-//struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key);
-struct Data readFile(struct Data buff, char *name);
-void saveFile(struct Data buff);
-struct Data allocText(struct Data buff, char key);
+char nix_getch(void);
+void chars_limit(buff_t chars);
+void set_filename(data buff, char *name);
+//data punched_card(data buff, term_t limit, bool mode, char key);
+data read_file(data buff, char *name);
+void save_file(data buff);
+data alloc_text(data buff, char key);
 
 #endif
 

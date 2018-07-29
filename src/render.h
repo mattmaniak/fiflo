@@ -16,24 +16,24 @@
 
 #define BAR_SZ 2
 
-#define MIN_X 80
+#define MIN_X 80 // MIN is before name to tell apart from limits.h macros.
 #define MIN_Y 10
-#define MAX_X 65534 // USHRT_MAX - 1
-#define MAX_Y 65534
+#define MAX_X USHRT_MAX - 1 // 65534
+#define MAX_Y USHRT_MAX - 1
 
 // ANSI escape codes.
 #define RESET "\033[0m"
 #define INVERT "\033[7m"
 
-void showHelp(void);
-void showVersion(void);
-void printDynamicFilename(const char *string, const char *prog, term_t max_len);
-void bar(struct Data buff, char key);
-term_t termSize(bool axis);
-void cleanFrame(void);
-void renderText(struct Data buff);
-void windowFill(buff_t lines);
-struct Data window(struct Data buff, char key);
+void help(void);
+void version(void);
+void print_dynamic_filename(const char *string, const char *prog, term_t max_len);
+void bar(data buff, char key);
+term_t get_term_sz(bool axis);
+void flush_window(void);
+void print_text(data buff);
+data window(data buff, char key);
+void fill_window(buff_t lines);
 
 #endif
 

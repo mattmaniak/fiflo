@@ -4,8 +4,8 @@
 Simple terminal-based text editor.
 
 ## Requirements:
-Linux-based OS with: gcc, make for compilation and optionally gzip to man-pages
-installation. Any terminal that supports ANSI escape codes.
+Linux-based OS with: 64-bit gcc, make for compilation and optionally gzip to
+man-pages installation. Any terminal that supports ANSI escape codes.
 
 ## Compilation
 ```

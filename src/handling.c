@@ -11,7 +11,7 @@ buff_t get_file_sz(FILE *fd)
 	return fd_sz;
 }
 
-char unixGetch(void) // https://stackoverflow.com/questions/12710582/
+char nix_getch(void) // https://stackoverflow.com/questions/12710582/
 {
 	char key;
 	struct termios oldt, newt;
@@ -26,7 +26,7 @@ char unixGetch(void) // https://stackoverflow.com/questions/12710582/
 	return key;
 }
 
-void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
+void ptr_check(void *ptr, char *errmsg) // Eg. malloc or FILE*.
 {
 	if(ptr == NULL)
 	{
@@ -35,7 +35,7 @@ void pointerCheck(void *ptr, char *errmsg) // Eg. malloc or FILE*.
 	}
 }
 
-void charsLimit(buff_t chars)
+void chars_limit(buff_t chars)
 {
 	if(chars > MAX_CHARS)
 	{
@@ -46,7 +46,7 @@ void charsLimit(buff_t chars)
 	}
 }
 
-void setFilename(struct Data buff, char *name)
+void set_filename(data buff, char *name)
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
@@ -87,7 +87,7 @@ void setFilename(struct Data buff, char *name)
 
 // Limit chars per line to 80.
 /*
-struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
+data punched_card(data buff, term_t limit, bool mode, char key)
 {
 	const uint8_t newline = 1;
 	static int8_t pos;
@@ -133,7 +133,7 @@ struct Data punchedCard(struct Data buff, term_t limit, bool mode, char key)
 	return buff;
 }*/
 
-struct Data readFile(struct Data buff, char *name)
+data read_file(data buff, char *name)
 {
 	char chr;
 	const uint8_t terminator_sz = 1;
@@ -143,7 +143,7 @@ struct Data readFile(struct Data buff, char *name)
 
 	buff.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
 
-	setFilename(buff, name);
+	set_filename(buff, name);
 	FILE *textfile = fopen(buff.filename, "r");
 
 	if(textfile != NULL)
@@ -158,7 +158,7 @@ struct Data readFile(struct Data buff, char *name)
 			{
 				buff.lines++;
 			}
-//			punchedCard(buff, MAX_CHARS_PER_LINE, READ, chr);
+//			punched_card(buff, MAX_CHARS_PER_LINE, READ, chr);
 		}
 		fclose(textfile);
 	}
@@ -170,12 +170,12 @@ struct Data readFile(struct Data buff, char *name)
 	return buff;
 }
 
-void saveFile(struct Data buff)
+void save_file(data buff)
 {
 	buff_t pos;
 
 	FILE *textfile = fopen(buff.filename, "w");
-	pointerCheck(textfile, "Cannot write to the file, exited.\0");
+	ptr_check(textfile, "Cannot write to the file, exited.\0");
 
 	for(pos = 0; pos < buff.chars; pos++)
 	{
@@ -188,7 +188,7 @@ void saveFile(struct Data buff)
 }
 
 // Convert pressed key into a char in the string.
-struct Data allocText(struct Data buff, char key)
+data alloc_text(data buff, char key)
 {
 	if(key == CTRL_D || key == LINEFEED || key == CTRL_X || key >= 32)
 	{
@@ -233,7 +233,7 @@ struct Data allocText(struct Data buff, char key)
 			break;
 
 			case CTRL_D:
-				saveFile(buff);
+				save_file(buff);
 			break;
 
 			case CTRL_X:

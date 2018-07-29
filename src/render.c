@@ -2,10 +2,11 @@
 
 #include "render.h"
 
-void showHelp(void)
+void help(void)
 {
 	printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
 	"Usage: fiflo [option].",
+
 	"Options:        Description:",
 	"<NULL>          Open and set the basename to 'noname.asdf'.",
 	"basename        Open the textfile named 'basename' using current path.",
@@ -14,7 +15,7 @@ void showHelp(void)
 	"-v, --version   Display info about the current version.");
 }
 
-void showVersion(void)
+void version(void)
 {
 	printf("%s\n%s\n%s\n",
 	"fiflo v1.1.0 (WIP)",
@@ -22,11 +23,11 @@ void showVersion(void)
 	"https://gitlab.com/mattmaniak/fiflo");
 }
 
-// Cuts a string when is too long. TODO
-void printDynamicFilename(const char *string, const char *prog, term_t max_len)
+// Cuts a string when is too long. TODO: SHORTEN!
+void print_dynamic_filename(const char *string, const char *prog, term_t max_len)
 {
 	term_t pos;
-	term_t whitespace = termSize(X) - strlen(string) - strlen(prog);
+	term_t whitespace = get_term_sz(X) - strlen(string) - strlen(prog);
 
 	if(strlen(string) > max_len)
 	{
@@ -46,7 +47,7 @@ void printDynamicFilename(const char *string, const char *prog, term_t max_len)
 	}
 }
 
-void bar(struct Data buff, char key) // TODO: SIMPLIFY!
+void bar(data buff, char key) // TODO: SIMPLIFY!
 {
 	const char *info[5] = {" fiflo | file: \0",
 	" lines: \0", " | chars: \0", " | last: \0",
@@ -56,7 +57,7 @@ void bar(struct Data buff, char key) // TODO: SIMPLIFY!
 	term_t x;
 
 	printf("%s%s", INVERT, info[0]);
-	printDynamicFilename(buff.filename, info[0], termSize(X) - strlen(info[0])
+	print_dynamic_filename(buff.filename, info[0], get_term_sz(X) - strlen(info[0])
 	- dots_and_space);
 
 	char keycode[4];
@@ -75,14 +76,14 @@ void bar(struct Data buff, char key) // TODO: SIMPLIFY!
 	printf("%s%i%s%i%s%i%s", info[1], buff.lines, info[3],
 	buff.chars, info[3], key, info[4]);
 
-	for(x = 0; x <= termSize(X) - whitespace; x++)
+	for(x = 0; x <= get_term_sz(X) - whitespace; x++)
 	{
 		printf("%c", ' ');
 	}
 	printf("%s", RESET);
 }
 
-term_t termSize(bool axis) // Check terminal size.
+term_t get_term_sz(bool axis) // Check terminal size.
 {
 	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -110,10 +111,10 @@ term_t termSize(bool axis) // Check terminal size.
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
-void cleanFrame(void) // To provide rendering in a one frame.
+void flush_window(void) // To provide rendering in a one frame.
 {
 	term_t y;
-	for(y = 0; y < termSize(Y); y++)
+	for(y = 0; y < get_term_sz(Y); y++)
 	{
 		printf("%s", "\033[F\033[K"); // Go to the upper line and clean it.
 	}
@@ -121,7 +122,7 @@ void cleanFrame(void) // To provide rendering in a one frame.
 }
 
 // Pressed keys to rendered chars in proper order.
-void renderText(struct Data buff)
+void print_text(data buff)
 {
 	buff_t pos;
 
@@ -130,7 +131,7 @@ void renderText(struct Data buff)
 		printf("%c", LINEFEED); // Necessary at least for the LXTerminal.
 	}
 
-	if(buff.lines <= termSize(Y) - BAR_SZ)
+	if(buff.lines <= get_term_sz(Y) - BAR_SZ)
 	{
 		for(pos = 0; pos < buff.chars; pos++) // Chars rendering.
 		{
@@ -147,9 +148,9 @@ void renderText(struct Data buff)
 			if(buff.text[pos] == LINEFEED)
 			{
 				renderable_lines++;
-				if(renderable_lines == termSize(Y) - BAR_SZ)
+				if(renderable_lines == get_term_sz(Y) - BAR_SZ)
 				{
-					renderable_lines = termSize(Y) - BAR_SZ;
+					renderable_lines = get_term_sz(Y) - BAR_SZ;
 					chars_offset = buff.chars;
 				}
 			}
@@ -162,28 +163,28 @@ void renderText(struct Data buff)
 	}
 }
 
-void windowFill(buff_t lines)
+// Shows chars and other stupid things.
+data window(data buff, char key)
+{
+	buff = alloc_text(buff, key);
+//	buff = punched_card(buff, MAX_CHARS_PER_LINE, WRITE, key);
+//	chars_limit(buff.chars);
+
+	bar(buff, key);
+	print_text(buff);
+
+	return buff;
+}
+
+void fill_window(buff_t lines)
 {
 	term_t y;
-	if(lines <= termSize(Y) + BAR_SZ)
+	if(lines <= get_term_sz(Y) + BAR_SZ)
 	{
-		for(y = lines + BAR_SZ; y < termSize(Y); y++)
+		for(y = lines + BAR_SZ; y < get_term_sz(Y); y++)
 		{
 			printf("%c", LINEFEED);
 		}
 	}
-}
-
-// Terminal fill that shows chars and other stupid things.
-struct Data window(struct Data buff, char key)
-{
-	buff = allocText(buff, key);
-//	buff = punchedCard(buff, MAX_CHARS_PER_LINE, WRITE, key);
-//	charsLimit(buff.chars);
-
-	bar(buff, key);
-	renderText(buff);
-
-	return buff;
 }
 
