@@ -1,6 +1,5 @@
 # Ideas for the fiflo.
 ## (delete if done correctly):
-- real cursor (stdin),
 - heap-allocated text (wip),
 - TAB handling,
 - config file (colors),

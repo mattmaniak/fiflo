@@ -206,20 +206,12 @@ data alloc_text(data buff, char key)
 				{
 					buff.chars++;
 				}
-				if(buff.chars > MAX_CHARS)
-				{
-					buff.chars = MAX_CHARS;
-				}
 			break;
 
 			case LINEFEED:
 				buff.text = realloc(buff.text, buff.chars + 1); // TODO: CHEKCING
 				buff.text[buff.chars] = LINEFEED;
 				buff.chars++;
-				if(buff.chars > MAX_CHARS)
-				{
-					buff.chars = MAX_CHARS;
-				}
 				buff.lines++;
 			break;
 
@@ -235,6 +227,10 @@ data alloc_text(data buff, char key)
 				if(buff.text[buff.chars] == LINEFEED)
 				{
 					buff.lines--;
+				}
+				if(buff.lines < 1)
+				{
+					buff.lines = 1;
 				}
 			break;
 

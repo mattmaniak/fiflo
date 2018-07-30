@@ -9,19 +9,17 @@ void run(char *name)
 {
 	data buff = read_file(buff, name);
 	char pressed_key = TERMINATOR;
-
-//	fill_window(-1); // This frame will be instantly cleaned.
-//	flush_window();
+	term_t y;
 
 	for(;;)
 	{
 		buff = window(buff, pressed_key);
-		if(buff.lines < get_term_sz(Y) - BAR_SZ)
+		for(y = 0; y < get_term_sz(Y) - BAR_SZ - buff.lines; y++)
 		{
-			fill_window(buff.lines);
+			printf("%s", CURSOR_UP);
 		}
 		pressed_key = nix_getch();
-		flush_window();
+		flush_window(buff.lines);
 	}
 }
 

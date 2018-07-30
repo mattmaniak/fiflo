@@ -21,18 +21,21 @@
 // ANSI escape codes.
 #define RESET "\033[0m"
 #define INVERT "\033[7m"
+#define CURSOR_UP "\033[A"
+#define CURSOR_DOWN "\033[B"
+#define CURSOR_RIGHT "\033[C"
+#define CURSOR_LEFT "\033[D"
 
 void help(void);
 void version(void);
 
 term_t get_term_sz(bool axis);
-void flush_window(void);
+void flush_window(buff_t lines);
 
 void print_fname(const char *string, const char *prog, term_t max_len);
 void bar(data buff, char key);
 void print_text(data buff);
 data window(data buff, char key);
-void fill_window(buff_t lines);
 
 #endif
 

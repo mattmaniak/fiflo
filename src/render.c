@@ -51,9 +51,13 @@ term_t get_term_sz(bool axis) // Check terminal size.
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
-void flush_window(void) // To provide rendering in a one frame.
+void flush_window(buff_t lines) // To provide rendering in a one frame.
 {
 	term_t y;
+	for(y = 0; y < get_term_sz(Y) - BAR_SZ - lines; y++)
+	{
+		printf("%s", CURSOR_DOWN);
+	}
 	for(y = 0; y < get_term_sz(Y); y++)
 	{
 		printf("%s", "\033[F\033[K"); // Go to the upper line and clean it.
@@ -165,27 +169,22 @@ void print_text(data buff)
 // Shows chars and other stupid things.
 data window(data buff, char key)
 {
+	term_t y;
+
 	buff = alloc_text(buff, key);
 //	buff = punched_card(buff, MAX_CHARS_PER_LINE, WRITE, key);
-//	chars_limit(buff.chars);
+	chars_limit(buff.chars);
 
 	bar(buff, key);
 	print_text(buff);
 
-	putchar('|'); // Temponary cursor.
-
-	return buff;
-}
-
-void fill_window(buff_t lines)
-{
-	term_t y;
-	if(lines <= get_term_sz(Y) + BAR_SZ)
+	if(buff.lines <= get_term_sz(Y) + BAR_SZ)
 	{
-		for(y = lines + BAR_SZ; y < get_term_sz(Y); y++)
+		for(y = buff.lines + BAR_SZ; y < get_term_sz(Y); y++)
 		{
 			printf("%c", LINEFEED);
 		}
 	}
+	return buff;
 }
 
