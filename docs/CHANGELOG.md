@@ -11,7 +11,9 @@ files use git-show or git-log.
 - dynamically allocated text,
 - real stdin (built-in terminal) cursor,
 - version info,
-- scrolling && no lines && chars limit.
+- scrolling && no lines && chars limit,
+- file is no longer created at the program's start,
+- bigger buffer.
 
 ### v1.0.0 (July 15, 2018):
 - simplified API,

@@ -7,19 +7,19 @@
 
 void run(char *name)
 {
-	data buff = read_file(buff, name);
+	buff data = read_file(data, name);
 	char pressed_key = TERMINATOR;
 	term_t y;
 
 	for(;;)
 	{
-		buff = window(buff, pressed_key);
-		for(y = 0; y < get_term_sz(Y) - BAR_SZ - buff.lines; y++)
+		data = window(data, pressed_key);
+		for(y = 0; y < get_term_sz(Y) - BAR_SZ - data.lines; y++)
 		{
 			printf("%s", CURSOR_UP);
 		}
 		pressed_key = nix_getch();
-		flush_window(buff.lines);
+		flush_window(data.lines);
 	}
 }
 

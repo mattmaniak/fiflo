@@ -24,11 +24,11 @@
 buff_t get_file_sz(FILE *fd);
 char nix_getch(void);
 void chars_limit(buff_t chars);
-void set_filename(data buff, char *name);
-data punched_card(data buff, term_t limit, bool mode, char key);
-data read_file(data buff, char *name);
-void save_file(data buff);
-data alloc_text(data buff, char key);
+void set_filename(buff data, char *name);
+buff punched_card(buff data, term_t limit, bool mode, char key);
+buff read_file(buff data, char *name);
+void save_file(buff data);
+buff alloc_text(buff data, char key);
 
 #endif
 

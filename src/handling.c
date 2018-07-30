@@ -52,7 +52,7 @@ void chars_limit(buff_t chars)
 	}
 }
 
-void set_filename(data buff, char *name)
+void set_filename(buff data, char *name)
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
@@ -61,7 +61,7 @@ void set_filename(data buff, char *name)
 
 	if(name[0] == '/')
 	{
-		strcpy(buff.filename, name);
+		strcpy(data.filename, name);
 	}
 	else
 	{
@@ -77,22 +77,22 @@ void set_filename(data buff, char *name)
 
 		for(chr = 0; chr < strlen(path); chr++) // Copy cwd.
 		{
-			buff.filename[chr] = path[chr];
+			data.filename[chr] = path[chr];
 		}
-		buff.filename[strlen(path)] = '/'; // Add the slash between.
+		data.filename[strlen(path)] = '/'; // Add the slash between.
 
 		for(chr = 0; chr < strlen(name); chr++) // Copy bname.
 		{
-			buff.filename[chr + strlen(path) + slash_sz] = name[chr];
+			data.filename[chr + strlen(path) + slash_sz] = name[chr];
 		}
-		buff.filename[strlen(path) + strlen(name) + slash_sz] = TERMINATOR;
+		data.filename[strlen(path) + strlen(name) + slash_sz] = TERMINATOR;
 
 		free(path);
 	}
 }
 
 // Limit chars per line to 80.
-data punched_card(data buff, term_t limit, bool mode, char key)
+buff punched_card(buff data, term_t limit, bool mode, char key)
 {
 	const bool newline = 1;
 	static int8_t pos;
@@ -119,132 +119,131 @@ data punched_card(data buff, term_t limit, bool mode, char key)
 				case READ:
 					fprintf(stderr, "%s%i%s%i%s%i%c\n",
 					"A single line cannot have more than ", limit,
-					" chars, exited.\nLine ", buff.lines, " has got ", pos,
+					" chars, exited.\nLine ", data.lines, " has got ", pos,
 					'.');
 
-					free(buff.filename);
+					free(data.filename);
 					exit(1);
 				break;
 
 				// Auto newline. TODO!!!
 				case WRITE:
-					buff.text[buff.chars - 1] = LINEFEED;
-					buff.lines++;
+					data.text[data.chars - 1] = LINEFEED;
+					data.lines++;
 					pos = 1;
 				break;
 			}
 		}
 	}
-	return buff;
+	return data;
 }
 
-data read_file(data buff, char *name)
+buff read_file(buff data, char *name)
 {
 	char chr;
 	const bool terminator_sz = 1;
 
-	buff.chars = 0;
-	buff.lines = 1;
+	data.chars = 0;
+	data.lines = 1;
 
-	buff.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
+	data.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
 
-	set_filename(buff, name);
-	FILE *textfile = fopen(buff.filename, "r");
+	set_filename(data, name);
+	FILE *textfile = fopen(data.filename, "r");
 
 	if(textfile != NULL)
 	{
-		buff.text = malloc(get_file_sz(textfile));
-
+		data.text = malloc(get_file_sz(textfile));
 		while((chr = getc(textfile)) != EOF)
 		{
-			buff.text[buff.chars] = chr;
-			buff.chars++;
+			data.text[data.chars] = chr;
+			data.chars++;
 			if(chr == LINEFEED)
 			{
-				buff.lines++;
+				data.lines++;
 			}
-//			punched_card(buff, MAX_CHARS_PER_LINE, READ, chr);
+//			punched_card(data, MAX_CHARS_PER_LINE, READ, chr);
 		}
 		fclose(textfile);
 	}
 	else
 	{
-		buff.text = malloc(1);
-		buff.text[0] = TERMINATOR;
+		data.text = malloc(1);
+		data.text[0] = TERMINATOR;
 	}
-	return buff;
+	return data;
 }
 
-void save_file(data buff)
+void save_file(buff data)
 {
 	buff_t pos;
 
-	FILE *textfile = fopen(buff.filename, "w");
+	FILE *textfile = fopen(data.filename, "w");
 	ptr_check(textfile, "Cannot write to the file, exited.\0");
 
-	for(pos = 0; pos < buff.chars; pos++)
+	for(pos = 0; pos < data.chars; pos++)
 	{
-		if(buff.text[pos] != TERMINATOR)
+		if(data.text[pos] != TERMINATOR)
 		{
-			fprintf(textfile, "%c", buff.text[pos]);
+			fprintf(textfile, "%c", data.text[pos]);
 		}
 	}
 	fclose(textfile);
 }
 
 // Convert pressed key into a char in the string.
-data alloc_text(data buff, char key)
+buff alloc_text(buff data, char key)
 {
 	if(key == CTRL_D || key == LINEFEED || key == CTRL_X || key >= 32)
 	{
 		switch(key)
 		{
 			default:
-				buff.text = realloc(buff.text, buff.chars + 1); // TODO: CHEKCING
-				buff.text[buff.chars] = key;
+				data.text = realloc(data.text, data.chars + 1); // TODO: CHEKCING
+				data.text[data.chars] = key;
 				if(key != TERMINATOR)
 				{
-					buff.chars++;
+					data.chars++;
 				}
 			break;
 
 			case LINEFEED:
-				buff.text = realloc(buff.text, buff.chars + 1); // TODO: CHEKCING
-				buff.text[buff.chars] = LINEFEED;
-				buff.chars++;
-				buff.lines++;
+				data.text = realloc(data.text, data.chars + 1); // TODO: CHEKCING
+				data.text[data.chars] = LINEFEED;
+				data.chars++;
+				data.lines++;
 			break;
 
 			case BACKSPACE:
-				buff.text = realloc(buff.text, buff.chars + 1); // TODO: CHEKCING
-				buff.text[buff.chars] = BACKSPACE;
-				buff.text[buff.chars] = LINEFEED;
-				buff.chars--;
-				if(buff.chars < 0)
+				data.text = realloc(data.text, data.chars + 1); // TODO: CHEKCING
+				data.text[data.chars] = BACKSPACE;
+				data.text[data.chars] = LINEFEED;
+				data.chars--;
+				if(data.chars < 0)
 				{
-					buff.chars = 0;
+					data.chars = 0;
 				}
-				if(buff.text[buff.chars] == LINEFEED)
+				if(data.text[data.chars] == LINEFEED)
 				{
-					buff.lines--;
+					data.lines--;
 				}
-				if(buff.lines < 1)
+				if(data.lines < 1)
 				{
-					buff.lines = 1;
+					data.lines = 1;
 				}
 			break;
 
 			case CTRL_D:
-				save_file(buff);
+				save_file(data);
 			break;
 
 			case CTRL_X:
-				free(buff.filename);
-				free(buff.text);
+				free(data.filename);
+				free(data.text);
 				exit(0);
 		}
 		// TODO: UNIFIED TERMINATOR.
 	}
-	return buff;
+	return data;
 }
 

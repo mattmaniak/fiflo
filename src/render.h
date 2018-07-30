@@ -33,9 +33,9 @@ term_t get_term_sz(bool axis);
 void flush_window(buff_t lines);
 
 void print_fname(const char *string, const char *prog, term_t max_len);
-void bar(data buff, char key);
-void print_text(data buff);
-data window(data buff, char key);
+void bar(buff data, char key);
+void print_text(buff data);
+buff window(buff data, char key);
 
 #endif
 

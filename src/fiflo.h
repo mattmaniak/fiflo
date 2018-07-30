@@ -21,7 +21,7 @@ typedef struct
 	buff_t chars; // Amounts
 	buff_t lines; // indicators.
 }
-data;
+buff;
 
 void run(char *name);
 void ignore_sig(int nothing);
