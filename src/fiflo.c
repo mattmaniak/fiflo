@@ -10,17 +10,18 @@ void run(char *name)
 	data buff = read_file(buff, name);
 	char pressed_key = TERMINATOR;
 
-	fill_window(-1); // This frame will be instantly cleaned.
+//	fill_window(-1); // This frame will be instantly cleaned.
+//	flush_window();
 
 	for(;;)
 	{
-		flush_window();
 		buff = window(buff, pressed_key);
-		pressed_key = nix_getch();
 		if(buff.lines < get_term_sz(Y) - BAR_SZ)
 		{
 			fill_window(buff.lines);
 		}
+		pressed_key = nix_getch();
+		flush_window();
 	}
 }
 

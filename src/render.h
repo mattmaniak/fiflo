@@ -24,10 +24,12 @@
 
 void help(void);
 void version(void);
-void print_fname(const char *string, const char *prog, term_t max_len);
-void bar(data buff, char key);
+
 term_t get_term_sz(bool axis);
 void flush_window(void);
+
+void print_fname(const char *string, const char *prog, term_t max_len);
+void bar(data buff, char key);
 void print_text(data buff);
 data window(data buff, char key);
 void fill_window(buff_t lines);

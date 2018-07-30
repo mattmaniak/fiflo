@@ -8,6 +8,12 @@ buff_t get_file_sz(FILE *fd)
 	fseek(fd, 0, SEEK_END);
 	buff_t sz = ftell(fd);
 	fseek(fd, pos, SEEK_SET);
+
+	if(sz > MAX_CHARS)
+	{
+		fputs("To big file on input, exited.\n", stderr);
+		exit(1);
+	}
 	return sz;
 }
 
@@ -219,7 +225,8 @@ data alloc_text(data buff, char key)
 
 			case BACKSPACE:
 				buff.text = realloc(buff.text, buff.chars + 1); // TODO: CHEKCING
-				buff.text[buff.chars] = TERMINATOR;
+				buff.text[buff.chars] = BACKSPACE;
+				buff.text[buff.chars] = LINEFEED;
 				buff.chars--;
 				if(buff.chars < 0)
 				{
@@ -240,6 +247,7 @@ data alloc_text(data buff, char key)
 				free(buff.text);
 				exit(0);
 		}
+		// TODO: UNIFIED TERMINATOR.
 	}
 	return buff;
 }

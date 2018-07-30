@@ -23,7 +23,45 @@ void version(void)
 	"https://gitlab.com/mattmaniak/fiflo");
 }
 
-// Cuts a string when is too long. TODO: SHORTEN!
+term_t get_term_sz(bool axis) // Check terminal size.
+{
+	struct winsize win; // From "sys/ioctl.h".
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+
+	if(win.ws_col < MIN_X || win.ws_row < MIN_Y)
+	{
+		fprintf(stderr, "%s%i%c%i%s\n",
+		"Min. term size is ", MIN_X, 'x', MIN_Y, ", exited.");
+		exit(1);
+	}
+	else if(win.ws_col > MAX_X || win.ws_row > MAX_Y)
+	{
+		fprintf(stderr, "%s%i%c%i%s\n",
+		"Max. term size is ", MAX_X, 'x', MAX_Y, ", exited.");
+		exit(1);
+	}
+
+	switch(axis)
+	{
+		case X:
+			return win.ws_col;
+		case Y:
+			return win.ws_row;
+	}
+	return 0; // Protection from the -Wreturn-type warning.
+}
+
+void flush_window(void) // To provide rendering in a one frame.
+{
+	term_t y;
+	for(y = 0; y < get_term_sz(Y); y++)
+	{
+		printf("%s", "\033[F\033[K"); // Go to the upper line and clean it.
+	}
+	fflush(stdout);
+}
+
+// Cuts a string when is too long.
 void print_fname(const char *string, const char *prog, term_t max_len)
 {
 	term_t pos;
@@ -82,44 +120,6 @@ void bar(data buff, char key)
 	printf("%s", RESET);
 }
 
-term_t get_term_sz(bool axis) // Check terminal size.
-{
-	struct winsize win; // From "sys/ioctl.h".
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
-
-	if(win.ws_col < MIN_X || win.ws_row < MIN_Y)
-	{
-		fprintf(stderr, "%s%i%c%i%s\n",
-		"Min. term size is ", MIN_X, 'x', MIN_Y, ", exited.");
-		exit(1);
-	}
-	else if(win.ws_col > MAX_X || win.ws_row > MAX_Y)
-	{
-		fprintf(stderr, "%s%i%c%i%s\n",
-		"Max. term size is ", MAX_X, 'x', MAX_Y, ", exited.");
-		exit(1);
-	}
-
-	switch(axis)
-	{
-		case X:
-			return win.ws_col;
-		case Y:
-			return win.ws_row;
-	}
-	return 0; // Protection from the -Wreturn-type warning.
-}
-
-void flush_window(void) // To provide rendering in a one frame.
-{
-	term_t y;
-	for(y = 0; y < get_term_sz(Y); y++)
-	{
-		printf("%s", "\033[F\033[K"); // Go to the upper line and clean it.
-	}
-	fflush(stdout);
-}
-
 // Pressed keys to rendered chars in proper order.
 void print_text(data buff)
 {
@@ -171,6 +171,8 @@ data window(data buff, char key)
 
 	bar(buff, key);
 	print_text(buff);
+
+	putchar('|'); // Temponary cursor.
 
 	return buff;
 }
