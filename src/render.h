@@ -25,6 +25,8 @@
 #define CURSOR_DOWN "\033[B"
 #define CURSOR_RIGHT "\033[C"
 #define CURSOR_LEFT "\033[D"
+#define GO_UPPER_LINE "\033[F"
+#define CLEAN_LINE "\033[K"
 
 void help(void);
 void version(void);

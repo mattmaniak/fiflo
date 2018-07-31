@@ -9,11 +9,6 @@ buff_t get_file_sz(FILE *fd)
 	buff_t sz = ftell(fd);
 	fseek(fd, pos, SEEK_SET);
 
-	if(sz > MAX_CHARS)
-	{
-		fputs("To big file on input, exited.\n", stderr);
-		exit(1);
-	}
 	return sz;
 }
 
@@ -45,9 +40,8 @@ void chars_limit(buff_t chars)
 {
 	if(chars > MAX_CHARS)
 	{
-		fprintf(stderr, "%s%i%s%i%s",
-		"Max. lines amount: ", MAX_CHARS, ", got: ", chars,
-		". Stretch your terminal or sth.\n");
+		fprintf(stderr, "%s%i%s%i\n", "Max. lines amount: ", MAX_CHARS,
+		", got: ", chars);
 		exit(1);
 	}
 }
@@ -65,8 +59,9 @@ void set_filename(buff data, char *name)
 	}
 	else
 	{
-		uint16_t chr;
+		uint16_t pos;
 		char *path = malloc(PATH_MAX + terminator_sz);
+		ptr_check(path, "Cannot allocate path in memory, exited.\n");
 
 		if(getcwd(path, PATH_MAX + terminator_sz) == NULL)
 		{
@@ -75,15 +70,15 @@ void set_filename(buff data, char *name)
 		}
 		path[strlen(path)] = TERMINATOR;
 
-		for(chr = 0; chr < strlen(path); chr++) // Copy cwd.
+		for(pos = 0; pos < strlen(path); pos++) // Copy cwd.
 		{
-			data.filename[chr] = path[chr];
+			data.filename[pos] = path[pos];
 		}
 		data.filename[strlen(path)] = '/'; // Add the slash between.
 
-		for(chr = 0; chr < strlen(name); chr++) // Copy bname.
+		for(pos = 0; pos < strlen(name); pos++) // Copy bname.
 		{
-			data.filename[chr + strlen(path) + slash_sz] = name[chr];
+			data.filename[pos + strlen(path) + slash_sz] = name[pos];
 		}
 		data.filename[strlen(path) + strlen(name) + slash_sz] = TERMINATOR;
 
@@ -147,6 +142,7 @@ buff read_file(buff data, char *name)
 	data.lines = 1;
 
 	data.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
+	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\n");
 
 	set_filename(data, name);
 	FILE *textfile = fopen(data.filename, "r");
@@ -196,10 +192,11 @@ buff alloc_text(buff data, char key)
 {
 	if(key == CTRL_D || key == LINEFEED || key == CTRL_X || key >= 32)
 	{
+		data.text = realloc(data.text, data.chars + 1);
+		ptr_check(data.text, "Cannot realloc memory for a new char, exited.\n");
 		switch(key)
 		{
 			default:
-				data.text = realloc(data.text, data.chars + 1); // TODO: CHEKCING
 				data.text[data.chars] = key;
 				if(key != TERMINATOR)
 				{
@@ -208,14 +205,12 @@ buff alloc_text(buff data, char key)
 			break;
 
 			case LINEFEED:
-				data.text = realloc(data.text, data.chars + 1); // TODO: CHEKCING
 				data.text[data.chars] = LINEFEED;
 				data.chars++;
 				data.lines++;
 			break;
 
 			case BACKSPACE:
-				data.text = realloc(data.text, data.chars + 1); // TODO: CHEKCING
 				data.text[data.chars] = BACKSPACE;
 				data.text[data.chars] = LINEFEED;
 				data.chars--;

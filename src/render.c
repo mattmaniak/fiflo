@@ -58,9 +58,10 @@ void flush_window(buff_t lines) // To provide rendering in a one frame.
 	{
 		printf("%s", CURSOR_DOWN);
 	}
+	printf("%s", CLEAN_LINE);
 	for(y = 0; y < get_term_sz(Y); y++)
 	{
-		printf("%s", "\033[F\033[K"); // Go to the upper line and clean it.
+		printf("%s%s", GO_UPPER_LINE, CLEAN_LINE);
 	}
 	fflush(stdout);
 }
@@ -114,10 +115,10 @@ void bar(buff data, char key)
 	term_t whitespace = strlen(info[4]) + strlen(info[1]) + strlen(lines)
 	+ strlen(info[2]) + strlen(chars) + strlen(info[3]) + strlen(keycode);
 
-	printf("%s%i%s%i%s%i%s", info[1], data.lines, info[3],
+	printf("%s%i%s%i%s%i%s", info[1], data.lines, info[2],
 	data.chars, info[3], key, info[4]);
 
-	for(x = 0; x <= get_term_sz(X) - whitespace; x++)
+	for(x = 0; x < get_term_sz(X) - whitespace; x++)
 	{
 		printf("%c", ' ');
 	}
