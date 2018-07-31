@@ -134,13 +134,9 @@ void print_text(buff data)
 	{
 		printf("%c", LINEFEED); // Necessary at least for the LXTerminal.
 	}
-
 	if(data.lines < get_term_sz(Y) - BAR_SZ)
 	{
-		for(pos = 0; pos < data.chars; pos++) // Chars rendering.
-		{
-			printf("%c", data.text[pos]);
-		}
+		puts(data.text);
 	}
 	else // More lines than the terminal can render - scrolling. TODO: MULTIPLE
 	{

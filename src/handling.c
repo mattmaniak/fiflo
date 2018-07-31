@@ -46,7 +46,7 @@ void chars_limit(buff_t chars)
 	}
 }
 
-void set_filename(buff data, char *name)
+void set_filename(buff data, char *name) // TODO: FOLDER PREVENTION
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
@@ -202,7 +202,15 @@ buff alloc_text(buff data, char key)
 				{
 					data.chars++;
 				}
-			break;
+/*				if(data.chars == 0)
+				{
+					data.lines = 0;
+				}
+				else if(data.chars == 1)
+				{
+					data.lines = 1;
+				}
+*/			break;
 
 			case LINEFEED:
 				data.text[data.chars] = LINEFEED;
@@ -211,12 +219,12 @@ buff alloc_text(buff data, char key)
 			break;
 
 			case BACKSPACE:
-				data.text[data.chars] = BACKSPACE;
 				data.text[data.chars] = TERMINATOR;
 				data.chars--;
 				if(data.chars < 0)
 				{
 					data.chars = 0;
+//					data.lines = 0;
 				}
 				if(data.text[data.chars] == LINEFEED)
 				{

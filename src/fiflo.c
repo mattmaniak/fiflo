@@ -18,6 +18,7 @@ void run(char *name)
 		{
 //			printf("%s", CURSOR_UP);
 		}
+//		puts(data.text);
 		pressed_key = nix_getch();
 //		flush_window(data.lines);
 	}
