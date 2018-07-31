@@ -130,12 +130,12 @@ void print_text(buff data)
 {
 	buff_t pos;
 
-	if(data.text[0] == TERMINATOR || LINEFEED)
+	if(data.chars == 0)
 	{
 		printf("%c", LINEFEED); // Necessary at least for the LXTerminal.
 	}
 
-	if(data.lines <= get_term_sz(Y) - BAR_SZ)
+	if(data.lines < get_term_sz(Y) - BAR_SZ)
 	{
 		for(pos = 0; pos < data.chars; pos++) // Chars rendering.
 		{

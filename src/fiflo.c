@@ -14,12 +14,12 @@ void run(char *name)
 	for(;;)
 	{
 		data = window(data, pressed_key);
-		for(y = 0; y < get_term_sz(Y) - BAR_SZ - data.lines; y++)
+		for(y = 0; y <= get_term_sz(Y) - BAR_SZ - data.lines; y++)
 		{
-			printf("%s", CURSOR_UP);
+//			printf("%s", CURSOR_UP);
 		}
 		pressed_key = nix_getch();
-		flush_window(data.lines);
+//		flush_window(data.lines);
 	}
 }
 
@@ -32,7 +32,7 @@ void argc_check(int arg_count)
 {
 	if(arg_count > 2)
 	{
-		fputs("Fiflo can handle max. one additional arg.\n", stderr);
+		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
 		exit(1);
 	}
 }

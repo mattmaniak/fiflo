@@ -212,7 +212,7 @@ buff alloc_text(buff data, char key)
 
 			case BACKSPACE:
 				data.text[data.chars] = BACKSPACE;
-				data.text[data.chars] = LINEFEED;
+				data.text[data.chars] = TERMINATOR;
 				data.chars--;
 				if(data.chars < 0)
 				{
