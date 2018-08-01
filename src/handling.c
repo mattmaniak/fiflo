@@ -177,13 +177,15 @@ void save_file(buff data)
 	FILE *textfile = fopen(data.filename, "w");
 	ptr_check(textfile, "Cannot write to the file, exited.\0");
 
-	for(pos = 0; pos < data.chars; pos++)
-	{
-		if(data.text[pos] != TERMINATOR)
-		{
-			fprintf(textfile, "%c", data.text[pos]);
-		}
-	}
+	fputs(data.text, textfile);
+
+//	for(pos = 0; pos <= data.chars; pos++)
+//	{
+//		if(data.text[pos] != TERMINATOR)
+//		{
+//			fprintf(textfile, "%c", data.text[pos]);
+//		}
+//	}
 	fclose(textfile);
 }
 
@@ -192,48 +194,41 @@ buff alloc_text(buff data, char key)
 {
 	if(key == CTRL_D || key == LINEFEED || key == CTRL_X || key >= 32)
 	{
-		data.text = realloc(data.text, data.chars + 1);
+		data.text = realloc(data.text, data.chars + 2);
 		ptr_check(data.text, "Cannot realloc memory for a new char, exited.\n");
 		switch(key)
 		{
 			default:
 				data.text[data.chars] = key;
-				if(key != TERMINATOR)
-				{
-					data.chars++;
-				}
-/*				if(data.chars == 0)
-				{
-					data.lines = 0;
-				}
-				else if(data.chars == 1)
-				{
-					data.lines = 1;
-				}
-*/			break;
+				data.text[data.chars + 1] = TERMINATOR;
+				data.chars++;
+			break;
+
+			case TERMINATOR: // Maybe for reading.
+			break;
 
 			case LINEFEED:
 				data.text[data.chars] = LINEFEED;
+				data.text[data.chars + 1] = TERMINATOR;
 				data.chars++;
 				data.lines++;
 			break;
 
 			case BACKSPACE:
-				data.text[data.chars] = TERMINATOR;
+				if(data.text[data.chars] == LINEFEED)
+				{
+					data.lines--;
+					if(data.lines < 1)
+					{
+						data.lines = 1;
+					}
+				}
 				data.chars--;
 				if(data.chars < 0)
 				{
 					data.chars = 0;
-//					data.lines = 0;
 				}
-				if(data.text[data.chars] == LINEFEED)
-				{
-					data.lines--;
-				}
-				if(data.lines < 1)
-				{
-					data.lines = 1;
-				}
+				data.text[data.chars] = TERMINATOR;
 			break;
 
 			case CTRL_D:
@@ -245,7 +240,6 @@ buff alloc_text(buff data, char key)
 				free(data.text);
 				exit(0);
 		}
-		// TODO: UNIFIED TERMINATOR.
 	}
 	return data;
 }

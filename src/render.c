@@ -54,11 +54,11 @@ term_t get_term_sz(bool axis) // Check terminal size.
 void flush_window(buff_t lines) // To provide rendering in a one frame.
 {
 	term_t y;
-	for(y = 0; y < get_term_sz(Y) - BAR_SZ - lines; y++)
+/*	for(y = 0; y < get_term_sz(Y) - BAR_SZ - lines; y++)
 	{
 		printf("%s", CURSOR_DOWN);
 	}
-	printf("%s", CLEAN_LINE);
+*/	printf("%s", CLEAN_LINE);
 	for(y = 0; y < get_term_sz(Y); y++)
 	{
 		printf("%s%s", GO_UPPER_LINE, CLEAN_LINE);
@@ -66,7 +66,7 @@ void flush_window(buff_t lines) // To provide rendering in a one frame.
 	fflush(stdout);
 }
 
-// Cuts a string when is too long.
+// Cuts a string when is too long. TODO: NAMES!
 void print_fname(const char *string, const char *prog, term_t max_len)
 {
 	term_t pos;
@@ -76,7 +76,7 @@ void print_fname(const char *string, const char *prog, term_t max_len)
 	{
 		for(pos = 0; pos < max_len; pos++)
 		{
-			printf("%c", string[pos]);
+			putchar(string[pos]);
 		}
 		printf("%s", "... ");
 	}
@@ -85,7 +85,7 @@ void print_fname(const char *string, const char *prog, term_t max_len)
 		printf("%s", string);
 		for(pos = 0; pos < whitespace; pos++)
 		{
-			printf("%c", ' ');
+			putchar(' ');
 		}
 	}
 }
@@ -120,7 +120,7 @@ void bar(buff data, char key)
 
 	for(x = 0; x < get_term_sz(X) - whitespace; x++)
 	{
-		printf("%c", ' ');
+		putchar(' ');
 	}
 	printf("%s", RESET);
 }
@@ -132,11 +132,18 @@ void print_text(buff data)
 
 	if(data.chars == 0)
 	{
-		printf("%c", LINEFEED); // Necessary at least for the LXTerminal.
+		putchar(LINEFEED); // Necessary at least for the LXTerminal.
 	}
 	if(data.lines < get_term_sz(Y) - BAR_SZ)
 	{
-		puts(data.text);
+		if(data.text[0] == LINEFEED)
+		{
+			putchar('\n');
+		}
+		for(pos = 0; pos <= data.chars; pos++)
+		{
+			putchar(data.text[pos]);
+		}
 	}
 	else // More lines than the terminal can render - scrolling. TODO: MULTIPLE
 	{
@@ -157,7 +164,7 @@ void print_text(buff data)
 		}
 		for(pos = chars_offset; pos < data.chars; pos++) // Chars rendering.
 		{
-			printf("%c", data.text[pos]);
+			putchar(data.text[pos]);
 		}
 //		printf("%i", chars_offset);
 	}
@@ -179,7 +186,7 @@ buff window(buff data, char key)
 	{
 		for(y = data.lines + BAR_SZ; y < get_term_sz(Y); y++)
 		{
-			printf("%c", LINEFEED);
+			putchar(LINEFEED);
 		}
 	}
 	return data;

@@ -16,7 +16,7 @@ all:
 debug:
 	$(CC) src/$(TARGET).c -o $(TARGET) \
 	$(CFLAGS) \
-	-g $(ASAN_FLAGS)
+	$(ASAN_FLAGS)
 
 install:
 	cp $(TARGET) $(BIN_ODIR)
