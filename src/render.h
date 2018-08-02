@@ -1,15 +1,11 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
-
-#define X true
-#define Y false
 
 #define BAR_SZ 2
 
@@ -31,7 +27,7 @@
 void help(void);
 void version(void);
 
-term_t get_term_sz(bool axis);
+term_t get_term_sz(char axis);
 void flush_window(buff_t lines);
 
 void print_fname(const char *string, const char *prog, term_t max_len);

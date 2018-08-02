@@ -129,8 +129,8 @@ void save_file(buff data)
 
 buff count_lines(buff data)
 {
-	data.lines = 1;
 	buff_t pos;
+	data.lines = 1;
 
 	for(pos = 0; pos <= data.chars; pos++)
 	{
@@ -139,9 +139,53 @@ buff count_lines(buff data)
 			data.lines++;
 		}
 	}
-	if(data.lines < 1)
+	return data;
+}
+
+
+buff printable_key(buff data, char key)
+{
+	switch(key)
 	{
-		data.lines = 1;
+		default:
+			data.text[data.chars] = key;
+			data.chars++;
+			data.text[data.chars] = TERMINATOR;
+		break;
+
+		case TERMINATOR: // Maybe for the reading.
+		break;
+
+		case LINEFEED:
+			data.text[data.chars] = LINEFEED;
+			data.chars++;
+			data.text[data.chars] = TERMINATOR;
+		break;
+
+		case BACKSPACE:
+			data.chars--;
+			if(data.chars < 0)
+			{
+				data.chars = 0;
+			}
+			data.text[data.chars] = TERMINATOR;
+		break;
+	}
+	return data;
+}
+
+buff shortcut(buff data, char key)
+{
+	switch(key)
+	{
+		case CTRL_D:
+			save_file(data);
+		break;
+
+		case CTRL_X:
+			free(data.filename);
+			free(data.text);
+			exit(0);
 	}
 	return data;
 }
@@ -156,37 +200,13 @@ buff alloc_text(buff data, char key)
 		switch(key)
 		{
 			default:
-				data.text[data.chars] = key;
-				data.chars++;
-				data.text[data.chars] = TERMINATOR;
-			break;
-
-			case TERMINATOR: // Maybe for the reading.
-			break;
-
-			case LINEFEED:
-				data.text[data.chars] = LINEFEED;
-				data.chars++;
-				data.text[data.chars] = TERMINATOR;
-			break;
-
-			case BACKSPACE:
-				data.chars--;
-				if(data.chars < 0)
-				{
-					data.chars = 0;
-				}
-				data.text[data.chars] = TERMINATOR;
+				data = printable_key(data, key);
 			break;
 
 			case CTRL_D:
-				save_file(data);
-			break;
-
 			case CTRL_X:
-				free(data.filename);
-				free(data.text);
-				exit(0);
+				data = shortcut(data, key);
+			break;
 		}
 	}
 	return data;

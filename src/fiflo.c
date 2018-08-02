@@ -14,7 +14,7 @@ void run(char* name)
 	for(;;)
 	{
 		data = window(data, pressed_key);
-		for(y = 0; y <= get_term_sz(Y) - BAR_SZ - data.lines; y++)
+		for(y = 0; y <= get_term_sz('Y') - BAR_SZ - data.lines; y++)
 		{
 //			printf("%s", CURSOR_UP);
 		}

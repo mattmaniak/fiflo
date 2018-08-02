@@ -30,10 +30,15 @@ buff_t get_file_sz(FILE* fd);
 char nix_getch(void);
 void ptr_check(void* ptr, const char* errmsg);
 void chars_limit(buff_t chars);
+
 void set_filename(buff data, char* name);
 buff read_file(buff data, char* name);
 void save_file(buff data);
+
 buff count_lines(buff data);
+
+buff printable_key(buff data, char key);
+buff shortcut(buff data, char key);
 buff alloc_text(buff data, char key);
 
 #endif
