@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Wpedantic
+CFLAGS = -Wall -Wextra -Wpedantic -std=c11
 ASAN_FLAGS = -lasan \
 -fsanitize=address \
 -fsanitize=undefined \

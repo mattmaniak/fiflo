@@ -38,4 +38,6 @@ commits to provide updated code on the "develop" branch.
 - write short TODOs near thing to fix as uppercase comment,
 - #define as much as you can,
 - keep docs up-to-date with your code in stable releases,
+- every function have to fit in the 720p screen with 10px font,
+- uninitialized variables must be before initialized,
 - function's args names need to be shorter than variables names.

@@ -53,8 +53,8 @@ term_t get_term_sz(bool axis) // Check terminal size.
 
 void flush_window(buff_t lines) // To provide rendering in a one frame.
 {
-	term_t y;
-/*	for(y = 0; y < get_term_sz(Y) - BAR_SZ - lines; y++)
+/*	term_t y;
+	for(y = 0; y < get_term_sz(Y) - BAR_SZ - lines; y++)
 	{
 		printf("%s", CURSOR_DOWN);
 	}
@@ -67,7 +67,7 @@ void flush_window(buff_t lines) // To provide rendering in a one frame.
 }
 
 // Cuts a string when is too long. TODO: NAMES!
-void print_fname(const char *string, const char *prog, term_t max_len)
+void print_fname(const char* string, const char* prog, term_t max_len)
 {
 	term_t pos;
 	term_t whitespace = get_term_sz(X) - strlen(string) - strlen(prog);
@@ -92,13 +92,15 @@ void print_fname(const char *string, const char *prog, term_t max_len)
 
 void bar(buff data, char key)
 {
-	const char *info[5] = {" fiflo | file: \0",
-	" lines: \0", " | chars: \0", " | last: \0",
+	term_t x;
+
+	const char* info[5] = {" fiflo | file: \0",
+	" lines: \0",
+	" | chars: \0",
+	" | last: \0",
 	" | save: CTRL+D | exit: CTRL+X \0"};
 
 	const uint8_t dots_and_space = 4;
-	term_t x;
-
 	char keycode[4];
 	char lines[11];
 	char chars[11];
@@ -130,21 +132,15 @@ void print_text(buff data)
 {
 	buff_t pos;
 
-	if(data.chars == 0)
-	{
-		putchar(LINEFEED); // Necessary at least for the LXTerminal.
-	}
 	if(data.lines < get_term_sz(Y) - BAR_SZ)
 	{
-		if(data.text[0] == LINEFEED)
+		if(data.chars == 0 || data.text[0] == LINEFEED)
 		{
-			putchar('\n');
+			putchar(LINEFEED); // Necessary at least for the LXTerminal.
 		}
-		for(pos = 0; pos <= data.chars; pos++)
-		{
-			putchar(data.text[pos]);
-		}
+		printf("%s", data.text);
 	}
+	// TODO
 	else // More lines than the terminal can render - scrolling. TODO: MULTIPLE
 	{
 		static term_t renderable_lines = 0;
@@ -176,7 +172,7 @@ buff window(buff data, char key)
 	term_t y;
 
 	data = alloc_text(data, key);
-//	buff = punched_card(buff, MAX_CHARS_PER_LINE, WRITE, key);
+	data = count_lines(data);
 	chars_limit(data.chars);
 
 	bar(data, key);

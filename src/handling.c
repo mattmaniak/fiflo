@@ -2,7 +2,7 @@
 
 #include "handling.h"
 
-buff_t get_file_sz(FILE *fd)
+buff_t get_file_sz(FILE* fd)
 {
 	buff_t pos = ftell(fd);
 	fseek(fd, 0, SEEK_END);
@@ -27,7 +27,7 @@ char nix_getch(void) // https://stackoverflow.com/questions/12710582/
 	return key;
 }
 
-void ptr_check(void *ptr, char *errmsg) // Eg. malloc or FILE*.
+void ptr_check(void* ptr, const char* errmsg) // Eg. malloc or FILE*.
 {
 	if(ptr == NULL)
 	{
@@ -46,7 +46,7 @@ void chars_limit(buff_t chars)
 	}
 }
 
-void set_filename(buff data, char *name) // TODO: FOLDER PREVENTION
+void set_filename(buff data, char* name) // TODO: FOLDER PREVENTION
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
@@ -60,12 +60,13 @@ void set_filename(buff data, char *name) // TODO: FOLDER PREVENTION
 	else
 	{
 		uint16_t pos;
-		char *path = malloc(PATH_MAX + terminator_sz);
-		ptr_check(path, "Cannot allocate path in memory, exited.\n");
+		// https://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html
+		char* path = malloc(MAX_PATH + terminator_sz);
+		ptr_check(path, "Cannot allocate path in memory, exited.\0");
 
-		if(getcwd(path, PATH_MAX + terminator_sz) == NULL)
+		if(getcwd(path, MAX_PATH + terminator_sz) == NULL)
 		{
-			fputs("Cannot get your current dir, exited.\n", stderr);
+			fputs("Cannot get your current dir, exited.\0", stderr);
 			exit(1);
 		}
 		path[strlen(path)] = TERMINATOR;
@@ -86,107 +87,63 @@ void set_filename(buff data, char *name) // TODO: FOLDER PREVENTION
 	}
 }
 
-// Limit chars per line to 80.
-buff punched_card(buff data, term_t limit, bool mode, char key)
-{
-	const bool newline = 1;
-	static int8_t pos;
-
-	if(key == LINEFEED)
-	{
-		pos = 1;
-	}
-	else if(key == BACKSPACE)
-	{
-		pos--;
-		if(pos <= 1)
-		{
-			pos = limit + newline + 1;
-		}
-	}
-	else
-	{
-		pos++;
-		if(pos > limit + newline)
-		{
-			switch(mode)
-			{
-				case READ:
-					fprintf(stderr, "%s%i%s%i%s%i%c\n",
-					"A single line cannot have more than ", limit,
-					" chars, exited.\nLine ", data.lines, " has got ", pos,
-					'.');
-
-					free(data.filename);
-					exit(1);
-				break;
-
-				// Auto newline. TODO!!!
-				case WRITE:
-					data.text[data.chars - 1] = LINEFEED;
-					data.lines++;
-					pos = 1;
-				break;
-			}
-		}
-	}
-	return data;
-}
-
-buff read_file(buff data, char *name)
+buff read_file(buff data, char* name)
 {
 	char chr;
 	const bool terminator_sz = 1;
-
 	data.chars = 0;
-	data.lines = 1;
 
-	data.filename = malloc(PATH_MAX + NAME_MAX + terminator_sz);
-	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\n");
+	data.filename = malloc(MAX_PATH + MAX_NAME + terminator_sz); // >~ 4 KiB.
+	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\0");
 
 	set_filename(data, name);
-	FILE *textfile = fopen(data.filename, "r");
+	FILE* textfile = fopen(data.filename, "r");
 
 	if(textfile != NULL)
 	{
-		data.text = malloc(get_file_sz(textfile));
+		data.text = malloc(get_file_sz(textfile) + terminator_sz);
 		while((chr = getc(textfile)) != EOF)
 		{
 			data.text[data.chars] = chr;
 			data.chars++;
-			if(chr == LINEFEED)
-			{
-				data.lines++;
-			}
-//			punched_card(data, MAX_CHARS_PER_LINE, READ, chr);
 		}
+		data.text[data.chars] = TERMINATOR;
 		fclose(textfile);
 	}
 	else
 	{
-		data.text = malloc(1);
-		data.text[0] = TERMINATOR;
+		data.text = malloc(terminator_sz);
+		data.text[data.chars] = TERMINATOR;
 	}
 	return data;
 }
 
 void save_file(buff data)
 {
-	buff_t pos;
-
-	FILE *textfile = fopen(data.filename, "w");
+	FILE* textfile = fopen(data.filename, "w");
 	ptr_check(textfile, "Cannot write to the file, exited.\0");
 
 	fputs(data.text, textfile);
-
-//	for(pos = 0; pos <= data.chars; pos++)
-//	{
-//		if(data.text[pos] != TERMINATOR)
-//		{
-//			fprintf(textfile, "%c", data.text[pos]);
-//		}
-//	}
 	fclose(textfile);
+}
+
+buff count_lines(buff data)
+{
+	data.lines = 1;
+	buff_t pos;
+
+	for(pos = 0; pos <= data.chars; pos++)
+	{
+		if(data.text[pos] == LINEFEED)
+		{
+			data.lines++;
+		}
+	}
+	if(data.lines < 1)
+	{
+		data.lines = 1;
+	}
+	return data;
 }
 
 // Convert pressed key into a char in the string.
@@ -195,34 +152,25 @@ buff alloc_text(buff data, char key)
 	if(key == CTRL_D || key == LINEFEED || key == CTRL_X || key >= 32)
 	{
 		data.text = realloc(data.text, data.chars + 2);
-		ptr_check(data.text, "Cannot realloc memory for a new char, exited.\n");
+		ptr_check(data.text, "Cannot realloc memory for a new char, exited.\0");
 		switch(key)
 		{
 			default:
 				data.text[data.chars] = key;
-				data.text[data.chars + 1] = TERMINATOR;
 				data.chars++;
+				data.text[data.chars] = TERMINATOR;
 			break;
 
-			case TERMINATOR: // Maybe for reading.
+			case TERMINATOR: // Maybe for the reading.
 			break;
 
 			case LINEFEED:
 				data.text[data.chars] = LINEFEED;
-				data.text[data.chars + 1] = TERMINATOR;
 				data.chars++;
-				data.lines++;
+				data.text[data.chars] = TERMINATOR;
 			break;
 
 			case BACKSPACE:
-				if(data.text[data.chars] == LINEFEED)
-				{
-					data.lines--;
-					if(data.lines < 1)
-					{
-						data.lines = 1;
-					}
-				}
 				data.chars--;
 				if(data.chars < 0)
 				{

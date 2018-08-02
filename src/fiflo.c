@@ -5,7 +5,7 @@
 #include "handling.c"
 #include "render.c"
 
-void run(char *name)
+void run(char* name)
 {
 	buff data = read_file(data, name);
 	char pressed_key = TERMINATOR;
@@ -37,7 +37,7 @@ void argc_check(int arg_count)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	signal(SIGTSTP, ignore_sig); // CTRL_Z
 	signal(SIGINT, ignore_sig); // CTRL_C
