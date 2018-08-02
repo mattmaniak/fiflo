@@ -27,7 +27,7 @@ commits to provide updated code on the "develop" branch.
 - https://nvie.com/posts/a-successful-git-branching-model/.
 
 ## Coding rules:
-- indentation style: 1 hard tab (equal to 4 spaces),
+- indentation style: 1 hard tab (4 spaces),
 - use Allman-style indentation,
 - max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
 - comment a lot,
@@ -37,7 +37,7 @@ commits to provide updated code on the "develop" branch.
 - keep names short.
 - write short TODOs near thing to fix as uppercase comment,
 - #define as much as you can,
-- keep docs up-to-date with your code in stable releases,
+- keep docs up-to-date with the code in stable releases,
 - every function have to fit in the 720p screen with 10px font,
 - uninitialized variables must be before initialized,
 - function's args names need to be shorter than variables names.

@@ -143,34 +143,41 @@ buff count_lines(buff data)
 }
 
 
-buff printable_key(buff data, char key)
+buff visible_chars(buff data, char key)
 {
+	bool terminator_sz = 1;
+	bool new_sz = 1;
+
 	switch(key)
 	{
 		default:
+			data.text = realloc(data.text, data.chars + terminator_sz + new_sz);
 			data.text[data.chars] = key;
 			data.chars++;
-			data.text[data.chars] = TERMINATOR;
 		break;
 
-		case TERMINATOR: // Maybe for the reading.
+		case TERMINATOR: // Required for rendering.
+		case TAB:
 		break;
 
 		case LINEFEED:
+			data.text = realloc(data.text, data.chars + terminator_sz + new_sz);
 			data.text[data.chars] = LINEFEED;
 			data.chars++;
-			data.text[data.chars] = TERMINATOR;
 		break;
 
 		case BACKSPACE:
+			data.text = realloc(data.text, data.chars);
 			data.chars--;
 			if(data.chars < 0)
 			{
 				data.chars = 0;
+				data.text = realloc(data.text, data.chars + terminator_sz);
 			}
-			data.text[data.chars] = TERMINATOR;
 		break;
 	}
+	ptr_check(data.text, "Cannot realloc memory for a new char, exited.\0");
+	data.text[data.chars] = TERMINATOR;
 	return data;
 }
 
@@ -193,21 +200,16 @@ buff shortcut(buff data, char key)
 // Convert pressed key into a char in the string.
 buff alloc_text(buff data, char key)
 {
-	if(key == CTRL_D || key == LINEFEED || key == CTRL_X || key >= 32)
+	switch(key)
 	{
-		data.text = realloc(data.text, data.chars + 2);
-		ptr_check(data.text, "Cannot realloc memory for a new char, exited.\0");
-		switch(key)
-		{
-			default:
-				data = printable_key(data, key);
-			break;
+		default:
+			data = visible_chars(data, key);
+		break;
 
-			case CTRL_D:
-			case CTRL_X:
-				data = shortcut(data, key);
-			break;
-		}
+		case CTRL_D:
+		case CTRL_X:
+			data = shortcut(data, key);
+		break;
 	}
 	return data;
 }

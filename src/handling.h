@@ -9,15 +9,13 @@
 #include <unistd.h>
 #include <termios.h>
 
-#define READ true
-#define WRITE false
-
 #define MAX_PATH 4096
 #define MAX_NAME 255
 
 // Required keymap.
 #define TERMINATOR 0
 #define CTRL_D 4
+#define TAB 9
 #define LINEFEED 10
 #define CTRL_X 24
 #define ARROW_UP 65
@@ -37,7 +35,7 @@ void save_file(buff data);
 
 buff count_lines(buff data);
 
-buff printable_key(buff data, char key);
+buff visible_chars(buff data, char key);
 buff shortcut(buff data, char key);
 buff alloc_text(buff data, char key);
 

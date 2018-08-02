@@ -12,7 +12,7 @@ void help(void)
 	"basename        Open the textfile named 'basename' using current path.",
 	"/path/basename  Open the textfile 'basename' located in the '/path'.",
 	"-h, --help      Show program help.",
-	"-v, --version   Display info about the current version.");
+	"-v, --version   Display words about the current version.");
 }
 
 void version(void)
@@ -54,11 +54,11 @@ term_t get_term_sz(char axis) // Check terminal size.
 void flush_window(buff_t lines) // To provide rendering in a one frame.
 {
 	term_t y;
-/*	for(y = 0; y < get_term_sz('Y') - BAR_SZ - lines; y++)
+	for(y = 0; y < get_term_sz('Y') - BAR_SZ - lines; y++)
 	{
 		printf("%s", CURSOR_DOWN);
 	}
-*/	printf("%s", CLEAN_LINE);
+	printf("%s", CLEAN_LINE);
 	for(y = 0; y < get_term_sz('Y'); y++)
 	{
 		printf("%s%s", GO_UPPER_LINE, CLEAN_LINE);
@@ -94,7 +94,7 @@ void bar(buff data, char key)
 {
 	term_t x;
 
-	const char* info[5] = {" fiflo | file: \0",
+	const char* words[5] = {" fiflo | file: \0",
 	" lines: \0",
 	" | chars: \0",
 	" | last: \0",
@@ -109,16 +109,16 @@ void bar(buff data, char key)
 	sprintf(lines, "%i", data.lines);
 	sprintf(chars, "%i", data.chars);
 
-	printf("%s%s", INVERT, info[0]);
-	print_fname(data.filename, info[0], get_term_sz('X') - strlen(info[0])
+	printf("%s%s", INVERT, words[0]);
+	print_fname(data.filename, words[0], get_term_sz('X') - strlen(words[0])
 	- dots_and_space);
 
 	// Lower part of the bar.
-	term_t whitespace = strlen(info[4]) + strlen(info[1]) + strlen(lines)
-	+ strlen(info[2]) + strlen(chars) + strlen(info[3]) + strlen(keycode);
+	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lines)
+	+ strlen(words[2]) + strlen(chars) + strlen(words[3]) + strlen(keycode);
 
-	printf("%s%i%s%i%s%i%s", info[1], data.lines, info[2],
-	data.chars, info[3], key, info[4]);
+	printf("%s%i%s%i%s%i%s", words[1], data.lines, words[2],
+	data.chars, words[3], key, words[4]);
 
 	for(x = 0; x < get_term_sz('X') - whitespace; x++)
 	{
@@ -127,11 +127,33 @@ void bar(buff data, char key)
 	printf("%s", RESET);
 }
 
+void scroll(buff data) // TODO: DELETING LAST CHAR AFTER SCROLL.
+{
+	static term_t chars_offset;
+	static term_t renderable_lines = 0;
+	buff_t pos;
+
+	for(pos = 0; pos < data.chars; pos++)
+	{
+		if(data.text[pos] == LINEFEED)
+		{
+			renderable_lines++;
+			if(renderable_lines == get_term_sz('Y') - BAR_SZ)
+			{
+				renderable_lines = get_term_sz('Y') - BAR_SZ;
+				chars_offset = data.chars;
+			}
+		}
+	}
+	for(pos = chars_offset; pos < data.chars; pos++) // Chars rendering.
+	{
+		putchar(data.text[pos]);
+	}
+}
+
 // Pressed keys to rendered chars in proper order.
 void print_text(buff data)
 {
-	buff_t pos;
-
 	if(data.lines < get_term_sz('Y') - BAR_SZ)
 	{
 		if(data.chars == 0 || data.text[0] == LINEFEED)
@@ -140,29 +162,9 @@ void print_text(buff data)
 		}
 		printf("%s", data.text);
 	}
-	// TODO
-	else // More lines than the terminal can render - scrolling. TODO: MULTIPLE
+	else
 	{
-		static term_t renderable_lines = 0;
-		static term_t chars_offset;
-
-		for(pos = 0; pos < data.chars; pos++)
-		{
-			if(data.text[pos] == LINEFEED)
-			{
-				renderable_lines++;
-				if(renderable_lines == get_term_sz('Y') - BAR_SZ)
-				{
-					renderable_lines = get_term_sz('Y') - BAR_SZ;
-					chars_offset = data.chars;
-				}
-			}
-		}
-		for(pos = chars_offset; pos < data.chars; pos++) // Chars rendering.
-		{
-			putchar(data.text[pos]);
-		}
-//		printf("%i", chars_offset);
+		scroll(data);
 	}
 }
 
