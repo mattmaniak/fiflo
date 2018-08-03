@@ -1,6 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Wpedantic -std=c11
 ASAN_FLAGS = -lasan \
+-fsanitize=leak \
 -fsanitize=address \
 -fsanitize=undefined \
 -fsanitize=signed-integer-overflow \
@@ -16,7 +17,8 @@ all:
 debug:
 	$(CC) src/$(TARGET).c -o $(TARGET) \
 	$(CFLAGS) \
-	$(ASAN_FLAGS)
+	$(ASAN_FLAGS) \
+	-g
 
 install:
 	cp $(TARGET) $(BIN_ODIR)

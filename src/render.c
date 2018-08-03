@@ -19,7 +19,7 @@ void version(void)
 {
 	printf("%s\n%s\n%s\n",
 	"fiflo v1.1.0 (WIP)",
-	"(c) 2018 mattmaniak",
+	"(c) 2018 mattmaniak under the MIT License",
 	"https://gitlab.com/mattmaniak/fiflo");
 }
 
@@ -98,7 +98,7 @@ void bar(buff data, char key)
 	" lines: \0",
 	" | chars: \0",
 	" | last: \0",
-	" | save: CTRL+D | exit: CTRL+'X' \0"};
+	" | save: CTRL+D | exit: CTRL+X \0"};
 
 	const uint8_t dots_and_space = 4;
 	char keycode[4];
@@ -127,17 +127,31 @@ void bar(buff data, char key)
 	printf("%s", RESET);
 }
 
-void set_cursor_pos(buff data)
+void set_cursor_pos(buff data) // TODO: SCROLLING
 {
 	term_t y;
+	buff_t pos;
+	term_t right = 0;
+
 	for(y = 0; y < get_term_sz('Y') - BAR_SZ - data.lines; y++)
 	{
 		printf("%s", CURSOR_UP);
 	}
-	for(y = 0; y < data.chars; y++)
+	for(pos = data.chars; pos > 0; pos--)
+	{
+		if(data.text[pos] == LINEFEED)
+		{
+			right--;
+			break;
+		}
+		right++;
+	}
+	for(y = 0; y < right; y++)
 	{
 		printf("%s", CURSOR_RIGHT);
 	}
+	printf("%i", right);
+	right = 0;
 }
 
 void scroll(buff data) // TODO: DELETING LAST CHAR AFTER SCROLL.
@@ -173,7 +187,7 @@ void print_text(buff data)
 		{
 			putchar(LINEFEED); // Necessary at least for the LXTerminal.
 		}
-		printf("%s", data.text);
+		fputs(data.text, stdout);
 	}
 	else
 	{
