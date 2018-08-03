@@ -127,10 +127,23 @@ void bar(buff data, char key)
 	printf("%s", RESET);
 }
 
+void set_cursor_pos(buff data)
+{
+	term_t y;
+	for(y = 0; y < get_term_sz('Y') - BAR_SZ - data.lines; y++)
+	{
+		printf("%s", CURSOR_UP);
+	}
+	for(y = 0; y < data.chars; y++)
+	{
+		printf("%s", CURSOR_RIGHT);
+	}
+}
+
 void scroll(buff data) // TODO: DELETING LAST CHAR AFTER SCROLL.
 {
-	static term_t chars_offset;
 	static term_t renderable_lines = 0;
+	static term_t chars_offset;
 	buff_t pos;
 
 	for(pos = 0; pos < data.chars; pos++)
@@ -169,13 +182,9 @@ void print_text(buff data)
 }
 
 // Shows chars and other stupid things.
-buff window(buff data, char key)
+void window(buff data, char key)
 {
 	term_t y;
-
-	data = alloc_text(data, key);
-	data = count_lines(data);
-	chars_limit(data.chars);
 
 	bar(data, key);
 	print_text(data);
@@ -187,6 +196,6 @@ buff window(buff data, char key)
 			putchar(LINEFEED);
 		}
 	}
-	return data;
+	set_cursor_pos(data);
 }
 

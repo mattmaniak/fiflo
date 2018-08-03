@@ -7,18 +7,19 @@
 
 void run(char* name)
 {
-	buff data = read_file(data, name);
+	buff data = {NULL, NULL, 0, 1}; // Initializer to prevent -Wuninitialized.
+	data = read_file(data, name);
 	char pressed_key = TERMINATOR;
-	term_t y;
 
 	for(;;)
 	{
-		data = window(data, pressed_key);
-		for(y = 0; y < get_term_sz('Y') - BAR_SZ - data.lines; y++)
-		{
-			printf("%s", CURSOR_UP);
-		}
+		data = alloc_text(data, pressed_key);
+		data = count_lines(data);
+		chars_limit(data.chars);
+
+		window(data, pressed_key);
 		pressed_key = nix_getch();
+
 		flush_window(data.lines);
 	}
 }

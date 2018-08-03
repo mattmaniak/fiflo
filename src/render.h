@@ -33,9 +33,10 @@ void flush_window(buff_t lines);
 void print_fname(const char *string, const char *prog, term_t max_len);
 void bar(buff data, char key);
 
+void set_cursor_pos(buff data);
 void scroll(buff data);
 void print_text(buff data);
-buff window(buff data, char key);
+void window(buff data, char key);
 
 #endif
 

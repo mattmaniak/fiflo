@@ -59,8 +59,8 @@ void set_filename(buff data, char* name) // TODO: FOLDER PREVENTION
 	}
 	else
 	{
-		uint16_t pos;
 		// https://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html
+		uint16_t pos;
 		char* path = malloc(MAX_PATH + terminator_sz);
 		ptr_check(path, "Cannot allocate path in memory, exited.\0");
 
@@ -91,7 +91,6 @@ buff read_file(buff data, char* name)
 {
 	char chr;
 	const bool terminator_sz = 1;
-	data.chars = 0;
 
 	data.filename = malloc(MAX_PATH + MAX_NAME + terminator_sz); // >~ 4 KiB.
 	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\0");
@@ -130,7 +129,7 @@ void save_file(buff data)
 buff count_lines(buff data)
 {
 	buff_t pos;
-	data.lines = 1;
+	data.lines = 1; // Reset.
 
 	for(pos = 0; pos <= data.chars; pos++)
 	{
