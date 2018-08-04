@@ -51,6 +51,7 @@ term_t get_term_sz(char axis) // Check terminal size.
 	return 0; // Protection from the -Wreturn-type warning.
 }
 
+// TODO: WITH SCROLL
 void flush_window(buff_t lines) // To provide rendering in a one frame.
 {
 	term_t y;
@@ -61,7 +62,7 @@ void flush_window(buff_t lines) // To provide rendering in a one frame.
 	printf("%s", CLEAN_LINE);
 	for(y = 0; y < get_term_sz('Y'); y++)
 	{
-		printf("%s%s", GO_UPPER_LINE, CLEAN_LINE);
+		printf("%s%s", LINE_UP, CLEAN_LINE);
 	}
 	fflush(stdout);
 }
@@ -141,7 +142,10 @@ void set_cursor_pos(buff data) // TODO: SCROLLING
 	{
 		if(data.text[pos] == LINEFEED)
 		{
-			right--;
+			if(right > 0)
+			{
+				right--;
+			}
 			break;
 		}
 		right++;
@@ -150,32 +154,30 @@ void set_cursor_pos(buff data) // TODO: SCROLLING
 	{
 		printf("%s", CURSOR_RIGHT);
 	}
-	printf("%i", right);
-	right = 0;
+	if(data.lines == 2)
+	{
+		printf("%s", CURSOR_LEFT);
+	}
 }
 
-void scroll(buff data) // TODO: DELETING LAST CHAR AFTER SCROLL.
+buff_t scroll(buff data)
 {
-	static term_t renderable_lines = 0;
-	static term_t chars_offset;
-	buff_t pos;
+	buff_t hidden_lines = data.lines % (get_term_sz('Y') - BAR_SZ - 1);
+	buff_t offset = 0;
 
-	for(pos = 0; pos < data.chars; pos++)
+	for(buff_t pos = 0; pos < data.chars; pos++)
 	{
 		if(data.text[pos] == LINEFEED)
 		{
-			renderable_lines++;
-			if(renderable_lines == get_term_sz('Y') - BAR_SZ)
-			{
-				renderable_lines = get_term_sz('Y') - BAR_SZ;
-				chars_offset = data.chars;
-			}
+			offset++;
+		}
+		if(offset == hidden_lines)
+		{
+			offset = pos;
+			break;
 		}
 	}
-	for(pos = chars_offset; pos < data.chars; pos++) // Chars rendering.
-	{
-		putchar(data.text[pos]);
-	}
+	return offset;
 }
 
 // Pressed keys to rendered chars in proper order.
@@ -191,7 +193,10 @@ void print_text(buff data)
 	}
 	else
 	{
-		scroll(data);
+		for(buff_t pos = scroll(data); pos < data.chars; pos++)
+		{
+			putchar(data.text[pos]);
+		}
 	}
 }
 

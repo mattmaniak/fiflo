@@ -38,7 +38,7 @@ void ptr_check(void* ptr, const char* errmsg) // Eg. malloc or FILE*.
 
 void chars_limit(buff_t chars)
 {
-	if(chars > MAX_CHARS)
+	if(chars > MAX_CHARS - 1) // -1 to handle max_lines.
 	{
 		fprintf(stderr, "%s%i%s%i\n", "Max. lines amount: ", MAX_CHARS,
 		", got: ", chars);
@@ -55,7 +55,7 @@ void set_filename(buff data, char* name) // TODO: FOLDER PREVENTION
 
 	if(name[0] == '/')
 	{
-		strcpy(data.filename, name);
+		strcpy(data.filename, name); // PROBABLY TODO
 	}
 	else
 	{
