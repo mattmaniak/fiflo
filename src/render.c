@@ -129,27 +129,30 @@ void bar(buff data, char key)
 	printf("%s", RESET);
 }
 
-void set_cursor_pos(buff data) // TODO: SCROLLING
+void set_cursor(buff data)
 {
 	term_t y;
 	buff_t pos;
 	term_t right = 0;
 
-	for(y = 0; y < get_term_sz('Y') - BAR_SZ - data.lines; y++)
+	if(data.lines < get_term_sz('Y') - BAR_SZ)
 	{
-		printf("%s", CURSOR_UP);
-	}
-	for(pos = data.chars; pos > 0; pos--)
-	{
-		if(data.text[pos] == LINEFEED)
+		for(y = 0; y < get_term_sz('Y') - BAR_SZ - data.lines; y++)
 		{
-			if(right > 0)
-			{
-				right--;
-			}
-			break;
+			printf("%s", CURSOR_UP);
 		}
-		right++;
+		for(pos = data.chars; pos > 0; pos--) // Last line doesn't need 'right'.
+		{
+			if(data.text[pos] == LINEFEED)
+			{
+				if(right > 0)
+				{
+					right--;
+				}
+				break;
+			}
+			right++;
+		}
 	}
 	for(y = 0; y < right; y++)
 	{
@@ -165,8 +168,6 @@ buff_t scroll(buff data)
 {
 	buff_t lines_to_hide = data.lines % (get_term_sz('Y') - BAR_SZ);
 	buff_t offset = 0;
-
-//	printf("X%iX", lines_to_hide);
 
 	for(buff_t pos = 0; pos < data.chars; pos++)
 	{
@@ -204,7 +205,6 @@ void print_text(buff data)
 		{
 			putchar(data.text[pos]);
 		}
-//		printf("%s", CURSOR_UP); // TODO
 	}
 }
 
@@ -214,13 +214,13 @@ void window(buff data, char key)
 	bar(data, key);
 	print_text(data);
 
-	if(data.lines <= get_term_sz('Y') + BAR_SZ)
+	if(data.lines <= get_term_sz('Y') - BAR_SZ) // Visible bottom fill.
 	{
-		for(term_t y = data.lines + BAR_SZ; y < get_term_sz('Y'); y++)
+		for(term_t y = data.lines; y < get_term_sz('Y') - BAR_SZ; y++)
 		{
 			putchar(LINEFEED);
 		}
 	}
-	set_cursor_pos(data);
+	set_cursor(data);
 }
 

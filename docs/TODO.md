@@ -8,5 +8,5 @@
 - "configure.sh" file,
 - search option,
 - line numbers,
-- thread lock or sth,
+- thread lock or sth (mutex),
 - hex mode.
