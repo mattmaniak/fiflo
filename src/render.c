@@ -129,6 +129,26 @@ void bar(buff data, char key)
 	printf("%s", RESET);
 }
 
+buff_t scroll(buff data)
+{
+	buff_t lines_to_hide = data.lines - (get_term_sz('Y') - BAR_SZ);
+	buff_t offset = 0;
+
+	for(buff_t pos = 0; pos < data.chars; pos++)
+	{
+		if(data.text[pos] == LINEFEED)
+		{
+			offset++;
+		}
+		if(offset == lines_to_hide) // How many lines to scroll.
+		{
+			offset = pos;
+			break;
+		}
+	}
+	return offset;
+}
+
 void set_cursor(buff data)
 {
 	term_t y;
@@ -162,30 +182,6 @@ void set_cursor(buff data)
 	{
 		printf("%s", CURSOR_LEFT);
 	}
-}
-
-buff_t scroll(buff data)
-{
-	buff_t lines_to_hide = data.lines % (get_term_sz('Y') - BAR_SZ);
-	buff_t offset = 0;
-
-	for(buff_t pos = 0; pos < data.chars; pos++)
-	{
-		if(data.text[pos] == LINEFEED)
-		{
-			offset++;
-		}
-		if(data.lines > 2 * (get_term_sz('Y') - BAR_SZ))
-		{
-			break;
-		}
-		if(offset == lines_to_hide) // How many lines to scroll.
-		{
-			offset = pos;
-			break;
-		}
-	}
-	return offset;
 }
 
 // Pressed keys to rendered chars in proper order.

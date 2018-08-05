@@ -11,7 +11,7 @@ files use git-show or git-log.
 - dynamically allocated text,
 - real stdin (built-in terminal) cursor,
 - version info,
-- scrolling && way bigger lines && chars limit,
+- scrolling,
 - file is no longer created at the program's start,
 - bigger buffer.
 
