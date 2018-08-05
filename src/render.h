@@ -22,7 +22,7 @@
 #define CURSOR_RIGHT "\033[C"
 #define CURSOR_LEFT "\033[D"
 #define LINE_UP "\033[F"
-#define CLEAN_LINE "\033[K"
+#define CLEAN_WHOLE_LINE "\033[2K"
 
 void help(void);
 void version(void);
@@ -34,7 +34,7 @@ void print_fname(const char *string, const char *prog, term_t max_len);
 void bar(buff data, char key);
 
 void set_cursor_pos(buff data);
-// buff_t scroll(buff data);
+buff_t scroll(buff data);
 void print_text(buff data);
 void window(buff data, char key);
 

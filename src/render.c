@@ -59,10 +59,11 @@ void flush_window(buff_t lines) // To provide rendering in a one frame.
 	{
 		printf("%s", CURSOR_DOWN);
 	}
-	printf("%s", CLEAN_LINE);
+
+	printf("%s", CLEAN_WHOLE_LINE);
 	for(y = 0; y < get_term_sz('Y'); y++)
 	{
-		printf("%s%s", LINE_UP, CLEAN_LINE);
+		printf("%s%s", LINE_UP, CLEAN_WHOLE_LINE);
 	}
 	fflush(stdout);
 }
@@ -106,9 +107,9 @@ void bar(buff data, char key)
 	char lines[11];
 	char chars[11];
 
-	sprintf(keycode, "%i", key);
-	sprintf(lines, "%i", data.lines);
-	sprintf(chars, "%i", data.chars);
+	snprintf(keycode, sizeof(keycode), "%i", key);
+	snprintf(lines, sizeof(lines), "%i", data.lines);
+	snprintf(chars, sizeof(chars), "%i", data.chars);
 
 	printf("%s%s", INVERT, words[0]);
 	print_fname(data.filename, words[0], get_term_sz('X') - strlen(words[0])
@@ -162,8 +163,10 @@ void set_cursor_pos(buff data) // TODO: SCROLLING
 
 buff_t scroll(buff data)
 {
-	buff_t hidden_lines = data.lines % (get_term_sz('Y') - BAR_SZ - 1);
+	buff_t lines_to_hide = data.lines % (get_term_sz('Y') - BAR_SZ);
 	buff_t offset = 0;
+
+//	printf("X%iX", lines_to_hide);
 
 	for(buff_t pos = 0; pos < data.chars; pos++)
 	{
@@ -171,7 +174,11 @@ buff_t scroll(buff data)
 		{
 			offset++;
 		}
-		if(offset == hidden_lines)
+		if(data.lines > 2 * (get_term_sz('Y') - BAR_SZ))
+		{
+			break;
+		}
+		if(offset == lines_to_hide) // How many lines to scroll.
 		{
 			offset = pos;
 			break;
@@ -183,7 +190,7 @@ buff_t scroll(buff data)
 // Pressed keys to rendered chars in proper order.
 void print_text(buff data)
 {
-	if(data.lines < get_term_sz('Y') - BAR_SZ)
+	if(data.lines <= get_term_sz('Y') - BAR_SZ)
 	{
 		if(data.chars == 0 || data.text[0] == LINEFEED)
 		{
@@ -197,20 +204,19 @@ void print_text(buff data)
 		{
 			putchar(data.text[pos]);
 		}
+//		printf("%s", CURSOR_UP); // TODO
 	}
 }
 
 // Shows chars and other stupid things.
 void window(buff data, char key)
 {
-	term_t y;
-
 	bar(data, key);
 	print_text(data);
 
 	if(data.lines <= get_term_sz('Y') + BAR_SZ)
 	{
-		for(y = data.lines + BAR_SZ; y < get_term_sz('Y'); y++)
+		for(term_t y = data.lines + BAR_SZ; y < get_term_sz('Y'); y++)
 		{
 			putchar(LINEFEED);
 		}
