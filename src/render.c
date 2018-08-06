@@ -1,5 +1,3 @@
-// TODO: DESCRIPTION!
-
 #include "render.h"
 
 void help(void)
@@ -7,12 +5,12 @@ void help(void)
 	printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
 	"Usage: fiflo [option].",
 
-	"Options:        Description:",
-	"<NULL>          Open and set the basename to 'noname.asdf'.",
-	"basename        Open the textfile named 'basename' using current path.",
-	"/path/basename  Open the textfile 'basename' located in the '/path'.",
-	"-h, --help      Show program help.",
-	"-v, --version   Display words about the current version.");
+	"Options:      Description:",
+	"<NULL>        Open and set the filename to '/<current_path>/noname.asdf'",
+	"basename      Open the textfile 'basename' using your current path.",
+	"/path/bname   Open the textfile 'basename' located in the '/path'.",
+	"-h, --help    Show program help.",
+	"-v, --version Display some info about the current version.");
 }
 
 void version(void)
@@ -23,7 +21,7 @@ void version(void)
 	"https://gitlab.com/mattmaniak/fiflo");
 }
 
-term_t get_term_sz(char axis) // Check terminal size.
+term_t get_term_sz(char axis)
 {
 	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
@@ -48,14 +46,13 @@ term_t get_term_sz(char axis) // Check terminal size.
 		case 'Y':
 			return win.ws_row;
 	}
-	return 0; // Protection from the -Wreturn-type warning.
+	return 0; // Required -Wreturn-type.
 }
 
-// TODO: WITH SCROLL
-void flush_window(buff_t lines) // To provide rendering in a one frame.
+void flush_window(buff_t lines)
 {
 	term_t y;
-	for(y = 0; y < get_term_sz('Y') - BAR_SZ - lines; y++)
+	for(y = 0; y < PLACE_FOR_TEXT - lines; y++)
 	{
 		printf("%s", CURSOR_DOWN);
 	}
@@ -68,41 +65,31 @@ void flush_window(buff_t lines) // To provide rendering in a one frame.
 	fflush(stdout);
 }
 
-// Cuts a string when is too long. TODO: NAMES!
-void print_fname(const char* string, const char* prog, term_t max_len)
+void print_fname(const char* prog, char* fname, term_t max_len)
 {
-	term_t pos;
-	term_t whitespace = get_term_sz('X') - strlen(string) - strlen(prog);
+	term_t whitespace = get_term_sz('X') - strlen(prog) - strlen(fname);
 
-	if(strlen(string) > max_len)
+	if(strlen(fname) > max_len)
 	{
-		for(pos = 0; pos < max_len; pos++)
-		{
-			putchar(string[pos]);
-		}
-		printf("%s", "... ");
+		printf("%.*s%s", max_len, fname, "... "); // Precision of the output.
 	}
 	else
 	{
-		printf("%s", string);
-		for(pos = 0; pos < whitespace; pos++)
-		{
-			putchar(' ');
-		}
+		printf("%s%*s", fname, whitespace, " "); // Minimal width: whitespace.
 	}
 }
 
-void bar(buff data, char key)
+void bar(buff data, char key) // TODO: SHORTEN
 {
-	term_t x;
-
-	const char* words[5] = {" fiflo | file: \0",
-	" lines: \0",
-	" | chars: \0",
-	" | last: \0",
-	" | save: CTRL+D | exit: CTRL+X \0"};
-
 	const uint8_t dots_and_space = 4;
+	const char* words[5] =
+	{
+		" fiflo | file: \0",
+		" lines: \0",
+		" | chars: \0",
+		" | last: \0",
+		" | save: CTRL+D | exit: CTRL+X \0"
+	};
 	char keycode[4];
 	char lines[11];
 	char chars[11];
@@ -112,33 +99,27 @@ void bar(buff data, char key)
 	snprintf(chars, sizeof(chars), "%i", data.chars);
 
 	printf("%s%s", INVERT, words[0]);
-	print_fname(data.filename, words[0], get_term_sz('X') - strlen(words[0])
+	print_fname(words[0], data.filename, get_term_sz('X') - strlen(words[0])
 	- dots_and_space);
 
 	// Lower part of the bar.
 	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lines)
 	+ strlen(words[2]) + strlen(chars) + strlen(words[3]) + strlen(keycode);
 
-	printf("%s%i%s%i%s%i%s", words[1], data.lines, words[2],
-	data.chars, words[3], key, words[4]);
-
-	for(x = 0; x < get_term_sz('X') - whitespace; x++)
-	{
-		putchar(' ');
-	}
-	printf("%s", RESET);
+	printf("%s%i%s%i%s%i%s%*s%s", words[1], data.lines, words[2], data.chars,
+	words[3], key, words[4], get_term_sz('X') - whitespace, " ", RESET);
 }
 
 buff_t scroll(buff data)
 {
-	buff_t lines_to_hide = data.lines - (get_term_sz('Y') - BAR_SZ);
+	buff_t lines_to_hide = data.lines - PLACE_FOR_TEXT;
 	buff_t offset = 0;
 
 	for(buff_t pos = 0; pos < data.chars; pos++)
 	{
 		if(data.text[pos] == LINEFEED)
 		{
-			offset++;
+			offset++; // Temponary usage.
 		}
 		if(offset == lines_to_hide) // How many lines to scroll.
 		{
@@ -149,19 +130,18 @@ buff_t scroll(buff data)
 	return offset;
 }
 
-void set_cursor(buff data)
+void set_cursor_pos(buff data)
 {
 	term_t y;
-	buff_t pos;
 	term_t right = 0;
 
-	if(data.lines < get_term_sz('Y') - BAR_SZ)
+	if(data.lines < PLACE_FOR_TEXT)
 	{
-		for(y = 0; y < get_term_sz('Y') - BAR_SZ - data.lines; y++)
+		for(y = 0; y < PLACE_FOR_TEXT - data.lines; y++)
 		{
 			printf("%s", CURSOR_UP);
 		}
-		for(pos = data.chars; pos > 0; pos--) // Last line doesn't need 'right'.
+		for(buff_t pos = data.chars; pos > 0; pos--) // Last line is auto pos.
 		{
 			if(data.text[pos] == LINEFEED)
 			{
@@ -184,10 +164,9 @@ void set_cursor(buff data)
 	}
 }
 
-// Pressed keys to rendered chars in proper order.
 void print_text(buff data)
 {
-	if(data.lines <= get_term_sz('Y') - BAR_SZ)
+	if(data.lines <= PLACE_FOR_TEXT) // Text fits in a screen.
 	{
 		if(data.chars == 0 || data.text[0] == LINEFEED)
 		{
@@ -204,19 +183,18 @@ void print_text(buff data)
 	}
 }
 
-// Shows chars and other stupid things.
 void window(buff data, char key)
 {
 	bar(data, key);
 	print_text(data);
 
-	if(data.lines <= get_term_sz('Y') - BAR_SZ) // Visible bottom fill.
+	if(data.lines <= PLACE_FOR_TEXT) // Visible bottom fill.
 	{
-		for(term_t y = data.lines; y < get_term_sz('Y') - BAR_SZ; y++)
+		for(term_t y = data.lines; y < PLACE_FOR_TEXT; y++)
 		{
 			putchar(LINEFEED);
 		}
 	}
-	set_cursor(data);
+	set_cursor_pos(data);
 }
 

@@ -24,20 +24,21 @@
 #define ARROW_LEFT 68
 #define BACKSPACE 127
 
+// Functions connected with the program API. Generally what's unseen.
 buff_t get_file_sz(FILE* fd);
 char nix_getch(void);
-void ptr_check(void* ptr, const char* errmsg);
-void limit(buff data);
+void ptr_check(void* ptr, const char* errmsg); // Exit on error with message.
+void limits(buff data); // Prevent overflows
 
 void set_filename(buff data, char* name);
 buff read_file(buff data, char* name);
 void save_file(buff data);
 
-buff count_lines(buff data);
 
-buff visible_chars(buff data, char key);
-buff shortcut(buff data, char key);
-buff alloc_text(buff data, char key);
+buff visible_char(buff data, char key);
+buff keyboard_shortcut(buff data, char key);
+buff count_lines(buff data);
+buff alloc_text(buff data, char key); // Place the char into the string.
 
 #endif
 

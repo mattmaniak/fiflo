@@ -7,15 +7,14 @@
 
 void run(char* name)
 {
-	buff data = {NULL, NULL, 0, 1}; // Initializer to prevent -Wuninitialized.
+	buff data = {NULL, NULL, 0, 0}; // Just empty init for -Wuninitialized.
 	data = read_file(data, name);
-	char pressed_key = TERMINATOR;
+	char pressed_key = TERMINATOR; // Initializer too.
 
-	for(;;)
+	for(;;) // Main program loop.
 	{
 		data = alloc_text(data, pressed_key);
-		data = count_lines(data);
-		limit(data);
+		limits(data);
 
 		window(data, pressed_key);
 		pressed_key = nix_getch();

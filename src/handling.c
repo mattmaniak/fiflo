@@ -1,5 +1,3 @@
-// Functions connected with the program API. Generally what's unseen.
-
 #include "handling.h"
 
 buff_t get_file_sz(FILE* fd)
@@ -27,16 +25,16 @@ char nix_getch(void) // https://stackoverflow.com/questions/12710582/
 	return key;
 }
 
-void ptr_check(void* ptr, const char* errmsg) // Eg. malloc or FILE*.
+void ptr_check(void* ptr, const char* errmsg)
 {
-	if(ptr == NULL)
+	if(!ptr)
 	{
-		fprintf(stderr, "%s\n", errmsg);
+		fputs(errmsg, stderr);
 		exit(1);
 	}
 }
 
-void limit(buff data)
+void limits(buff data)
 {
 	if(data.lines >= MAX_LINES)
 	{
@@ -68,11 +66,11 @@ void set_filename(buff data, char* name) // TODO: FOLDER PREVENTION
 		// https://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html
 		uint16_t pos;
 		char* path = malloc(MAX_PATH + terminator_sz);
-		ptr_check(path, "Cannot allocate path in memory, exited.\0");
+		ptr_check(path, "Cannot allocate path in memory, exited.\n\0");
 
 		if(getcwd(path, MAX_PATH + terminator_sz) == NULL)
 		{
-			fputs("Cannot get your current dir, exited.\0", stderr);
+			fputs("Cannot get your current dir, exited.\n\0", stderr);
 			exit(1);
 		}
 		path[strlen(path)] = TERMINATOR;
@@ -99,7 +97,7 @@ buff read_file(buff data, char* name)
 	const bool terminator_sz = 1;
 
 	data.filename = malloc(MAX_PATH + MAX_NAME + terminator_sz); // >~ 4 KiB.
-	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\0");
+	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\n\0");
 
 	set_filename(data, name);
 	FILE* textfile = fopen(data.filename, "r");
@@ -126,28 +124,13 @@ buff read_file(buff data, char* name)
 void save_file(buff data)
 {
 	FILE* textfile = fopen(data.filename, "w");
-	ptr_check(textfile, "Cannot write to the file, exited.\0");
+	ptr_check(textfile, "Cannot write to the file, exited.\n\0");
 
 	fputs(data.text, textfile);
 	fclose(textfile);
 }
 
-buff count_lines(buff data)
-{
-	buff_t pos;
-	data.lines = 1; // Reset.
-
-	for(pos = 0; pos <= data.chars; pos++)
-	{
-		if(data.text[pos] == LINEFEED)
-		{
-			data.lines++;
-		}
-	}
-	return data;
-}
-
-buff visible_chars(buff data, char key)
+buff visible_char(buff data, char key)
 {
 	bool terminator_sz = 1;
 	bool new_sz = 1;
@@ -161,7 +144,7 @@ buff visible_chars(buff data, char key)
 		break;
 
 		case TERMINATOR: // Required for rendering.
-		case TAB:
+		case TAB: // TODO
 		break;
 
 		case LINEFEED:
@@ -180,12 +163,12 @@ buff visible_chars(buff data, char key)
 			}
 		break;
 	}
-	ptr_check(data.text, "Cannot realloc memory for a new char, exited.\0");
+	ptr_check(data.text, "Cannot realloc memory for the new char, exited.\n\0");
 	data.text[data.chars] = TERMINATOR;
 	return data;
 }
 
-buff shortcut(buff data, char key)
+buff keyboard_shortcut(buff data, char key)
 {
 	switch(key)
 	{
@@ -194,27 +177,41 @@ buff shortcut(buff data, char key)
 		break;
 
 		case CTRL_X:
-			free(data.filename);
 			free(data.text);
+			free(data.filename);
 			exit(0);
 	}
 	return data;
 }
 
-// Convert pressed key into a char in the string.
+buff count_lines(buff data)
+{
+	data.lines = 1; // Reset.
+
+	for(buff_t pos = 0; pos <= data.chars; pos++)
+	{
+		if(data.text[pos] == LINEFEED)
+		{
+			data.lines++;
+		}
+	}
+	return data;
+}
+
 buff alloc_text(buff data, char key)
 {
 	switch(key)
 	{
 		default:
-			data = visible_chars(data, key);
+			data = visible_char(data, key);
 		break;
 
 		case CTRL_D:
 		case CTRL_X:
-			data = shortcut(data, key);
+			data = keyboard_shortcut(data, key);
 		break;
 	}
+	data = count_lines(data);
 	return data;
 }
 

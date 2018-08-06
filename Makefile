@@ -7,7 +7,7 @@ CFLAGS = \
 ASAN_FLAGS = \
 -fsanitize=address \
 -fsanitize=undefined \
--fsanitize=signed-integer-overflow \
+-fsanitize=signed-integer-overflow
 
 TARGET = fiflo
 
@@ -22,7 +22,7 @@ debug:
 	$(CC) src/$(TARGET).c -o $(TARGET) \
 	$(CFLAGS) \
 	$(ASAN_FLAGS) \
-	-g
+	-g -O0
 
 install:
 	cp $(TARGET) $(BIN_ODIR)
