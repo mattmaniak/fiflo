@@ -27,7 +27,7 @@
 buff_t get_file_sz(FILE* fd);
 char nix_getch(void);
 void ptr_check(void* ptr, const char* errmsg);
-void chars_limit(buff_t chars);
+void limit(buff data);
 
 void set_filename(buff data, char* name);
 buff read_file(buff data, char* name);

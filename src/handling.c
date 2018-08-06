@@ -36,12 +36,18 @@ void ptr_check(void* ptr, const char* errmsg) // Eg. malloc or FILE*.
 	}
 }
 
-void chars_limit(buff_t chars)
+void limit(buff data)
 {
-	if(chars > MAX_CHARS - 1) // -1 to handle max_lines.
+	if(data.lines >= MAX_LINES)
 	{
-		fprintf(stderr, "%s%i%s%i\n", "Max. lines amount: ", MAX_CHARS,
-		", got: ", chars);
+		fprintf(stderr, "Maximum lines amount: %i, got: %i.\n", MAX_LINES,
+		data.lines);
+		exit(1);
+	}
+	else if(data.chars >= MAX_CHARS)
+	{
+		fprintf(stderr, "Maximum lines amount: %i, got: %i.\n", MAX_CHARS,
+		data.chars);
 		exit(1);
 	}
 }
@@ -140,7 +146,6 @@ buff count_lines(buff data)
 	}
 	return data;
 }
-
 
 buff visible_chars(buff data, char key)
 {

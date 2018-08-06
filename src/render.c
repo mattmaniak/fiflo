@@ -30,14 +30,14 @@ term_t get_term_sz(char axis) // Check terminal size.
 
 	if(win.ws_col < MIN_X || win.ws_row < MIN_Y)
 	{
-		fprintf(stderr, "%s%i%c%i%s\n",
-		"Min. term size is ", MIN_X, 'x', MIN_Y, ", exited.");
+		fprintf(stderr, "Minimum terminal size is: %ix%i, exited.\n", MIN_X,
+		MIN_Y);
 		exit(1);
 	}
 	else if(win.ws_col > MAX_X || win.ws_row > MAX_Y)
 	{
-		fprintf(stderr, "%s%i%c%i%s\n",
-		"Max. term size is ", MAX_X, 'x', MAX_Y, ", exited.");
+		fprintf(stderr, "Maximum terminal size is: %ix%i, exited.\n", MAX_X,
+		MAX_Y);
 		exit(1);
 	}
 

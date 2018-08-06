@@ -9,10 +9,10 @@
 
 #define BAR_SZ 2
 
-#define MIN_X 80 // MIN is before name to tell apart from limits.h macros.
+#define MIN_X 80 // MIN/MAX are before names to tell apart from limits.h macros.
 #define MIN_Y 10
 #define MAX_X USHRT_MAX - 1 // 65534
-#define MAX_Y USHRT_MAX - 1
+#define MAX_Y MAX_X
 
 // ANSI escape codes.
 #define RESET "\033[0m"

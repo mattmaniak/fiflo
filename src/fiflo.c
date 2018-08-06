@@ -1,6 +1,6 @@
 #ifdef __linux__
 
-#include "fiflo.h"
+#include "fiflo.h" // All typedefs are here.
 
 #include "handling.c"
 #include "render.c"
@@ -15,7 +15,7 @@ void run(char* name)
 	{
 		data = alloc_text(data, pressed_key);
 		data = count_lines(data);
-		chars_limit(data.chars);
+		limit(data);
 
 		window(data, pressed_key);
 		pressed_key = nix_getch();

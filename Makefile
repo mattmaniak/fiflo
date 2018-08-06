@@ -1,12 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Wpedantic -std=c11
-ASAN_FLAGS = -lasan \
--fsanitize=leak \
+CFLAGS = \
+-std=c11 \
+-Wall -Wextra -Wpedantic \
+-lm
+
+ASAN_FLAGS = \
 -fsanitize=address \
 -fsanitize=undefined \
 -fsanitize=signed-integer-overflow \
 
 TARGET = fiflo
+
 BIN_ODIR = /usr/bin/$(TARGET)
 MAN_ODIR = /usr/share/man/man1/$(TARGET).1
 
