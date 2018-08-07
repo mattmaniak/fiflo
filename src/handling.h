@@ -1,6 +1,7 @@
 #ifndef HANDLING_H
 #define HANDLING_H
 
+#include <linux/limits.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -8,9 +9,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <termios.h>
-
-#define MAX_PATH 4096
-#define MAX_NAME 255
 
 // Required keymap.
 #define TERMINATOR 0
@@ -23,6 +21,8 @@
 #define ARROW_RIGHT 67
 #define ARROW_LEFT 68
 #define BACKSPACE 127
+
+#define TERMINATOR_SZ 1
 
 // Functions connected with the program API. Generally what's unseen.
 buff_t get_file_sz(FILE* fd);

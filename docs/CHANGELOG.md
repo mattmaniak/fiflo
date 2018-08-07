@@ -13,7 +13,8 @@ files use git-show or git-log.
 - version info,
 - scrolling,
 - file is no longer created at the program's start,
-- bigger buffer.
+- bigger buffer,
+- folder as a file prevention.
 
 ### v1.0.0 (July 15, 2018):
 - simplified API,

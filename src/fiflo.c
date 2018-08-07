@@ -7,8 +7,9 @@
 
 void run(char* name)
 {
+
 	buff data = {NULL, NULL, 0, 0}; // Just empty init for -Wuninitialized.
-	data.filename = malloc(MAX_PATH + MAX_NAME + 1); // >~ 4 KiB.
+	data.filename = malloc(PATH_MAX + NAME_MAX);
 	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\n\0");
 	set_filename(data, name);
 

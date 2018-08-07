@@ -25,7 +25,7 @@
 #define LINE_UP "\033[F"
 #define CLEAN_WHOLE_LINE "\033[2K"
 
-// Every see thing.
+// Every seen thing.
 void help(void);
 void version(void);
 
