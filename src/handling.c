@@ -64,35 +64,28 @@ void set_filename(buff data, char* passed)
 	}
 	if(passed[0] == '/')
 	{
-		strcpy(data.filename, passed); // PROBABLY TODO
+		strcpy(data.filename, passed); // Malloced so doesn't need 'n' for size.
 	}
 	else
 	{
 		// https://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html
-		uint16_t pos;
-		char* path = malloc(MAX_PATH + terminator_sz);
-		ptr_check(path, "Cannot allocate path in memory, exited.\n\0");
+		char* abs_path = malloc(MAX_PATH + terminator_sz);
 
-		if(getcwd(path, MAX_PATH + terminator_sz) == NULL)
+		// TODO: MAYBE STRLEN CHECK
+		ptr_check(abs_path, "Cannot allocate path in memory, exited.\n\0");
+		ptr_check(getcwd(abs_path, MAX_PATH + terminator_sz),
+		"Cannot get your current dir, exited.\n\0");
+
+		strcpy(data.filename, abs_path);
+		data.filename[strlen(abs_path)] = '/'; // Add the slash between.
+
+		for(uint16_t pos = 0; pos < strlen(passed); pos++) // Copy bname.
 		{
-			fputs("Cannot get your current dir, exited.\n\0", stderr);
-			exit(1);
+			data.filename[pos + strlen(abs_path) + slash_sz] = passed[pos];
 		}
-		path[strlen(path)] = TERMINATOR;
+		data.filename[strlen(abs_path) + strlen(passed) + slash_sz] = TERMINATOR;
 
-		for(pos = 0; pos < strlen(path); pos++) // Copy cwd.
-		{
-			data.filename[pos] = path[pos];
-		}
-		data.filename[strlen(path)] = '/'; // Add the slash between.
-
-		for(pos = 0; pos < strlen(passed); pos++) // Copy bname.
-		{
-			data.filename[pos + strlen(path) + slash_sz] = passed[pos];
-		}
-		data.filename[strlen(path) + strlen(passed) + slash_sz] = TERMINATOR;
-
-		free(path);
+		free(abs_path);
 	}
 }
 
