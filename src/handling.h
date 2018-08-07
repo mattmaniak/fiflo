@@ -30,8 +30,8 @@ char nix_getch(void);
 void ptr_check(void* ptr, const char* errmsg); // Exit on error with message.
 void limits(buff data); // Prevent overflows
 
-void set_filename(buff data, char* name);
-buff read_file(buff data, char* name);
+void set_filename(buff data, char* passed);
+buff read_file(buff data);
 void save_file(buff data);
 
 

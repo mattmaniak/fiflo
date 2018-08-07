@@ -50,16 +50,21 @@ void limits(buff data)
 	}
 }
 
-void set_filename(buff data, char* name) // TODO: FOLDER PREVENTION
+void set_filename(buff data, char* passed)
 {
 	// Filename = absolute path + basename eg. "/home/user/my_file".
 	// Basename (base filename) eg. "my_file".
 	const bool terminator_sz = 1;
 	const bool slash_sz = 1;
 
-	if(name[0] == '/')
+	if(passed[strlen(passed) - 1] == '/')
 	{
-		strcpy(data.filename, name); // PROBABLY TODO
+		fputs("Cannot open the folder as a file, exited.\n", stderr);
+		exit(1);
+	}
+	if(passed[0] == '/')
+	{
+		strcpy(data.filename, passed); // PROBABLY TODO
 	}
 	else
 	{
@@ -81,28 +86,23 @@ void set_filename(buff data, char* name) // TODO: FOLDER PREVENTION
 		}
 		data.filename[strlen(path)] = '/'; // Add the slash between.
 
-		for(pos = 0; pos < strlen(name); pos++) // Copy bname.
+		for(pos = 0; pos < strlen(passed); pos++) // Copy bname.
 		{
-			data.filename[pos + strlen(path) + slash_sz] = name[pos];
+			data.filename[pos + strlen(path) + slash_sz] = passed[pos];
 		}
-		data.filename[strlen(path) + strlen(name) + slash_sz] = TERMINATOR;
+		data.filename[strlen(path) + strlen(passed) + slash_sz] = TERMINATOR;
 
 		free(path);
 	}
 }
 
-buff read_file(buff data, char* name)
+buff read_file(buff data)
 {
 	char chr;
 	const bool terminator_sz = 1;
 
-	data.filename = malloc(MAX_PATH + MAX_NAME + terminator_sz); // >~ 4 KiB.
-	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\n\0");
-
-	set_filename(data, name);
 	FILE* textfile = fopen(data.filename, "r");
-
-	if(textfile != NULL)
+	if(textfile)
 	{
 		data.text = malloc(get_file_sz(textfile) + terminator_sz);
 		while((chr = getc(textfile)) != EOF)

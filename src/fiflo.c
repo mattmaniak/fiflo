@@ -8,7 +8,11 @@
 void run(char* name)
 {
 	buff data = {NULL, NULL, 0, 0}; // Just empty init for -Wuninitialized.
-	data = read_file(data, name);
+	data.filename = malloc(MAX_PATH + MAX_NAME + 1); // >~ 4 KiB.
+	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\n\0");
+	set_filename(data, name);
+
+	data = read_file(data);
 	char pressed_key = TERMINATOR; // Initializer too.
 
 	for(;;) // Main program loop.

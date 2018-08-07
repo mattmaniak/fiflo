@@ -84,7 +84,7 @@ void bar(buff data, char key) // TODO: SHORTEN
 	const uint8_t dots_and_space = 4;
 	const char* words[5] =
 	{
-		" fiflo | file: \0",
+		" fiflo | filename: \0",
 		" lines: \0",
 		" | chars: \0",
 		" | last: \0",
@@ -132,12 +132,11 @@ buff_t scroll(buff data)
 
 void set_cursor_pos(buff data)
 {
-	term_t y;
 	term_t right = 0;
 
 	if(data.lines < PLACE_FOR_TEXT)
 	{
-		for(y = 0; y < PLACE_FOR_TEXT - data.lines; y++)
+		for(term_t y = 0; y < PLACE_FOR_TEXT - data.lines; y++)
 		{
 			printf("%s", CURSOR_UP);
 		}
@@ -154,7 +153,7 @@ void set_cursor_pos(buff data)
 			right++;
 		}
 	}
-	for(y = 0; y < right; y++)
+	for(term_t x = 0; x < right; x++)
 	{
 		printf("%s", CURSOR_RIGHT);
 	}
