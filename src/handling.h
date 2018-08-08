@@ -10,6 +10,10 @@
 #include <unistd.h>
 #include <termios.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 // Required keymap.
 #define TERMINATOR 0
 #define CTRL_D 4

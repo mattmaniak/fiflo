@@ -108,13 +108,21 @@ buff read_file(buff data)
 	return data;
 }
 
-void save_file(buff data)
+void save_file(buff data) // TODO: WRITING
 {
-	FILE* textfile = fopen(data.filename, "w");
-	ptr_check(textfile, "Cannot write to the file, exited.\n\0");
+	int textfile = open(data.filename, O_CREAT | O_EXCL | O_WRONLY, 0600);
+	if(textfile == -1)
+	{
+		fputs("Failed to create the file.\n", stderr);
+		exit(1);
+	}
+	close(textfile);
 
-	fputs(data.text, textfile);
-	fclose(textfile);
+//	FILE* textfile = fopen(data.filename, "w");
+//	ptr_check(textfile, "Cannot write to the file, exited.\n\0");
+
+//	fputs(data.text, textfile);
+//	fclose(textfile);
 }
 
 buff visible_char(buff data, char key)

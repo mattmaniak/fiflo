@@ -8,7 +8,7 @@
 #include <sys/ioctl.h>
 
 #define BAR_SZ 2
-#define PLACE_FOR_TEXT get_term_sz('Y') - BAR_SZ
+#define PLACE_FOR_TEXT (get_term_sz('Y') - BAR_SZ)
 
 #define MIN_X 80 // MIN/MAX are before names to tell apart from limits.h macros.
 #define MIN_Y 10

@@ -71,11 +71,19 @@ void print_fname(const char* prog, char* fname, term_t max_len)
 
 	if(strlen(fname) > max_len)
 	{
+		for(term_t pos = 0; pos < max_len; pos++)
+		{
+			putchar(fname[pos]);
+		}
 		printf("%.*s%s", max_len, fname, "... "); // Precision of the output.
 	}
 	else
 	{
-		printf("%s%*s", fname, whitespace, " "); // Minimal width: whitespace.
+		printf("%s", fname); // Minimal width: whitespace.
+		for(term_t pos = 0; pos < whitespace; pos++)
+		{
+			putchar(' ');
+		}
 	}
 }
 

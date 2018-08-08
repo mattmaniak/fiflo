@@ -41,3 +41,14 @@ commits to provide updated code on the "develop" branch.
 - every function have to fit in the 720p screen with 10px font,
 - uninitialized variables must be before initialized,
 - function's args names need to be shorter than variables names.
+
+## Testing
+Before the stable release 'fiflo' is tested with:
+- LXTerminal,
+- Terminology,
+- Gnome Terminal,
+- xterm
+emulators and with the native Linux text mode wnich is priority in tests.
+
+I do my best for proper rendering in every above. In others there could be some
+bugs because of ther quirk modes.
