@@ -7,19 +7,20 @@
 
 void run(char* name)
 {
-
 	buff data = {NULL, NULL, 0, 0}; // Just empty init for -Wuninitialized.
-	data.filename = malloc(PATH_MAX + NAME_MAX);
+	data.filename = malloc(PATH_MAX);
 	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\n\0");
-	set_filename(data, name);
 
+	set_fname(data, name);
 	data = read_file(data);
 	char pressed_key = TERMINATOR; // Initializer too.
 
 	for(;;) // Main program loop.
 	{
+		signal(SIGTSTP, ignore_sig); // CTRL_Z
+		signal(SIGINT, ignore_sig); // CTRL_C
+
 		data = alloc_text(data, pressed_key);
-		limits(data);
 
 		window(data, pressed_key);
 		pressed_key = nix_getch();
@@ -44,9 +45,6 @@ void argc_check(int arg_count)
 
 int main(int argc, char* argv[])
 {
-	signal(SIGTSTP, ignore_sig); // CTRL_Z
-	signal(SIGINT, ignore_sig); // CTRL_C
-
 	argc_check(argc);
 	if(argv[1] == NULL)
 	{

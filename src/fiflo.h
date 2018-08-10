@@ -10,8 +10,8 @@
 typedef uint16_t term_t;
 typedef int32_t buff_t;
 
-#define MAX_LINES (buff_t) powf(2, (sizeof(buff_t) * 8))
 #define MAX_CHARS MAX_LINES - 1 // 1 for NULL.
+#define MAX_LINES (buff_t) powf(2, (sizeof(buff_t) * 8))
 
 typedef struct
 {

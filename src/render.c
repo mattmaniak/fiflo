@@ -28,13 +28,13 @@ term_t get_term_sz(char axis)
 
 	if(win.ws_col < MIN_X || win.ws_row < MIN_Y)
 	{
-		fprintf(stderr, "Minimum terminal size is: %ix%i, exited.\n", MIN_X,
+		fprintf(stderr, "Minimum terminal size is: %dx%d, exited.\n", MIN_X,
 		MIN_Y);
 		exit(1);
 	}
 	else if(win.ws_col > MAX_X || win.ws_row > MAX_Y)
 	{
-		fprintf(stderr, "Maximum terminal size is: %ix%i, exited.\n", MAX_X,
+		fprintf(stderr, "Maximum terminal size is: %dx%d, exited.\n", MAX_X,
 		MAX_Y);
 		exit(1);
 	}
@@ -102,9 +102,9 @@ void bar(buff data, char key) // TODO: SHORTEN
 	char lines[11];
 	char chars[11];
 
-	snprintf(keycode, sizeof(keycode), "%i", key);
-	snprintf(lines, sizeof(lines), "%i", data.lines);
-	snprintf(chars, sizeof(chars), "%i", data.chars);
+	snprintf(keycode, sizeof(keycode), "%d", key);
+	snprintf(lines, sizeof(lines), "%d", data.lines);
+	snprintf(chars, sizeof(chars), "%d", data.chars);
 
 	printf("%s%s", INVERT, words[0]);
 	print_fname(words[0], data.filename, get_term_sz('X') - strlen(words[0])
@@ -114,7 +114,7 @@ void bar(buff data, char key) // TODO: SHORTEN
 	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lines)
 	+ strlen(words[2]) + strlen(chars) + strlen(words[3]) + strlen(keycode);
 
-	printf("%s%i%s%i%s%i%s%*s%s", words[1], data.lines, words[2], data.chars,
+	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lines, words[2], data.chars,
 	words[3], key, words[4], get_term_sz('X') - whitespace, " ", RESET);
 }
 
@@ -165,7 +165,7 @@ void set_cursor_pos(buff data)
 	{
 		printf("%s", CURSOR_RIGHT);
 	}
-	if(data.lines == 2)
+	if(data.text[0] == LINEFEED && data.lines == 2)
 	{
 		printf("%s", CURSOR_LEFT);
 	}

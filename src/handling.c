@@ -1,13 +1,12 @@
 #include "handling.h"
 
-buff_t get_file_sz(FILE* fd)
+void ptr_check(void* ptr, const char* errmsg)
 {
-	buff_t pos = ftell(fd);
-	fseek(fd, 0, SEEK_END);
-	buff_t sz = ftell(fd);
-	fseek(fd, pos, SEEK_SET);
-
-	return sz;
+	if(!ptr)
+	{
+		fprintf(stderr, "%s\n", errmsg);
+		exit(1);
+	}
 }
 
 char nix_getch(void) // https://stackoverflow.com/questions/12710582/
@@ -25,53 +24,37 @@ char nix_getch(void) // https://stackoverflow.com/questions/12710582/
 	return key;
 }
 
-void ptr_check(void* ptr, const char* errmsg)
+void set_fname(buff data, char* passed)
 {
-	if(!ptr)
-	{
-		fputs(errmsg, stderr);
-		exit(1);
-	}
-}
-
-void limits(buff data)
-{
-	if(data.lines >= MAX_LINES)
-	{
-		fprintf(stderr, "Maximum lines amount: %i, got: %i.\n", MAX_LINES,
-		data.lines);
-		exit(1);
-	}
-	else if(data.chars >= MAX_CHARS)
-	{
-		fprintf(stderr, "Maximum lines amount: %i, got: %i.\n", MAX_CHARS,
-		data.chars);
-		exit(1);
-	}
-}
-
-void set_filename(buff data, char* passed)
-{
-	const bool slash_sz = 1;
-
+	// https://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html worth.
 	if(passed[strlen(passed) - 1] == '/')
 	{
-		fputs("Cannot open the folder as a file, exited.\n", stderr);
+		fputs("Cannot open passed folder as the file, exited.\n", stderr);
 		exit(1);
 	}
+
 	if(passed[0] == '/') // Is absolute path.
 	{
+		if(strlen(passed) + 1 > PATH_MAX)
+		{
+			fputs("Given path is to long, exited.\n", stderr);
+			exit(1);
+		}
 		strcpy(data.filename, passed); // Malloced so doesn't need 'n' for size.
 	}
-	else
+	else // Relative or basename.
 	{
-		// https://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html
-		char* abs_path = malloc(PATH_MAX + TERMINATOR_SZ); // See man 3 getcwd.
+		const bool slash_sz = 1;
 
-		// TODO: MAYBE STRLEN
-		ptr_check(getcwd(abs_path, PATH_MAX + TERMINATOR_SZ),
-		"Cannot get your current dir.\n\0");
+		char* abs_path = malloc(PATH_MAX); // Man 3 getcwd.
+		ptr_check((getcwd(abs_path, PATH_MAX)),
+		"Cannot get your current dir. Can be too long, exited.\0");
 
+		if((strlen(abs_path) + strlen(passed) + 1) > PATH_MAX)
+		{
+			fputs("Your filename is too long, exited.\n", stderr);
+			exit(1);
+		}
 		strcpy(data.filename, abs_path); // Copy the path.
 		data.filename[strlen(abs_path)] = '/'; // Add the slash between.
 
@@ -82,6 +65,16 @@ void set_filename(buff data, char* passed)
 		}
 		free(abs_path);
 	}
+}
+
+buff_t get_file_sz(FILE* fd)
+{
+	buff_t pos = ftell(fd);
+	fseek(fd, 0, SEEK_END);
+	buff_t sz = ftell(fd);
+	fseek(fd, pos, SEEK_SET);
+
+	return sz;
 }
 
 buff read_file(buff data)
@@ -108,21 +101,21 @@ buff read_file(buff data)
 	return data;
 }
 
-void save_file(buff data) // TODO: WRITING
+void save_file(buff data)
 {
-	int textfile = open(data.filename, O_CREAT | O_EXCL | O_WRONLY, 0600);
-	if(textfile == -1)
+	if(access(data.filename, F_OK) == -1) // ... there is no file.
 	{
-		fputs("Failed to create the file.\n", stderr);
-		exit(1);
+		int created = open(data.filename, O_CREAT | O_EXCL | O_WRONLY, 0600);
+		if(created == -1)
+		{
+			fputs("Failed to create the file.\n", stderr);
+			exit(1);
+		}		
 	}
-	close(textfile);
-
-//	FILE* textfile = fopen(data.filename, "w");
-//	ptr_check(textfile, "Cannot write to the file, exited.\n\0");
-
-//	fputs(data.text, textfile);
-//	fclose(textfile);
+	FILE* textfile = fopen(data.filename, "r+");
+	ptr_check(textfile, "Cannot write to the file, exited.\0");
+	fputs(data.text, textfile);
+	fclose(textfile);
 }
 
 buff visible_char(buff data, char key)
@@ -137,6 +130,7 @@ buff visible_char(buff data, char key)
 			data.chars++;
 		break;
 
+		case NEGATIVE_CHAR: // Eg. CTRL+C.
 		case TERMINATOR: // Required for rendering.
 		case TAB:
 		case ARROW_UP:
@@ -161,7 +155,7 @@ buff visible_char(buff data, char key)
 			}
 		break;
 	}
-	ptr_check(data.text, "Cannot realloc memory for the new char, exited.\n\0");
+	ptr_check(data.text, "Cannot realloc memory for the new char, exited.\0");
 	data.text[data.chars] = TERMINATOR;
 	return data;
 }
@@ -196,6 +190,22 @@ buff count_lines(buff data)
 	return data;
 }
 
+void limits(buff data)
+{
+	if(data.lines >= MAX_LINES)
+	{
+		fprintf(stderr, "Maximum lines amount: %d, got: %d.\n", MAX_LINES,
+		data.lines);
+		exit(1);
+	}
+	else if(data.chars >= MAX_CHARS)
+	{
+		fprintf(stderr, "Maximum lines amount: %d, got: %d.\n", MAX_CHARS,
+		data.chars);
+		exit(1);
+	}
+}
+
 buff alloc_text(buff data, char key)
 {
 	switch(key)
@@ -210,6 +220,8 @@ buff alloc_text(buff data, char key)
 		break;
 	}
 	data = count_lines(data);
+	limits(data);
+
 	return data;
 }
 
