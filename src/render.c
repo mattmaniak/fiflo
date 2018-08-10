@@ -82,7 +82,7 @@ void print_fname(const char* prog, char* fname, term_t max_len)
 		printf("%s", fname); // Minimal width: whitespace.
 		for(term_t pos = 0; pos < whitespace; pos++)
 		{
-			putchar(' ');
+			putchar(SPACE);
 		}
 	}
 }
@@ -107,7 +107,7 @@ void bar(buff data, char key) // TODO: SHORTEN
 	snprintf(chars, sizeof(chars), "%d", data.chars);
 
 	printf("%s%s", INVERT, words[0]);
-	print_fname(words[0], data.filename, get_term_sz('X') - strlen(words[0])
+	print_fname(words[0], data.fname, get_term_sz('X') - strlen(words[0])
 	- dots_and_space);
 
 	// Lower part of the bar.
@@ -165,7 +165,7 @@ void set_cursor_pos(buff data)
 	{
 		printf("%s", CURSOR_RIGHT);
 	}
-	if(data.text[0] == LINEFEED && data.lines == 2)
+	if(data.text[0] == LINEFEED && data.lines == 2) // Upper algorithm weakness.
 	{
 		printf("%s", CURSOR_LEFT);
 	}

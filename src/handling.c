@@ -12,22 +12,23 @@ void ptr_check(void* ptr, const char* errmsg)
 char nix_getch(void) // https://stackoverflow.com/questions/12710582/
 {
 	char key;
-	struct termios oldt, newt;
+	struct termios old, new;
 
-	tcgetattr(STDIN_FILENO, &oldt); // Get terminal attribiutes.
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt); // Set terminal attribiutes.
+	tcgetattr(STDIN_FILENO, &old); // Get terminal attribiutes.
+	new = old; // Set new terminal settings same as old.
+	new.c_lflag &= ~(ICANON | ECHO); // Disable buffered I/O and set echo mode.
+	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
 
 	key = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // Set terminal attribiutes.
+	tcsetattr(STDIN_FILENO, TCSANOW, &old); // Restore terminal settings.
+
 	return key;
 }
 
 void set_fname(buff data, char* passed)
 {
 	// https://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html worth.
-	if(passed[strlen(passed) - 1] == '/')
+	if(passed[strlen(passed) - TERMINATOR_SZ] == '/')
 	{
 		fputs("Cannot open passed folder as the file, exited.\n", stderr);
 		exit(1);
@@ -35,35 +36,34 @@ void set_fname(buff data, char* passed)
 
 	if(passed[0] == '/') // Is absolute path.
 	{
-		if(strlen(passed) + 1 > PATH_MAX)
+		if(strlen(passed) + TERMINATOR_SZ > PATH_MAX)
 		{
 			fputs("Given path is to long, exited.\n", stderr);
 			exit(1);
 		}
-		strcpy(data.filename, passed); // Malloced so doesn't need 'n' for size.
+		strcpy(data.fname, passed); // Malloced so doesn't need 'n' for size.
 	}
 	else // Relative or basename.
 	{
 		const bool slash_sz = 1;
 
-		char* abs_path = malloc(PATH_MAX); // Man 3 getcwd.
-		ptr_check((getcwd(abs_path, PATH_MAX)),
+		char* abs_dir = malloc(PATH_MAX); // Man 3 getcwd.
+		ptr_check((getcwd(abs_dir, PATH_MAX)),
 		"Cannot get your current dir. Can be too long, exited.\0");
 
-		if((strlen(abs_path) + strlen(passed) + 1) > PATH_MAX)
+		if((strlen(abs_dir) + strlen(passed) + TERMINATOR_SZ) > PATH_MAX)
 		{
 			fputs("Your filename is too long, exited.\n", stderr);
 			exit(1);
 		}
-		strcpy(data.filename, abs_path); // Copy the path.
-		data.filename[strlen(abs_path)] = '/'; // Add the slash between.
+		strcpy(data.fname, abs_dir); // Copy the path.
+		data.fname[strlen(abs_dir)] = '/'; // Add the slash between.
 
 		for(uint16_t pos = 0; pos < strlen(passed); pos++) // Append basename.
 		{
-			strcpy(&data.filename[strlen(abs_path) + slash_sz + pos], 
-			&passed[pos]);
+			strcpy(&data.fname[strlen(abs_dir) + slash_sz + pos], &passed[pos]);
 		}
-		free(abs_path);
+		free(abs_dir);
 	}
 }
 
@@ -81,7 +81,7 @@ buff read_file(buff data)
 {
 	char chr;
 
-	FILE* textfile = fopen(data.filename, "r");
+	FILE* textfile = fopen(data.fname, "r");
 	if(textfile)
 	{
 		data.text = malloc(get_file_sz(textfile) + TERMINATOR_SZ);
@@ -103,16 +103,16 @@ buff read_file(buff data)
 
 void save_file(buff data)
 {
-	if(access(data.filename, F_OK) == -1) // ... there is no file.
+	if(access(data.fname, F_OK) == -1) // ... there is no file.
 	{
-		int created = open(data.filename, O_CREAT | O_EXCL | O_WRONLY, 0600);
+		int created = open(data.fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if(created == -1)
 		{
 			fputs("Failed to create the file.\n", stderr);
 			exit(1);
 		}		
 	}
-	FILE* textfile = fopen(data.filename, "r+");
+	FILE* textfile = fopen(data.fname, "w");
 	ptr_check(textfile, "Cannot write to the file, exited.\0");
 	fputs(data.text, textfile);
 	fclose(textfile);
@@ -132,11 +132,23 @@ buff visible_char(buff data, char key)
 
 		case NEGATIVE_CHAR: // Eg. CTRL+C.
 		case TERMINATOR: // Required for rendering.
+		break;
+
 		case TAB:
+			for(uint8_t spaces = 0; spaces < 2; spaces++) // Actually converts.
+			{
+			data.text = realloc(data.text, data.chars + TERMINATOR_SZ + new_sz);
+			data.text[data.chars] = SPACE;
+			data.chars++;
+			}
+		break;
+
 		case ARROW_UP:
 		case ARROW_DOWN:
 		case ARROW_RIGHT:
 		case ARROW_LEFT:
+			data.chars -= 2;
+			data.text = realloc(data.text, data.chars + TERMINATOR_SZ);
 		break;
 
 		case LINEFEED:
@@ -157,6 +169,7 @@ buff visible_char(buff data, char key)
 	}
 	ptr_check(data.text, "Cannot realloc memory for the new char, exited.\0");
 	data.text[data.chars] = TERMINATOR;
+
 	return data;
 }
 
@@ -170,7 +183,7 @@ buff keyboard_shortcut(buff data, char key)
 
 		case CTRL_X:
 			free(data.text);
-			free(data.filename);
+			free(data.fname);
 			exit(0);
 	}
 	return data;

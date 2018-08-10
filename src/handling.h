@@ -1,16 +1,14 @@
 #ifndef HANDLING_H
 #define HANDLING_H
 
+// Common rest is included in 'fiflo.h' There are only file-specific imports.
 #include <linux/limits.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/file.h>
 #include <unistd.h>
 #include <termios.h>
-
 
 // Required keymap.
 #define NEGATIVE_CHAR -1
@@ -19,6 +17,7 @@
 #define TAB 9
 #define LINEFEED 10
 #define CTRL_X 24
+#define SPACE 32
 #define ARROW_UP 65
 #define ARROW_DOWN 66
 #define ARROW_RIGHT 67

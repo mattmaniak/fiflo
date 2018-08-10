@@ -15,15 +15,15 @@ typedef int32_t buff_t;
 
 typedef struct
 {
-	char* filename; // Full, eg. /home/user/basename
+	char* fname; // Full filename, eg. /home/user/basename
 	char* text; // Malloc'ed pointer with all typed/read chars.
 	buff_t chars; // Amount
 	buff_t lines; // indicators.
 }
 buff;
 
-void run(char* name);
 void ignore_sig(int nothing);
+void run(char* name);
 void argc_check(int arg_count);
 int main(int argc, char* argv[]);
 

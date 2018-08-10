@@ -1,10 +1,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+// Common rest is included in 'fiflo.h' There are only file-specific imports.
 #include <sys/ioctl.h>
 
 #define BAR_SZ 2

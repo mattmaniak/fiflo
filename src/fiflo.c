@@ -5,11 +5,16 @@
 #include "handling.c"
 #include "render.c"
 
+void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
+{
+	if(nothing == 0) {}
+}
+
 void run(char* name)
 {
 	buff data = {NULL, NULL, 0, 0}; // Just empty init for -Wuninitialized.
-	data.filename = malloc(PATH_MAX);
-	ptr_check(data.filename, "Cannot alloc filename in memory, exited.\n\0");
+	data.fname = malloc(PATH_MAX);
+	ptr_check(data.fname, "Cannot alloc filename in memory, exited.\n\0");
 
 	set_fname(data, name);
 	data = read_file(data);
@@ -27,11 +32,6 @@ void run(char* name)
 
 		flush_window(data.lines);
 	}
-}
-
-void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
-{
-	if(nothing == 0) {}
 }
 
 void argc_check(int arg_count)
