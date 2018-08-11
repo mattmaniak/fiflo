@@ -8,12 +8,11 @@ files use git-show or git-log.
 
 ## Versions:
 ### v1.1.0 (WIP):
-- dynamically allocated text,
+- dynamically allocated text (in theory max. 2G - 1),
 - real stdin (built-in terminal) cursor,
 - version info,
-- scrolling,
+- soft scrolling,
 - file is no longer created at the program's start,
-- bigger buffer,
 - folder as the file prevention,
 - auto_newline when the single line is equal <user's terminal width>.
 

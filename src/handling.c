@@ -9,7 +9,7 @@ void ptr_check(void* ptr, const char* errmsg)
 	}
 }
 
-char nix_getch(void) // https://stackoverflow.com/questions/12710582/
+char nix_getch(void)
 {
 	char key;
 	struct termios old, new;
@@ -27,10 +27,9 @@ char nix_getch(void) // https://stackoverflow.com/questions/12710582/
 
 void set_fname(buff data, char* passed)
 {
-	// https://insanecoding.blogspot.com/2007/11/pathmax-simply-isnt.html worth.
 	if(passed[strlen(passed) - TERMINATOR_SZ] == '/')
 	{
-		fputs("Cannot open passed folder as the file, exited.\n", stderr);
+		fputs("Cannot open passed directory as the file, exited.\n", stderr);
 		exit(1);
 	}
 
@@ -47,23 +46,24 @@ void set_fname(buff data, char* passed)
 	{
 		const bool slash_sz = 1;
 
-		char* abs_dir = malloc(PATH_MAX); // Man 3 getcwd.
-		ptr_check((getcwd(abs_dir, PATH_MAX)),
-		"Cannot get your current dir. Can be too long, exited.\0");
+		char* abs_path = malloc(PATH_MAX); // Man 3 getcwd.
+		ptr_check((getcwd(abs_path, PATH_MAX)),
+		"Cannot get your current path. Can be too long, exited.\0");
 
-		if((strlen(abs_dir) + strlen(passed) + TERMINATOR_SZ) > PATH_MAX)
+		if((strlen(abs_path) + strlen(passed) + TERMINATOR_SZ) > PATH_MAX)
 		{
-			fputs("Your filename is too long, exited.\n", stderr);
+			fputs("Given filename is too long, exited.\n", stderr);
 			exit(1);
 		}
-		strcpy(data.fname, abs_dir); // Copy the path.
-		data.fname[strlen(abs_dir)] = '/'; // Add the slash between.
+		strcpy(data.fname, abs_path); // Copy the path.
+		data.fname[strlen(abs_path)] = '/'; // Add the slash between.
 
 		for(uint16_t pos = 0; pos < strlen(passed); pos++) // Append basename.
 		{
-			strcpy(&data.fname[strlen(abs_dir) + slash_sz + pos], &passed[pos]);
+			strcpy(&data.fname[strlen(abs_path) + slash_sz + pos],
+			&passed[pos]);
 		}
-		free(abs_dir);
+		free(abs_path);
 	}
 }
 
@@ -120,39 +120,28 @@ void save_file(buff data)
 
 buff visible_char(buff data, char key)
 {
-	const bool new_sz = 1;
-
-	switch(key)
+	switch(key) // + 1 means 'the new char'.
 	{
 		default:
-			data.text = realloc(data.text, data.chars + TERMINATOR_SZ + new_sz);
+			data.text = realloc(data.text, data.chars + TERMINATOR_SZ + 1);
 			data.text[data.chars] = key;
 			data.chars++;
 		break;
 
-		case NEGATIVE_CHAR: // Eg. CTRL+C.
 		case TERMINATOR: // Required for rendering.
 		break;
 
 		case TAB:
 			for(uint8_t spaces = 0; spaces < 2; spaces++) // Actually converts.
 			{
-			data.text = realloc(data.text, data.chars + TERMINATOR_SZ + new_sz);
-			data.text[data.chars] = SPACE;
-			data.chars++;
+				data.text = realloc(data.text, data.chars + TERMINATOR_SZ + 1);
+				data.text[data.chars] = SPACE;
+				data.chars++;
 			}
 		break;
 
-		case ARROW_UP:
-		case ARROW_DOWN:
-		case ARROW_RIGHT:
-		case ARROW_LEFT:
-			data.chars -= 2;
-			data.text = realloc(data.text, data.chars + TERMINATOR_SZ);
-		break;
-
 		case LINEFEED:
-			data.text = realloc(data.text, data.chars + TERMINATOR_SZ + new_sz);
+			data.text = realloc(data.text, data.chars + TERMINATOR_SZ + 1);
 			data.text[data.chars] = LINEFEED;
 			data.chars++;
 		break;
@@ -177,6 +166,9 @@ buff keyboard_shortcut(buff data, char key)
 {
 	switch(key)
 	{
+		case NEGATIVE_CHAR:
+		break;
+
 		case CTRL_D:
 			save_file(data);
 		break;
@@ -185,6 +177,8 @@ buff keyboard_shortcut(buff data, char key)
 			free(data.text);
 			free(data.fname);
 			exit(0);
+		break;
+
 	}
 	return data;
 }
@@ -227,6 +221,7 @@ buff alloc_text(buff data, char key)
 			data = visible_char(data, key);
 		break;
 
+		case NEGATIVE_CHAR: // Eg. CTRL+C.
 		case CTRL_D:
 		case CTRL_X:
 			data = keyboard_shortcut(data, key);

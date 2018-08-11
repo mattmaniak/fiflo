@@ -18,6 +18,7 @@ void run(char* name)
 
 	set_fname(data, name);
 	data = read_file(data);
+	data = auto_newline(data);
 	char pressed_key = TERMINATOR; // Initializer too.
 
 	for(;;) // Main program loop.

@@ -1,5 +1,5 @@
 #ifndef HANDLING_H
-#define HANDLING_H
+#define HANDLING_H // Non-seen API things that makes text && misc. things works.
 
 // Common rest is included in 'fiflo.h' There are only file-specific imports.
 #include <linux/limits.h>
@@ -18,15 +18,10 @@
 #define LINEFEED 10
 #define CTRL_X 24
 #define SPACE 32
-#define ARROW_UP 65
-#define ARROW_DOWN 66
-#define ARROW_RIGHT 67
-#define ARROW_LEFT 68
 #define BACKSPACE 127
 
 #define TERMINATOR_SZ 1
 
-// Functions connected with the program API. Generally what's unseen.
 void ptr_check(void* ptr, const char* errmsg); // Exit on error with message.
 char nix_getch(void);
 

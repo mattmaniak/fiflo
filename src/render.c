@@ -6,9 +6,9 @@ void help(void)
 	"Usage: fiflo [option].",
 
 	"Options:      Description:",
-	"<NULL>        Open and set the filename to '/<current_path>/noname.asdf'",
+	"<NULL>        Set the filename to '/<current_path>/noname.asdf'",
 	"basename      Open the textfile 'basename' using your current path.",
-	"/path/bname   Open the textfile 'basename' located in the '/path'.",
+	"/dir/bname    Open the textfile 'bname' located in the '/dir' folder.",
 	"-h, --help    Show program help.",
 	"-v, --version Display some info about the current version.");
 }
@@ -17,8 +17,8 @@ void version(void)
 {
 	printf("%s\n%s\n%s\n",
 	"fiflo v1.1.0 (WIP)",
-	"(c) 2018 mattmaniak under the MIT License",
-	"https://gitlab.com/mattmaniak/fiflo");
+	"https://gitlab.com/mattmaniak/fiflo",
+	"(C) 2018 mattmaniak under the MIT License.");
 }
 
 term_t get_term_sz(char axis)
@@ -63,27 +63,18 @@ void flush_window(buff_t lines)
 
 void print_fname(const char* prog, char* fname, term_t max_len)
 {
-	term_t whitespace = get_term_sz('X') - strlen(prog) - strlen(fname);
-
 	if(strlen(fname) > max_len)
 	{
-		for(term_t pos = 0; pos < max_len; pos++)
-		{
-			putchar(fname[pos]);
-		}
 		printf("%.*s%s", max_len, fname, "... "); // Precision of the output.
 	}
 	else
 	{
-		printf("%s", fname); // Minimal width: whitespace.
-		for(term_t pos = 0; pos < whitespace; pos++)
-		{
-			putchar(SPACE);
-		}
+		term_t whitespace = get_term_sz('X') - strlen(prog) - strlen(fname);
+		printf("%s%*s", fname, whitespace, " ");
 	}
 }
 
-void bar(buff data, char key) // TODO: SHORTEN
+void bar(buff data, char key)
 {
 	const uint8_t dots_and_space = 4;
 	const char* words[5] =
@@ -94,7 +85,7 @@ void bar(buff data, char key) // TODO: SHORTEN
 		" | last: \0",
 		" | save: CTRL+D | exit: CTRL+X \0"
 	};
-	char keycode[4]; // TODO: WOOT?
+	char keycode[4];
 	char lines[11];
 	char chars[11];
 
@@ -102,7 +93,8 @@ void bar(buff data, char key) // TODO: SHORTEN
 	snprintf(lines, sizeof(lines), "%d", data.lines);
 	snprintf(chars, sizeof(chars), "%d", data.chars);
 
-	printf("%s%s", INVERT, words[0]);
+	// Upper part of the bar.
+	printf("%s%s", COLORS_INVERT, words[0]);
 	print_fname(words[0], data.fname, get_term_sz('X') - strlen(words[0])
 	- dots_and_space);
 
@@ -111,7 +103,7 @@ void bar(buff data, char key) // TODO: SHORTEN
 	+ strlen(words[2]) + strlen(chars) + strlen(words[3]) + strlen(keycode);
 
 	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lines, words[2], data.chars,
-	words[3], key, words[4], get_term_sz('X') - whitespace, " ", RESET);
+	words[3], key, words[4], get_term_sz('X') - whitespace, " ", COLORS_RESET);
 }
 
 buff_t scroll(buff data)
@@ -125,16 +117,17 @@ buff_t scroll(buff data)
 		{
 			offset++; // Temponary usage.
 		}
-		if(offset == lines_to_hide) // How many lines to scroll.
+		if(offset == lines_to_hide + 1) // How many lines to scroll.
 		{
 			offset = pos;
 			break;
 		}
 	}
+	printf("%s", "...");
 	return offset;
 }
 
-void set_cursor_pos(buff data) // TODO: IMPROVE ALGORITHM.
+void set_cursor_pos(buff data)
 {
 	term_t right = 1;
 
@@ -182,7 +175,7 @@ void print_text(buff data)
 	}
 }
 
-buff auto_newline(buff data)
+buff auto_newline(buff data) // TODO: CHANGE TO HORIZONTAL SCROLL
 {
 	term_t offset = 0;
 	if(data.lines == 1)

@@ -1,20 +1,21 @@
 #ifndef RENDER_H
-#define RENDER_H
+#define RENDER_H // Every seen thing.
 
 // Common rest is included in 'fiflo.h' There are only file-specific imports.
 #include <sys/ioctl.h>
 
-#define BAR_SZ 2
-#define MIN_X 80 // MIN/MAX are before names to tell apart from limits.h macros.
+// MIN/MAX are before names to tell apart from limits.h macros.
+#define MIN_X 80
 #define MIN_Y 10
 #define MAX_X USHRT_MAX - 1 // 65534
 #define MAX_Y MAX_X
 
+#define BAR_SZ 2
 #define PLACE_FOR_TEXT (get_term_sz('Y') - BAR_SZ)
 
 // ANSI escape codes.
-#define RESET "\033[0m"
-#define INVERT "\033[7m"
+#define COLORS_RESET "\033[0m"
+#define COLORS_INVERT "\033[7m"
 #define MV_CURSOR_UP(n) printf("\033[%dA", n)
 #define MV_CURSOR_DOWN(n) printf("\033[%dB", n)
 #define MV_CURSOR_RIGHT(n) printf("\033[%dC", n)
@@ -22,7 +23,7 @@
 #define LINE_UP "\033[F"
 #define CLEAN_WHOLE_LINE "\033[2K"
 
-// Every seen thing.
+// Shown after certain program's parameter.
 void help(void);
 void version(void);
 
