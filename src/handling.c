@@ -16,9 +16,9 @@ char nix_getch(void) // https://stackoverflow.com/questions/12710582/
 
 	tcgetattr(STDIN_FILENO, &old); // Get terminal attribiutes.
 	new = old; // Set new terminal settings same as old.
-	new.c_lflag &= ~(ICANON | ECHO); // Disable buffered I/O and set echo mode.
+	new.c_lflag &= ~(ICANON | ECHO); // Disable buffered I/O and echo mode.
+	
 	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
-
 	key = getchar();
 	tcsetattr(STDIN_FILENO, TCSANOW, &old); // Restore terminal settings.
 

@@ -5,20 +5,20 @@
 #include <sys/ioctl.h>
 
 #define BAR_SZ 2
-#define PLACE_FOR_TEXT (get_term_sz('Y') - BAR_SZ)
-
 #define MIN_X 80 // MIN/MAX are before names to tell apart from limits.h macros.
 #define MIN_Y 10
 #define MAX_X USHRT_MAX - 1 // 65534
 #define MAX_Y MAX_X
 
+#define PLACE_FOR_TEXT (get_term_sz('Y') - BAR_SZ)
+
 // ANSI escape codes.
 #define RESET "\033[0m"
 #define INVERT "\033[7m"
-#define CURSOR_UP "\033[A"
-#define CURSOR_DOWN "\033[B"
-#define CURSOR_RIGHT "\033[C"
-#define CURSOR_LEFT "\033[D"
+#define MV_CURSOR_UP(n) printf("\033[%dA", n)
+#define MV_CURSOR_DOWN(n) printf("\033[%dB", n)
+#define MV_CURSOR_RIGHT(n) printf("\033[%dC", n)
+#define MV_CURSOR_LEFT(n) printf("\033[%dD", n)
 #define LINE_UP "\033[F"
 #define CLEAN_WHOLE_LINE "\033[2K"
 
@@ -35,6 +35,7 @@ void bar(buff data, char key); // Render the only bar: upper. Contains info.
 buff_t scroll(buff data); // Ignores first chars to leave a place for the rest.
 void set_cursor_pos(buff data);
 void print_text(buff data); // Pressed keys to rendered chars in proper order.
+buff auto_newline(buff data);
 void window(buff data, char key); // Bar + rendered text + fill + cursor.
 
 #endif

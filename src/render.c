@@ -51,14 +51,10 @@ term_t get_term_sz(char axis)
 
 void flush_window(buff_t lines)
 {
-	term_t y;
-	for(y = 0; y < PLACE_FOR_TEXT - lines; y++)
-	{
-		printf("%s", CURSOR_DOWN);
-	}
+	MV_CURSOR_DOWN(PLACE_FOR_TEXT - lines);
 
 	printf("%s", CLEAN_WHOLE_LINE);
-	for(y = 0; y < get_term_sz('Y'); y++)
+	for(term_t y = 0; y < get_term_sz('Y'); y++)
 	{
 		printf("%s%s", LINE_UP, CLEAN_WHOLE_LINE);
 	}
@@ -98,7 +94,7 @@ void bar(buff data, char key) // TODO: SHORTEN
 		" | last: \0",
 		" | save: CTRL+D | exit: CTRL+X \0"
 	};
-	char keycode[4];
+	char keycode[4]; // TODO: WOOT?
 	char lines[11];
 	char chars[11];
 
@@ -138,16 +134,13 @@ buff_t scroll(buff data)
 	return offset;
 }
 
-void set_cursor_pos(buff data)
+void set_cursor_pos(buff data) // TODO: IMPROVE ALGORITHM.
 {
-	term_t right = 0;
+	term_t right = 1;
 
 	if(data.lines < PLACE_FOR_TEXT)
 	{
-		for(term_t y = 0; y < PLACE_FOR_TEXT - data.lines; y++)
-		{
-			printf("%s", CURSOR_UP);
-		}
+		MV_CURSOR_UP(PLACE_FOR_TEXT - data.lines);
 		for(buff_t pos = data.chars; pos > 0; pos--) // Last line is auto pos.
 		{
 			if(data.text[pos] == LINEFEED)
@@ -161,13 +154,12 @@ void set_cursor_pos(buff data)
 			right++;
 		}
 	}
-	for(term_t x = 0; x < right; x++)
-	{
-		printf("%s", CURSOR_RIGHT);
-	}
+	MV_CURSOR_RIGHT(right);
+	MV_CURSOR_LEFT(1);
+
 	if(data.text[0] == LINEFEED && data.lines == 2) // Upper algorithm weakness.
 	{
-		printf("%s", CURSOR_LEFT);
+		MV_CURSOR_LEFT(1);
 	}
 }
 
@@ -190,9 +182,40 @@ void print_text(buff data)
 	}
 }
 
+buff auto_newline(buff data)
+{
+	term_t offset = 0;
+	if(data.lines == 1)
+	{
+		if(data.chars >= get_term_sz('X'))
+		{
+			data.text[data.chars - 1] = LINEFEED;
+			data.lines++;
+		}
+	}
+	else
+	{
+		for(buff_t pos = data.chars - 1; pos >= 0; pos--)
+		{
+			if(data.text[pos] == LINEFEED)
+			{
+				offset = data.chars - pos;
+				break;
+			}
+		}
+		if(offset > get_term_sz('X'))
+		{
+			data.text[data.chars - 1] = LINEFEED;
+			data.lines++;
+		}
+	}
+	return data;
+}
+
 void window(buff data, char key)
 {
 	bar(data, key);
+	data = auto_newline(data);
 	print_text(data);
 
 	if(data.lines <= PLACE_FOR_TEXT) // Visible bottom fill.

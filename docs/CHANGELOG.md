@@ -14,7 +14,8 @@ files use git-show or git-log.
 - scrolling,
 - file is no longer created at the program's start,
 - bigger buffer,
-- folder as a file prevention.
+- folder as the file prevention,
+- auto_newline when the single line is equal <user's terminal width>.
 
 ### v1.0.0 (July 15, 2018):
 - simplified API,

@@ -1,7 +1,7 @@
 # Ideas for the fiflo.
 ## (delete if done correctly):
 - simplify Makefile,
-- keymap,
+- bigger keymap,
 - TAB handling,
 - config file (colors),
 - no 80 chars per line limit,
@@ -10,4 +10,5 @@
 - search option,
 - line numbers,
 - lock on the file,
-- hex mode.
+- hex mode,
+- only one text processing loop.
