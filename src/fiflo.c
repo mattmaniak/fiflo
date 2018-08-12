@@ -14,11 +14,10 @@ void run(char* name)
 {
 	buff data = {NULL, NULL, 0, 0}; // Just empty init for -Wuninitialized.
 	data.fname = malloc(PATH_MAX);
-	ptr_check(data.fname, "Cannot alloc filename in memory, exited.\n\0");
+	ptr_check(data.fname, "Cannot alloc memory for the filename, exited.\n\0");
 
 	set_fname(data, name);
 	data = read_file(data);
-	data = auto_newline(data);
 	char pressed_key = TERMINATOR; // Initializer too.
 
 	for(;;) // Main program loop.

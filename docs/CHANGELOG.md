@@ -7,7 +7,7 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
-### v1.1.0 (WIP):
+### v1.1.0 (August 12, 2018):
 - dynamically allocated text (in theory max. 2G - 1),
 - real stdin (built-in terminal) cursor,
 - version info,

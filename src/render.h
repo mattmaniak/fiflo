@@ -36,7 +36,6 @@ void bar(buff data, char key); // Render the only bar: upper. Contains info.
 buff_t scroll(buff data); // Ignores first chars to leave a place for the rest.
 void set_cursor_pos(buff data);
 void print_text(buff data); // Pressed keys to rendered chars in proper order.
-buff auto_newline(buff data);
 void window(buff data, char key); // Bar + rendered text + fill + cursor.
 
 #endif

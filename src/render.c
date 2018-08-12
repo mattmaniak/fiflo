@@ -16,8 +16,8 @@ void help(void)
 void version(void)
 {
 	printf("%s\n%s\n%s\n",
-	"fiflo v1.1.0 (WIP)",
-	"https://gitlab.com/mattmaniak/fiflo",
+	"fiflo v1.1.0",
+	"https://gitlab.com/mattmaniak/fiflo.git",
 	"(C) 2018 mattmaniak under the MIT License.");
 }
 
@@ -175,40 +175,9 @@ void print_text(buff data)
 	}
 }
 
-buff auto_newline(buff data) // TODO: CHANGE TO HORIZONTAL SCROLL
-{
-	term_t offset = 0;
-	if(data.lines == 1)
-	{
-		if(data.chars >= get_term_sz('X'))
-		{
-			data.text[data.chars - 1] = LINEFEED;
-			data.lines++;
-		}
-	}
-	else
-	{
-		for(buff_t pos = data.chars - 1; pos >= 0; pos--)
-		{
-			if(data.text[pos] == LINEFEED)
-			{
-				offset = data.chars - pos;
-				break;
-			}
-		}
-		if(offset > get_term_sz('X'))
-		{
-			data.text[data.chars - 1] = LINEFEED;
-			data.lines++;
-		}
-	}
-	return data;
-}
-
 void window(buff data, char key)
 {
 	bar(data, key);
-	data = auto_newline(data);
 	print_text(data);
 
 	if(data.lines <= PLACE_FOR_TEXT) // Visible bottom fill.
