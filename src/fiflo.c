@@ -12,18 +12,20 @@ void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 
 void run(char* name)
 {
-	buff data = {NULL, NULL, 0, 0}; // Just empty init for -Wuninitialized.
-	data.fname = malloc(PATH_MAX);
+	buff data = {malloc(PATH_MAX), {NULL}, 0, 0};
 	ptr_check(data.fname, "Cannot alloc memory for the filename, exited.\n\0");
 
+	data.row[data.lines] = malloc(1);
+	data.row[data.lines][data.chars] = TERMINATOR;
+
 	set_fname(data, name);
-	data = read_file(data);
+//	data = read_file(data);
 	char pressed_key = TERMINATOR; // Initializer too.
 
 	for(;;) // Main program loop.
 	{
 		signal(SIGTSTP, ignore_sig); // CTRL_Z
-		signal(SIGINT, ignore_sig); // CTRL_C
+//		signal(SIGINT, ignore_sig); // CTRL_C
 
 		data = alloc_text(data, pressed_key);
 

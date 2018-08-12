@@ -76,7 +76,7 @@ buff_t get_file_sz(FILE* fd)
 
 	return sz;
 }
-
+/*
 buff read_file(buff data)
 {
 	char chr;
@@ -84,23 +84,22 @@ buff read_file(buff data)
 	FILE* textfile = fopen(data.fname, "r");
 	if(textfile)
 	{
-		data.text = malloc(get_file_sz(textfile) + TERMINATOR_SZ);
+		data.row = malloc(get_file_sz(textfile) + TERMINATOR_SZ);
 		while((chr = getc(textfile)) != EOF)
 		{
-			data.text[data.chars] = chr;
+			data.row[data.lines] = chr;
 			data.chars++;
 		}
-		data.text[data.chars] = TERMINATOR;
 		fclose(textfile);
 	}
 	else
 	{
-		data.text = malloc(TERMINATOR_SZ);
-		data.text[data.chars] = TERMINATOR;
+		data.row = malloc(TERMINATOR_SZ);
+		data.row[data.chars] = TERMINATOR;
 	}
 	return data;
 }
-
+*//*
 void save_file(buff data)
 {
 	if(access(data.fname, F_OK) == -1) // ... there is no file.
@@ -114,54 +113,54 @@ void save_file(buff data)
 	}
 	FILE* textfile = fopen(data.fname, "w");
 	ptr_check(textfile, "Cannot write to the file, exited.\0");
-	fputs(data.text, textfile);
+	fputs(data.row, textfile);
 	fclose(textfile);
 }
-
+*/
 buff visible_char(buff data, char key)
 {
 	switch(key) // + 1 means 'the new char'.
 	{
 		default:
-			data.text = realloc(data.text, data.chars + TERMINATOR_SZ + 1);
-			data.text[data.chars] = key;
+			data.row[data.lines] = realloc(data.row[data.lines], data.chars + 2);
+			ptr_check(data.row[data.lines], "Cannot realloc memory for the new char, exited.\0");
+			data.row[data.lines][data.chars] = key;
 			data.chars++;
+			data.row[data.lines][data.chars] = TERMINATOR;
 		break;
 
 		case TERMINATOR: // Required for rendering.
 		break;
 
-		case TAB:
+/*		case TAB:
 			for(uint8_t spaces = 0; spaces < 2; spaces++) // Actually converts.
 			{
-				data.text = realloc(data.text, data.chars + TERMINATOR_SZ + 1);
-				data.text[data.chars] = SPACE;
+				data.row = realloc(data.row, data.chars + TERMINATOR_SZ + 1);
+				data.row[data.chars] = SPACE;
 				data.chars++;
 			}
 		break;
 
 		case LINEFEED:
-			data.text = realloc(data.text, data.chars + TERMINATOR_SZ + 1);
-			data.text[data.chars] = LINEFEED;
+			data.row = realloc(data.row, data.chars + TERMINATOR_SZ + 1);
+			data.row[data.chars] = LINEFEED;
 			data.chars++;
 		break;
 
 		case BACKSPACE:
-			data.text = realloc(data.text, data.chars);
+			data.row = realloc(data.row, data.chars);
 			data.chars--;
 			if(data.chars < 0)
 			{
 				data.chars = 0;
-				data.text = realloc(data.text, data.chars + TERMINATOR_SZ);
+				data.row = realloc(data.row, data.chars + TERMINATOR_SZ);
 			}
 		break;
-	}
-	ptr_check(data.text, "Cannot realloc memory for the new char, exited.\0");
-	data.text[data.chars] = TERMINATOR;
+*/	}
 
 	return data;
 }
-
+/*
 buff keyboard_shortcut(buff data, char key)
 {
 	switch(key)
@@ -174,7 +173,7 @@ buff keyboard_shortcut(buff data, char key)
 		break;
 
 		case CTRL_X:
-			free(data.text);
+			free(data.row);
 			free(data.fname);
 			exit(0);
 		break;
@@ -189,7 +188,7 @@ buff count_lines(buff data)
 
 	for(buff_t pos = 0; pos <= data.chars; pos++)
 	{
-		if(data.text[pos] == LINEFEED)
+		if(data.row[pos] == LINEFEED)
 		{
 			data.lines++;
 		}
@@ -212,7 +211,7 @@ void limits(buff data)
 		exit(1);
 	}
 }
-
+*/
 buff alloc_text(buff data, char key)
 {
 	switch(key)
@@ -224,11 +223,11 @@ buff alloc_text(buff data, char key)
 		case NEGATIVE_CHAR: // Eg. CTRL+C.
 		case CTRL_D:
 		case CTRL_X:
-			data = keyboard_shortcut(data, key);
+//			data = keyboard_shortcut(data, key);
 		break;
 	}
-	data = count_lines(data);
-	limits(data);
+//	data = count_lines(data);
+//	limits(data);
 
 	return data;
 }
