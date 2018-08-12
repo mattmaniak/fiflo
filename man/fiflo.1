@@ -5,19 +5,26 @@ fiflo
 .SH SYNOPSIS
 fiflo [option]
 .SH DESCRIPTION
-Simple terminal-based text editor. For that moment it prevents reading and
-writing more than 80 visible chars per line. Also you cannot write more than
-your terminal window is able to render at the execution moment.
+Simple terminal-based text editor. Currently converts TABs to 2 spaces. Arrows
+that normally should move the cursor breaks the window so don't use them.
+Also don't open files that contains lines longer than Your <terminal width>.
 .SH OPTIONS
 .TP
 .B <NULL>
-Create and open the default file - 'noname.asdf'.
+Open and set the basename to 'noname.asdf'. This file will be created after
+saving.
 .TP
-.B <file>
-Open the textfile named "file". Passing absolute/relative is possible.
+.B basename
+Open the textfile named 'name' using current path.
+.TP
+.B /path/basename
+Open the textfile 'basename' located in the '/path'.
 .TP
 .B -h, --help
 Show program help.
+.TP
+.B -v, --version
+Display info about the current version.
 .SH SEE ALSO
 https://gitlab.com/mattmaniak/fiflo
 .SH BUGS

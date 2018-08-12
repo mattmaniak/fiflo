@@ -1,60 +1,68 @@
 #ifdef __linux__
 
-#include "fiflo.h"
+#include "fiflo.h" // All typedefs are here.
 
-#include "hardware.c"
-#include "logic.c"
+#include "handling.c"
+#include "render.c"
 
-void showHelp(void)
+void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 {
-	printf("%s\n%s\n%s\n%s\n%s\n",
-	"Usage: fiflo [option].",
-	"Options:     Description:",
-	"<NULL>       Create and open the default file - 'noname.asdf'.",
-	"<file>       Open the textfile named 'file'.",
-	"-h, --help   Show program help.");
+	if(nothing == 0) {}
 }
 
-void programRound(char *name)
+void run(char* name)
 {
-	struct Data buff = readFile(buff, name);
-	window(buff, TERMINATOR);
+	buff data = {NULL, NULL, 0, 0}; // Just empty init for -Wuninitialized.
+	data.fname = malloc(PATH_MAX);
+	ptr_check(data.fname, "Cannot alloc memory for the filename, exited.\n\0");
 
-	for(;;)
+	set_fname(data, name);
+	data = read_file(data);
+	char pressed_key = TERMINATOR; // Initializer too.
+
+	for(;;) // Main program loop.
 	{
-		char pressed_key = unixGetch();
-		cleanFrame();
-		buff = window(buff, pressed_key);
+		signal(SIGTSTP, ignore_sig); // CTRL_Z
+		signal(SIGINT, ignore_sig); // CTRL_C
+
+		data = alloc_text(data, pressed_key);
+
+		window(data, pressed_key);
+		pressed_key = nix_getch();
+
+		flush_window(data.lines);
 	}
 }
 
-void argcCheck(int arg_count)
+void argc_check(int arg_count)
 {
 	if(arg_count > 2)
 	{
-		fputs("Fiflo can handle max. one parameter.\n", stderr);
+		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
 		exit(1);
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-	signal(SIGTSTP, sigHandler); // CTRL_X
-	signal(SIGINT, sigHandler); // CTRL_C
-
-	argcCheck(argc);
+	argc_check(argc);
 	if(argv[1] == NULL)
 	{
-		programRound("noname.asdf\0");
+		run("noname.asdf\0");
 	}
-	else if(strcmp(argv[1], "-h\0") == 0 || strcmp(argv[1], "--help\0") == 0)
+	else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
 	{
-		showHelp();
+		help();
+		exit(0);
+	}
+	else if(strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)
+	{
+		version();
 		exit(0);
 	}
 	else
 	{
-		programRound(argv[1]);
+		run(argv[1]);
 	}
 	return 0;
 }

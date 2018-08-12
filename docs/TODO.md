@@ -1,12 +1,14 @@
 # Ideas for the fiflo.
-## [delete if done correctly]:
-- heap-allocated text,
+## (delete if done correctly):
+- simplify Makefile,
+- bigger keymap,
 - TAB handling,
 - config file (colors),
 - no 80 chars per line limit,
 - usability for other *nixes,
-- scrolling,
-- "configure" file,
-- movable cursor,
-- bigger buffer,
-- search option.
+- "configure.sh" file,
+- search option,
+- line numbers,
+- lock on the file,
+- hex mode,
+- only one text processing loop.

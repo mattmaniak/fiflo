@@ -1,11 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Wpedantic
-ASAN_FLAGS = -lasan \
+CFLAGS = \
+-std=c11 \
+-Wall -Wextra -Wpedantic \
+-lm
+
+ASAN_FLAGS = \
 -fsanitize=address \
 -fsanitize=undefined \
--fsanitize=signed-integer-overflow \
+-fsanitize=signed-integer-overflow
 
 TARGET = fiflo
+
 BIN_ODIR = /usr/bin/$(TARGET)
 MAN_ODIR = /usr/share/man/man1/$(TARGET).1
 
@@ -16,7 +21,8 @@ all:
 debug:
 	$(CC) src/$(TARGET).c -o $(TARGET) \
 	$(CFLAGS) \
-	-g $(ASAN_FLAGS)
+	$(ASAN_FLAGS) \
+	-g -O0
 
 install:
 	cp $(TARGET) $(BIN_ODIR)

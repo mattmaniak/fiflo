@@ -2,25 +2,30 @@
 #define FIFLO_H
 
 #include <limits.h>
+#include <math.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
 
-#define BUFF_SZ SHRT_MAX - 1
-typedef int16_t buff_t; // > 16 makes stack error.
+typedef uint16_t term_t;
+typedef int32_t buff_t;
 
-struct Data // There is no typedef to provide better code readibility.
+#define MAX_CHARS MAX_LINES - 1 // 1 for NULL.
+#define MAX_LINES (buff_t) powf(2, (sizeof(buff_t) * 8))
+
+typedef struct
 {
-	char *filename; // Eg. /home/user/basename.asdf
-	char text[BUFF_SZ];
-	buff_t chars;
-	buff_t lines;
-};
+	char* fname; // Full filename, eg. /home/user/basename
+	char* text; // Malloc'ed pointer with all typed/read chars.
+	buff_t chars; // Amount
+	buff_t lines; // indicators.
+}
+buff;
 
-void showHelp(void);
-void programRound(char *name);
-void argcChceck(void);
-int main(int argc, char *argv[]);
+void ignore_sig(int nothing);
+void run(char* name);
+void argc_check(int arg_count);
+int main(int argc, char* argv[]);
 
 #endif
 

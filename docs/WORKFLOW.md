@@ -1,12 +1,15 @@
 # fiflo - workflow
 
+## Remote repo (is upstream)
+https://gitlab.com/mattmaniak/fiflo
+
 ## Branches
 Everything happens on three branches:
 - stable (main branch),
 - develop,
 - hotfix.
 
-## Branches description
+## Branches description && merging
 Everything connected with the development, tests etc. happens on the "develop"
 branch. When everything is ok and the changelog is up-to-date content is merged
 without fast-forwarding ("--no-ff" to make branches visualisation cleaner) to
@@ -24,11 +27,28 @@ commits to provide updated code on the "develop" branch.
 - https://nvie.com/posts/a-successful-git-branching-model/.
 
 ## Coding rules:
+- indentation style: 1 hard tab (4 spaces),
 - use Allman-style indentation,
+- max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
 - comment a lot,
+- single line can't exceed 80 characters.
+- dont't use camelCase (is unreadable), only lower-case snake_case is allowed,
+- #defines have to be CAPITALIZED,
+- keep names short.
 - write short TODOs near thing to fix as uppercase comment,
-- name longer variables with an underscore, functions with camelCase,
 - #define as much as you can,
-- keep docs up-to-date with your code in stable releases,
-- function's args names should be shorter than variables names,
-- no "typedef struct".
+- keep docs up-to-date with the code in stable releases,
+- every function have to fit in the 720p screen with 10px font,
+- uninitialized variables must be before initialized,
+- function's args names need to be shorter than variables names.
+
+## Testing
+Before the stable release 'fiflo' is tested with:
+- LXTerminal,
+- Terminology,
+- Gnome Terminal,
+- xterm
+emulators and with the native Linux text mode wnich is priority in tests.
+
+I do my best for proper rendering in every above. In others there could be some
+bugs because of ther quirk modes.
