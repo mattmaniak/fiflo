@@ -10,22 +10,23 @@
 typedef uint16_t term_t;
 typedef int8_t buff_t; // TEMPONARY.
 
-#define MAX_CHARS MAX_LINES - 1 // 1 for NULL.
-#define MAX_LINES (buff_t) powf(2, (sizeof(buff_t) * 8))
+#define MAX_LNS (buff_t) powf(2, (sizeof(buff_t) * 8))
+#define MAX_CHRS MAX_LNS - 1 // 1 for NULL. TODO
 
 typedef struct
 {
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt;
 	buff_t chrs;
-	buff_t lns;
+	buff_t chrs_ln;
+	buff_t ln;
 }
 buff;
 
 void ignore_sig(int nothing);
 void run(char* name);
 void argc_check(int arg_count);
-int main(int argc, char* argv[]);
+int main(int argc, char** argv);
 
 #endif
 

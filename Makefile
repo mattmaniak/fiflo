@@ -14,9 +14,9 @@ TARGET = fiflo
 BIN_ODIR = /usr/bin/$(TARGET)
 MAN_ODIR = /usr/share/man/man1/$(TARGET).1
 
-all:
+build:
 	$(CC) src/$(TARGET).c -o $(TARGET) \
-	$(CFLAGS)
+	$(CFLAGS) -O3
 
 debug:
 	$(CC) src/$(TARGET).c -o $(TARGET) \

@@ -51,7 +51,7 @@ term_t get_term_sz(char axis)
 
 void flush_window(buff_t lns)
 {
-	MV_CURSOR_DOWN(PLACE_FOR_TEXT - lns);
+	MV_CURSOR_DOWN(TXT_PLACE - lns);
 
 	printf("%s", CLEAN_WHOLE_LINE);
 	for(term_t y = 0; y < get_term_sz('Y'); y++)
@@ -74,7 +74,7 @@ void print_fname(const char* prog, char* fname, term_t max_len)
 	}
 }
 
-void bar(buff data, char key)
+void bar(buff dat, char key)
 {
 	const uint8_t dots_and_space = 4;
 	const char* words[5] =
@@ -90,30 +90,30 @@ void bar(buff data, char key)
 	char chrs[11];
 
 	snprintf(keycode, sizeof(keycode), "%d", key);
-	snprintf(lns, sizeof(lns), "%d", data.lns);
-	snprintf(chrs, sizeof(chrs), "%d", data.chrs);
+	snprintf(lns, sizeof(lns), "%d", dat.ln);
+	snprintf(chrs, sizeof(chrs), "%d", dat.chrs);
 
 	// Upper part of the bar.
 	printf("%s%s", COLORS_INVERT, words[0]);
-	print_fname(words[0], data.fname, get_term_sz('X') - strlen(words[0])
+	print_fname(words[0], dat.fname, get_term_sz('X') - strlen(words[0])
 	- dots_and_space);
 
 	// Lower part of the bar.
 	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lns)
 	+ strlen(words[2]) + strlen(chrs) + strlen(words[3]) + strlen(keycode);
 
-	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lns, words[2], data.chrs,
+	printf("%s%d%s%d%s%d%s%*s%s", words[1], dat.ln, words[2], dat.chrs,
 	words[3], key, words[4], get_term_sz('X') - whitespace, " ", COLORS_RESET);
 }
 /*
-buff_t scroll(buff data)
+buff_t scroll(buff dat)
 {
-	buff_t lines_to_hide = data.lns - PLACE_FOR_TEXT;
+	buff_t lines_to_hide = dat.ln - TXT_PLACE;
 	buff_t offset = 0;
 
-	for(buff_t pos = 0; pos < data.chrs; pos++)
+	for(buff_t pos = 0; pos < dat.chrs; pos++)
 	{
-		if(data.txt[pos] == LINEFEED)
+		if(dat.txt[pos] == LINEFEED)
 		{
 			offset++; // Temponary usage.
 		}
@@ -127,16 +127,16 @@ buff_t scroll(buff data)
 	return offset;
 }
 *//*
-void set_cursor_pos(buff data)
+void set_cursor_pos(buff dat)
 {
 	term_t right = 1;
 
-	if(data.lns < PLACE_FOR_TEXT)
+	if(dat.ln < TXT_PLACE)
 	{
-		MV_CURSOR_UP(PLACE_FOR_TEXT - data.lns);
-		for(buff_t pos = data.chrs; pos > 0; pos--) // Last row is auto pos.
+		MV_CURSOR_UP(TXT_PLACE - dat.ln);
+		for(buff_t pos = dat.chrs; pos > 0; pos--) // Last row is auto pos.
 		{
-			if(data.txt[pos] == LINEFEED)
+			if(dat.txt[pos] == LINEFEED)
 			{
 				if(right > 0)
 				{
@@ -150,36 +150,36 @@ void set_cursor_pos(buff data)
 	MV_CURSOR_RIGHT(right);
 	MV_CURSOR_LEFT(1);
 
-	if(data.txt[0] == LINEFEED && data.lns == 2) // Upper algorithm weakness.
+	if(dat.txt[0] == LINEFEED && dat.ln == 2) // Upper algorithm weakness.
 	{
 		MV_CURSOR_LEFT(1);
 	}
 }
 */
-void print_text(buff data)
+void print_text(buff dat)
 {
-	if(data.chrs == 0 || data.txt[0][0] == LINEFEED)
+	if(dat.chrs == 0 || dat.txt[0][0] == LINEFEED)
 	{
-		putchar(LINEFEED); // Necessary at least for the LXTerminal.
+		putchar(LINEFEED); // Necessary for tested terminals.
 	}
-	for(term_t y = 0; y <= data.lns; y++)
+	for(term_t ln = 0; ln <= dat.ln; ln++)
 	{
-		fputs(data.txt[y], stdout);
+		fputs(dat.txt[ln], stdout);
 	}
 }
 
-void window(buff data, char key)
+void window(buff dat, char key)
 {
-	bar(data, key);
-	print_text(data);
+	bar(dat, key);
+	print_text(dat);
 
-	if(data.lns <= PLACE_FOR_TEXT) // Visible bottom fill.
+	if(dat.ln <= TXT_PLACE) // Visible bottom fill.
 	{
-		for(term_t y = data.lns + 1; y < PLACE_FOR_TEXT; y++)
+		for(term_t ln = dat.ln + 1; ln < TXT_PLACE; ln++)
 		{
 			putchar(LINEFEED);
 		}
 	}
-//	set_cursor_pos(data);
+//	set_cursor_pos(dat);
 }
 

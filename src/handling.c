@@ -25,9 +25,9 @@ char nix_getch(void)
 	return key;
 }
 
-void set_fname(buff data, char* passed)
+void set_fname(buff dat, char* passed)
 {
-	if(passed[strlen(passed) - TERMINATOR_SZ] == '/')
+	if(passed[strlen(passed) - NULLTERM_SZ] == '/')
 	{
 		fputs("Cannot open passed directory as the file, exited.\n", stderr);
 		exit(1);
@@ -35,12 +35,12 @@ void set_fname(buff data, char* passed)
 
 	if(passed[0] == '/') // Is absolute path.
 	{
-		if(strlen(passed) + TERMINATOR_SZ > PATH_MAX)
+		if(strlen(passed) + NULLTERM_SZ > PATH_MAX)
 		{
 			fputs("Given path is to long, exited.\n", stderr);
 			exit(1);
 		}
-		strcpy(data.fname, passed); // Malloced so doesn't need 'n' for size.
+		strcpy(dat.fname, passed); // Malloced so doesn't need 'n' for size.
 	}
 	else // Relative or basename.
 	{
@@ -50,17 +50,17 @@ void set_fname(buff data, char* passed)
 		ptr_check((getcwd(abs_path, PATH_MAX)),
 		"Cannot get your current path. Can be too long, exited.\0");
 
-		if((strlen(abs_path) + strlen(passed) + TERMINATOR_SZ) > PATH_MAX)
+		if((strlen(abs_path) + strlen(passed) + NULLTERM_SZ) > PATH_MAX)
 		{
 			fputs("Given filename is too long, exited.\n", stderr);
 			exit(1);
 		}
-		strcpy(data.fname, abs_path); // Copy the path.
-		data.fname[strlen(abs_path)] = '/'; // Add the slash between.
+		strcpy(dat.fname, abs_path); // Copy the path.
+		dat.fname[strlen(abs_path)] = '/'; // Add the slash between.
 
 		for(uint16_t pos = 0; pos < strlen(passed); pos++) // Append basename.
 		{
-			strcpy(&data.fname[strlen(abs_path) + slash_sz + pos],
+			strcpy(&dat.fname[strlen(abs_path) + slash_sz + pos],
 			&passed[pos]);
 		}
 		free(abs_path);
@@ -77,103 +77,106 @@ buff_t get_file_sz(FILE* fd)
 	return sz;
 }
 /*
-buff read_file(buff data)
+buff read_file(buff dat)
 {
 	char chr;
 
-	FILE* textfile = fopen(data.fname, "r");
+	FILE* textfile = fopen(dat.fname, "r");
 	if(textfile)
 	{
-		data.txt = malloc(get_file_sz(textfile) + TERMINATOR_SZ);
+		dat.txt = malloc(get_file_sz(textfile) + NULLTERM_SZ);
 		while((chr = getc(textfile)) != EOF)
 		{
-			data.txt[data.lns] = chr;
-			data.chrs++;
+			dat.txt[dat.ln] = chr;
+			dat.chrs++;
 		}
 		fclose(textfile);
 	}
 	else
 	{
-		data.txt = malloc(TERMINATOR_SZ);
-		data.txt[data.chrs] = TERMINATOR;
+		dat.txt = malloc(NULLTERM_SZ);
+		dat.txt[dat.chrs] = NULLTERM;
 	}
-	return data;
+	return dat;
 }
 *//*
-void save_file(buff data)
+void save_file(buff dat)
 {
-	if(access(data.fname, F_OK) == -1) // ... there is no file.
+	if(access(dat.fname, F_OK) == -1) // ... there is no file.
 	{
-		int created = open(data.fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
+		int created = open(dat.fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if(created == -1)
 		{
 			fputs("Failed to create the file.\n", stderr);
 			exit(1);
 		}		
 	}
-	FILE* textfile = fopen(data.fname, "w");
+	FILE* textfile = fopen(dat.fname, "w");
 	ptr_check(textfile, "Cannot write to the file, exited.\0");
-	fputs(data.txt, textfile);
+	fputs(dat.txt, textfile);
 	fclose(textfile);
 }
 */
-buff visible_char(buff data, char key) // TODO: WORK AND SHORTEN.
+buff visible_char(buff dat, char key) // TODO: WORK AND SHORTEN.
 {
 	switch(key) // + 1 means 'the new char'.
 	{
 		default:
-			data.chrs++;
-			data.txt[data.lns] = realloc(data.txt[data.lns], data.chrs + 1);
-			ptr_check(data.txt[data.lns],
+			dat.chrs_ln++;
+			dat.chrs++;
+			dat.txt[dat.ln] = realloc(dat.txt[dat.ln], dat.chrs_ln + 1);
+			ptr_check(dat.txt[dat.ln],
 			"Cannot realloc memory for the new char, exited.\0");
 
-			data.txt[data.lns][data.chrs - 1] = key;
-			data.txt[data.lns][data.chrs] = TERMINATOR;
+			dat.txt[dat.ln][dat.chrs_ln - 1] = key;
+			dat.txt[dat.ln][dat.chrs_ln] = NULLTERM;
 		break;
 
-		case TERMINATOR: // Required for rendering.
+		case NULLTERM: // Required for rendering.
 		break;
 
 /*		case TAB:
 			for(uint8_t spaces = 0; spaces < 2; spaces++) // Actually converts.
 			{
-				data.txt = realloc(data.txt, data.chrs + TERMINATOR_SZ + 1);
-				data.txt[data.chrs] = SPACE;
-				data.chrs++;
+				dat.txt = realloc(dat.txt, dat.chrs + NULLTERM_SZ + 1);
+				dat.txt[dat.chrs] = SPACE;
+				dat.chrs++;
 			}
 		break;
 */
 		case LINEFEED:
-			data.chrs++;
-			data.txt[data.lns] = realloc(data.txt[data.lns], data.chrs + 1);
-			ptr_check(data.txt[data.lns],
+			dat.chrs++;
+			dat.txt[dat.ln] = realloc(dat.txt[dat.ln], dat.chrs_ln + 1);
+			ptr_check(dat.txt[dat.ln],
 			"Cannot realloc memory for the new char, exited.\0");
-			data.txt[data.lns][data.chrs - 1] = LINEFEED;
-			data.txt[data.lns][data.chrs] = TERMINATOR;
-			data.lns++;
 
-			data.txt = realloc(data.txt, (data.lns + 1) * 8);
-			data.txt[data.lns] = malloc(1);
-			data.txt[data.lns][0] = TERMINATOR;
+			dat.txt[dat.ln][dat.chrs_ln - 1] = LINEFEED;
+			dat.txt[dat.ln][dat.chrs_ln] = NULLTERM;
+
+			dat.ln++;
+			dat.chrs_ln = 0;
+			dat.txt = realloc(dat.txt, (dat.ln + 1) * 8);
+			dat.txt[dat.ln] = malloc(1);
+			dat.txt[dat.ln][0] = NULLTERM;
 		break;
 
 		case BACKSPACE:
-			data.txt[data.lns] = realloc(data.txt[data.lns], data.chrs + 1);
-			ptr_check(data.txt[data.lns],
+			dat.txt[dat.ln] = realloc(dat.txt[dat.ln], dat.chrs + 1);
+			ptr_check(dat.txt[dat.ln],
 			"Cannot realloc memory for the backspace, exited.\0");
 
-			data.chrs--;
-			if(data.chrs < 0)
+			dat.chrs--;
+			if(dat.chrs < 0)
 			{
-				data.chrs = 0;
+				dat.chrs = 0;
 			}
-			data.txt[data.lns][data.chrs] = TERMINATOR;
+			dat.txt[dat.ln][dat.chrs] = NULLTERM;
 		break;
 	}
-	return data;
+	return dat;
 }
 /*
-buff keyboard_shortcut(buff data, char key)
+buff keyboard_shortcut(buff dat, char key)
 {
 	switch(key)
 	{
@@ -181,66 +184,66 @@ buff keyboard_shortcut(buff data, char key)
 		break;
 
 		case CTRL_D:
-			save_file(data);
+			save_file(dat);
 		break;
 
 		case CTRL_X:
-			free(data.txt);
-			free(data.fname);
+			free(dat.txt);
+			free(dat.fname);
 			exit(0);
 		break;
 
 	}
-	return data;
+	return dat;
 }
 
-buff count_lines(buff data)
+buff count_lines(buff dat)
 {
-	data.lns = 1; // Reset.
+	dat.ln = 1; // Reset.
 
-	for(buff_t pos = 0; pos <= data.chrs; pos++)
+	for(buff_t pos = 0; pos <= dat.chrs; pos++)
 	{
-		if(data.txt[pos] == LINEFEED)
+		if(dat.txt[pos] == LINEFEED)
 		{
-			data.lns++;
+			dat.ln++;
 		}
 	}
-	return data;
+	return dat;
 }
 
-void limits(buff data)
+void limits(buff dat)
 {
-	if(data.lns >= MAX_LINES)
+	if(dat.ln >= MAX_LINES)
 	{
 		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_LINES,
-		data.lns);
+		dat.ln);
 		exit(1);
 	}
-	else if(data.chrs >= MAX_CHARS)
+	else if(dat.chrs >= MAX_CHARS)
 	{
 		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_CHARS,
-		data.chrs);
+		dat.chrs);
 		exit(1);
 	}
 }
 */
-buff alloc_text(buff data, char key)
+buff alloc_text(buff dat, char key)
 {
 	switch(key)
 	{
 		default:
-			data = visible_char(data, key);
+			dat = visible_char(dat, key);
 		break;
 
 		case NEGATIVE_CHAR: // Eg. CTRL+C.
 		case CTRL_D:
 		case CTRL_X:
-//			data = keyboard_shortcut(data, key);
+//			dat = keyboard_shortcut(dat, key);
 		break;
 	}
-//	data = count_lines(data);
-//	limits(data);
+//	dat = count_lines(dat);
+//	limits(dat);
 
-	return data;
+	return dat;
 }
 

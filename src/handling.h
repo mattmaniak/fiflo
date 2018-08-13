@@ -12,7 +12,7 @@
 
 // Required keymap.
 #define NEGATIVE_CHAR -1
-#define TERMINATOR 0
+#define NULLTERM 0
 #define CTRL_D 4
 #define TAB 9
 #define LINEFEED 10
@@ -20,7 +20,7 @@
 #define SPACE 32
 #define BACKSPACE 127
 
-#define TERMINATOR_SZ 1
+#define NULLTERM_SZ 1
 
 void ptr_check(void* ptr, const char* errmsg); // Exit on error with message.
 char nix_getch(void);

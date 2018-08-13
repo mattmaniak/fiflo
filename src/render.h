@@ -11,7 +11,7 @@
 #define MAX_Y MAX_X
 
 #define BAR_SZ 2
-#define PLACE_FOR_TEXT (get_term_sz('Y') - BAR_SZ)
+#define TXT_PLACE (get_term_sz('Y') - BAR_SZ)
 
 // ANSI escape codes.
 #define COLORS_RESET "\033[0m"
