@@ -84,18 +84,18 @@ buff read_file(buff data)
 	FILE* textfile = fopen(data.fname, "r");
 	if(textfile)
 	{
-		data.row = malloc(get_file_sz(textfile) + TERMINATOR_SZ);
+		data.txt = malloc(get_file_sz(textfile) + TERMINATOR_SZ);
 		while((chr = getc(textfile)) != EOF)
 		{
-			data.row[data.lines] = chr;
-			data.chars++;
+			data.txt[data.lns] = chr;
+			data.chrs++;
 		}
 		fclose(textfile);
 	}
 	else
 	{
-		data.row = malloc(TERMINATOR_SZ);
-		data.row[data.chars] = TERMINATOR;
+		data.txt = malloc(TERMINATOR_SZ);
+		data.txt[data.chrs] = TERMINATOR;
 	}
 	return data;
 }
@@ -113,20 +113,22 @@ void save_file(buff data)
 	}
 	FILE* textfile = fopen(data.fname, "w");
 	ptr_check(textfile, "Cannot write to the file, exited.\0");
-	fputs(data.row, textfile);
+	fputs(data.txt, textfile);
 	fclose(textfile);
 }
 */
-buff visible_char(buff data, char key)
+buff visible_char(buff data, char key) // TODO: WORK AND SHORTEN.
 {
 	switch(key) // + 1 means 'the new char'.
 	{
 		default:
-			data.row[data.lines] = realloc(data.row[data.lines], data.chars + 2);
-			ptr_check(data.row[data.lines], "Cannot realloc memory for the new char, exited.\0");
-			data.row[data.lines][data.chars] = key;
-			data.chars++;
-			data.row[data.lines][data.chars] = TERMINATOR;
+			data.chrs++;
+			data.txt[data.lns] = realloc(data.txt[data.lns], data.chrs + 1);
+			ptr_check(data.txt[data.lns],
+			"Cannot realloc memory for the new char, exited.\0");
+
+			data.txt[data.lns][data.chrs - 1] = key;
+			data.txt[data.lns][data.chrs] = TERMINATOR;
 		break;
 
 		case TERMINATOR: // Required for rendering.
@@ -135,29 +137,39 @@ buff visible_char(buff data, char key)
 /*		case TAB:
 			for(uint8_t spaces = 0; spaces < 2; spaces++) // Actually converts.
 			{
-				data.row = realloc(data.row, data.chars + TERMINATOR_SZ + 1);
-				data.row[data.chars] = SPACE;
-				data.chars++;
+				data.txt = realloc(data.txt, data.chrs + TERMINATOR_SZ + 1);
+				data.txt[data.chrs] = SPACE;
+				data.chrs++;
 			}
 		break;
-
+*/
 		case LINEFEED:
-			data.row = realloc(data.row, data.chars + TERMINATOR_SZ + 1);
-			data.row[data.chars] = LINEFEED;
-			data.chars++;
+			data.chrs++;
+			data.txt[data.lns] = realloc(data.txt[data.lns], data.chrs + 1);
+			ptr_check(data.txt[data.lns],
+			"Cannot realloc memory for the new char, exited.\0");
+			data.txt[data.lns][data.chrs - 1] = LINEFEED;
+			data.txt[data.lns][data.chrs] = TERMINATOR;
+			data.lns++;
+
+			data.txt = realloc(data.txt, (data.lns + 1) * 8);
+			data.txt[data.lns] = malloc(1);
+			data.txt[data.lns][0] = TERMINATOR;
 		break;
 
 		case BACKSPACE:
-			data.row = realloc(data.row, data.chars);
-			data.chars--;
-			if(data.chars < 0)
-			{
-				data.chars = 0;
-				data.row = realloc(data.row, data.chars + TERMINATOR_SZ);
-			}
-		break;
-*/	}
+			data.txt[data.lns] = realloc(data.txt[data.lns], data.chrs + 1);
+			ptr_check(data.txt[data.lns],
+			"Cannot realloc memory for the backspace, exited.\0");
 
+			data.chrs--;
+			if(data.chrs < 0)
+			{
+				data.chrs = 0;
+			}
+			data.txt[data.lns][data.chrs] = TERMINATOR;
+		break;
+	}
 	return data;
 }
 /*
@@ -173,7 +185,7 @@ buff keyboard_shortcut(buff data, char key)
 		break;
 
 		case CTRL_X:
-			free(data.row);
+			free(data.txt);
 			free(data.fname);
 			exit(0);
 		break;
@@ -184,13 +196,13 @@ buff keyboard_shortcut(buff data, char key)
 
 buff count_lines(buff data)
 {
-	data.lines = 1; // Reset.
+	data.lns = 1; // Reset.
 
-	for(buff_t pos = 0; pos <= data.chars; pos++)
+	for(buff_t pos = 0; pos <= data.chrs; pos++)
 	{
-		if(data.row[pos] == LINEFEED)
+		if(data.txt[pos] == LINEFEED)
 		{
-			data.lines++;
+			data.lns++;
 		}
 	}
 	return data;
@@ -198,16 +210,16 @@ buff count_lines(buff data)
 
 void limits(buff data)
 {
-	if(data.lines >= MAX_LINES)
+	if(data.lns >= MAX_LINES)
 	{
-		fprintf(stderr, "Maximum lines amount: %d, got: %d.\n", MAX_LINES,
-		data.lines);
+		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_LINES,
+		data.lns);
 		exit(1);
 	}
-	else if(data.chars >= MAX_CHARS)
+	else if(data.chrs >= MAX_CHARS)
 	{
-		fprintf(stderr, "Maximum lines amount: %d, got: %d.\n", MAX_CHARS,
-		data.chars);
+		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_CHARS,
+		data.chrs);
 		exit(1);
 	}
 }

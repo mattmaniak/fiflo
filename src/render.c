@@ -49,9 +49,9 @@ term_t get_term_sz(char axis)
 	return 0; // Required -Wreturn-type.
 }
 
-void flush_window(buff_t lines)
+void flush_window(buff_t lns)
 {
-	MV_CURSOR_DOWN(PLACE_FOR_TEXT - lines);
+	MV_CURSOR_DOWN(PLACE_FOR_TEXT - lns);
 
 	printf("%s", CLEAN_WHOLE_LINE);
 	for(term_t y = 0; y < get_term_sz('Y'); y++)
@@ -83,15 +83,15 @@ void bar(buff data, char key)
 		" lines: \0",
 		" | chars: \0",
 		" | last: \0",
-		" | save: CTRL+D | exit: CTRL+X \0"
+		" | save: CTRL+D | exit: CTRL+X\0"
 	};
 	char keycode[4];
-	char lines[11];
-	char chars[11];
+	char lns[11];
+	char chrs[11];
 
 	snprintf(keycode, sizeof(keycode), "%d", key);
-	snprintf(lines, sizeof(lines), "%d", data.lines);
-	snprintf(chars, sizeof(chars), "%d", data.chars);
+	snprintf(lns, sizeof(lns), "%d", data.lns);
+	snprintf(chrs, sizeof(chrs), "%d", data.chrs);
 
 	// Upper part of the bar.
 	printf("%s%s", COLORS_INVERT, words[0]);
@@ -99,25 +99,25 @@ void bar(buff data, char key)
 	- dots_and_space);
 
 	// Lower part of the bar.
-	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lines)
-	+ strlen(words[2]) + strlen(chars) + strlen(words[3]) + strlen(keycode);
+	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lns)
+	+ strlen(words[2]) + strlen(chrs) + strlen(words[3]) + strlen(keycode);
 
-	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lines, words[2], data.chars,
+	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lns, words[2], data.chrs,
 	words[3], key, words[4], get_term_sz('X') - whitespace, " ", COLORS_RESET);
 }
 /*
 buff_t scroll(buff data)
 {
-	buff_t lines_to_hide = data.lines - PLACE_FOR_TEXT;
+	buff_t lines_to_hide = data.lns - PLACE_FOR_TEXT;
 	buff_t offset = 0;
 
-	for(buff_t pos = 0; pos < data.chars; pos++)
+	for(buff_t pos = 0; pos < data.chrs; pos++)
 	{
-		if(data.row[pos] == LINEFEED)
+		if(data.txt[pos] == LINEFEED)
 		{
 			offset++; // Temponary usage.
 		}
-		if(offset == lines_to_hide + 1) // How many lines to scroll.
+		if(offset == lines_to_hide + 1) // How many lns to scroll.
 		{
 			offset = pos;
 			break;
@@ -131,12 +131,12 @@ void set_cursor_pos(buff data)
 {
 	term_t right = 1;
 
-	if(data.lines < PLACE_FOR_TEXT)
+	if(data.lns < PLACE_FOR_TEXT)
 	{
-		MV_CURSOR_UP(PLACE_FOR_TEXT - data.lines);
-		for(buff_t pos = data.chars; pos > 0; pos--) // Last row is auto pos.
+		MV_CURSOR_UP(PLACE_FOR_TEXT - data.lns);
+		for(buff_t pos = data.chrs; pos > 0; pos--) // Last row is auto pos.
 		{
-			if(data.row[pos] == LINEFEED)
+			if(data.txt[pos] == LINEFEED)
 			{
 				if(right > 0)
 				{
@@ -150,7 +150,7 @@ void set_cursor_pos(buff data)
 	MV_CURSOR_RIGHT(right);
 	MV_CURSOR_LEFT(1);
 
-	if(data.row[0] == LINEFEED && data.lines == 2) // Upper algorithm weakness.
+	if(data.txt[0] == LINEFEED && data.lns == 2) // Upper algorithm weakness.
 	{
 		MV_CURSOR_LEFT(1);
 	}
@@ -158,13 +158,13 @@ void set_cursor_pos(buff data)
 */
 void print_text(buff data)
 {
-	if(data.chars == 0 || data.row[0][0] == LINEFEED)
+	if(data.chrs == 0 || data.txt[0][0] == LINEFEED)
 	{
 		putchar(LINEFEED); // Necessary at least for the LXTerminal.
 	}
-	for(term_t y = 0; y <= data.lines; y++)
+	for(term_t y = 0; y <= data.lns; y++)
 	{
-		fputs(data.row[y], stdout);
+		fputs(data.txt[y], stdout);
 	}
 }
 
@@ -173,9 +173,9 @@ void window(buff data, char key)
 	bar(data, key);
 	print_text(data);
 
-	if(data.lines <= PLACE_FOR_TEXT) // Visible bottom fill.
+	if(data.lns <= PLACE_FOR_TEXT) // Visible bottom fill.
 	{
-		for(term_t y = data.lines + 1; y < PLACE_FOR_TEXT; y++)
+		for(term_t y = data.lns + 1; y < PLACE_FOR_TEXT; y++)
 		{
 			putchar(LINEFEED);
 		}

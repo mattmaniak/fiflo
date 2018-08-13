@@ -12,13 +12,15 @@ void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 
 void run(char* name)
 {
-	buff data = {malloc(PATH_MAX), {NULL}, 0, 0};
-	ptr_check(data.fname, "Cannot alloc memory for the filename, exited.\n\0");
-
-	data.row[data.lines] = malloc(1);
-	data.row[data.lines][data.chars] = TERMINATOR;
-
+	buff data = {malloc(PATH_MAX), malloc(8), 0, 0};
+	ptr_check(data.fname, "Cannot allocate memory for the filename, exited.\0");
 	set_fname(data, name);
+
+	ptr_check(data.txt, "Cannot allocate memory for the text, exited.\0");
+	data.txt[data.lns] = malloc(1);
+	ptr_check(data.txt, "Cannot allocate memory for first next line, exited.\0");
+	data.txt[data.lns][data.chrs] = TERMINATOR;
+
 //	data = read_file(data);
 	char pressed_key = TERMINATOR; // Initializer too.
 
@@ -32,7 +34,7 @@ void run(char* name)
 		window(data, pressed_key);
 		pressed_key = nix_getch();
 
-		flush_window(data.lines);
+		flush_window(data.lns);
 	}
 }
 
@@ -45,7 +47,7 @@ void argc_check(int arg_count)
 	}
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
 	argc_check(argc);
 	if(argv[1] == NULL)
