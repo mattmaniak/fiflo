@@ -117,39 +117,23 @@ void save_file(buff dat)
 	fclose(textfile);
 }
 */
-buff visible_char(buff dat, char key) // TODO: WORK AND SHORTEN.
+buff addition_char(buff dat, char key) // TODO: WORK AND SHORTEN.
 {
+	dat.chrs++;
+	dat.chrs_ln++;
+
+	dat.txt[dat.ln] = realloc(dat.txt[dat.ln], dat.chrs_ln + 1);
+	ptr_check(dat.txt[dat.ln],
+
+	"Cannot realloc memory for the new char, exited.\0");
 	switch(key) // + 1 means 'the new char'.
 	{
 		default:
-			dat.chrs_ln++;
-			dat.chrs++;
-			dat.txt[dat.ln] = realloc(dat.txt[dat.ln], dat.chrs_ln + 1);
-			ptr_check(dat.txt[dat.ln],
-			"Cannot realloc memory for the new char, exited.\0");
-
 			dat.txt[dat.ln][dat.chrs_ln - 1] = key;
 			dat.txt[dat.ln][dat.chrs_ln] = NULLTERM;
 		break;
 
-		case NULLTERM: // Required for rendering.
-		break;
-
-/*		case TAB:
-			for(uint8_t spaces = 0; spaces < 2; spaces++) // Actually converts.
-			{
-				dat.txt = realloc(dat.txt, dat.chrs + NULLTERM_SZ + 1);
-				dat.txt[dat.chrs] = SPACE;
-				dat.chrs++;
-			}
-		break;
-*/
 		case LINEFEED:
-			dat.chrs++;
-			dat.txt[dat.ln] = realloc(dat.txt[dat.ln], dat.chrs_ln + 1);
-			ptr_check(dat.txt[dat.ln],
-			"Cannot realloc memory for the new char, exited.\0");
-
 			dat.txt[dat.ln][dat.chrs_ln - 1] = LINEFEED;
 			dat.txt[dat.ln][dat.chrs_ln] = NULLTERM;
 
@@ -158,19 +142,6 @@ buff visible_char(buff dat, char key) // TODO: WORK AND SHORTEN.
 			dat.txt = realloc(dat.txt, (dat.ln + 1) * 8);
 			dat.txt[dat.ln] = malloc(1);
 			dat.txt[dat.ln][0] = NULLTERM;
-		break;
-
-		case BACKSPACE:
-			dat.txt[dat.ln] = realloc(dat.txt[dat.ln], dat.chrs + 1);
-			ptr_check(dat.txt[dat.ln],
-			"Cannot realloc memory for the backspace, exited.\0");
-
-			dat.chrs--;
-			if(dat.chrs < 0)
-			{
-				dat.chrs = 0;
-			}
-			dat.txt[dat.ln][dat.chrs] = NULLTERM;
 		break;
 	}
 	return dat;
@@ -197,20 +168,6 @@ buff keyboard_shortcut(buff dat, char key)
 	return dat;
 }
 
-buff count_lines(buff dat)
-{
-	dat.ln = 1; // Reset.
-
-	for(buff_t pos = 0; pos <= dat.chrs; pos++)
-	{
-		if(dat.txt[pos] == LINEFEED)
-		{
-			dat.ln++;
-		}
-	}
-	return dat;
-}
-
 void limits(buff dat)
 {
 	if(dat.ln >= MAX_LINES)
@@ -231,8 +188,7 @@ buff alloc_text(buff dat, char key)
 {
 	switch(key)
 	{
-		default:
-			dat = visible_char(dat, key);
+		case NULLTERM: // Required for rendering.
 		break;
 
 		case NEGATIVE_CHAR: // Eg. CTRL+C.
@@ -240,8 +196,37 @@ buff alloc_text(buff dat, char key)
 		case CTRL_X:
 //			dat = keyboard_shortcut(dat, key);
 		break;
+
+		case BACKSPACE:
+			dat.txt[dat.ln] = realloc(dat.txt[dat.ln], dat.chrs_ln + 1);
+			ptr_check(dat.txt[dat.ln],
+			"Cannot realloc memory for the backspace, exited.\0");
+
+			dat.chrs_ln--;
+			dat.chrs--;
+			if(dat.chrs < 0)
+			{
+				dat.chrs = 0;
+			}
+			if(dat.chrs_ln < 0)
+			{
+				dat.ln--;
+				if(dat.ln < 0)
+				{
+					dat.ln = 0;
+				}
+				else if(dat.chrs > 0)
+				{
+					dat.chrs_ln = strlen(dat.txt[dat.ln] + 1);
+				}
+			}
+			dat.txt[dat.ln][dat.chrs_ln] = NULLTERM;
+		break;
+
+		default:
+			dat = addition_char(dat, key);
+		break;
 	}
-//	dat = count_lines(dat);
 //	limits(dat);
 
 	return dat;

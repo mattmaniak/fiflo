@@ -31,9 +31,8 @@ buff_t get_file_sz(FILE* fd);
 buff read_file(buff data);
 void save_file(buff data);
 
-buff visible_char(buff data, char key);
+buff addition_char(buff data, char key);
 buff keyboard_shortcut(buff data, char key);
-buff count_lines(buff data);
 void limits(buff data); // Prevent overflows
 buff alloc_text(buff data, char key); // Place the char into the string.
 

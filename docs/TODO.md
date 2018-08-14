@@ -1,5 +1,7 @@
 # Ideas for the fiflo.
 ## (delete if done correctly):
+- pointer-to-pointer API,
+- add TAB,
 - simplify Makefile,
 - bigger keymap,
 - TAB handling,

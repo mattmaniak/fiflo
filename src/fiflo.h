@@ -18,7 +18,7 @@ typedef struct
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt;
 	buff_t chrs;
-	buff_t chrs_ln;
+	buff_t chrs_ln; // Chars in the current line.
 	buff_t ln;
 }
 buff;
