@@ -28,14 +28,12 @@ term_t get_term_sz(char axis)
 
 	if(win.ws_col < MIN_X || win.ws_row < MIN_Y)
 	{
-		fprintf(stderr, "Minimum terminal size is: %dx%d, exited.\n", MIN_X,
-		MIN_Y);
+		fprintf(stderr, "Min. term size is: %dx%d, exited.\n", MIN_X, MIN_Y);
 		exit(1);
 	}
 	else if(win.ws_col > MAX_X || win.ws_row > MAX_Y)
 	{
-		fprintf(stderr, "Maximum terminal size is: %dx%d, exited.\n", MAX_X,
-		MAX_Y);
+		fprintf(stderr, "Max. term size is: %dx%d, exited.\n", MAX_X, MAX_Y);
 		exit(1);
 	}
 
@@ -74,7 +72,7 @@ void print_fname(const char* prog, char* fname, term_t max_len)
 	}
 }
 
-void bar(buff dat, char key)
+void bar(buff data, char key)
 {
 	const uint8_t dots_and_space = 4;
 	const char* words[5] =
@@ -90,30 +88,30 @@ void bar(buff dat, char key)
 	char chrs[11];
 
 	snprintf(keycode, sizeof(keycode), "%d", key);
-	snprintf(lns, sizeof(lns), "%d", dat.ln);
-	snprintf(chrs, sizeof(chrs), "%d", dat.chrs);
+	snprintf(lns, sizeof(lns), "%d", data.lns);
+	snprintf(chrs, sizeof(chrs), "%d", data.chrs);
 
 	// Upper part of the bar.
 	printf("%s%s", COLORS_INVERT, words[0]);
-	print_fname(words[0], dat.fname, get_term_sz('X') - strlen(words[0])
+	print_fname(words[0], data.fname, get_term_sz('X') - strlen(words[0])
 	- dots_and_space);
 
 	// Lower part of the bar.
 	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lns)
 	+ strlen(words[2]) + strlen(chrs) + strlen(words[3]) + strlen(keycode);
 
-	printf("%s%d%s%d%s%d%s%*s%s", words[1], dat.ln, words[2], dat.chrs,
+	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lns, words[2], data.chrs,
 	words[3], key, words[4], get_term_sz('X') - whitespace, " ", COLORS_RESET);
 }
 /*
-buff_t scroll(buff dat)
+buff_t scroll(buff data)
 {
-	buff_t lines_to_hide = dat.ln - TXT_PLACE;
+	buff_t lines_to_hide = data.lns - TXT_PLACE;
 	buff_t offset = 0;
 
-	for(buff_t pos = 0; pos < dat.chrs; pos++)
+	for(buff_t pos = 0; pos < data.chrs; pos++)
 	{
-		if(dat.txt[pos] == LINEFEED)
+		if(data.txt[pos] == LINEFEED)
 		{
 			offset++; // Temponary usage.
 		}
@@ -127,16 +125,16 @@ buff_t scroll(buff dat)
 	return offset;
 }
 *//*
-void set_cursor_pos(buff dat)
+void set_cursor_pos(buff data)
 {
 	term_t right = 1;
 
-	if(dat.ln < TXT_PLACE)
+	if(data.lns < TXT_PLACE)
 	{
-		MV_CURSOR_UP(TXT_PLACE - dat.ln);
-		for(buff_t pos = dat.chrs; pos > 0; pos--) // Last row is auto pos.
+		MV_CURSOR_UP(TXT_PLACE - data.lns);
+		for(buff_t pos = data.chrs; pos > 0; pos--) // Last row is auto pos.
 		{
-			if(dat.txt[pos] == LINEFEED)
+			if(data.txt[pos] == LINEFEED)
 			{
 				if(right > 0)
 				{
@@ -150,36 +148,36 @@ void set_cursor_pos(buff dat)
 	MV_CURSOR_RIGHT(right);
 	MV_CURSOR_LEFT(1);
 
-	if(dat.txt[0] == LINEFEED && dat.ln == 2) // Upper algorithm weakness.
+	if(data.txt[0] == LINEFEED && data.lns == 2) // Upper algorithm weakness.
 	{
 		MV_CURSOR_LEFT(1);
 	}
 }
 */
-void print_text(buff dat)
+void print_text(buff data)
 {
-	if(dat.chrs == 0 || dat.txt[0][0] == LINEFEED)
+	if(data.chrs == 0 || data.txt[0][0] == LINEFEED)
 	{
 		putchar(LINEFEED); // Necessary for tested terminals.
 	}
-	for(term_t ln = 0; ln <= dat.ln; ln++)
+	for(term_t ln = 0; ln <= data.lns; ln++)
 	{
-		fputs(dat.txt[ln], stdout);
+		fputs(data.txt[ln], stdout);
 	}
 }
 
-void window(buff dat, char key)
+void window(buff data, char key)
 {
-	bar(dat, key);
-	print_text(dat);
+	bar(data, key);
+	print_text(data);
 
-	if(dat.ln <= TXT_PLACE) // Visible bottom fill.
+	if(data.lns <= TXT_PLACE) // Visible bottom fill.
 	{
-		for(term_t ln = dat.ln + 1; ln < TXT_PLACE; ln++)
+		for(term_t ln = data.lns + 1; ln < TXT_PLACE; ln++)
 		{
 			putchar(LINEFEED);
 		}
 	}
-//	set_cursor_pos(dat);
+//	set_cursor_pos(data);
 }
 

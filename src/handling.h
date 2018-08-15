@@ -20,7 +20,7 @@
 #define SPACE 32
 #define BACKSPACE 127
 
-#define NULLTERM_SZ 1
+#define NTERM_SZ 1
 
 void ptr_check(void* ptr, const char* errmsg); // Exit on error with message.
 char nix_getch(void);
@@ -31,7 +31,7 @@ buff_t get_file_sz(FILE* fd);
 buff read_file(buff data);
 void save_file(buff data);
 
-buff addition_char(buff data, char key);
+buff add_char(buff data, char key);
 buff keyboard_shortcut(buff data, char key);
 void limits(buff data); // Prevent overflows
 buff alloc_text(buff data, char key); // Place the char into the string.

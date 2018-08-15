@@ -16,10 +16,10 @@ typedef int8_t buff_t; // TEMPONARY.
 typedef struct
 {
 	char* fname; // Full filename, eg. /home/user/basename
-	char** txt;
-	buff_t chrs;
-	buff_t chrs_ln; // Chars in the current line.
-	buff_t ln;
+	char** txt; // Eg. txt[lines][chars].
+	buff_t chrs; // Stores 
+	buff_t lns;  // amounts of them.
+	buff_t chrs_ln; // Amount of chars in a current line.
 }
 buff;
 
