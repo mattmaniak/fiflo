@@ -48,7 +48,7 @@ void set_fname(buff data, char* passed)
 
 		char* abs_path = malloc(PATH_MAX); // Man 3 getcwd.
 		ptr_check((getcwd(abs_path, PATH_MAX)),
-"get your current path. Can be too long\0");
+		"get your current path. Can be too long\0");
 
 		if((strlen(abs_path) + strlen(passed) + NTERM_SZ) > PATH_MAX)
 		{
@@ -67,39 +67,26 @@ void set_fname(buff data, char* passed)
 	}
 }
 
-buff_t get_file_sz(FILE* fd)
-{
-	buff_t pos = ftell(fd);
-	fseek(fd, 0, SEEK_END);
-	buff_t sz = ftell(fd);
-	fseek(fd, pos, SEEK_SET);
-
-	return sz;
-}
-/*
 buff read_file(buff data)
 {
-	char chrs;
+	char chr;
 
 	FILE* textfile = fopen(data.fname, "r");
 	if(textfile)
 	{
-		data.txt = malloc(get_file_sz(textfile) + NTERM_SZ);
-		while((chrs = getc(textfile)) != EOF)
+		while((chr = getc(textfile)) != EOF)
 		{
-			data.txt[data.lns] = chrs;
-			data.chrs++;
+			data = txt_alloc(data, chr);
 		}
 		fclose(textfile);
 	}
 	else
 	{
-		data.txt = malloc(NTERM_SZ);
-		data.txt[data.chrs] = NULLTERM;
+		data.txt[data.lns][data.chrs] = NULLTERM;
 	}
 	return data;
 }
-*/
+
 void save_file(buff data)
 {
 	if(access(data.fname, F_OK) == -1) // ... there is no file.
@@ -107,7 +94,7 @@ void save_file(buff data)
 		int created = open(data.fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if(created == -1)
 		{
-			fputs("Failed to create the file, exited.\n", stderr);
+			fputs("Failed to create the new file, exited.\n", stderr);
 			exit(1);
 		}		
 	}
@@ -121,7 +108,7 @@ void save_file(buff data)
 	fclose(textfile);
 }
 
-buff add_char(buff data, char key) // TODO: WORK AND SHORTEN.
+buff add_char(buff data, char key)
 {
 	data.chrs_ln++;
 	data.txt[data.lns] = realloc(data.txt[data.lns], data.chrs_ln + 1);
@@ -190,7 +177,7 @@ void limits(buff data)
 	}
 }
 */
-buff alloc_text(buff data, char key)
+buff txt_alloc(buff data, char key)
 {
 	switch(key)
 	{

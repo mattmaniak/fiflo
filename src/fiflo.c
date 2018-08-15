@@ -22,7 +22,7 @@ void run(char* name)
 	ptr_check(data.txt, "Cannot allocate memory for first line, exited.\0");
 	data.txt[data.lns][data.chrs] = NULLTERM;
 
-//	data = read_file(data);
+	data = read_file(data);
 	char pressed_key = NULLTERM; // Initializer too.
 
 	for(;;) // Main program loop.
@@ -30,7 +30,7 @@ void run(char* name)
 		signal(SIGTSTP, ignore_sig); // CTRL_Z
 		signal(SIGINT, ignore_sig); // CTRL_C
 
-		data = alloc_text(data, pressed_key);
+		data = txt_alloc(data, pressed_key);
 
 		window(data, pressed_key);
 		pressed_key = nix_getch();
