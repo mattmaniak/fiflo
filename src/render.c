@@ -100,7 +100,7 @@ void bar(buff data, char key)
 	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lns)
 	+ strlen(words[2]) + strlen(chrs) + strlen(words[3]) + strlen(keycode);
 
-	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lns, words[2], data.chrs,
+	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lns + 1, words[2], data.chrs,
 	words[3], key, words[4], get_term_sz('X') - whitespace, " ", COLORS_RESET);
 }
 /*
@@ -124,36 +124,17 @@ buff_t scroll(buff data)
 	printf("%s", "[...]");
 	return offset;
 }
-*//*
+*/
 void set_cursor_pos(buff data)
 {
-	term_t right = 1;
-
 	if(data.lns < TXT_PLACE)
 	{
-		MV_CURSOR_UP(TXT_PLACE - data.lns);
-		for(buff_t pos = data.chrs; pos > 0; pos--) // Last row is auto pos.
-		{
-			if(data.txt[pos] == LINEFEED)
-			{
-				if(right > 0)
-				{
-					right--;
-				}
-				break;
-			}
-			right++;
-		}
+		MV_CURSOR_UP(TXT_PLACE - data.lns - 1);
 	}
-	MV_CURSOR_RIGHT(right);
+	MV_CURSOR_RIGHT((buff_t) strlen(data.txt[data.lns]) + 1);
 	MV_CURSOR_LEFT(1);
-
-	if(data.txt[0] == LINEFEED && data.lns == 2) // Upper algorithm weakness.
-	{
-		MV_CURSOR_LEFT(1);
-	}
 }
-*/
+
 void print_text(buff data)
 {
 	if(data.chrs == 0 || data.txt[0][0] == LINEFEED)
@@ -178,6 +159,6 @@ void window(buff data, char key)
 			putchar(LINEFEED);
 		}
 	}
-//	set_cursor_pos(data);
+	set_cursor_pos(data);
 }
 

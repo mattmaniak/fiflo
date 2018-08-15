@@ -28,7 +28,7 @@ void run(char* name)
 	for(;;) // Main program loop.
 	{
 		signal(SIGTSTP, ignore_sig); // CTRL_Z
-//		signal(SIGINT, ignore_sig); // CTRL_C
+		signal(SIGINT, ignore_sig); // CTRL_C
 
 		data = alloc_text(data, pressed_key);
 

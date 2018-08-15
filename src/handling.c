@@ -99,7 +99,7 @@ buff read_file(buff data)
 	}
 	return data;
 }
-*//*
+*/
 void save_file(buff data)
 {
 	if(access(data.fname, F_OK) == -1) // ... there is no file.
@@ -113,10 +113,14 @@ void save_file(buff data)
 	}
 	FILE* textfile = fopen(data.fname, "w");
 	ptr_check(textfile, "write to the file\0");
-	fputs(data.txt, textfile);
+
+	for(buff_t ln = 0; ln <= data.lns; ln++)
+	{
+		fputs(data.txt[ln], textfile);
+	}
 	fclose(textfile);
 }
-*/
+
 buff add_char(buff data, char key) // TODO: WORK AND SHORTEN.
 {
 	data.chrs_ln++;
@@ -154,7 +158,7 @@ buff keyboard_shortcut(buff data, char key)
 		break;
 
 		case CTRL_D:
-//			save_file(data);
+			save_file(data);
 		break;
 
 		case CTRL_X: // Frees everything and exits the program.
@@ -206,6 +210,7 @@ buff alloc_text(buff data, char key)
 			data.chrs_ln--;
 			if(data.lns > 0 && data.chrs_ln < 0)
 			{
+				free(data.txt[data.lns]);
 				data.lns--;
 				data.chrs_ln = strlen(data.txt[data.lns]) - 1;
 			}

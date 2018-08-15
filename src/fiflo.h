@@ -17,8 +17,8 @@ typedef struct
 {
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt; // Eg. txt[lines][chars].
-	buff_t chrs; // Stores 
-	buff_t lns;  // amounts of them.
+	buff_t chrs; // Stores
+	buff_t lns;  // indexes (amount - 1) of them.
 	buff_t chrs_ln; // Amount of chars in a current line.
 }
 buff;
