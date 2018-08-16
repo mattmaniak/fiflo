@@ -1,6 +1,7 @@
-# Ideas for the fiflo.
+# TODOs and ideas for fiflo.
 ## (delete if done correctly):
-- pointer-to-pointer API,
+- malloc BLOCKS of memory, not bytes,
+- move indicators to bottom,
 - add TAB,
 - simplify Makefile,
 - bigger keymap,

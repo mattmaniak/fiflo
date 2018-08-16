@@ -33,7 +33,7 @@ void flush_window(buff_t lines); // For rendering in a one frame.
 void print_fname(const char *prog, char *fname, term_t max_len); // Dynamic.
 void bar(buff data, char key); // Render the only bar: upper. Contains info.
 
-buff_t scroll(buff data); // Ignores first chars to leave a place for the rest.
+void scroll(buff data); // Ignores first chars to leave a place for the rest.
 void set_cursor_pos(buff data);
 void print_text(buff data); // Pressed keys to rendered chars in proper order.
 void window(buff data, char key); // Bar + rendered text + fill + cursor.
