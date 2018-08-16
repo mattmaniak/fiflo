@@ -103,7 +103,7 @@ void bar(buff data, char key)
 	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lns + 1, words[2], data.chrs,
 	words[3], key, words[4], get_term_sz('X') - whitespace, " ", COLORS_RESET);
 }
-/*
+
 buff_t scroll(buff data)
 {
 	buff_t lines_to_hide = data.lns - TXT_PLACE;
@@ -111,11 +111,11 @@ buff_t scroll(buff data)
 
 	for(buff_t pos = 0; pos < data.chrs; pos++)
 	{
-		if(data.txt[pos] == LINEFEED)
+/*		if(data.txt[pos] == LINEFEED)
 		{
 			offset++; // Temponary usage.
 		}
-		if(offset == lines_to_hide + 1) // How many lns to scroll.
+*/		if(offset == lines_to_hide + 1) // How many lns to scroll.
 		{
 			offset = pos;
 			break;
@@ -124,7 +124,7 @@ buff_t scroll(buff data)
 	printf("%s", "[...]");
 	return offset;
 }
-*/
+
 void set_cursor_pos(buff data)
 {
 	if(data.lns < TXT_PLACE)
@@ -143,7 +143,19 @@ void print_text(buff data)
 	}
 	for(term_t ln = 0; ln <= data.lns; ln++)
 	{
-		fputs(data.txt[ln], stdout);
+		buff_t cutline = strlen(data.txt[ln]) - get_term_sz('X');
+		if(strlen(data.txt[ln]) >= get_term_sz('X'))
+		{
+			printf("%s", "[...]");
+			for(buff_t chr = cutline + 5; chr < (buff_t) strlen(data.txt[ln]); chr++)
+			{
+				putchar(data.txt[ln][chr]);
+			}
+		}
+		else
+		{
+			fputs(data.txt[ln], stdout);
+		}
 	}
 }
 
@@ -158,6 +170,10 @@ void window(buff data, char key)
 		{
 			putchar(LINEFEED);
 		}
+	}
+	else
+	{
+		// Scroll.
 	}
 	set_cursor_pos(data);
 }
