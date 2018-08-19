@@ -25,15 +25,15 @@
 void ptr_check(void* ptr, const char* errmsg); // Exit on error with a message.
 char nix_getch(void);
 
-void set_fname(buff data, char* passed);
+void set_fname(buff dat, char* passed);
 
-buff read_file(buff data);
-void save_file(buff data);
+buff read_file(buff dat);
+void save_file(buff dat);
 
-buff add_char(buff data, char key);
-buff keyboard_shortcut(buff data, char key);
-void limits(buff data); // Prevent overflows
-buff txt_alloc(buff data, char key); // Place the char into the string.
+buff add_char(buff dat, char key);
+buff keyboard_shortcut(buff dat, char key);
+void limits(buff dat); // Prevent overflows
+buff txt_alloc(buff dat, char key); // Place the char into the string.
 
 #endif
 

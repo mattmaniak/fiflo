@@ -28,12 +28,12 @@ term_t get_term_sz(char axis)
 
 	if(win.ws_col < MIN_X || win.ws_row < MIN_Y)
 	{
-		fprintf(stderr, "Min. term size is: %dx%d, exited.\n", MIN_X, MIN_Y);
+		fprintf(stderr, "Min. term size is %dx%d, exited.\n", MIN_X, MIN_Y);
 		exit(1);
 	}
 	else if(win.ws_col > MAX_X || win.ws_row > MAX_Y)
 	{
-		fprintf(stderr, "Max. term size is: %dx%d, exited.\n", MAX_X, MAX_Y);
+		fprintf(stderr, "Max. term size is %dx%d, exited.\n", MAX_X, MAX_Y);
 		exit(1);
 	}
 
@@ -47,11 +47,14 @@ term_t get_term_sz(char axis)
 	return 0; // Required -Wreturn-type.
 }
 
-void flush_window(buff_t lns)
+void flush_window(buff dat)
 {
-	MV_CURSOR_DOWN(TXT_PLACE - lns);
-
+	if(dat.lns < TXT_AREA)
+	{
+		MV_CURSOR_DOWN(TXT_AREA - dat.lns);
+	}
 	printf("%s", CLEAN_WHOLE_LINE);
+
 	for(term_t y = 0; y < get_term_sz('Y'); y++)
 	{
 		printf("%s%s", LINE_UP, CLEAN_WHOLE_LINE);
@@ -59,110 +62,72 @@ void flush_window(buff_t lns)
 	fflush(stdout);
 }
 
-void print_fname(const char* prog, char* fname, term_t max_len)
+void bar(buff dat, char key)
 {
-	if(strlen(fname) > max_len)
+	const uint8_t dots_and_space = 6;
+	const char* title = " fiflo | filename: \0";
+	uint16_t max_len = get_term_sz('X') - strlen(title) - dots_and_space;
+
+	printf("%s%s", COLORS_INVERT, title);
+
+	if(strlen(dat.fname) > max_len)
 	{
-		printf("%.*s%s", max_len, fname, "... "); // Precision of the output.
+		printf("%.*s%s", max_len, dat.fname, "[...] ");
 	}
 	else
 	{
-		term_t whitespace = get_term_sz('X') - strlen(prog) - strlen(fname);
-		printf("%s%*s", fname, whitespace, " ");
+		term_t fill = get_term_sz('X') - strlen(title) - strlen(dat.fname);
+		printf("%s%*s", dat.fname, fill, " ");
 	}
-}
-
-void bar(buff data, char key)
-{
-	const uint8_t dots_and_space = 4;
-	const char* words[5] =
-	{
-		" fiflo | filename: \0",
-		" lines: \0",
-		" | chars: \0",
-		" | last: \0",
-		" | save: CTRL+D | exit: CTRL+X\0"
-	};
-	char keycode[4];
-	char lns[11];
-	char chrs[11];
-
-	snprintf(keycode, sizeof(keycode), "%d", key);
-	snprintf(lns, sizeof(lns), "%d", data.lns);
-	snprintf(chrs, sizeof(chrs), "%d", data.chrs);
-
-	// Upper part of the bar.
-	printf("%s%s", COLORS_INVERT, words[0]);
-	print_fname(words[0], data.fname, get_term_sz('X') - strlen(words[0])
-	- dots_and_space);
-
 	// Lower part of the bar.
-	term_t whitespace = strlen(words[4]) + strlen(words[1]) + strlen(lns)
-	+ strlen(words[2]) + strlen(chrs) + strlen(words[3]) + strlen(keycode);
-
-	printf("%s%d%s%d%s%d%s%*s%s", words[1], data.lns + 1, words[2], data.chrs,
-	words[3], key, words[4], get_term_sz('X') - whitespace, " ", COLORS_RESET);
+	printf(" lines: %.*d, chars: %.*d, last key: %.*d%*s%s", 11, dat.lns + 1,
+	11, dat.chrs, 3, key, get_term_sz('X') - 54, " ", COLORS_RESET);
 }
 
-void scroll(buff data)
+buff_t scroll(buff dat)
 {
-	buff_t hidden_lines = data.lns - TXT_PLACE;
-
-	for(buff_t ln = hidden_lines; ln <= data.lns; ln++)
+	const bool current_line = 1;
+	buff_t hidden_lines = 0;
+	if(dat.lns >= TXT_AREA)
 	{
-		fputs(data.txt[ln], stdout);
+		hidden_lines = dat.lns - TXT_AREA + current_line;
+	}
+	return hidden_lines;
+}
+
+void set_cursor_pos(buff dat)
+{
+	if(dat.lns < TXT_AREA)
+	{
+		MV_CURSOR_UP(TXT_AREA - dat.lns - 1);
+	}
+	else
+	{
+//		MV_CURSOR_DOWN(1);
+	}
+	MV_CURSOR_RIGHT((buff_t) strlen(dat.txt[dat.lns]));
+	if(dat.txt[dat.lns][0] == NULLTERM)
+	{
+		MV_CURSOR_LEFT(1);
 	}
 }
 
-void set_cursor_pos(buff data)
+void window(buff dat, char key)
 {
-	if(data.lns < TXT_PLACE)
-	{
-		MV_CURSOR_UP(TXT_PLACE - data.lns - 1);
-	}
-	MV_CURSOR_RIGHT((buff_t) strlen(data.txt[data.lns]));
-}
+	bar(dat, key);
 
-void print_text(buff data)
-{
-	if(data.chrs == 0 || data.txt[0][0] == LINEFEED)
+	for(term_t ln = scroll(dat); ln <= dat.lns; ln++)
+	{
+		fputs(dat.txt[ln], stdout);
+	}
+	if(dat.chrs == 0 || dat.txt[0][0] == LINEFEED)
 	{
 		putchar(LINEFEED); // Necessary for tested terminals.
 	}
-	for(term_t ln = 0; ln <= data.lns; ln++)
+	for(term_t ln = dat.lns + 1; ln < TXT_AREA; ln++)
 	{
-		buff_t cutline = strlen(data.txt[ln]) - get_term_sz('X');
-		if(strlen(data.txt[ln]) > get_term_sz('X'))
-		{
-			printf("%s", "[...]");
-			for(buff_t chr = cutline + 5; chr < (buff_t) strlen(data.txt[ln]); chr++)
-			{
-				putchar(data.txt[ln][chr]);
-			}
-		}
-		else
-		{
-			fputs(data.txt[ln], stdout);
-		}
+		putchar(LINEFEED);
 	}
-}
-
-void window(buff data, char key)
-{
-	bar(data, key);
-
-	if(data.lns < TXT_PLACE) // Visible bottom fill.
-	{
-		print_text(data);
-		for(term_t ln = data.lns + 1; ln < TXT_PLACE; ln++)
-		{
-			putchar(LINEFEED);
-		}
-	}
-	else
-	{
-		scroll(data);
-	}
-//	set_cursor_pos(data);
+	set_cursor_pos(dat);
 }
 
