@@ -1,7 +1,7 @@
 # TODOs and ideas for fiflo.
 ## (delete if done correctly):
 - malloc BLOCKS of memory, not bytes,
-- move indicators to bottom,
+- simplify scroll check (< TXT_AREA etc.),
 - add TAB,
 - simplify Makefile,
 - bigger keymap,

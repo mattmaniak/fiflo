@@ -54,7 +54,7 @@ void flush_window(buff dat)
 	}
 	else
 	{
-		buff_t hidden_lines = dat.lns - TXT_AREA + 1;
+		buff_t hidden_lines = dat.lns - TXT_AREA + CURRENT_LN;
 		MV_CURSOR_DOWN(dat.lns - hidden_lines);
 	}
 	printf("%s", CLEAN_WHOLE_LINE);
@@ -76,24 +76,23 @@ void bar(buff dat, char key)
 
 	if(strlen(dat.fname) > max_len)
 	{
-		printf("%.*s%s", max_len, dat.fname, "[...] ");
+		printf("%.*s%s\n", max_len, dat.fname, "[...] ");
 	}
 	else
 	{
 		term_t fill = get_term_sz('X') - strlen(title) - strlen(dat.fname);
-		printf("%s%*s", dat.fname, fill, " ");
+		printf("%s%*s\n", dat.fname, fill, " ");
 	}
 	// Lower part of the bar.
-	printf(" lines: %.*d, chars: %.*d, last key: %.*d%*s%s", 11, dat.lns + 1,
+	printf(" lines: %.*d, chars: %.*d, last key: %.*d%*s%s\n", 11, dat.lns + 1,
 	11, dat.chrs, 3, key, get_term_sz('X') - 54, " ", COLORS_RESET);
 }
 
 void set_cursor_pos(buff dat)
 {
-	const bool current_line = 1;
-	if(dat.lns < TXT_AREA - current_line)
+	if(dat.lns < TXT_AREA - CURRENT_LN)
 	{
-		MV_CURSOR_UP(TXT_AREA - dat.lns - current_line);
+		MV_CURSOR_UP(TXT_AREA - dat.lns - CURRENT_LN);
 		MV_CURSOR_RIGHT((buff_t) strlen(dat.txt[dat.lns]));
 	}
 	if(dat.txt[dat.lns][0] == NULLTERM)
@@ -112,22 +111,14 @@ void window(buff dat, char key)
 		{
 			fputs(dat.txt[ln], stdout);
 		}
-		if(dat.chrs == 0 || dat.txt[0][0] == LINEFEED)
-		{
-			putchar(LINEFEED); // Necessary for tested terminals.
-		}
-		for(term_t ln = dat.lns + 1; ln < TXT_AREA; ln++)
+		for(term_t ln = dat.lns + CURRENT_LN; ln < TXT_AREA; ln++)
 		{
 			putchar(LINEFEED);
 		}
 	}
 	else
 	{
-		buff_t hidden_lines = dat.lns - TXT_AREA + 1;
-		if(dat.txt[hidden_lines][0] == LINEFEED)
-		{
-			putchar(LINEFEED);
-		}
+		buff_t hidden_lines = dat.lns - TXT_AREA + CURRENT_LN;
 		for(term_t ln = hidden_lines; ln <= dat.lns; ln++)
 		{
 			fputs(dat.txt[ln], stdout);

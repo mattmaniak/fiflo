@@ -11,6 +11,7 @@
 #define MAX_Y MAX_X
 
 #define BAR_SZ 2
+#define CURRENT_LN 1
 #define TXT_AREA (get_term_sz('Y') - BAR_SZ)
 
 // ANSI escape codes.
