@@ -48,10 +48,14 @@ term_t get_term_sz(char axis)
 }
 
 void flush_window(buff dat)
-{
-	if(dat.lns < TXT_AREA)
+{	if(dat.lns < TXT_AREA)
 	{
 		MV_CURSOR_DOWN(TXT_AREA - dat.lns);
+	}
+	else
+	{
+		buff_t hidden_lines = dat.lns - TXT_AREA + 1;
+		MV_CURSOR_DOWN(dat.lns - hidden_lines);
 	}
 	printf("%s", CLEAN_WHOLE_LINE);
 
@@ -84,28 +88,14 @@ void bar(buff dat, char key)
 	11, dat.chrs, 3, key, get_term_sz('X') - 54, " ", COLORS_RESET);
 }
 
-buff_t scroll(buff dat)
-{
-	const bool current_line = 1;
-	buff_t hidden_lines = 0;
-	if(dat.lns >= TXT_AREA)
-	{
-		hidden_lines = dat.lns - TXT_AREA + current_line;
-	}
-	return hidden_lines;
-}
-
 void set_cursor_pos(buff dat)
 {
-	if(dat.lns < TXT_AREA)
+	const bool current_line = 1;
+	if(dat.lns < TXT_AREA - current_line)
 	{
-		MV_CURSOR_UP(TXT_AREA - dat.lns - 1);
+		MV_CURSOR_UP(TXT_AREA - dat.lns - current_line);
+		MV_CURSOR_RIGHT((buff_t) strlen(dat.txt[dat.lns]));
 	}
-	else
-	{
-//		MV_CURSOR_DOWN(1);
-	}
-	MV_CURSOR_RIGHT((buff_t) strlen(dat.txt[dat.lns]));
 	if(dat.txt[dat.lns][0] == NULLTERM)
 	{
 		MV_CURSOR_LEFT(1);
@@ -116,17 +106,32 @@ void window(buff dat, char key)
 {
 	bar(dat, key);
 
-	for(term_t ln = scroll(dat); ln <= dat.lns; ln++)
+	if(dat.lns < TXT_AREA)
 	{
-		fputs(dat.txt[ln], stdout);
+		for(term_t ln = 0; ln <= dat.lns; ln++)
+		{
+			fputs(dat.txt[ln], stdout);
+		}
+		if(dat.chrs == 0 || dat.txt[0][0] == LINEFEED)
+		{
+			putchar(LINEFEED); // Necessary for tested terminals.
+		}
+		for(term_t ln = dat.lns + 1; ln < TXT_AREA; ln++)
+		{
+			putchar(LINEFEED);
+		}
 	}
-	if(dat.chrs == 0 || dat.txt[0][0] == LINEFEED)
+	else
 	{
-		putchar(LINEFEED); // Necessary for tested terminals.
-	}
-	for(term_t ln = dat.lns + 1; ln < TXT_AREA; ln++)
-	{
-		putchar(LINEFEED);
+		buff_t hidden_lines = dat.lns - TXT_AREA + 1;
+		if(dat.txt[hidden_lines][0] == LINEFEED)
+		{
+			putchar(LINEFEED);
+		}
+		for(term_t ln = hidden_lines; ln <= dat.lns; ln++)
+		{
+			fputs(dat.txt[ln], stdout);
+		}
 	}
 	set_cursor_pos(dat);
 }
