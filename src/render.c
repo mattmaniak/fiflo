@@ -70,13 +70,13 @@ void bar(buff dat, char key)
 {
 	const uint8_t dots_and_space = 6;
 	const char* title = " fiflo | filename: \0";
-	uint16_t max_len = get_term_sz('X') - strlen(title) - dots_and_space;
+	uint16_t fname_max = get_term_sz('X') - strlen(title) - dots_and_space;
 
 	printf("%s%s", COLORS_INVERT, title);
 
-	if(strlen(dat.fname) > max_len)
+	if(strlen(dat.fname) > fname_max)
 	{
-		printf("%.*s%s\n", max_len, dat.fname, "[...] ");
+		printf("%.*s%s\n", fname_max, dat.fname, "[...] ");
 	}
 	else
 	{
@@ -84,13 +84,24 @@ void bar(buff dat, char key)
 		printf("%s%*s\n", dat.fname, fill, " ");
 	}
 	// Lower part of the bar.
-	printf(" lines: %.*d, chars: %.*d, last key: %.*d%*s%s\n", 11, dat.lns + 1,
+	printf(" lines: %*d, chars: %*d, last key: %*d%*s%s\n", 11, dat.lns + 1,
 	11, dat.chrs, 3, key, get_term_sz('X') - 54, " ", COLORS_RESET);
+}
+
+void lower_fill(buff_t lns)
+{
+	if(lns < TXT_AREA)
+	{
+		for(term_t ln = lns + CURRENT_LN; ln < TXT_AREA; ln++)
+		{
+			putchar(LINEFEED);
+		}
+	}
 }
 
 void set_cursor_pos(buff dat)
 {
-	if(dat.lns < TXT_AREA - CURRENT_LN)
+	if(dat.lns < TXT_AREA - CURRENT_LN) // else don't move.
 	{
 		MV_CURSOR_UP(TXT_AREA - dat.lns - CURRENT_LN);
 		MV_CURSOR_RIGHT((buff_t) strlen(dat.txt[dat.lns]));
@@ -104,26 +115,25 @@ void set_cursor_pos(buff dat)
 void window(buff dat, char key)
 {
 	bar(dat, key);
+	buff_t hidden_lines = 0;
 
-	if(dat.lns < TXT_AREA)
+	if(dat.lns >= TXT_AREA) // Horizontal scroll.
 	{
-		for(term_t ln = 0; ln <= dat.lns; ln++)
-		{
-			fputs(dat.txt[ln], stdout);
-		}
-		for(term_t ln = dat.lns + CURRENT_LN; ln < TXT_AREA; ln++)
-		{
-			putchar(LINEFEED);
-		}
+		hidden_lines = dat.lns - TXT_AREA + CURRENT_LN;
 	}
-	else
+	for(term_t ln = hidden_lines; ln <= dat.lns; ln++)
 	{
-		buff_t hidden_lines = dat.lns - TXT_AREA + CURRENT_LN;
-		for(term_t ln = hidden_lines; ln <= dat.lns; ln++)
+		if(strlen(dat.txt[ln]) >= get_term_sz('X')) // Vertical scroll.
+		{
+			printf("%s%s", "[...]",
+			dat.txt[ln] + strlen(dat.txt[ln]) - get_term_sz('X') + 5);
+		}
+		else
 		{
 			fputs(dat.txt[ln], stdout);
 		}
 	}
+	lower_fill(dat.lns);
 	set_cursor_pos(dat);
 }
 

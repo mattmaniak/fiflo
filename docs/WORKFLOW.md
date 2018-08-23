@@ -22,19 +22,19 @@ of destroying visualisations when used without parameters - merged is more
 accurate for this purpose. OFC everything is pushed between one or a few
 commits to provide updated code on the "develop" branch.
 
-## Goog sources:
+## Branching and versioning sources:
 - https://semver.org/,
 - https://nvie.com/posts/a-successful-git-branching-model/.
 
 ## Coding rules:
 - indentation style: 1 hard tab (4 spaces),
-- use Allman-style indentation,
+- use Allman-style like indentation,
 - max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
 - comment a lot,
 - single line can't exceed 80 characters.
 - dont't use camelCase (is unreadable), only lower-case snake_case is allowed,
 - #defines have to be CAPITALIZED,
-- keep names short.
+- keep names semantic shortened, eg. 'fname_max',
 - write short TODOs near thing to fix as uppercase comment,
 - #define as much as you can,
 - keep docs up-to-date with the code in stable releases,
@@ -48,7 +48,8 @@ Before the stable release 'fiflo' is tested with:
 - Terminology,
 - Gnome Terminal,
 - xterm
-emulators and with the native Linux text mode wnich is priority in tests.
+emulators
+and with the native Linux text mode wnich is priority in tests.
 
-I do my best for proper rendering in every above. In others there could be some
-bugs because of ther quirk modes.
+I do my best for proper rendering in every above. In other cases editor can
+works but there could be some glitches because of ther quirk modes.

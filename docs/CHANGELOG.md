@@ -8,13 +8,15 @@ files use git-show or git-log.
 
 ## Versions:
 ### v2.0.0 (WIP):
+- vertical scroll,
 - lines as separate strings.
+- no 80 chars per line limit.
 
 ### v1.1.0 (August 12, 2018):
 - dynamically allocated text (in theory max. 2G - 1),
 - real stdin (built-in terminal) cursor,
 - version info,
-- soft scrolling,
+- soft horizontal scrolling,
 - file is no longer created at the program's start,
 - folder as the file prevention,
 - auto_newline when the single line is equal <user's terminal width>.

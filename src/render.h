@@ -31,7 +31,7 @@ void version(void);
 term_t get_term_sz(char axis);
 void flush_window(buff dat); // For rendering in a one frame.
 
-buff_t scroll(buff dat); // Ignores first chars to leave a place for the rest.
+void lower_fill(buff_t lns);
 void set_cursor_pos(buff dat);
 void window(buff dat, char key); // Bar + rendered text + fill + cursor.
 
