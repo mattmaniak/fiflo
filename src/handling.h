@@ -11,11 +11,11 @@
 #include <termios.h>
 
 // Required keymap.
-#define NEGATIVE_CHAR -1
+#define NEG_CHAR -1
 #define NULLTERM 0
 #define CTRL_D 4
 #define TAB 9
-#define LINEFEED 10
+#define LF 10
 #define CTRL_X 24
 #define SPACE 32
 #define BACKSPACE 127

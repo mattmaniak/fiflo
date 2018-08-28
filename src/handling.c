@@ -119,8 +119,8 @@ buff add_char(buff dat, char key)
 			dat.txt[dat.lns][dat.chrs_ln - 1] = key;
 		break;
 
-		case LINEFEED:
-			dat.txt[dat.lns][dat.chrs_ln - 1] = LINEFEED;
+		case LF:
+			dat.txt[dat.lns][dat.chrs_ln - 1] = LF;
 			dat.txt[dat.lns][dat.chrs_ln] = NULLTERM;
 			dat.lns++;
 
@@ -141,7 +141,7 @@ buff keyboard_shortcut(buff dat, char key)
 {
 	switch(key)
 	{
-		case NEGATIVE_CHAR:
+		case NEG_CHAR:
 		break;
 
 		case CTRL_D:
@@ -160,65 +160,67 @@ buff keyboard_shortcut(buff dat, char key)
 	}
 	return dat;
 }
-/*
+
 void limits(buff dat)
 {
-	if(dat.lns >= MAX_LN)
+	if(dat.lns >= MAX_LNS)
 	{
-		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_LN,
-		dat.lns);
+		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_LNS, dat.lns);
 		exit(1);
 	}
-	else if(dat.chrs >= MAX_CHR)
+	else if(dat.chrs >= MAX_CHRS)
 	{
-		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_CHR,
+		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_CHRS,
 		dat.chrs);
 		exit(1);
 	}
 }
-*/
+
 buff txt_alloc(buff dat, char key)
 {
-	switch(key)
+	if(key != 033) // ...is not ANSI escape code then convert arrows to chars.
 	{
-		case NULLTERM: // Only for the initialization.
-		break;
+		switch(key)
+		{
+			case NULLTERM: // Only for the initialization.
+			break;
 
-		case NEGATIVE_CHAR: // Eg. CTRL+C - singal.
-		case CTRL_D:
-		case CTRL_X:
-			dat = keyboard_shortcut(dat, key);
-		break;
+			case NEG_CHAR: // Eg. CTRL+C - singal.
+			case CTRL_D:
+			case CTRL_X:
+				dat = keyboard_shortcut(dat, key);
+			break;
 
-		case BACKSPACE:
-			dat.txt[dat.lns] = realloc(dat.txt[dat.lns], dat.chrs_ln + 1);
-			ptr_check(dat.txt[dat.lns], "realloc memory for the backspace\0");
+			case BACKSPACE:
+				dat.txt[dat.lns] = realloc(dat.txt[dat.lns], dat.chrs_ln + 1);
+				ptr_check(dat.txt[dat.lns], "realloc memory for the backspace\0");
 
-			dat.chrs_ln--;
-			if(dat.lns > 0 && dat.chrs_ln < 0)
-			{
-				free(dat.txt[dat.lns]);
-				dat.lns--;
-				dat.chrs_ln = strlen(dat.txt[dat.lns]) - 1;
-			}
-			else if(dat.lns == 0 && dat.chrs_ln < 0)
-			{
-				dat.chrs_ln = 0;
-			}
-			dat.txt[dat.lns][dat.chrs_ln] = NULLTERM;
+				dat.chrs_ln--;
+				if(dat.lns > 0 && dat.chrs_ln < 0)
+				{
+					free(dat.txt[dat.lns]);
+					dat.lns--;
+					dat.chrs_ln = strlen(dat.txt[dat.lns]) - 1;
+				}
+				else if(dat.lns == 0 && dat.chrs_ln < 0)
+				{
+					dat.chrs_ln = 0;
+				}
+				dat.txt[dat.lns][dat.chrs_ln] = NULLTERM;
 
-			dat.chrs--;
-			if(dat.chrs < 0)
-			{
-				dat.chrs = 0;
-			}
-		break;
+				dat.chrs--;
+				if(dat.chrs < 0)
+				{
+					dat.chrs = 0;
+				}
+			break;
 
-		default:
-			dat = add_char(dat, key);
-		break;
+			default:
+				dat = add_char(dat, key);
+			break;
+		}
 	}
-//	limits(dat);
+	limits(dat);
 
 	return dat;
 }

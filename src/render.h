@@ -4,12 +4,7 @@
 // Common rest is included in 'fiflo.h' There are only file-specific imports.
 #include <sys/ioctl.h>
 
-// MIN/MAX are before names to tell apart from limits.h macros.
-#define MIN_X 80
-#define MIN_Y 10
-#define MAX_X USHRT_MAX - 1 // 65534
-#define MAX_Y MAX_X
-
+// UI areas.
 #define BAR_SZ 2
 #define CURRENT_LN 1
 #define TXT_AREA (get_term_sz('Y') - BAR_SZ)
@@ -30,6 +25,7 @@ void version(void);
 
 term_t get_term_sz(char axis);
 void flush_window(buff dat); // For rendering in a one frame.
+void draw_bar(buff dat, char key);
 
 void lower_fill(buff_t lns);
 void set_cursor_pos(buff dat);

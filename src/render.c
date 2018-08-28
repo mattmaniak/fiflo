@@ -23,17 +23,21 @@ void version(void)
 
 term_t get_term_sz(char axis)
 {
+	const uint8_t x_min = 80;
+	const uint8_t y_min = 10;
+	const uint16_t sz_max = USHRT_MAX;
+
 	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
-	if(win.ws_col < MIN_X || win.ws_row < MIN_Y)
+	if(win.ws_col < x_min || win.ws_row < y_min)
 	{
-		fprintf(stderr, "Min. term size is %dx%d, exited.\n", MIN_X, MIN_Y);
+		fprintf(stderr, "Min. term size is %dx%d, exited.\n", x_min, y_min);
 		exit(1);
 	}
-	else if(win.ws_col > MAX_X || win.ws_row > MAX_Y)
+	else if(win.ws_col > sz_max || win.ws_row > sz_max)
 	{
-		fprintf(stderr, "Max. term size is %dx%d, exited.\n", MAX_X, MAX_Y);
+		fprintf(stderr, "Max. term size is %dx%d, exited.\n", sz_max, sz_max);
 		exit(1);
 	}
 
@@ -66,7 +70,7 @@ void flush_window(buff dat)
 	fflush(stdout);
 }
 
-void bar(buff dat, char key)
+void draw_bar(buff dat, char key)
 {
 	const uint8_t dots_and_space = 6;
 	const char* title = " fiflo | filename: \0";
@@ -83,7 +87,7 @@ void bar(buff dat, char key)
 		term_t fill = get_term_sz('X') - strlen(title) - strlen(dat.fname);
 		printf("%s%*s\n", dat.fname, fill, " ");
 	}
-	// Lower part of the bar.
+	// Lower part of the draw_bar.
 	printf(" lines: %*d, chars: %*d, last key: %*d%*s%s\n", 11, dat.lns + 1,
 	11, dat.chrs, 3, key, get_term_sz('X') - 54, " ", COLORS_RESET);
 }
@@ -94,7 +98,7 @@ void lower_fill(buff_t lns)
 	{
 		for(term_t ln = lns + CURRENT_LN; ln < TXT_AREA; ln++)
 		{
-			putchar(LINEFEED);
+			putchar(LF);
 		}
 	}
 }
@@ -114,7 +118,7 @@ void set_cursor_pos(buff dat)
 
 void window(buff dat, char key)
 {
-	bar(dat, key);
+	draw_bar(dat, key);
 	buff_t hidden_lines = 0;
 
 	if(dat.lns >= TXT_AREA) // Horizontal scroll.
