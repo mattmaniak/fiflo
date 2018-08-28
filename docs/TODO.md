@@ -1,9 +1,9 @@
 # TODOs and ideas for fiflo.
 ## (delete if done correctly):
 - malloc BLOCKS of memory, not bytes,
+- move cursor,
 - add TAB,
 - simplify Makefile,
-- bigger keymap,
 - config file (colors),
 - usability for other *nixes,
 - "configure.sh" file,

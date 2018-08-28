@@ -37,7 +37,7 @@ commits to provide updated code on the "develop" branch.
 - keep names semantic shortened, eg. 'fname_max',
 - write short TODOs near thing to fix as uppercase comment,
 - keep docs up-to-date with the code in stable releases,
-- every function have to fit in the 720p screen with 10px font,
+- every function have to fit in the 720p screen with the 10px font,
 - uninitialized variables must be before initialized,
 - function's args names need to be shorter than variables names.
 

@@ -13,28 +13,28 @@ void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 
 void run(char* name)
 {
-	buff dat = {malloc(PATH_MAX), malloc(sizeof(&dat.txt)), 0, 0, 0};
-	ptr_check(dat.fname, "Cannot allocate memory for the filename, exited.\0");
-	set_fname(dat, name);
+	buff dt = {malloc(PATH_MAX), malloc(sizeof(&dt.txt)), 0, 0, 0};
+	ptr_check(dt.fname, "Cannot allocate memory for the filename, exited.\0");
+	set_fname(dt, name);
 
-	ptr_check(dat.txt, "Cannot allocate memory for the text, exited.\0");
-	dat.txt[dat.lns] = malloc(1);
-	ptr_check(dat.txt, "Cannot allocate memory for first line, exited.\0");
-	dat.txt[dat.lns][dat.chrs] = NULLTERM;
+	ptr_check(dt.txt, "Cannot allocate memory for the text, exited.\0");
+	dt.txt[dt.lns] = malloc(1);
+	ptr_check(dt.txt, "Cannot allocate memory for first line, exited.\0");
+	dt.txt[dt.lns][dt.chrs] = NTERM;
 
-	dat = read_file(dat);
-	char pressed_key = NULLTERM; // Initializer too.
+	dt = read_file(dt);
+	char pressed_key = NTERM; // Initializer too.
 
 	for(;;) // Main program loop.
 	{
 		signal(SIGTSTP, ignore_sig); // CTRL_Z
 		signal(SIGINT, ignore_sig); // CTRL_C
 
-		dat = txt_alloc(dat, pressed_key);
-		window(dat, pressed_key);
+		dt = handle_key(dt, pressed_key);
+		window(dt, pressed_key);
 
 		pressed_key = nix_getch();
-		flush_window(dat);
+		flush_window(dt);
 	}
 }
 

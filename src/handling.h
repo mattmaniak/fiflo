@@ -12,7 +12,7 @@
 
 // Required keymap.
 #define NEG_CHAR -1
-#define NULLTERM 0
+#define NTERM 0
 #define CTRL_D 4
 #define TAB 9
 #define LF 10
@@ -25,15 +25,16 @@
 void ptr_check(void* ptr, const char* errmsg); // Exit on error with a message.
 char nix_getch(void);
 
-void set_fname(buff dat, char* passed);
+void set_fname(buff dt, char* passed);
+buff read_file(buff dt);
+void save_file(buff dt);
 
-buff read_file(buff dat);
-void save_file(buff dat);
+buff add_char(buff dt, char key);
+buff keyboard_shortcut(buff dt, char key);
+buff alloc_chr(buff dt, char key);
 
-buff add_char(buff dat, char key);
-buff keyboard_shortcut(buff dat, char key);
-void limits(buff dat); // Prevent overflows
-buff txt_alloc(buff dat, char key); // Place the char into the string.
+void limits(buff dt); // Prevent overflows
+buff handle_key(buff dt, char key); // Place the char into the string.
 
 #endif
 

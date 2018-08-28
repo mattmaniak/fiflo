@@ -24,12 +24,12 @@ void help(void);
 void version(void);
 
 term_t get_term_sz(char axis);
-void flush_window(buff dat); // For rendering in a one frame.
-void draw_bar(buff dat, char key);
+void flush_window(buff dt); // For rendering in a one frame.
+void draw_bar(buff dt, char key);
 
 void lower_fill(buff_t lns);
-void set_cursor_pos(buff dat);
-void window(buff dat, char key); // Bar + rendered text + fill + cursor.
+void set_cursor_pos(buff dt);
+void window(buff dt, char key); // Bar + rendered text + fill + cursor.
 
 #endif
 
