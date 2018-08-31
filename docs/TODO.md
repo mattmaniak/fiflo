@@ -1,5 +1,6 @@
-# TODOs and ideas for fiflo.
-## (delete if done correctly):
+# fiflo - TODOs
+## delete one if done:
+- simplify syntax (less numbers - more defines and variables),
 - bigger buffer,
 - move cursor,
 - add the real TAB,
@@ -8,6 +9,5 @@
 - usability for other *nixes,
 - "configure.sh" file,
 - search option,
-- line numbers,
-- lock on the file,
+- lock on a file,
 - hex mode.

@@ -6,18 +6,20 @@
 
 // UI areas.
 #define BAR_SZ 2
-#define CURRENT_LN 1
+#define CURRENT 1
 #define TXT_AREA (get_term_sz('Y') - BAR_SZ)
 
-// ANSI escape codes.
-#define COLORS_RESET "\033[0m"
-#define COLORS_INVERT "\033[7m"
-#define MV_CURSOR_UP(n) printf("\033[%dA", n)
-#define MV_CURSOR_DOWN(n) printf("\033[%dB", n)
-#define MV_CURSOR_RIGHT(n) printf("\033[%dC", n)
-#define MV_CURSOR_LEFT(n) printf("\033[%dD", n)
-#define LINE_UP "\033[F"
-#define CLEAN_WHOLE_LINE "\033[2K"
+// ANSI escape codes..
+#define A_RESET "\033[0m"
+#define A_INVERT "\033[7m"
+#define A_LINE_UP "\033[F"
+#define A_CLEAN_LINE "\033[2K"
+#define A_CURSOR_UP(n) printf("\033[%dA", n)
+#define A_CURSOR_DOWN(n) printf("\033[%dB", n)
+#define A_CURSOR_RIGHT(n) printf("\033[%dC", n)
+#define A_CURSOR_LEFT(n) printf("\033[%dD", n)
+
+#define DOTS "[...]"
 
 // Shown after certain program's parameter.
 void help(void);

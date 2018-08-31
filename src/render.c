@@ -21,7 +21,7 @@ void version(void)
 	"(C) 2018 mattmaniak under the MIT License.");
 }
 
-term_t get_term_sz(char axis)
+term_t get_term_sz(char axis) // TODO: RENDERING WITH SMALLER STTY SIZE.
 {
 	const uint8_t x_min = 60;
 	const uint8_t y_min = 6;
@@ -54,33 +54,32 @@ term_t get_term_sz(char axis)
 void flush_window(buff dt)
 {	if(dt.lns < TXT_AREA)
 	{
-		MV_CURSOR_DOWN(TXT_AREA - dt.lns);
+		A_CURSOR_DOWN(TXT_AREA - dt.lns);
 	}
 	else
 	{
-		buff_t hidden_lns = dt.lns - TXT_AREA + CURRENT_LN;
-		MV_CURSOR_DOWN(dt.lns - hidden_lns);
+		buff_t hidden_lns = dt.lns - TXT_AREA + CURRENT;
+		A_CURSOR_DOWN(dt.lns - hidden_lns);
 	}
-	printf("%s", CLEAN_WHOLE_LINE);
+	printf("%s", A_CLEAN_LINE);
 
 	for(term_t y = 0; y < get_term_sz('Y'); y++)
 	{
-		printf("%s%s", LINE_UP, CLEAN_WHOLE_LINE);
+		printf("%s%s", A_LINE_UP, A_CLEAN_LINE);
 	}
 	fflush(stdout);
 }
 
-void draw_bar(buff dt, char key)
+void draw_bar(buff dt, char key) // TODO: SIMPLIFY
 {
-	const uint8_t dots_and_space = 6;
 	const char* title = " fiflo | filename: \0";
-	uint16_t fname_max = get_term_sz('X') - strlen(title) - dots_and_space;
+	uint16_t fname_max = get_term_sz('X') - strlen(title) - strlen(DOTS);
 
-	printf("%s%s", COLORS_INVERT, title);
+	printf("%s%s", A_INVERT, title);
 
 	if(strlen(dt.fname) > fname_max)
 	{
-		printf("%.*s%s\n", fname_max, dt.fname, "[...] ");
+		printf("%.*s%s\n", fname_max, dt.fname, DOTS);
 	}
 	else
 	{
@@ -88,15 +87,15 @@ void draw_bar(buff dt, char key)
 		printf("%s%*s\n", dt.fname, fill, " ");
 	}
 	// Lower part of the draw_bar.
-	printf(" lines: %*d, chars: %*d, last key: %*d%*s%s\n", 10, dt.lns + 1,
-	10, dt.chrs, 3, key, get_term_sz('X') - 52, " ", COLORS_RESET);
+	printf(" chars in the line: %*d, chars: %*d, last key: %*d%*s%s\n", 5,
+	dt.chrs_ln, 5, dt.chrs, 3, key, get_term_sz('X') - 54, " ", A_RESET);
 }
 
 void lower_fill(buff_t lns)
 {
 	if(lns < TXT_AREA)
 	{
-		for(term_t ln = lns + CURRENT_LN; ln < TXT_AREA; ln++)
+		for(term_t ln = lns + CURRENT; ln < TXT_AREA; ln++)
 		{
 			putchar(LF);
 		}
@@ -105,35 +104,39 @@ void lower_fill(buff_t lns)
 
 void set_cursor_pos(buff dt)
 {
-	if(dt.lns < TXT_AREA - CURRENT_LN)
+	if(dt.lns < TXT_AREA - CURRENT)
 	{
-		MV_CURSOR_UP(TXT_AREA - dt.lns - CURRENT_LN);
-		MV_CURSOR_RIGHT((buff_t) strlen(dt.txt[dt.lns]));
-	}
-	// else don't move.
-	if(dt.txt[dt.lns][0] == NTERM)
-	{
-		MV_CURSOR_LEFT(1);
+		A_CURSOR_UP(TXT_AREA - dt.lns - CURRENT);
+		A_CURSOR_RIGHT((buff_t) strlen(dt.txt[dt.lns]) + 5);
 	}
 }
 
-void window(buff dt, char key)
+void window(buff dt, char key) // TODO: SIMPLIFY
 {
-	const char* too_many = "[...]\0";
+	const char* too_many = A_INVERT DOTS A_RESET"\0";
 	buff_t hidden_lns = 0;
 	draw_bar(dt, key);
 
 	if(dt.lns >= TXT_AREA) // Horizontal scroll.
 	{
-		hidden_lns = dt.lns - TXT_AREA + CURRENT_LN + 1;
+		hidden_lns = dt.lns - TXT_AREA + CURRENT + 1; // 1 - DOTS in Y.
 		puts(too_many);
 	}
 	for(term_t ln = hidden_lns; ln <= dt.lns; ln++)
 	{
-		if(strlen(dt.txt[ln]) >= get_term_sz('X')) // Vertical scroll.
+		printf("%s%*d%s", A_INVERT, (uint8_t) strlen(DOTS), ln, A_RESET);
+		if(strlen(dt.txt[ln]) + (uint8_t) strlen(DOTS) >= get_term_sz('X'))
 		{
-			printf("%s%s", too_many, dt.txt[ln] + strlen(dt.txt[ln])
-			+ strlen(too_many) - get_term_sz('X'));
+			if(dt.txt[ln][strlen(dt.txt[ln]) - 1] == LF) // Move one right.
+			{
+				printf("%s%s", too_many, dt.txt[ln] + strlen(dt.txt[ln])
+				+ strlen(too_many) - get_term_sz('X') - 3);
+			}
+			else
+			{
+				printf("%s%s", too_many, dt.txt[ln] + strlen(dt.txt[ln])
+				+ strlen(too_many) - get_term_sz('X') - 2);
+			}
 		}
 		else
 		{

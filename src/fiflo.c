@@ -11,12 +11,12 @@ void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 	if(nothing == 0) {}
 }
 
-void run(char* name)
+void run(char* passed)
 {
 	buff dt = {malloc(PATH_MAX), malloc(MEMBLOCK), 0, 0, 0};
 
 	ptr_check(dt.fname, "Cannot allocate memory for the filename, exited.\0");
-	set_fname(dt, name);
+	set_fname(dt, passed);
 
 	ptr_check(dt.txt, "malloc memory for the text\0");
 	dt.txt[dt.lns] = malloc(MEMBLOCK);

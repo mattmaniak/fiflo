@@ -29,7 +29,10 @@ void set_fname(buff dt, char* passed);
 buff read_file(buff dt);
 void save_file(buff dt);
 
-void blockalloc(buff dt);
+void alloc_block(buff dt);
+void free_block(buff dt);
+void free_all(buff dt);
+
 buff add_char(buff dt, char key);
 buff keyboard_shortcut(buff dt, char key);
 buff alloc_chr(buff dt, char key);

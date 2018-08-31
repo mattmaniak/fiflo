@@ -11,7 +11,10 @@ files use git-show or git-log.
 - vertical && horizontal scroll,
 - lines as separate strings,
 - no 80 chars per line limit,
-- arrows are ignored.
+- arrows are ignored,
+- line numbers,
+- better performance (block-allocated memory),
+- fixed buffer of size 32M.
 
 ### v1.1.0 (August 12, 2018):
 - dynamically allocated text (in theory max. 2G - 1),

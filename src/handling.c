@@ -108,7 +108,7 @@ void save_file(buff dt)
 	fclose(textfile);
 }
 
-void blockalloc(buff dt)
+void alloc_block(buff dt)
 {
 	if(dt.chrs_ln % MEMBLOCK == MEMBLOCK - NTERM_SZ)
 	{
@@ -122,7 +122,7 @@ void blockalloc(buff dt)
 	}
 }
 
-void blockdealloc(buff dt)
+void free_block(buff dt)
 {
 	if(dt.chrs_ln % MEMBLOCK == MEMBLOCK - NTERM_SZ)
 	{
@@ -136,7 +136,7 @@ void blockdealloc(buff dt)
 	}
 }
 
-void freeall(buff dt)
+void free_all(buff dt)
 {
 	free(dt.fname);
 	for(buff_t ln = 0; ln <= dt.lns; ln++)
@@ -149,7 +149,7 @@ void freeall(buff dt)
 buff add_char(buff dt, char key)
 {
 	dt.chrs_ln++;
-	blockalloc(dt);
+	alloc_block(dt);
 
 	switch(key)
 	{
@@ -161,7 +161,7 @@ buff add_char(buff dt, char key)
 			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = SPACE;
 			dt.chrs_ln++;
 
-			blockalloc(dt);
+			alloc_block(dt);
 
 			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = SPACE;
 			dt.chrs++;
@@ -172,7 +172,7 @@ buff add_char(buff dt, char key)
 			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 			dt.lns++;
 
-			blockalloc(dt);
+			alloc_block(dt);
 
 			dt.chrs_ln = 0;
 			dt.txt[dt.lns] = malloc(MEMBLOCK); // The new line.
@@ -196,7 +196,7 @@ buff keyboard_shortcut(buff dt, char key)
 		break;
 
 		case CTRL_X: // Frees everything and exits the program.
-			freeall(dt);
+			free_all(dt);
 			exit(0);
 		break;
 	}
@@ -217,7 +217,7 @@ buff alloc_chr(buff dt, char key)
 		break;
 
 		case BACKSPACE:
-			blockdealloc(dt);
+			free_block(dt);
 
 			dt.chrs_ln--;
 			if(dt.lns > 0 && dt.chrs_ln < 0)
@@ -251,13 +251,13 @@ void limits(buff dt)
 	if(dt.lns > MAX_LNS)
 	{
 		fprintf(stderr, "Max. lines amount: %d, got more.\n", MAX_LNS);
-		freeall(dt);
+		free_all(dt);
 		exit(1);
 	}
 	else if(dt.chrs > MAX_CHRS)
 	{
 		fprintf(stderr, "Max. chars amount: %d, got more.\n", MAX_CHRS);
-		freeall(dt);
+		free_all(dt);
 		exit(1);
 	}
 }

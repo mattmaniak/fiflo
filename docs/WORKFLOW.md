@@ -5,9 +5,9 @@ https://gitlab.com/mattmaniak/fiflo
 
 ## Branches
 Everything happens on three branches:
-- stable (main branch),
-- develop,
-- hotfix.
+- master,
+- hotfix,
+- develop.
 
 ## Branches description && merging
 Everything connected with the development, tests etc. happens on the "develop"
@@ -16,8 +16,8 @@ without fast-forwarding ("--no-ff" to make branches visualisation cleaner) to
 the "stable". Then annotated tag is made on this branch. If there are any bugs,
 typos... "stable" is "--no-ff" merged into "hotfix" and after repairs merged
 back. Fixes from "hotfix" are made independently on the "develop" branch. But
-sometimes 'hotfix' can be merged back to 'master' and then 'develop' if a bug
-will be discovered before changes on 'develop'. "Rebasing" isn't used because
+sometimes "hotfix" can be merged back to "master" and then "develop" if a bug
+will be discovered before changes on "develop". "Rebasing" isn"t used because
 of destroying visualisations when used without parameters - merged is more
 accurate for this purpose. OFC everything is pushed between one or a few
 commits to provide updated code on the "develop" branch.
@@ -30,19 +30,17 @@ commits to provide updated code on the "develop" branch.
 - indentation style: 1 hard tab (4 spaces),
 - use Allman-style like indentation,
 - max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
-- comment a lot,
 - single line can't exceed 80 characters.
-- dont't use camelCase (is unreadable), only lower-case snake_case is allowed,
+- dont"t use camelCase (is unreadable), only lower-case snake_case is allowed,
 - #defines have to be CAPITALIZED,
-- keep names semantic shortened, eg. 'fname_max',
+- keep names semantic shortened, eg. "fname_max",
 - write short TODOs near thing to fix as uppercase comment,
 - keep docs up-to-date with the code in stable releases,
 - every function have to fit in the 720p screen with the 10px font,
-- uninitialized variables must be before initialized,
-- function's args names need to be shorter than variables names.
+- function"s args names need to be shorter than variables names.
 
 ## Testing
-Before the stable release 'fiflo' is tested with:
+Before the stable release "fiflo" is tested with:
 - LXTerminal,
 - Terminology,
 - Gnome Terminal,

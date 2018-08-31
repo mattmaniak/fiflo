@@ -25,7 +25,7 @@ typedef struct
 buff;
 
 void ignore_sig(int nothing);
-void run(char* name);
+void run(char* passed);
 void argc_check(int arg_count);
 int main(int argc, char** argv);
 
