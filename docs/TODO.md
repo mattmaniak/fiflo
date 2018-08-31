@@ -1,8 +1,8 @@
 # TODOs and ideas for fiflo.
 ## (delete if done correctly):
-- malloc BLOCKS of memory, not bytes,
+- bigger buffer,
 - move cursor,
-- add TAB,
+- add the real TAB,
 - simplify Makefile,
 - config file (colors),
 - usability for other *nixes,

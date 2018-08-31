@@ -8,20 +8,19 @@
 #include <stdint.h>
 
 typedef uint16_t term_t;
-typedef int32_t buff_t;
+typedef int16_t buff_t;
 
+#define MEMBLOCK 4096
 #define MAX_LNS (buff_t) powf(2, (sizeof(buff_t) * 8))
 #define MAX_CHRS MAX_LNS - 1 // 1 for NULL
-
-#define BLOCK_SZ 4096
 
 typedef struct
 {
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt; // Eg. txt[lns][chrs].
 	buff_t chrs;
+	buff_t chrs_ln; // Chars in the current line.
 	buff_t lns;
-	buff_t chrs_ln; // Chars in the line.
 }
 buff;
 

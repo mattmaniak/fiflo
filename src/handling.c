@@ -108,39 +108,75 @@ void save_file(buff dt)
 	fclose(textfile);
 }
 
+void blockalloc(buff dt)
+{
+	if(dt.chrs_ln % MEMBLOCK == MEMBLOCK - NTERM_SZ)
+	{
+		dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLOCK);
+		ptr_check(dt.txt[dt.lns], "realloc the new memory block for chars\0");
+	}
+	else if(dt.lns % MEMBLOCK == MEMBLOCK)
+	{
+		dt.txt = realloc(dt.txt, dt.lns + MEMBLOCK);
+		ptr_check(dt.txt[dt.lns], "realloc the new memory block for lines\0");
+	}
+}
+
+void blockdealloc(buff dt)
+{
+	if(dt.chrs_ln % MEMBLOCK == MEMBLOCK - NTERM_SZ)
+	{
+		dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln - MEMBLOCK);
+		ptr_check(dt.txt[dt.lns], "realloc the new memory block for chars\0");
+	}
+	else if(dt.lns % MEMBLOCK == MEMBLOCK)
+	{
+		dt.txt = realloc(dt.txt, dt.lns - MEMBLOCK);
+		ptr_check(dt.txt[dt.lns], "realloc the new memory block for lines\0");
+	}
+}
+
+void freeall(buff dt)
+{
+	free(dt.fname);
+	for(buff_t ln = 0; ln <= dt.lns; ln++)
+	{
+		free(dt.txt[ln]);
+	}
+	free(dt.txt);
+}
+
 buff add_char(buff dt, char key)
 {
 	dt.chrs_ln++;
-	dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + 1);
-	ptr_check(dt.txt[dt.lns], "realloc memory for the new char\0");
+	blockalloc(dt);
+
 	switch(key)
 	{
 		default:
-			dt.txt[dt.lns][dt.chrs_ln - 1] = key;
+			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = key;
 		break;
 
 		case TAB: // Actuall converts TAB to two spaces.
-			dt.txt[dt.lns][dt.chrs_ln - 1] = SPACE;
+			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = SPACE;
 			dt.chrs_ln++;
 
-			dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + 1);
-			ptr_check(dt.txt[dt.lns], "realloc memory for the new char\0");
+			blockalloc(dt);
 
-			dt.txt[dt.lns][dt.chrs_ln - 1] = SPACE;
+			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = SPACE;
 			dt.chrs++;
 		break;			
 
 		case LF:
-			dt.txt[dt.lns][dt.chrs_ln - 1] = LF;
+			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = LF;
 			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 			dt.lns++;
 
-			dt.txt = realloc(dt.txt, (dt.lns + 1) * sizeof(&dt.txt));
-			ptr_check(dt.txt, "realloc memory for the new line\0");
-			dt.txt[dt.lns] = malloc(sizeof(char)); // The new line.
-			ptr_check(dt.txt[dt.lns], "malloc byte in the new line\0");
+			blockalloc(dt);
 
 			dt.chrs_ln = 0;
+			dt.txt[dt.lns] = malloc(MEMBLOCK); // The new line.
+			ptr_check(dt.txt[dt.lns], "malloc byte in the new line\0");
 		break;
 	}
 	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
@@ -160,12 +196,7 @@ buff keyboard_shortcut(buff dt, char key)
 		break;
 
 		case CTRL_X: // Frees everything and exits the program.
-			for(buff_t ln = 0; ln <= dt.lns; ln++)
-			{
-				free(dt.txt[ln]);
-			}
-			free(dt.txt);
-			free(dt.fname);
+			freeall(dt);
 			exit(0);
 		break;
 	}
@@ -186,15 +217,14 @@ buff alloc_chr(buff dt, char key)
 		break;
 
 		case BACKSPACE:
-			dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + 1);
-			ptr_check(dt.txt[dt.lns], "realloc memory for the backspace\0");
+			blockdealloc(dt);
 
 			dt.chrs_ln--;
 			if(dt.lns > 0 && dt.chrs_ln < 0)
 			{
 				free(dt.txt[dt.lns]);
 				dt.lns--;
-				dt.chrs_ln = strlen(dt.txt[dt.lns]) - 1;
+				dt.chrs_ln = strlen(dt.txt[dt.lns]) - NTERM_SZ;
 			}
 			else if(dt.lns == 0 && dt.chrs_ln < 0)
 			{
@@ -218,15 +248,16 @@ buff alloc_chr(buff dt, char key)
 
 void limits(buff dt)
 {
-	if(dt.lns >= MAX_LNS)
+	if(dt.lns > MAX_LNS)
 	{
-		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_LNS, dt.lns);
+		fprintf(stderr, "Max. lines amount: %d, got more.\n", MAX_LNS);
+		freeall(dt);
 		exit(1);
 	}
-	else if(dt.chrs >= MAX_CHRS)
+	else if(dt.chrs > MAX_CHRS)
 	{
-		fprintf(stderr, "Maximum lns amount: %d, got: %d.\n", MAX_CHRS,
-		dt.chrs);
+		fprintf(stderr, "Max. chars amount: %d, got more.\n", MAX_CHRS);
+		freeall(dt);
 		exit(1);
 	}
 }

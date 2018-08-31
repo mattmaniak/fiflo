@@ -13,13 +13,14 @@ void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 
 void run(char* name)
 {
-	buff dt = {malloc(PATH_MAX), malloc(sizeof(&dt.txt)), 0, 0, 0};
+	buff dt = {malloc(PATH_MAX), malloc(MEMBLOCK), 0, 0, 0};
+
 	ptr_check(dt.fname, "Cannot allocate memory for the filename, exited.\0");
 	set_fname(dt, name);
 
-	ptr_check(dt.txt, "Cannot allocate memory for the text, exited.\0");
-	dt.txt[dt.lns] = malloc(1);
-	ptr_check(dt.txt, "Cannot allocate memory for first line, exited.\0");
+	ptr_check(dt.txt, "malloc memory for the text\0");
+	dt.txt[dt.lns] = malloc(MEMBLOCK);
+	ptr_check(dt.txt, "malloc memory for first line\0");
 	dt.txt[dt.lns][dt.chrs] = NTERM;
 
 	dt = read_file(dt);
@@ -27,9 +28,6 @@ void run(char* name)
 
 	for(;;) // Main program loop.
 	{
-		signal(SIGTSTP, ignore_sig); // CTRL_Z
-		signal(SIGINT, ignore_sig); // CTRL_C
-
 		dt = handle_key(dt, pressed_key);
 		window(dt, pressed_key);
 
@@ -49,6 +47,9 @@ void argc_check(int arg_count)
 
 int main(int argc, char** argv)
 {
+	signal(SIGTSTP, ignore_sig); // CTRL_Z
+	signal(SIGINT, ignore_sig); // CTRL_C
+
 	argc_check(argc);
 	if(argv[1] == NULL)
 	{
