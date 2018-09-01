@@ -46,7 +46,7 @@ Before the stable release "fiflo" is tested with:
 - Gnome Terminal,
 - xterm
 emulators
-and with the native Linux text mode wnich is priority in tests.
+and with the native Linux terminal wnich is priority in tests.
 
 I do my best for proper rendering in every above. In other cases editor can
 works but there could be some glitches because of ther quirk modes.

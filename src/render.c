@@ -98,7 +98,7 @@ void lower_fill(buff_t lns)
 		for(term_t ln = lns + CURRENT; ln < TXT_AREA; ln++)
 		{
 			putchar(LF);
-		}
+		}//putchar('s');
 	}
 }
 
@@ -107,7 +107,15 @@ void set_cursor_pos(buff dt)
 	if(dt.lns < TXT_AREA - CURRENT)
 	{
 		A_CURSOR_UP(TXT_AREA - dt.lns - CURRENT);
-		A_CURSOR_RIGHT((buff_t) strlen(dt.txt[dt.lns]) + 5);
+		if(strlen(dt.txt[dt.lns]) < get_term_sz('X') - strlen(DOTS))
+		{
+			A_CURSOR_RIGHT((term_t) strlen(dt.txt[dt.lns])
+			+ (term_t) strlen(DOTS));
+		}
+		else
+		{
+			A_CURSOR_RIGHT((term_t) get_term_sz('X') - CURRENT);
+		}
 	}
 }
 
