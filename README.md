@@ -5,7 +5,7 @@ Simple terminal-based text editor.
 
 ## Minimal requirements:
 - Linux-based OS,
-- gcc (64-bit),
+- 64-bit gcc (min. tested 4.8.4),
 - make,
 - terminal with an ANSI escape codes support.
 

@@ -10,14 +10,14 @@
 #define TXT_AREA (get_term_sz('Y') - BAR_SZ)
 
 // ANSI escape codes..
-#define A_RESET "\033[0m"
-#define A_INVERT "\033[7m"
-#define A_LINE_UP "\033[F"
-#define A_CLEAN_LINE "\033[2K"
-#define A_CURSOR_UP(n) printf("\033[%dA", n)
-#define A_CURSOR_DOWN(n) printf("\033[%dB", n)
-#define A_CURSOR_RIGHT(n) printf("\033[%dC", n)
-#define A_CURSOR_LEFT(n) printf("\033[%dD", n)
+#define RESET "\033[0m"
+#define INVERT "\033[7m"
+#define LINE_UP "\033[F"
+#define CLEAN_LINE "\033[2K"
+#define CURSOR_UP(n) printf("\033[%dA", n)
+#define CURSOR_DOWN(n) printf("\033[%dB", n)
+#define CURSOR_RIGHT(n) printf("\033[%dC", n)
+#define CURSOR_LEFT(n) printf("\033[%dD", n)
 
 #define DOTS "[...]"
 
