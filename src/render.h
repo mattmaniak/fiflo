@@ -21,15 +21,11 @@
 
 #define DOTS "[...]"
 
-// Shown after certain program's parameter.
-void help(void);
-void version(void);
-
-term_t get_term_sz(char axis);
+term_t get_term_sz(char axis); // Check if to small or big.
 void flush_window(buff dt); // For rendering in a one frame.
-void draw_bar(buff dt, char key);
 
-void lower_fill(buff_t lns);
+void draw_bar(buff dt, char key); // Upper bar.
+void lower_fill(buff_t lns); // Empty space below the text.
 void set_cursor_pos(buff dt);
 void window(buff dt, char key); // Bar + rendered text + fill + cursor.
 

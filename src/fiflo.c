@@ -11,7 +11,7 @@ void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 	if(nothing == 0) {}
 }
 
-void run(char* passed)
+void run(const char* passed)
 {
 	buff dt = {malloc(PATH_MAX), malloc(MEMBLOCK), 0, 0, 0};
 
@@ -38,12 +38,39 @@ void run(char* passed)
 
 void argc_check(int arg_count)
 {
-	if(arg_count > 2)
+	if(arg_count != 1 && arg_count != 2)
 	{
 		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
 		exit(1);
 	}
 }
+
+void options(const char* arg)
+{
+	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
+	{
+		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
+		"Usage: fiflo [option].",
+
+		"Options:      Description:",
+		"<NULL>        Set the filename to \"/<current_path>/noname.asdf\"",
+		"basename      Open the textfile \"basename\" using your current path.",
+		"/dir/bname    Open the textfile \"bname\" from the \"/dir\" folder.",
+		"-h, --help    Show program help.",
+		"-v, --version Display some info about the current version.");
+		exit(0);
+	}
+	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
+	{
+		printf("%s\n%s\n%s\n",
+		"fiflo v2.0.0 (WIP)",
+		"https://gitlab.com/mattmaniak/fiflo.git",
+		"(C) 2018 mattmaniak under the MIT License.");
+		exit(0);
+	}
+	run(arg);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -55,19 +82,9 @@ int main(int argc, char** argv)
 	{
 		run("noname.asdf\0");
 	}
-	else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
-	{
-		help();
-		exit(0);
-	}
-	else if(strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)
-	{
-		version();
-		exit(0);
-	}
 	else
 	{
-		run(argv[1]);
+		options(argv[1]);
 	}
 	return 0;
 }

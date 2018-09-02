@@ -25,7 +25,7 @@ char nix_getch(void)
 	return key;
 }
 
-void set_fname(buff dt, char* passed)
+void set_fname(buff dt, const char* passed)
 {
 	if(passed[strlen(passed) - NTERM_SZ] == '/')
 	{
@@ -251,15 +251,13 @@ void limits(buff dt)
 	if(dt.lns > MAX_LNS)
 	{
 		fprintf(stderr, "Max. lines amount: %d, got more.\n", MAX_LNS);
-		free_all(dt);
-		exit(1);
 	}
 	else if(dt.chrs > MAX_CHRS)
 	{
 		fprintf(stderr, "Max. chars amount: %d, got more.\n", MAX_CHRS);
-		free_all(dt);
-		exit(1);
 	}
+	free_all(dt);
+	exit(1);
 }
 
 buff handle_key(buff dt, char key)

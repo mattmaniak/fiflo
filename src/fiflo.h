@@ -7,11 +7,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef uint16_t term_t;
-typedef int16_t buff_t;
+typedef uint16_t term_t; // Unsigned short as in "sys/ioctl.h".
+typedef int16_t buff_t; // Only for amount indicators.
 
-#define MEMBLOCK 4096
-#define MAX_LNS (buff_t) powf(2, (sizeof(buff_t) * 8))
+#define MEMBLOCK 4096 // For optimal mallocation.
+#define MAX_LNS (buff_t) pow(2, (sizeof(buff_t) * 8))
 #define MAX_CHRS MAX_LNS - 1 // 1 for NULL
 
 typedef struct
@@ -25,8 +25,9 @@ typedef struct
 buff;
 
 void ignore_sig(int nothing);
-void run(char* passed);
+void run(const char* passed);
 void argc_check(int arg_count);
+void options(const char* arg);
 int main(int argc, char** argv);
 
 #endif

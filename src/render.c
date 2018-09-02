@@ -1,26 +1,5 @@
 #include "render.h"
 
-void help(void)
-{
-	printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
-	"Usage: fiflo [option].",
-
-	"Options:      Description:",
-	"<NULL>        Set the filename to '/<current_path>/noname.asdf'",
-	"basename      Open the textfile 'basename' using your current path.",
-	"/dir/bname    Open the textfile 'bname' located in the '/dir' folder.",
-	"-h, --help    Show program help.",
-	"-v, --version Display some info about the current version.");
-}
-
-void version(void)
-{
-	printf("%s\n%s\n%s\n",
-	"fiflo v2.0.0 (WIP)",
-	"https://gitlab.com/mattmaniak/fiflo.git",
-	"(C) 2018 mattmaniak under the MIT License.");
-}
-
 term_t get_term_sz(char axis)
 {
 	const uint8_t x_min = 45;
@@ -66,7 +45,7 @@ void flush_window(buff dt)
 	fflush(stdout);
 }
 
-void draw_bar(buff dt, char key) // TODO: SIMPLIFY
+void draw_bar(buff dt, char key)
 {
 	const char* title = "fiflo | filename:\0";
 	uint16_t fname_max = get_term_sz('X') - strlen(title) - strlen(DOTS);
@@ -83,8 +62,8 @@ void draw_bar(buff dt, char key) // TODO: SIMPLIFY
 		- strlen(dt.fname)), " ");
 	}
 	// Lower part of the draw_bar.
-	printf("chars (line | all | last):%*s%*d | %*d | %*d%s\n",
-	get_term_sz('X') - 45, " ", 5, dt.chrs_ln, 5, dt.chrs, 3, key, RESET);
+	printf("chars (all | line | last):%*s%*d | %*d | %*d%s\n",
+	get_term_sz('X') - 45, " ", 5, dt.chrs, 5, dt.chrs_ln, 3, key, RESET);
 }
 
 void lower_fill(buff_t lns)
@@ -128,18 +107,19 @@ void window(buff dt, char key) // TODO: SIMPLIFY
 	for(term_t ln = hidden_lns; ln <= dt.lns; ln++)
 	{
 		printf("%s%*d%s", INVERT, (uint8_t) strlen(DOTS), ln, RESET);
-		if(strlen(dt.txt[ln]) + (uint8_t) strlen(DOTS) >= get_term_sz('X'))
+		if(strlen(dt.txt[ln]) + strlen(DOTS) >= get_term_sz('X'))
 		{
+			uint8_t fill;
 			if(dt.txt[ln][strlen(dt.txt[ln]) - 1] == LF) // Move one right.
 			{
-				printf("%s%s", too_many, dt.txt[ln] + strlen(dt.txt[ln])
-				+ strlen(too_many) - get_term_sz('X') - 3);
+				fill = 3;
 			}
 			else
 			{
-				printf("%s%s", too_many, dt.txt[ln] + strlen(dt.txt[ln])
-				+ strlen(too_many) - get_term_sz('X') - 2);
+				fill = 2;
 			}
+			printf("%s%s", too_many, dt.txt[ln] + strlen(dt.txt[ln])
+			+ strlen(too_many) - get_term_sz('X') - fill);
 		}
 		else
 		{

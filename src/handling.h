@@ -25,7 +25,7 @@
 void ptr_check(void* ptr, const char* errmsg); // Exit on error with a message.
 char nix_getch(void);
 
-void set_fname(buff dt, char* passed);
+void set_fname(buff dt, const char* passed);
 buff read_file(buff dt);
 void save_file(buff dt);
 
