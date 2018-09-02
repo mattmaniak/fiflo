@@ -23,7 +23,7 @@ void version(void)
 
 term_t get_term_sz(char axis)
 {
-	const uint8_t x_min = 51;
+	const uint8_t x_min = 45;
 	const uint8_t y_min = 4;
 	const uint16_t sz_max = USHRT_MAX;
 
@@ -68,23 +68,23 @@ void flush_window(buff dt)
 
 void draw_bar(buff dt, char key) // TODO: SIMPLIFY
 {
-	const char* title = " fiflo | filename: \0";
-	uint16_t fname_max = get_term_sz('X') - strlen(title) - strlen(DOTS) - 1;
+	const char* title = "fiflo | filename:\0";
+	uint16_t fname_max = get_term_sz('X') - strlen(title) - strlen(DOTS);
 
 	printf("%s%s", INVERT, title);
 
 	if(strlen(dt.fname) > fname_max)
 	{
-		printf("%.*s%s%c\n", fname_max, dt.fname, DOTS, SPACE);
+		printf(" %.*s%s\n", fname_max, dt.fname, DOTS);
 	}
 	else
 	{
-		term_t fill = get_term_sz('X') - strlen(title) - strlen(dt.fname);
-		printf("%s%*s\n", dt.fname, fill, " ");
+		printf("%s%*s\n", dt.fname, (term_t) (get_term_sz('X') - strlen(title)
+		- strlen(dt.fname)), " ");
 	}
 	// Lower part of the draw_bar.
-	printf(" chars (line | all): %*d | %*d, last char: %*d%*s%s\n", 5,
-	dt.chrs_ln, 5, dt.chrs, 3, key, get_term_sz('X') - 50, " ", RESET);
+	printf("chars (line | all | last):%*s%*d | %*d | %*d%s\n",
+	get_term_sz('X') - 45, " ", 5, dt.chrs_ln, 5, dt.chrs, 3, key, RESET);
 }
 
 void lower_fill(buff_t lns)
