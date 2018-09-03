@@ -11,31 +11,6 @@ void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 	if(nothing == 0) {}
 }
 
-void run(const char* passed)
-{
-	buff dt = {malloc(PATH_MAX), malloc(MEMBLOCK), 0, 0, 0};
-
-	ptr_check(dt.fname, "Cannot allocate memory for the filename, exited.\0");
-	set_fname(dt, passed);
-
-	ptr_check(dt.txt, "malloc memory for the text\0");
-	dt.txt[dt.lns] = malloc(MEMBLOCK);
-	ptr_check(dt.txt, "malloc memory for first line\0");
-	dt.txt[dt.lns][dt.chrs] = NTERM;
-
-	dt = read_file(dt);
-	char pressed_key = NTERM; // Initializer too.
-
-	for(;;) // Main program loop.
-	{
-		dt = handle_key(dt, pressed_key);
-		window(dt, pressed_key);
-
-		pressed_key = nix_getch();
-		flush_window(dt);
-	}
-}
-
 void argc_check(int arg_count)
 {
 	if(arg_count != 1 && arg_count != 2)
@@ -71,11 +46,36 @@ void options(const char* arg)
 	run(arg);
 }
 
+void run(const char* passed)
+{
+	buff dt = {malloc(PATH_MAX), malloc(MEMBLOCK), 0, 0, 0};
+
+	ptr_check(dt.fname, "Cannot allocate memory for the filename, exited.\0");
+	set_fname(dt, passed);
+
+	ptr_check(dt.txt, "malloc memory for the text\0");
+	dt.txt[dt.lns] = malloc(MEMBLOCK);
+	ptr_check(dt.txt, "malloc memory for first line\0");
+	dt.txt[dt.lns][dt.chrs] = NTERM;
+
+	dt = read_file(dt);
+	char pressed_key = NTERM; // Initializer too.
+
+	for(;;) // Main program loop.
+	{
+		dt = handle_key(dt, pressed_key);
+		window(dt, pressed_key);
+
+		pressed_key = nix_getch();
+		flush_window(dt);
+	}
+}
 
 int main(int argc, char** argv)
 {
 	signal(SIGTSTP, ignore_sig); // CTRL_Z
 	signal(SIGINT, ignore_sig); // CTRL_C
+
 
 	argc_check(argc);
 	if(argv[1] == NULL)

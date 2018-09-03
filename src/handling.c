@@ -251,18 +251,20 @@ void limits(buff dt)
 	if(dt.lns > MAX_LNS)
 	{
 		fprintf(stderr, "Max. lines amount: %d, got more.\n", MAX_LNS);
+		free_all(dt);
+		exit(1);
 	}
 	else if(dt.chrs > MAX_CHRS)
 	{
 		fprintf(stderr, "Max. chars amount: %d, got more.\n", MAX_CHRS);
+		free_all(dt);
+		exit(1);
 	}
-	free_all(dt);
-	exit(1);
 }
 
 buff handle_key(buff dt, char key)
 {
-	if(key != 033) // ...is not ANSI escape code then convert arrows to chars.
+	if(key != 033)
 	{
 		dt = alloc_chr(dt, key);
 		limits(dt);

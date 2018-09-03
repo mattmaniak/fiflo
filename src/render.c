@@ -70,7 +70,7 @@ void lower_fill(buff_t lns)
 {
 	if(lns < TXT_AREA)
 	{
-		for(term_t ln = lns + CURRENT; ln < TXT_AREA; ln++)
+		for(term_t ln = lns; ln < TXT_AREA - CURRENT; ln++)
 		{
 			putchar(LF);
 		}
@@ -91,6 +91,7 @@ void set_cursor_pos(buff dt)
 			CURSOR_RIGHT((term_t) get_term_sz('X') - CURRENT);
 		}
 	}
+	// Else by default on the bottom.
 }
 
 void window(buff dt, char key) // TODO: SIMPLIFY
