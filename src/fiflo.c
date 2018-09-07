@@ -6,24 +6,19 @@
 #include "render.c"
 
 // TODO:
-void ignore_sig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
-{
+void ignore_sig(int nothing) { // Arg for "‘__sighandler_t {aka void (*)(int)}".
 	if(nothing == 0) {}
 }
 
-void argc_check(int arg_count)
-{
-	if(arg_count != 1 && arg_count != 2)
-	{
+void argc_check(int arg_count) {
+	if(arg_count != 1 && arg_count != 2) {
 		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
 		exit(1);
 	}
 }
 
-void options(const char* arg)
-{
-	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
-	{
+void options(const char* arg) {
+	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0) {
 		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
 		"Usage: fiflo [option].",
 
@@ -35,8 +30,7 @@ void options(const char* arg)
 		"-v, --version Display some info about the current version.");
 		exit(0);
 	}
-	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
-	{
+	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0) {
 		printf("%s\n%s\n%s\n",
 		"fiflo v2.0.0 (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
@@ -46,8 +40,7 @@ void options(const char* arg)
 	run(arg);
 }
 
-void run(const char* passed)
-{
+void run(const char* passed) {
 	buff dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0};
 	ptr_check(dt.fname, "Cannot allocate memory for the filename, exited.\0");
 	ptr_check(dt.txt, "malloc memory for the text\0");
@@ -60,8 +53,7 @@ void run(const char* passed)
 	dt = read_file(dt);
 	char pressed_key = NTERM; // Initializer too.
 
-	for(;;) // Main program loop.
-	{
+	for(;;) { // Main program loop. 
 		dt = handle_key(dt, pressed_key);
 		window(dt, pressed_key);
 
@@ -70,19 +62,16 @@ void run(const char* passed)
 	}
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 	signal(SIGTSTP, ignore_sig); // CTRL_Z
 	signal(SIGINT, ignore_sig); // CTRL_C
 
 
 	argc_check(argc);
-	if(argv[1] == NULL)
-	{
+	if(argv[1] == NULL) {
 		run("noname.asdf\0");
 	}
-	else
-	{
+	else {
 		options(argv[1]);
 	}
 	return 0;
@@ -92,8 +81,7 @@ int main(int argc, char** argv)
 
 #include <stdio.h>
 
-int main(void)
-{
+int main(void) {
 	fputs("Only Linux-based systems are supported, exited.\n", stderr);
 	return 0;
 }

@@ -28,7 +28,7 @@ commits to provide updated code on the "develop" branch.
 
 ## Coding rules:
 - indentation style: 1 hard tab (4 spaces),
-- use Allman-style like indentation,
+- use 1TBS indentation excluding nested "(if) elses",
 - max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
 - single line can't exceed 80 characters.
 - dont"t use camelCase (is unreadable), only lower-case snake_case is allowed,

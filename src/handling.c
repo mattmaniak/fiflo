@@ -1,16 +1,13 @@
 #include "handling.h"
 
-void ptr_check(void* ptr, const char* errmsg)
-{
-	if(!ptr)
-	{
+void ptr_check(void* ptr, const char* errmsg) {
+	if(!ptr) {
 		fprintf(stderr, "Can't %s, exited.\n", errmsg);
 		exit(1);
 	}
 }
 
-char nix_getch(void)
-{
+char nix_getch(void) {
 	struct termios old, new;
 	char key;
 
@@ -25,41 +22,34 @@ char nix_getch(void)
 	return key;
 }
 
-void set_fname(buff dt, const char* passed)
-{
-	if(passed[strlen(passed) - NTERM_SZ] == '/')
-	{
+void set_fname(buff dt, const char* passed) {
+	if(passed[strlen(passed) - NTERM_SZ] == '/') {
 		fputs("Can't open the directory as the file, exited.\n", stderr);
 		exit(1);
 	}
 
-	if(passed[0] == '/') // Is absolute path.
-	{
-		if(strlen(passed) + NTERM_SZ > PATH_MAX)
-		{
+	if(passed[0] == '/') { // Is absolute path.
+		if(strlen(passed) + NTERM_SZ > PATH_MAX) {
 			fputs("Given path is too long, exited.\n", stderr);
 			exit(1);
 		}
 		strcpy(dt.fname, passed); // Malloced so doesn't need 'n' for size.
 	}
-	else // Relative or basename.
-	{
+	else { // Relative or basename.
 		const bool slash_sz = 1;
 
 		char* abs_path = malloc(PATH_MAX); // Man 3 getcwd.
 		ptr_check((getcwd(abs_path, PATH_MAX)),
 		"get your current path. Can be too long\0");
 
-		if((strlen(abs_path) + strlen(passed) + NTERM_SZ) > PATH_MAX)
-		{
+		if((strlen(abs_path) + strlen(passed) + NTERM_SZ) > PATH_MAX) {
 			fputs("Given filename is too long, exited.\n", stderr);
 			exit(1);
 		}
 		strcpy(dt.fname, abs_path); // Copy the path.
 		dt.fname[strlen(abs_path)] = '/'; // Add the slash between.
 
-		for(uint16_t pos = 0; pos < strlen(passed); pos++) // Append basename.
-		{
+		for(uint16_t pos = 0; pos < strlen(passed); pos++) { // Append basename.
 			strcpy(&dt.fname[strlen(abs_path) + slash_sz + pos],
 			&passed[pos]);
 		}
@@ -67,33 +57,27 @@ void set_fname(buff dt, const char* passed)
 	}
 }
 
-buff read_file(buff dt)
-{
+buff read_file(buff dt) {
+	FILE* textfile = fopen(dt.fname, "r");
 	char chr;
 
-	FILE* textfile = fopen(dt.fname, "r");
-	if(textfile)
-	{
-		while((chr = getc(textfile)) != EOF)
-		{
+	if(textfile) {
+		while((chr = getc(textfile)) != EOF) {
 			dt = handle_key(dt, chr);
 		}
 		fclose(textfile);
 	}
-	else
-	{
+	else {
 		dt.txt[dt.lns][dt.chrs] = NTERM;
 	}
 	return dt;
 }
 
-void save_file(buff dt)
-{
-	if(access(dt.fname, F_OK) == -1) // ... there is no file.
-	{
+void save_file(buff dt) {
+	if(access(dt.fname, F_OK) == -1) { // ... there is no file.
 		int created = open(dt.fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
-		if(created == -1)
-		{
+
+		if(created == -1) {
 			fputs("Failed to create the new file, exited.\n", stderr);
 			exit(1);
 		}		
@@ -101,59 +85,51 @@ void save_file(buff dt)
 	FILE* textfile = fopen(dt.fname, "w");
 	ptr_check(textfile, "write to the file\0");
 
-	for(buff_t ln = 0; ln <= dt.lns; ln++)
-	{
+	for(buff_t ln = 0; ln <= dt.lns; ln++) {
 		fputs(dt.txt[ln], textfile);
 	}
 	fclose(textfile);
 }
 
-void alloc_block(buff dt)
-{
-	if(dt.chrs_ln % MEMBLK == 0)
-	{
-		puts("malloc");
+void alloc_block(buff dt) {
+	if(dt.chrs_ln % MEMBLK == 0) {
 		dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLK);
 		ptr_check(dt.txt[dt.lns], "realloc the new memory block for chars\0");
 	}
 }
 
-void free_all(buff dt)
-{
+void free_all(buff dt) {
 	free(dt.fname);
-	for(buff_t ln = 0; ln <= dt.lns; ln++)
-	{
+	for(buff_t ln = 0; ln <= dt.lns; ln++) {
 		free(dt.txt[ln]);
 	}
 	free(dt.txt);
 }
 
-buff add_char(buff dt, char key)
-{
+buff add_char(buff dt, char key) {
 	dt.chrs_ln++;
+	dt.chrs++;
 	alloc_block(dt);
-	switch(key)
-	{
+
+	switch(key) {
 		default:
-			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = key;
+			dt.txt[dt.lns][dt.chrs_ln - INDEX] = key;
 		break;
 
 		case TAB: // Actuall converts TAB to two spaces.
-			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = SPACE;
+			dt.txt[dt.lns][dt.chrs_ln - INDEX] = SPACE;
 			dt.chrs_ln++;
 
 			alloc_block(dt);
 
-			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = SPACE;
+			dt.txt[dt.lns][dt.chrs_ln - INDEX] = SPACE;
 			dt.chrs++;
 		break;			
 
 		case LF:
-			dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = LF;
+			dt.txt[dt.lns][dt.chrs_ln - INDEX] = LF;
 			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 			dt.lns++;
-
-			alloc_block(dt);
 
 			dt.chrs_ln = 0;
 			dt.txt[dt.lns] = malloc(MEMBLK); // The new line.
@@ -161,14 +137,11 @@ buff add_char(buff dt, char key)
 		break;
 	}
 	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-	dt.chrs++;
 	return dt;
 }
 
-buff keyboard_shortcut(buff dt, char key)
-{
-	switch(key)
-	{
+buff keyboard_shortcut(buff dt, char key) {
+	switch(key) {
 		case NEG_CHAR:
 		break;
 
@@ -184,11 +157,9 @@ buff keyboard_shortcut(buff dt, char key)
 	return dt;
 }
 
-buff alloc_chr(buff dt, char key)
-{
+buff alloc_chr(buff dt, char key) {
 //	printf("%d", (strlen(dt.txt[dt.lns]) + NTERM_SZ) % MEMBLK);
-	switch(key)
-	{
+	switch(key) {
 		case NTERM: // Only for the initialization.
 		break;
 
@@ -199,25 +170,17 @@ buff alloc_chr(buff dt, char key)
 		break;
 
 		case BACKSPACE:
-			if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1)
-			{
-				puts("dealloc");
-				dt.txt[dt.lns] = realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
-				ptr_check(dt.txt[dt.lns], "realloc the new memory block for chars\0");
+			if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1) {
+				dt.txt[dt.lns] = 
+				realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
+				ptr_check(dt.txt[dt.lns], "free the memory block\0");
 			}
-			if(dt.chrs > 0)
-			{
+			if(dt.chrs > 0) {
 				dt.chrs_ln--;
 				dt.chrs--;
 			}
+			// TODO: FREEING OLD LINE.
 			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-
-			if(dt.lns > 0 && dt.chrs_ln - 1 == 0)
-			{
-				free(dt.txt[dt.lns]);
-				dt.lns--;
-				dt.chrs_ln = strlen(dt.txt[dt.lns]) - NTERM_SZ;
-			}
 		break;
 
 
@@ -228,10 +191,8 @@ buff alloc_chr(buff dt, char key)
 	return dt;
 }
 
-void limits(buff dt)
-{
-	if(dt.lns > MAX_LNS)
-	{
+void limits(buff dt) {
+	if(dt.lns > MAX_LNS) {
 		fprintf(stderr,
 		"Max. lines amount: %d, chars: %d. Got more.\n", MAX_LNS, MAX_CHRS);
 		free_all(dt);
@@ -240,10 +201,8 @@ void limits(buff dt)
 
 }
 
-buff handle_key(buff dt, char key)
-{
-	if(key != 033)
-	{
+buff handle_key(buff dt, char key) {
+	if(key != 033) {
 		dt = alloc_chr(dt, key);
 		limits(dt);
 	}

@@ -14,8 +14,7 @@ typedef uint16_t buff_t; // Only for amount indicators.
 #define MAX_LNS (buff_t) pow(2, (sizeof(buff_t) * 8))
 #define MAX_CHRS MAX_LNS - 1 // 1 for NULL
 
-typedef struct
-{
+typedef struct {
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt; // Eg. txt[lns][chrs].
 	buff_t chrs;
