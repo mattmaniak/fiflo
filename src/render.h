@@ -19,10 +19,13 @@
 #define CURSOR_RIGHT(n) printf("\033[%dC", n)
 #define CURSOR_LEFT(n) printf("\033[%dD", n)
 
+#define SAVE_CURSOR_POS() printf("%s", "\033[s");
+#define RESTORE_CURSOR_POS() printf("%s", "\033[u");
+
 #define DOTS "[...]"
 
 term_t get_term_sz(char axis); // Check if to small or big.
-void flush_window(buff dt); // For rendering in a one frame.
+void flush_window(void); // For rendering in a one frame.
 
 void bar(buff dt, char key); // Upper bar.
 void lower_fill(buff_t lns); // Empty space below the text.

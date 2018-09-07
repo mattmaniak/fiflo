@@ -36,7 +36,6 @@ buff keyboard_shortcut(buff dt, char key);
 buff alloc_chr(buff dt, char key);
 
 void limits(buff dt); // Prevent overflows
-buff handle_key(buff dt, char key); // Place the char into the string.
 
 #endif
 

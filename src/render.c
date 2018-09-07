@@ -26,10 +26,8 @@ term_t get_term_sz(char axis) {
 	return 0; // Required -Wreturn-type.
 }
 
-void flush_window(buff dt) {
-	if(dt.lns < TXT_AREA - CURRENT) {
-		CURSOR_DOWN(TXT_AREA - dt.lns - CURRENT);
-	}
+void flush_window(void) {
+	RESTORE_CURSOR_POS();
 	printf("%s", CLEAN_LN);
 
 	for(term_t y = 0; y <= TXT_AREA; y++) {
@@ -65,6 +63,7 @@ void lower_fill(buff_t lns) {
 }
 
 void set_cursor_pos(buff dt) {
+	SAVE_CURSOR_POS();
 	if(dt.lns < TXT_AREA - CURRENT) {
 		CURSOR_UP(TXT_AREA - dt.lns - CURRENT);
 

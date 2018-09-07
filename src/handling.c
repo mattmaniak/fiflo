@@ -39,7 +39,7 @@ buff readfile(buff dt) {
 
 	if(textfile) {
 		while((chr = getc(textfile)) != EOF) {
-			dt = handle_key(dt, chr);
+			dt = alloc_chr(dt, chr);
 		}
 		fclose(textfile);
 	}
@@ -91,16 +91,20 @@ buff allocblk(buff dt, char mode) {
 	return dt;
 }
 
-buff freeblk(buff dt, char mode) {
-	switch(mode) {
-		case 'c':
-
-		break;
-
-		case 'l':
-
-		break;
+buff freeblk(buff dt) {
+	if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1) {
+		dt.txt[dt.lns] =
+		realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
+		checkptr(dt.txt[dt.lns], "free the memory block with chars\0");
 	}
+	if(dt.chrs > 0) {
+		dt.chrs_ln--;
+		dt.chrs--;
+	}
+	if(dt.lns > 1 && dt.chrs_ln == 0) {
+		puts("dealloca");
+	}
+	// TODO: LINE DELETION.
 	return dt;
 }
 
@@ -114,7 +118,6 @@ void freeall(buff dt) {
 
 buff add_char(buff dt, char key) {
 	dt = allocblk(dt, 'c');
-
 	switch(key) {
 		default:
 			dt.txt[dt.lns][dt.chrs_ln - INDEX] = key;
@@ -127,7 +130,6 @@ buff add_char(buff dt, char key) {
 		case LF:
 			dt.txt[dt.lns][dt.chrs_ln - INDEX] = LF;
 			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-
 			dt = allocblk(dt, 'l');
 		break;
 	}
@@ -137,9 +139,6 @@ buff add_char(buff dt, char key) {
 
 buff keyboard_shortcut(buff dt, char key) {
 	switch(key) {
-		case NEG_CHAR:
-		break;
-
 		case CTRL_D:
 			savefile(dt);
 		break;
@@ -153,36 +152,29 @@ buff keyboard_shortcut(buff dt, char key) {
 }
 
 buff alloc_chr(buff dt, char key) {
-//	printf("%d", (strlen(dt.txt[dt.lns]) + NTERM_SZ) % MEMBLK);
-	switch(key) {
-		case NTERM: // Only for the initialization.
-		break;
+	if(key != 033) {
+		switch(key) {
+			case NEG_CHAR: // Eg. CTRL+C - singal.
+			case NTERM: // Only for the initialization.
+			break;
 
-		case NEG_CHAR: // Eg. CTRL+C - singal.
-		case CTRL_D:
-		case CTRL_X:
-			dt = keyboard_shortcut(dt, key);
-		break;
+			case CTRL_D:
+			case CTRL_X:
+				dt = keyboard_shortcut(dt, key);
+			break;
 
-		case BACKSPACE:
-			if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1) {
-				dt.txt[dt.lns] =
-				realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
-				checkptr(dt.txt[dt.lns], "free the memory block with chars\0");
-			}
-			if(dt.chrs > 0) {
-				dt.chrs_ln--;
-				dt.chrs--;
-			}
-			// TODO: FREEING OLD LINE.
-			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-		break;
+			case BACKSPACE:
+				dt = freeblk(dt);
+				dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+			break;
 
 
-		default:
-			dt = add_char(dt, key);
-		break;
+			default:
+				dt = add_char(dt, key);
+			break;
+		}
 	}
+	limits(dt);
 	return dt;
 }
 
@@ -194,13 +186,5 @@ void limits(buff dt) {
 		exit(1);
 	}
 
-}
-
-buff handle_key(buff dt, char key) {
-	if(key != 033) {
-		dt = alloc_chr(dt, key);
-		limits(dt);
-	}
-	return dt;
 }
 

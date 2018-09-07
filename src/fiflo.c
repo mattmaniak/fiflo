@@ -78,11 +78,10 @@ void run(const char* passed) {
 		signal(SIGTSTP, sigignore); // CTRL_Z
 		signal(SIGINT, sigignore); // CTRL_C
 
-		dt = handle_key(dt, pressed);
+		dt = alloc_chr(dt, pressed);
 		window(dt, pressed);
-
 		pressed = nix_getch();
-		flush_window(dt);
+		flush_window();
 	}
 }
 
