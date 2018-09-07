@@ -1,30 +1,8 @@
 #include "handling.h"
 
-void ptr_check(void* ptr, const char* errmsg) {
-	if(!ptr) {
-		fprintf(stderr, "Can't %s, exited.\n", errmsg);
-		exit(1);
-	}
-}
-
-char nix_getch(void) {
-	struct termios old, new;
-	char key;
-
-	tcgetattr(STDIN_FILENO, &old); // Get terminal attribiutes.
-	new = old;
-	new.c_lflag &= ~(ICANON | ECHO); // Disable buffered I/O and echo mode.
-	
-	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
-	key = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &old); // Restore terminal settings.
-
-	return key;
-}
-
-void set_fname(buff dt, const char* passed) {
+void fnameset(buff dt, const char* passed) {
 	if(passed[strlen(passed) - NTERM_SZ] == '/') {
-		fputs("Can't open the directory as the file, exited.\n", stderr);
+		fputs("Can't open the directory as a file, exited.\n", stderr);
 		exit(1);
 	}
 
@@ -33,13 +11,13 @@ void set_fname(buff dt, const char* passed) {
 			fputs("Given path is too long, exited.\n", stderr);
 			exit(1);
 		}
-		strcpy(dt.fname, passed); // Malloced so doesn't need 'n' for size.
+		strcpy(dt.fname, passed); // Malloc'ed so doesn't need 'n' for size.
 	}
 	else { // Relative or basename.
 		const bool slash_sz = 1;
 
-		char* abs_path = malloc(PATH_MAX); // Man 3 getcwd.
-		ptr_check((getcwd(abs_path, PATH_MAX)),
+		char* abs_path = malloc(PATH_MAX);
+		checkptr((getcwd(abs_path, PATH_MAX)),
 		"get your current path. Can be too long\0");
 
 		if((strlen(abs_path) + strlen(passed) + NTERM_SZ) > PATH_MAX) {
@@ -48,16 +26,14 @@ void set_fname(buff dt, const char* passed) {
 		}
 		strcpy(dt.fname, abs_path); // Copy the path.
 		dt.fname[strlen(abs_path)] = '/'; // Add the slash between.
-
 		for(uint16_t pos = 0; pos < strlen(passed); pos++) { // Append basename.
-			strcpy(&dt.fname[strlen(abs_path) + slash_sz + pos],
-			&passed[pos]);
+			strcpy(&dt.fname[strlen(abs_path) + slash_sz + pos], &passed[pos]);
 		}
 		free(abs_path);
 	}
 }
 
-buff read_file(buff dt) {
+buff readfile(buff dt) {
 	FILE* textfile = fopen(dt.fname, "r");
 	char chr;
 
@@ -73,17 +49,17 @@ buff read_file(buff dt) {
 	return dt;
 }
 
-void save_file(buff dt) {
+void savefile(buff dt) {
 	if(access(dt.fname, F_OK) == -1) { // ... there is no file.
-		int created = open(dt.fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
+		int create = open(dt.fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
 
-		if(created == -1) {
+		if(create == -1) {
 			fputs("Failed to create the new file, exited.\n", stderr);
 			exit(1);
 		}		
 	}
 	FILE* textfile = fopen(dt.fname, "w");
-	ptr_check(textfile, "write to the file\0");
+	checkptr(textfile, "write to the file\0");
 
 	for(buff_t ln = 0; ln <= dt.lns; ln++) {
 		fputs(dt.txt[ln], textfile);
@@ -91,14 +67,44 @@ void save_file(buff dt) {
 	fclose(textfile);
 }
 
-void alloc_block(buff dt) {
-	if(dt.chrs_ln % MEMBLK == 0) {
-		dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLK);
-		ptr_check(dt.txt[dt.lns], "realloc the new memory block for chars\0");
+buff allocblk(buff dt, char mode) {
+	switch(mode) {
+		case 'c':
+			dt.chrs++;
+			dt.chrs_ln++;
+			if(dt.chrs_ln % MEMBLK == 0) { // MEMBLK - 1 chars + NTERM -> alloc.
+				dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLK);
+				checkptr(dt.txt[dt.lns], "alloc the new memblock for chars\0");
+			}
+		break;
+
+		case 'l':
+			dt.lns++;
+			if(dt.lns % MEMBLK == 0) { // Allocates with the one line reserve.
+				dt.txt = realloc(dt.txt, sizeof(dt.txt) * (dt.lns + MEMBLK));
+			}
+			dt.chrs_ln = 0;
+			dt.txt[dt.lns] = malloc(MEMBLK);
+			checkptr(dt.txt[dt.lns], "malloc byte in the new line\0");
+		break;
 	}
+	return dt;
 }
 
-void free_all(buff dt) {
+buff freeblk(buff dt, char mode) {
+	switch(mode) {
+		case 'c':
+
+		break;
+
+		case 'l':
+
+		break;
+	}
+	return dt;
+}
+
+void freeall(buff dt) {
 	free(dt.fname);
 	for(buff_t ln = 0; ln <= dt.lns; ln++) {
 		free(dt.txt[ln]);
@@ -107,33 +113,22 @@ void free_all(buff dt) {
 }
 
 buff add_char(buff dt, char key) {
-	dt.chrs_ln++;
-	dt.chrs++;
-	alloc_block(dt);
+	dt = allocblk(dt, 'c');
 
 	switch(key) {
 		default:
 			dt.txt[dt.lns][dt.chrs_ln - INDEX] = key;
 		break;
 
-		case TAB: // Actuall converts TAB to two spaces.
+		case TAB: // Actually converts TAB to the one space.
 			dt.txt[dt.lns][dt.chrs_ln - INDEX] = SPACE;
-			dt.chrs_ln++;
-
-			alloc_block(dt);
-
-			dt.txt[dt.lns][dt.chrs_ln - INDEX] = SPACE;
-			dt.chrs++;
 		break;			
 
 		case LF:
 			dt.txt[dt.lns][dt.chrs_ln - INDEX] = LF;
 			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-			dt.lns++;
 
-			dt.chrs_ln = 0;
-			dt.txt[dt.lns] = malloc(MEMBLK); // The new line.
-			ptr_check(dt.txt[dt.lns], "malloc byte in the new line\0");
+			dt = allocblk(dt, 'l');
 		break;
 	}
 	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
@@ -146,11 +141,11 @@ buff keyboard_shortcut(buff dt, char key) {
 		break;
 
 		case CTRL_D:
-			save_file(dt);
+			savefile(dt);
 		break;
 
 		case CTRL_X: // Frees everything and exits the program.
-			free_all(dt);
+			freeall(dt);
 			exit(0);
 		break;
 	}
@@ -171,9 +166,9 @@ buff alloc_chr(buff dt, char key) {
 
 		case BACKSPACE:
 			if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1) {
-				dt.txt[dt.lns] = 
+				dt.txt[dt.lns] =
 				realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
-				ptr_check(dt.txt[dt.lns], "free the memory block\0");
+				checkptr(dt.txt[dt.lns], "free the memory block with chars\0");
 			}
 			if(dt.chrs > 0) {
 				dt.chrs_ln--;
@@ -195,7 +190,7 @@ void limits(buff dt) {
 	if(dt.lns > MAX_LNS) {
 		fprintf(stderr,
 		"Max. lines amount: %d, chars: %d. Got more.\n", MAX_LNS, MAX_CHRS);
-		free_all(dt);
+		freeall(dt);
 		exit(1);
 	}
 

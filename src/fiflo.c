@@ -5,9 +5,15 @@
 #include "handling.c"
 #include "render.c"
 
-// TODO:
-void ignore_sig(int nothing) { // Arg for "‘__sighandler_t {aka void (*)(int)}".
+void sigignore(int nothing) { // Arg for "‘__sighandler_t {aka void (*)(int)}".
 	if(nothing == 0) {}
+}
+
+void checkptr(void* ptr, const char* errmsg) {
+	if(!ptr) {
+		fprintf(stderr, "Can't %s, exited.\n", errmsg);
+		exit(1);
+	}
 }
 
 void argc_check(int arg_count) {
@@ -40,33 +46,47 @@ void options(const char* arg) {
 	run(arg);
 }
 
+char nix_getch(void) {
+	struct termios old, new;
+	char key;
+
+	tcgetattr(STDIN_FILENO, &old); // Get terminal attribiutes.
+	new = old;
+	new.c_lflag &= ~(ICANON | ECHO); // Disable buffered I/O and echo mode.
+	
+	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
+	key = getchar();
+	tcsetattr(STDIN_FILENO, TCSANOW, &old); // Restore terminal settings.
+
+	return key;
+}
+
 void run(const char* passed) {
 	buff dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0};
-	ptr_check(dt.fname, "Cannot allocate memory for the filename, exited.\0");
-	ptr_check(dt.txt, "malloc memory for the text\0");
+	checkptr(dt.fname, "alloc memory for the filename\0");
+	checkptr(dt.txt, "alloc memory for lines\0");
 
-	set_fname(dt, passed);
+	fnameset(dt, passed);
 
 	dt.txt[dt.lns] = malloc(MEMBLK);
-	ptr_check(dt.txt, "malloc memory for first line\0");
+	checkptr(dt.txt, "alloc memory for chars in the first line\0");
 
-	dt = read_file(dt);
-	char pressed_key = NTERM; // Initializer too.
+	dt = readfile(dt);
+	char pressed = NTERM; // Initializer too.
 
-	for(;;) { // Main program loop. 
-		dt = handle_key(dt, pressed_key);
-		window(dt, pressed_key);
+	for(;;) { // Main program loop.
+		signal(SIGTSTP, sigignore); // CTRL_Z
+		signal(SIGINT, sigignore); // CTRL_C
 
-		pressed_key = nix_getch();
+		dt = handle_key(dt, pressed);
+		window(dt, pressed);
+
+		pressed = nix_getch();
 		flush_window(dt);
 	}
 }
 
 int main(int argc, char** argv) {
-	signal(SIGTSTP, ignore_sig); // CTRL_Z
-	signal(SIGINT, ignore_sig); // CTRL_C
-
-
 	argc_check(argc);
 	if(argv[1] == NULL) {
 		run("noname.asdf\0");

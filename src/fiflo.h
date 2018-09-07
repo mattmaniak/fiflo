@@ -23,10 +23,12 @@ typedef struct {
 }
 buff;
 
-void ignore_sig(int nothing);
+void sigignore(int nothing);
+void checkptr(void* ptr, const char* errmsg);
 void argc_check(int arg_count);
 void options(const char* arg);
 void run(const char* passed);
+char nix_getch(void);
 int main(int argc, char** argv);
 
 #endif

@@ -30,15 +30,15 @@ void flush_window(buff dt) {
 	if(dt.lns < TXT_AREA - CURRENT) {
 		CURSOR_DOWN(TXT_AREA - dt.lns - CURRENT);
 	}
-	printf("%s", CLEAN_LINE);
+	printf("%s", CLEAN_LN);
 
 	for(term_t y = 0; y <= TXT_AREA; y++) {
-		printf("%s%s", LINE_UP, CLEAN_LINE);
+		printf("%s%s", LINE_UP, CLEAN_LN);
 	}
 	fflush(stdout);
 }
 
-void draw_bar(buff dt, char key) {
+void bar(buff dt, char key) {
 	const char* title = "fiflo | filename:\0";
 	uint16_t fname_max = get_term_sz('X') - strlen(title) - strlen(DOTS);
 
@@ -51,7 +51,7 @@ void draw_bar(buff dt, char key) {
 		printf("%s%*s\n", dt.fname, (term_t) (get_term_sz('X') - strlen(title)
 		- strlen(dt.fname)), " ");
 	}
-	// Lower part of the draw_bar.
+	// Lower part of the bar.
 	printf("chars (all | line | last):%*s%*d | %*d | %*d%s\n",
 	get_term_sz('X') - 45, " ", 5, dt.chrs, 5, dt.chrs_ln, 3, key, RESET);
 }
@@ -81,7 +81,7 @@ void set_cursor_pos(buff dt) {
 void window(buff dt, char key) { // TODO: SIMPLIFY
 	const char* too_many = INVERT DOTS RESET"\0";
 	buff_t hidden_lns = 0;
-	draw_bar(dt, key);
+	bar(dt, key);
 
 	if(dt.lns >= TXT_AREA) { // Horizontal scroll.
 		hidden_lns = dt.lns - TXT_AREA + CURRENT + 1; // 1 - DOTS in Y.

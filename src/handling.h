@@ -23,16 +23,13 @@
 #define INDEX 1
 #define NTERM_SZ 1
 
-void ptr_check(void* ptr, const char* errmsg); // Exit on error with a message.
-char nix_getch(void);
+void fnameset(buff dt, const char* passed);
+buff readfile(buff dt);
+void savefile(buff dt);
 
-void set_fname(buff dt, const char* passed);
-buff read_file(buff dt);
-void save_file(buff dt);
-
-void alloc_block(buff dt);
+buff allocblk(buff dt, char mode);
 void free_block(buff dt);
-void free_all(buff dt);
+void freeall(buff dt);
 
 buff add_char(buff dt, char key);
 buff keyboard_shortcut(buff dt, char key);
