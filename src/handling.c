@@ -110,29 +110,11 @@ void save_file(buff dt)
 
 void alloc_block(buff dt)
 {
-	if(dt.chrs_ln % MEMBLOCK == MEMBLOCK - NTERM_SZ)
+	if(dt.chrs_ln % MEMBLK == 0)
 	{
-		dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLOCK);
+		puts("malloc");
+		dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLK);
 		ptr_check(dt.txt[dt.lns], "realloc the new memory block for chars\0");
-	}
-	else if(dt.lns % MEMBLOCK == MEMBLOCK)
-	{
-		dt.txt = realloc(dt.txt, dt.lns + MEMBLOCK);
-		ptr_check(dt.txt[dt.lns], "realloc the new memory block for lines\0");
-	}
-}
-
-void free_block(buff dt)
-{
-	if(dt.chrs_ln % MEMBLOCK == MEMBLOCK - NTERM_SZ)
-	{
-		dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln - MEMBLOCK);
-		ptr_check(dt.txt[dt.lns], "realloc the new memory block for chars\0");
-	}
-	else if(dt.lns % MEMBLOCK == MEMBLOCK)
-	{
-		dt.txt = realloc(dt.txt, dt.lns - MEMBLOCK);
-		ptr_check(dt.txt[dt.lns], "realloc the new memory block for lines\0");
 	}
 }
 
@@ -150,7 +132,6 @@ buff add_char(buff dt, char key)
 {
 	dt.chrs_ln++;
 	alloc_block(dt);
-
 	switch(key)
 	{
 		default:
@@ -175,7 +156,7 @@ buff add_char(buff dt, char key)
 			alloc_block(dt);
 
 			dt.chrs_ln = 0;
-			dt.txt[dt.lns] = malloc(MEMBLOCK); // The new line.
+			dt.txt[dt.lns] = malloc(MEMBLK); // The new line.
 			ptr_check(dt.txt[dt.lns], "malloc byte in the new line\0");
 		break;
 	}
@@ -205,6 +186,7 @@ buff keyboard_shortcut(buff dt, char key)
 
 buff alloc_chr(buff dt, char key)
 {
+//	printf("%d", (strlen(dt.txt[dt.lns]) + NTERM_SZ) % MEMBLK);
 	switch(key)
 	{
 		case NTERM: // Only for the initialization.
@@ -217,27 +199,27 @@ buff alloc_chr(buff dt, char key)
 		break;
 
 		case BACKSPACE:
-			free_block(dt);
+			if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1)
+			{
+				puts("dealloc");
+				dt.txt[dt.lns] = realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
+				ptr_check(dt.txt[dt.lns], "realloc the new memory block for chars\0");
+			}
+			if(dt.chrs > 0)
+			{
+				dt.chrs_ln--;
+				dt.chrs--;
+			}
+			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 
-			dt.chrs_ln--;
-			if(dt.lns > 0 && dt.chrs_ln < 0)
+			if(dt.lns > 0 && dt.chrs_ln - 1 == 0)
 			{
 				free(dt.txt[dt.lns]);
 				dt.lns--;
 				dt.chrs_ln = strlen(dt.txt[dt.lns]) - NTERM_SZ;
 			}
-			else if(dt.lns == 0 && dt.chrs_ln < 0)
-			{
-				dt.chrs_ln = 0;
-			}
-			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-
-			dt.chrs--;
-			if(dt.chrs < 0)
-			{
-				dt.chrs = 0;
-			}
 		break;
+
 
 		default:
 			dt = add_char(dt, key);
@@ -250,16 +232,12 @@ void limits(buff dt)
 {
 	if(dt.lns > MAX_LNS)
 	{
-		fprintf(stderr, "Max. lines amount: %d, got more.\n", MAX_LNS);
+		fprintf(stderr,
+		"Max. lines amount: %d, chars: %d. Got more.\n", MAX_LNS, MAX_CHRS);
 		free_all(dt);
 		exit(1);
 	}
-	else if(dt.chrs > MAX_CHRS)
-	{
-		fprintf(stderr, "Max. chars amount: %d, got more.\n", MAX_CHRS);
-		free_all(dt);
-		exit(1);
-	}
+
 }
 
 buff handle_key(buff dt, char key)

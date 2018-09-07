@@ -48,15 +48,14 @@ void options(const char* arg)
 
 void run(const char* passed)
 {
-	buff dt = {malloc(PATH_MAX), malloc(MEMBLOCK), 0, 0, 0};
-
+	buff dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0};
 	ptr_check(dt.fname, "Cannot allocate memory for the filename, exited.\0");
+	ptr_check(dt.txt, "malloc memory for the text\0");
+
 	set_fname(dt, passed);
 
-	ptr_check(dt.txt, "malloc memory for the text\0");
-	dt.txt[dt.lns] = malloc(MEMBLOCK);
+	dt.txt[dt.lns] = malloc(MEMBLK);
 	ptr_check(dt.txt, "malloc memory for first line\0");
-	dt.txt[dt.lns][dt.chrs] = NTERM;
 
 	dt = read_file(dt);
 	char pressed_key = NTERM; // Initializer too.

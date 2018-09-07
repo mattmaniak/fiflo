@@ -20,6 +20,7 @@
 #define SPACE 32
 #define BACKSPACE 127
 
+#define INDEX 1
 #define NTERM_SZ 1
 
 void ptr_check(void* ptr, const char* errmsg); // Exit on error with a message.

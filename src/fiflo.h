@@ -8,9 +8,9 @@
 #include <stdint.h>
 
 typedef uint16_t term_t; // Unsigned short as in "sys/ioctl.h".
-typedef int16_t buff_t; // Only for amount indicators.
+typedef uint16_t buff_t; // Only for amount indicators.
 
-#define MEMBLOCK 4096 // For optimal mallocation.
+#define MEMBLK 4 // For optimal mallocation Must be > 1.
 #define MAX_LNS (buff_t) pow(2, (sizeof(buff_t) * 8))
 #define MAX_CHRS MAX_LNS - 1 // 1 for NULL
 
