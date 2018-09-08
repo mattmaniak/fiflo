@@ -27,26 +27,23 @@ commits to provide updated code on the "develop" branch.
 - https://nvie.com/posts/a-successful-git-branching-model/.
 
 ## Coding rules:
-- indentation style: 1 hard tab (4 spaces),
-- use 1TBS indentation excluding nested "(if) elses",
+- use Allman's brace style, indentation: hard tab (4 spaces wide),
 - max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
-- single line can't exceed 80 characters.
-- dont"t use camelCase (is unreadable), only lower-case snake_case is allowed,
-- #defines have to be CAPITALIZED,
+- single line can't exceed 80 characters, function - 45,
+- funcion names shouldn't contain underscore, variables should,
 - keep names semantic shortened, eg. "fname_max",
-- write short TODOs near thing to fix as uppercase comment,
+- write short TODOs near thing to fix as uppercase comments,
 - keep docs up-to-date with the code in stable releases,
-- every function have to fit in the 720p screen with the 10px font,
 - function"s args names need to be shorter than variables names.
 
 ## Testing
-Before the stable release "fiflo" is tested with:
+Before the stable release, "fiflo" is tested with:
 - LXTerminal,
 - Terminology,
 - Gnome Terminal,
 - xterm
 emulators
-and with the native Linux terminal wnich is priority in tests.
+and with the native Linux text-mode wnich is priority in tests.
 
 I do my best for proper rendering in every above. In other cases editor can
-works but there could be some glitches because of ther quirk modes.
+work but there could be some glitches because of ther quirk modes.

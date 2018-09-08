@@ -5,26 +5,34 @@
 #include "handling.c"
 #include "render.c"
 
-void sigignore(int nothing) { // Arg for "‘__sighandler_t {aka void (*)(int)}".
+void sigignore(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
+{
 	if(nothing == 0) {}
 }
 
-void checkptr(void* ptr, const char* errmsg) {
-	if(!ptr) {
+void checkptr(buff dt, void* ptr, const char* errmsg)
+{
+	if(!ptr)
+	{
 		fprintf(stderr, "Can't %s, exited.\n", errmsg);
+		freeall(dt);
 		exit(1);
 	}
 }
 
-void argc_check(int arg_count) {
-	if(arg_count != 1 && arg_count != 2) {
+void argc_check(int arg_count)
+	{
+	if(arg_count != 1 && arg_count != 2)
+	{
 		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
 		exit(1);
 	}
 }
 
-void options(const char* arg) {
-	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0) {
+void options(const char* arg)
+{
+	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
+	{
 		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
 		"Usage: fiflo [option].",
 
@@ -36,7 +44,8 @@ void options(const char* arg) {
 		"-v, --version Display some info about the current version.");
 		exit(0);
 	}
-	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0) {
+	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
+	{
 		printf("%s\n%s\n%s\n",
 		"fiflo v2.0.0 (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
@@ -46,35 +55,38 @@ void options(const char* arg) {
 	run(arg);
 }
 
-char nix_getch(void) {
+char nix_getch(void)
+{
 	struct termios old, new;
 	char key;
 
-	tcgetattr(STDIN_FILENO, &old); // Get terminal attribiutes.
+	tcgetattr(STDIN_FILENO, &old); // Put the state of STDIN_FILENO into *old.
 	new = old;
 	new.c_lflag &= ~(ICANON | ECHO); // Disable buffered I/O and echo mode.
 	
 	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
-	key = getchar();
+	key = (char) getchar();
 	tcsetattr(STDIN_FILENO, TCSANOW, &old); // Restore terminal settings.
 
 	return key;
 }
 
-void run(const char* passed) {
+_Noreturn void run(const char* passed)
+{
 	buff dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0};
-	checkptr(dt.fname, "alloc memory for the filename\0");
-	checkptr(dt.txt, "alloc memory for lines\0");
+	checkptr(dt, dt.fname, "alloc memory for the filename\0");
+	checkptr(dt, dt.txt, "alloc memory for lines\0");
 
 	fnameset(dt, passed);
 
 	dt.txt[dt.lns] = malloc(MEMBLK);
-	checkptr(dt.txt, "alloc memory for chars in the first line\0");
+	checkptr(dt, dt.txt, "alloc memory for chars in the first line\0");
 
 	dt = readfile(dt);
 	char pressed = NTERM; // Initializer too.
 
-	for(;;) { // Main program loop.
+	for(;;) // Main program loop.
+	{
 		signal(SIGTSTP, sigignore); // CTRL_Z
 		signal(SIGINT, sigignore); // CTRL_C
 
@@ -85,12 +97,15 @@ void run(const char* passed) {
 	}
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 	argc_check(argc);
-	if(argv[1] == NULL) {
+	if(argv[1] == NULL)
+	{
 		run("noname.asdf\0");
 	}
-	else {
+	else
+	{
 		options(argv[1]);
 	}
 	return 0;
@@ -100,7 +115,8 @@ int main(int argc, char** argv) {
 
 #include <stdio.h>
 
-int main(void) {
+int main(void)
+{
 	fputs("Only Linux-based systems are supported, exited.\n", stderr);
 	return 0;
 }

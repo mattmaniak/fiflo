@@ -1,6 +1,7 @@
 #include "render.h"
 
-term_t get_term_sz(char axis) {
+term_t get_term_sz(char axis)
+{
 	const uint8_t x_min = 45;
 	const uint8_t y_min = 4;
 	const uint16_t sz_max = USHRT_MAX;
@@ -8,16 +9,19 @@ term_t get_term_sz(char axis) {
 	struct winsize win; // From "sys/ioctl.h".
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
-	if(win.ws_col < x_min || win.ws_row < y_min) {
+	if(win.ws_col < x_min || win.ws_row < y_min)
+	{
 		fprintf(stderr, "Min. term size is %dx%d, exited.\n", x_min, y_min);
 		exit(1);
 	}
-	else if(win.ws_col > sz_max || win.ws_row > sz_max) {
+	else if(win.ws_col > sz_max || win.ws_row > sz_max)
+	{
 		fprintf(stderr, "Max. term size is %dx%d, exited.\n", sz_max, sz_max);
 		exit(1);
 	}
 
-	switch(axis) {
+	switch(axis)
+	{
 		case 'X':
 			return win.ws_col;
 		case 'Y':
@@ -26,26 +30,31 @@ term_t get_term_sz(char axis) {
 	return 0; // Required -Wreturn-type.
 }
 
-void flush_window(void) {
+void flush_window(void)
+{
 	RESTORE_CURSOR_POS();
 	printf("%s", CLEAN_LN);
 
-	for(term_t y = 0; y <= TXT_AREA; y++) {
+	for(term_t y = 0; y <= TXT_AREA; y++)
+	{
 		printf("%s%s", LINE_UP, CLEAN_LN);
 	}
 	fflush(stdout);
 }
 
-void bar(buff dt, char key) {
+void bar(buff dt, char key)
+{
 	const char* title = "fiflo | filename:\0";
-	uint16_t fname_max = get_term_sz('X') - strlen(title) - strlen(DOTS);
+	term_t fname_max = get_term_sz('X') - (term_t )(strlen(title) - strlen(DOTS));
 
 	printf("%s%s", INVERT, title);
 
-	if(strlen(dt.fname) > fname_max) {
+	if(strlen(dt.fname) > fname_max)
+	{
 		printf(" %.*s%s\n", fname_max, dt.fname, DOTS);
 	}
-	else {
+	else
+	{
 		printf("%s%*s\n", dt.fname, (term_t) (get_term_sz('X') - strlen(title)
 		- strlen(dt.fname)), " ");
 	}
@@ -54,54 +63,67 @@ void bar(buff dt, char key) {
 	get_term_sz('X') - 45, " ", 5, dt.chrs, 5, dt.chrs_ln, 3, key, RESET);
 }
 
-void lower_fill(buff_t lns) {
-	if(lns < TXT_AREA) {
-		for(term_t ln = lns; ln < TXT_AREA - CURRENT; ln++) {
+void lower_fill(buff_t lns)
+{
+	if(lns < TXT_AREA)
+	{
+		for(term_t ln = lns; ln < TXT_AREA - CURRENT; ln++)
+		{
 			putchar(LF);
 		}
 	}
 }
 
-void set_cursor_pos(buff dt) {
+void set_cursor_pos(buff dt)
+{
 	SAVE_CURSOR_POS();
-	if(dt.lns < TXT_AREA - CURRENT) {
+	if(dt.lns < TXT_AREA - CURRENT)
+	{
 		CURSOR_UP(TXT_AREA - dt.lns - CURRENT);
 
-		if(strlen(dt.txt[dt.lns]) < get_term_sz('X') - strlen(DOTS)) {
+		if(strlen(dt.txt[dt.lns]) < get_term_sz('X') - strlen(DOTS))
+		{
 			CURSOR_RIGHT((term_t) (strlen(dt.txt[dt.lns]) + strlen(DOTS)));
 		}
-		else {
+		else
+		{
 			CURSOR_RIGHT((term_t) get_term_sz('X') - CURRENT);
 		}
 	}
 	// Else by default on the bottom.
 }
 
-void window(buff dt, char key) { // TODO: SIMPLIFY
+void window(buff dt, char key) // TODO: SIMPLIFY
+{
 	const char* too_many = INVERT DOTS RESET"\0";
 	buff_t hidden_lns = 0;
 	bar(dt, key);
 
-	if(dt.lns >= TXT_AREA) { // Horizontal scroll.
+	if(dt.lns >= TXT_AREA) // Horizontal scroll.
+	{
 		hidden_lns = dt.lns - TXT_AREA + CURRENT + 1; // 1 - DOTS in Y.
 		puts(too_many);
 	}
-	for(term_t ln = hidden_lns; ln <= dt.lns; ln++) {
+	for(term_t ln = hidden_lns; ln <= dt.lns; ln++)
+	{
 		printf("%s%*d%s", INVERT, (uint8_t) strlen(DOTS), ln, RESET);
-
-		if(strlen(dt.txt[ln]) + strlen(DOTS) >= get_term_sz('X')) {
+		if(strlen(dt.txt[ln]) + strlen(DOTS) >= get_term_sz('X'))
+		{
 			uint8_t fill;
 
-			if(dt.txt[ln][strlen(dt.txt[ln]) - 1] == LF) { // Move one right.
+			if(dt.txt[ln][strlen(dt.txt[ln]) - 1] == LF) // Move one right.
+			{
 				fill = 3;
 			}
-			else {
+			else
+			{
 				fill = 2;
 			}
 			printf("%s%s", too_many, dt.txt[ln] + strlen(dt.txt[ln])
 			+ strlen(too_many) - get_term_sz('X') - fill);
 		}
-		else {
+		else
+		{
 			fputs(dt.txt[ln], stdout);
 		}
 	}

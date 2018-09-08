@@ -40,4 +40,4 @@ Will you port it into the Windows?
 - No.
 
 How can I contribute?
-- Read the docs/WORKFLOW.md and send any request.
+- Read the doc/WORKFLOW.md and send any request.

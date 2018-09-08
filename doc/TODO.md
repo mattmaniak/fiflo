@@ -1,6 +1,7 @@
 # fiflo - TODOs
 ## delete one if done:
-- keymap
+- keymap,
+- pipe support,
 - simplify syntax (less numbers - more defines and variables),
 - improve sig handlers,
 - bigger buffer,

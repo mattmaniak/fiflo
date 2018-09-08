@@ -9,12 +9,11 @@ files use git-show or git-log.
 ## Versions:
 ### v2.0.0 (2018, WIP):
 - vertical && horizontal scroll,
-- lines as separate strings,
-- no 80 chars per line limit,
+- new allocation method (lines as a separate strings),
 - arrows are ignored,
 - line numbers,
-- better performance (2018, block-allocated memory),
-- fixed buffer of size 32M.
+- better performance (block-allocated memory),
+- max. buffer of size 64K.
 
 ### v1.1.0 (2018, August 12):
 - dynamically allocated text (2018, in theory max. 2G - 1),
@@ -26,7 +25,7 @@ files use git-show or git-log.
 - auto_newline when the single line is equal <user's terminal width>.
 
 ### v1.0.0 (2018, July 15):
-- simplified API,
+- simplified alghoritms,
 - less memory usage,
 - proper text allocation,
 - faster initialization,
@@ -36,7 +35,7 @@ files use git-show or git-log.
 - 80 chars per line limit && auto newline,
 
 ### v0.5.0-unstable (2018, July 1):
-(2018, The last v0.y.z version and showup of the old program logic. Mostly insecure.
+(The last v0.y.z version and showup of the old program logic. Mostly insecure.
 Not merged with "master" so look for it with tags.)
 - multiple lines writing && rendering,
 - file input/output operations,
