@@ -15,8 +15,7 @@ void checkptr(buff dt, void* ptr, const char* errmsg)
 	if(!ptr)
 	{
 		fprintf(stderr, "Can't %s, exited.\n", errmsg);
-		freeall(dt);
-		exit(1);
+		freeallexit(dt, 1);
 	}
 }
 
@@ -90,10 +89,10 @@ _Noreturn void run(const char* passed)
 		signal(SIGTSTP, sigignore); // CTRL_Z
 		signal(SIGINT, sigignore); // CTRL_C
 
-		dt = alloc_chr(dt, pressed);
+		dt = recochar(dt, pressed);
 		window(dt, pressed);
 		pressed = nix_getch();
-		flush_window();
+		flushwin();
 	}
 }
 

@@ -5,14 +5,18 @@
 #include <linux/limits.h>
 
 // Required keymap.
-#define NEG_CHAR -1
+#define NEG -1
 #define NTERM 0
 #define CTRL_D 4
+#define BELL 7
+#define BACKSPACE 8
 #define TAB 9
 #define LF 10
+#define VTAB 11
+#define FORMFEED 12
+#define CR 13
 #define CTRL_X 24
-#define SPACE 32
-#define BACKSPACE 127
+#define ESCAPE 27
 
 #define INDEX 1
 #define NTERM_SZ 1
@@ -23,13 +27,11 @@ void savefile(buff dt);
 
 buff allocblk(buff dt, char mode);
 buff freeblk(buff dt);
-void freeall(buff dt);
+void freeallexit(buff dt, _Bool code);
 
-buff add_char(buff dt, char key);
+buff charadd(buff dt, char key);
 buff keyboard_shortcut(buff dt, char key);
-buff alloc_chr(buff dt, char key);
-
-void limits(buff dt); // Prevent overflows
+buff recochar(buff dt, char key);
 
 #endif
 

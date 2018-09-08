@@ -5,7 +5,7 @@ void fnameset(buff dt, const char* passed)
 	if(passed[strlen(passed) - NTERM_SZ] == '/')
 	{
 		fputs("Can't open the directory as a file, exited.\n", stderr);
-		exit(1);
+		freeallexit(dt, 1);
 	}
 
 	if(passed[0] == '/') // Is absolute path.
@@ -13,13 +13,13 @@ void fnameset(buff dt, const char* passed)
 		if(strlen(passed) + NTERM_SZ > PATH_MAX)
 		{
 			fputs("Given path is too long, exited.\n", stderr);
-			exit(1);
+			freeallexit(dt, 1);
 		}
 		strcpy(dt.fname, passed); // Malloc'ed so doesn't need 'n' for size.
 	}
 	else // Relative or basename.
 	{
-		const bool slash_sz = 1;
+		const _Bool slash_sz = 1;
 		char* abs_path = malloc(PATH_MAX);
 		checkptr(dt, (getcwd(abs_path, PATH_MAX)),
 		"get your current path. Can be too long\0");
@@ -27,7 +27,7 @@ void fnameset(buff dt, const char* passed)
 		if((strlen(abs_path) + strlen(passed) + NTERM_SZ) > PATH_MAX)
 		{
 			fputs("Given filename is too long, exited.\n", stderr);
-			exit(1);
+			freeallexit(dt, 1);
 		}
 
 		strcpy(dt.fname, abs_path); // Copy the path.
@@ -49,7 +49,7 @@ buff readfile(buff dt)
 	{
 		while((chr = (char) getc(textfile)) != EOF)
 		{
-			dt = alloc_chr(dt, chr);
+			dt = recochar(dt, chr);
 		}
 		fclose(textfile);
 	}
@@ -68,7 +68,7 @@ void savefile(buff dt)
 		if(create == -1)
 		{
 			fputs("Failed to create the new file, exited.\n", stderr);
-			exit(1);
+			freeallexit(dt, 1);
 		}		
 	}
 	FILE* textfile = fopen(dt.fname, "w");
@@ -86,8 +86,11 @@ buff allocblk(buff dt, char mode)
 	switch(mode)
 	{
 		case 'c':
-			dt.chrs++;
-			dt.chrs_ln++;
+			if(dt.chrs < MAX_CHRS)
+			{
+				dt.chrs++;
+				dt.chrs_ln++;
+			}
 			if(dt.chrs_ln % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
 				dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLK);
@@ -96,7 +99,10 @@ buff allocblk(buff dt, char mode)
 		break;
 
 		case 'l':
-			dt.lns++;
+			if(dt.lns < MAX_LNS)
+			{
+				dt.lns++;
+			}
 			if(dt.lns % MEMBLK == 0) // Allocates with the one line reserve.
 			{
 				dt.txt = realloc(dt.txt, sizeof(dt.txt) * (dt.lns + MEMBLK));
@@ -106,6 +112,7 @@ buff allocblk(buff dt, char mode)
 			checkptr(dt, dt.txt[dt.lns], "malloc byte in the new line\0");
 		break;
 	}
+//	limits(dt);
 	return dt;
 }
 
@@ -126,7 +133,7 @@ buff freeblk(buff dt)
 	return dt;
 }
 
-void freeall(buff dt)
+void freeallexit(buff dt, _Bool code)
 {
 	free(dt.fname);
 	for(buff_t ln = 0; ln <= dt.lns; ln++)
@@ -134,9 +141,10 @@ void freeall(buff dt)
 		free(dt.txt[ln]);
 	}
 	free(dt.txt);
+	exit(code);
 }
 
-buff add_char(buff dt, char key)
+buff charadd(buff dt, char key)
 {
 	dt = allocblk(dt, 'c');
 	switch(key)
@@ -146,7 +154,7 @@ buff add_char(buff dt, char key)
 		break;
 
 		case TAB: // Actually converts TAB to the one space.
-			dt.txt[dt.lns][dt.chrs_ln - INDEX] = SPACE;
+			dt.txt[dt.lns][dt.chrs_ln - INDEX] = ' ';
 		break;			
 
 		case LF:
@@ -168,20 +176,22 @@ buff keyboard_shortcut(buff dt, char key)
 		break;
 
 		case CTRL_X: // Frees everything and exits the program.
-			freeall(dt);
-			exit(0);
+			freeallexit(dt, 0);
 		break;
 	}
 	return dt;
 }
 
-buff alloc_chr(buff dt, char key)
+buff recochar(buff dt, char key)
 {
-	if(key != 033)
+	if(key == NEG || key == NTERM || key == CTRL_D || key == BELL
+	|| key == BACKSPACE || key == TAB || key == LF || key == VTAB
+	|| key == FORMFEED || key == CR || key == CTRL_X
+	|| (key >= 32 && key < 127))
 	{
 		switch(key)
 		{
-			case NEG_CHAR: // Eg. CTRL+C - singal.
+			case NEG: // Eg. CTRL+C - singal.
 			case NTERM: // Only for the initialization.
 			break;
 
@@ -195,24 +205,11 @@ buff alloc_chr(buff dt, char key)
 				dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 			break;
 
-
 			default:
-				dt = add_char(dt, key);
+				dt = charadd(dt, key);
 			break;
 		}
 	}
-	limits(dt);
 	return dt;
-}
-
-void limits(buff dt)
-{
-	if(dt.lns > MAX_LNS)
-	{
-		fprintf(stderr,
-		"Max. lines amount: %d, chars: %d. Got more.\n", MAX_LNS, MAX_CHRS);
-		freeall(dt);
-		exit(1);
-	}
 }
 

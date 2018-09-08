@@ -7,7 +7,7 @@
 // UI areas.
 #define BAR_SZ 2
 #define CURRENT 1
-#define TXT_AREA (get_term_sz('Y') - BAR_SZ)
+#define TXT_AREA (termgetsz('Y') - BAR_SZ)
 
 // ANSI escape codes..
 #define RESET "\033[0m"
@@ -22,10 +22,12 @@
 #define SAVE_CURSOR_POS() printf("%s", "\033[s");
 #define RESTORE_CURSOR_POS() printf("%s", "\033[u");
 
+#define INDEX 1
+
 #define DOTS "[...]"
 
-term_t get_term_sz(char axis); // Check if to small or big.
-void flush_window(void); // For rendering in a one frame.
+term_t termgetsz(char axis); // Check if to small or big.
+void flushwin(void); // For rendering in a one frame.
 
 void bar(buff dt, char key); // Upper bar.
 void lower_fill(buff_t lns); // Empty space below the text.

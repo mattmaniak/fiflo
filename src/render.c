@@ -1,6 +1,6 @@
 #include "render.h"
 
-term_t get_term_sz(char axis)
+term_t termgetsz(char axis)
 {
 	const uint8_t x_min = 45;
 	const uint8_t y_min = 4;
@@ -30,7 +30,7 @@ term_t get_term_sz(char axis)
 	return 0; // Required -Wreturn-type.
 }
 
-void flush_window(void)
+void flushwin(void)
 {
 	RESTORE_CURSOR_POS();
 	printf("%s", CLEAN_LN);
@@ -45,7 +45,7 @@ void flush_window(void)
 void bar(buff dt, char key)
 {
 	const char* title = "fiflo | filename:\0";
-	term_t fname_max = get_term_sz('X') - (term_t )(strlen(title) - strlen(DOTS));
+	term_t fname_max = termgetsz('X') - (term_t )(strlen(title) - strlen(DOTS));
 
 	printf("%s%s", INVERT, title);
 
@@ -55,12 +55,12 @@ void bar(buff dt, char key)
 	}
 	else
 	{
-		printf("%s%*s\n", dt.fname, (term_t) (get_term_sz('X') - strlen(title)
+		printf("%s%*s\n", dt.fname, (term_t) (termgetsz('X') - strlen(title)
 		- strlen(dt.fname)), " ");
 	}
 	// Lower part of the bar.
 	printf("chars (all | line | last):%*s%*d | %*d | %*d%s\n",
-	get_term_sz('X') - 45, " ", 5, dt.chrs, 5, dt.chrs_ln, 3, key, RESET);
+	termgetsz('X') - 45, " ", 5, dt.chrs, 5, dt.chrs_ln, 3, key, RESET);
 }
 
 void lower_fill(buff_t lns)
@@ -79,51 +79,48 @@ void set_cursor_pos(buff dt)
 	SAVE_CURSOR_POS();
 	if(dt.lns < TXT_AREA - CURRENT)
 	{
-		CURSOR_UP(TXT_AREA - dt.lns - CURRENT);
-
-		if(strlen(dt.txt[dt.lns]) < get_term_sz('X') - strlen(DOTS))
+		if(strlen(dt.txt[dt.lns]) < termgetsz('X') - strlen(DOTS))
 		{
 			CURSOR_RIGHT((term_t) (strlen(dt.txt[dt.lns]) + strlen(DOTS)));
 		}
 		else
 		{
-			CURSOR_RIGHT((term_t) get_term_sz('X') - CURRENT);
+			CURSOR_RIGHT((term_t) termgetsz('X') - CURRENT);
 		}
+		CURSOR_UP(TXT_AREA - dt.lns - CURRENT);
 	}
 	// Else by default on the bottom.
 }
 
 void window(buff dt, char key) // TODO: SIMPLIFY
 {
-	const char* too_many = INVERT DOTS RESET"\0";
 	buff_t hidden_lns = 0;
 	bar(dt, key);
 
 	if(dt.lns >= TXT_AREA) // Horizontal scroll.
 	{
 		hidden_lns = dt.lns - TXT_AREA + CURRENT + 1; // 1 - DOTS in Y.
-		puts(too_many);
+		printf("%s%s%s\n", INVERT, DOTS, INVERT);
 	}
 	for(term_t ln = hidden_lns; ln <= dt.lns; ln++)
 	{
-		printf("%s%*d%s", INVERT, (uint8_t) strlen(DOTS), ln, RESET);
-		if(strlen(dt.txt[ln]) + strlen(DOTS) >= get_term_sz('X'))
+		if(strlen(dt.txt[ln]) + STRLENBUFF >= termgetsz('X'))
 		{
-			uint8_t fill;
-
-			if(dt.txt[ln][strlen(dt.txt[ln]) - 1] == LF) // Move one right.
+			_Bool fill;
+			if(dt.txt[ln][strlen(dt.txt[ln]) - INDEX] == LF) // Move one right.
 			{
-				fill = 3;
+				fill = 0;
 			}
 			else
 			{
-				fill = 2;
+				fill = 1;
 			}
-			printf("%s%s", too_many, dt.txt[ln] + strlen(dt.txt[ln])
-			+ strlen(too_many) - get_term_sz('X') - fill);
+			printf("%s%s%s%s", INVERT, DOTS, RESET, dt.txt[ln] + strlen(dt.txt[ln])
+			+ strlen(DOTS) - termgetsz('X') + fill);
 		}
 		else
 		{
+			printf("%s%*d%s", INVERT, STRLENBUFF, ln + INDEX, RESET);
 			fputs(dt.txt[ln], stdout);
 		}
 	}
