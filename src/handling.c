@@ -150,7 +150,8 @@ buf allocblk(buf dt, char mode)
 			{
 				if(dt.lns % MEMBLK == 0) // Allocates with the one line reserve.
 				{
-					dt.txt = realloc(dt.txt, sizeof(dt.txt) * (dt.lns + MEMBLK));
+					dt.txt =
+					realloc(dt.txt, sizeof(dt.txt) * (dt.lns + MEMBLK));
 				}
 				dt.txt[dt.lns] = malloc(MEMBLK);
 				checkptr(dt, dt.txt[dt.lns], "alloc byte in the new line\0");
@@ -161,7 +162,7 @@ buf allocblk(buf dt, char mode)
 	return dt;
 }
 
-buf charadd(buf dt, char key)
+buf charadd(buf dt, char key) // TODO: TAB SUPPORT WITH CURSOR.
 {
 	if(dt.chrs <= MAX_CHRS)
 	{
@@ -170,7 +171,7 @@ buf charadd(buf dt, char key)
 		dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 		switch(key)
 		{
-			case TAB: // TODO: TAB SUPPORT WITH CURSOR.
+			case TAB:
 				if(dt.chrs_ln % 8 == 1)
 				{
 					puts("dividable");
@@ -206,10 +207,7 @@ void keyboardshort(buf dt, char key)
 
 buf recochar(buf dt, char key)
 {
-	if(1)//(key == NEG || key == NTERM || key == CTRL_D || key == BELL
-//	|| key == BACKSPACE || key == TAB || key == LF || key == VTAB
-//	|| key == FORMFEED || key == CR || key == CTRL_X
-//	|| (key >= 32 && key < 127))
+	if(key != ESCAPE)
 	{
 		switch(key)
 		{

@@ -8,12 +8,8 @@
 #define NEG -1
 #define NTERM 0
 #define CTRL_D 4
-#define BELL 7
 #define TAB 9
 #define LF 10
-#define VTAB 11
-#define FORMFEED 12
-#define CR 13
 #define CTRL_X 24
 #define ESCAPE 27
 #define BACKSPACE 127

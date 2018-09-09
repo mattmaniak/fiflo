@@ -1,6 +1,5 @@
 # fiflo - TODOs
 ## delete one if done:
-- keymap,
 - TAB and cursor handling,
 - pointer to struct or/and struct padding,
 - pipe support,
