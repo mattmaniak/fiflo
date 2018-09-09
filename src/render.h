@@ -8,7 +8,7 @@
 #define BAR_SZ 2
 #define CURRENT 1
 #define TXT_AREA (termgetsz(dt, 'Y') - BAR_SZ)
-#define TERM_X_MIN 46
+#define TERM_X_MIN 67
 
 // ANSI escape codes..
 #define RESET "\033[0m"

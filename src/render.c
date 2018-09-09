@@ -56,9 +56,10 @@ void bar(buf dt, char key)
 		printf("%s%*s\n", dt.fname, termgetsz(dt, 'X')
 		- (term_t) (strlen(title) + strlen(dt.fname)), " ");
 	}
-	printf("chars (all | line | last):%*s%*d | %*d | %*d%s\n",
-	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", STRLENBUFF, dt.chrs, STRLENBUFF,
-	dt.chrs_ln, 3, key, RESET);
+	printf(
+	"chars (all, ln, last): %*d, %*d, %*d%*s| CTRL: D - save, X - exit%s\n",
+	STRLENBUFF, dt.chrs, STRLENBUFF, dt.chrs_ln, 3, key,
+	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
 }
 
 
