@@ -61,7 +61,8 @@ char nix_getch(void)
 
 	tcgetattr(STDIN_FILENO, &old); // Put the state of STDIN_FILENO into *old.
 	new = old;
-	new.c_lflag &= ~(ICANON | ECHO); // Disable buffered I/O and echo mode.
+	// Disable buffered I/O and echo mode.
+	new.c_lflag &= (unsigned int) ~(ICANON | ECHO);
 	
 	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
 	key = (char) getchar();
@@ -92,7 +93,7 @@ _Noreturn void run(const char* passed)
 		dt = recochar(dt, pressed);
 		window(dt, pressed);
 		pressed = nix_getch();
-		flushwin();
+		flushwin(dt);
 	}
 }
 

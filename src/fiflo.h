@@ -17,25 +17,27 @@
 #define MAX_CHRS MAX_LNS
 
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
-typedef uint16_t buff_t; // Only for amount indicators.
+typedef uint16_t buf_t; // Only for amount indicators.
 
 typedef struct
 {
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt; // Eg. txt[lns][chrs].
-	buff_t chrs;
-	buff_t chrs_ln; // Chars in the current line.
-	buff_t lns;
-	term_t cusr_x;
+	buf_t chrs; // All chars index.
+	buf_t chrs_ln; // Chars in the current line (index).
+	buf_t lns; // Lines index.
+	term_t cusr_x; // Horizontal user's cursor offset. Used in TAB.
 }
 buf;
 
-void sigignore(int nothing);
-void checkptr(buf dt, void* ptr, const char* errmsg);
-void argc_check(int arg_count);
-void options(const char* arg);
-void run(const char* passed);
-char nix_getch(void);
+void sigignore(int nothing); // Ignore signal when activated.
+void checkptr(buf dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
+
+void argc_check(int arg_count); // How many args were passed.
+void options(const char* arg); // Eg. -v, --version et al infos.
+char nix_getch(void); // Getchar without confirming by ENTER.
+
+_Noreturn void run(const char* passed); // Contains program loop.
 int main(int argc, char** argv);
 
 #endif

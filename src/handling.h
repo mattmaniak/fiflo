@@ -22,17 +22,17 @@
 #define NTERM_SZ 1
 #define UPLN dt.lns - 1
 
-void fnameset(buf dt, const char* passed);
+void fnameset(buf dt, const char* passed); // Optionally get current dir.
 buf readfile(buf dt);
 void savefile(buf dt);
 
-buf allocblk(buf dt, char mode);
-buf freeblk(buf dt);
-void freeallexit(buf dt, _Bool code);
+_Noreturn void freeallexit(buf dt, _Bool code); // Free everything from heap.
+buf freeblk(buf dt); // Check and free memblock.
+buf allocblk(buf dt, char mode); // Check and alloc block of memory.
 
-buf charadd(buf dt, char key);
-void keyboard_shortcut(buf dt, char key);
-buf recochar(buf dt, char key);
+buf charadd(buf dt, char key); // If a char is not the BACKSPACE.
+void keyboardshort(buf dt, char key); // Done if pressed key is shortcut.
+buf recochar(buf dt, char key); // Recognize type of a passed char.
 
 #endif
 

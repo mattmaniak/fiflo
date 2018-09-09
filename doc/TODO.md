@@ -4,7 +4,6 @@
 - TAB and cursor handling,
 - pointer to struct or/and struct padding,
 - pipe support,
-- simplify syntax (less numbers - more defines and variables),
 - improve sig handlers,
 - fix to big memory usage (blocks),
 - bigger buffer,

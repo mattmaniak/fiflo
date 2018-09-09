@@ -7,7 +7,7 @@
 // UI areas.
 #define BAR_SZ 2
 #define CURRENT 1
-#define TXT_AREA (termgetsz('Y') - BAR_SZ)
+#define TXT_AREA (termgetsz(dt, 'Y') - BAR_SZ)
 #define TERM_X_MIN 46
 
 // ANSI escape codes..
@@ -27,13 +27,13 @@
 
 #define DOTS "[...]"
 
-term_t termgetsz(char axis); // Check if to small or big.
-void flushwin(void); // For rendering in a one frame.
+term_t termgetsz(buf dt, char axis); // Check if a term to small or big.
+void flushwin(buf dt); // For rendering in a one frame.
 
-void bar(buf dt, char key); // Upper bar.
-void lower_fill(buff_t lns); // Empty space below the text.
-void set_cursor_pos(buf dt);
+void bar(buf dt, char key); // Render upper bar.
 void window(buf dt, char key); // Bar + rendered text + fill + cursor.
+void lower_fill(buf dt); // Empty space below the text.
+void setcurspos(buf dt); // Set cursor position from the rendered bottom.
 
 #endif
 

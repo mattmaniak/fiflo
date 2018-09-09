@@ -74,11 +74,57 @@ void savefile(buf dt)
 	FILE* textfile = fopen(dt.fname, "w");
 	checkptr(dt, textfile, "write to the file\0");
 
-	for(buff_t ln = 0; ln <= dt.lns; ln++)
+	for(buf_t ln = 0; ln <= dt.lns; ln++)
 	{
 		fputs(dt.txt[ln], textfile);
 	}
 	fclose(textfile);
+}
+
+_Noreturn void freeallexit(buf dt, _Bool code)
+{
+	free(dt.fname);
+	for(buf_t ln = 0; ln <= dt.lns; ln++)
+	{
+		free(dt.txt[ln]);
+	}
+	free(dt.txt);
+	exit(code);
+}
+
+buf freeblk(buf dt)
+{
+	_Bool line_back = 0;
+	if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1)
+	{
+		dt.txt[dt.lns] =
+		realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
+		checkptr(dt, dt.txt[dt.lns], "free the memblock with chars\0");
+	}
+	if(dt.chrs_ln > 0)
+	{
+		dt.chrs_ln--;
+		dt.chrs--;
+	}
+	else if(dt.chrs_ln == 0)
+	{
+		line_back = 1;
+	}
+	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+
+	if(line_back == 1 && dt.lns > 0
+	&& dt.txt[UPLN][strlen(dt.txt[UPLN]) - NTERM_SZ] == LF)
+	{
+		free(dt.txt[dt.lns]);
+		dt.lns--;
+		dt.chrs_ln = (buf_t) strlen(dt.txt[dt.lns]) - NTERM_SZ;
+		dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+		if(dt.chrs > 0) // Just for the LF removal.
+		{
+			dt.chrs--;
+		}
+	}
+	return dt;
 }
 
 buf allocblk(buf dt, char mode)
@@ -91,7 +137,7 @@ buf allocblk(buf dt, char mode)
 			if(dt.chrs_ln % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
 				dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLK);
-				checkptr(dt, dt.txt[dt.lns], "alloc the new memblock for chars\0");
+				checkptr(dt, dt.txt[dt.lns], "alloc new memblock for chars\0");
 			}
 		break;
 
@@ -113,52 +159,6 @@ buf allocblk(buf dt, char mode)
 		break;
 	}
 	return dt;
-}
-
-buf freeblk(buf dt)
-{
-	_Bool line_back = 0;
-	if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1)
-	{
-		dt.txt[dt.lns] =
-		realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
-		checkptr(dt, dt.txt[dt.lns], "free the memory block with chars\0");
-	}
-	if(dt.chrs_ln > 0)
-	{
-		dt.chrs_ln--;
-		dt.chrs--;
-	}
-	else if(dt.chrs_ln == 0)
-	{
-		line_back = 1;
-	}
-	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-
-	if(line_back == 1 && dt.lns > 0
-	&& dt.txt[UPLN][strlen(dt.txt[UPLN]) - NTERM_SZ] == LF)
-	{
-		free(dt.txt[dt.lns]);
-		dt.lns--;
-		dt.chrs_ln = strlen(dt.txt[dt.lns]) - NTERM_SZ;
-		dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-		if(dt.chrs > 0) // Just for the LF removal.
-		{
-			dt.chrs--;
-		}
-	}
-	return dt;
-}
-
-void freeallexit(buf dt, _Bool code)
-{
-	free(dt.fname);
-	for(buff_t ln = 0; ln <= dt.lns; ln++)
-	{
-		free(dt.txt[ln]);
-	}
-	free(dt.txt);
-	exit(code);
 }
 
 buf charadd(buf dt, char key)
@@ -190,7 +190,7 @@ buf charadd(buf dt, char key)
 	return dt;
 }
 
-void keyboard_shortcut(buf dt, char key)
+void keyboardshort(buf dt, char key)
 {
 	switch(key)
 	{
@@ -219,7 +219,7 @@ buf recochar(buf dt, char key)
 
 			case CTRL_D:
 			case CTRL_X:
-				keyboard_shortcut(dt, key);
+				keyboardshort(dt, key);
 			break;
 
 			case BACKSPACE:
