@@ -49,7 +49,7 @@ buf readfile(buf dt)
 	{
 		while((chr = (char) getc(textfile)) != EOF)
 		{
-			dt = recochar(dt, chr);
+			dt = charadd(dt, chr);
 		}
 		fclose(textfile);
 	}
@@ -98,18 +98,23 @@ buf allocblk(buf dt, char mode)
 			}
 		break;
 
-		case 'l':
+		case 'l': // TODO: MAX_LNS handling.
 			if(dt.lns < MAX_LNS)
 			{
 				dt.lns++;
+				if(dt.lns % MEMBLK == 0) // Allocates with the one line reserve.
+				{
+					dt.txt = realloc(dt.txt, sizeof(dt.txt) * (dt.lns + MEMBLK));
+				}
+				dt.chrs_ln = 0;
+				dt.txt[dt.lns] = malloc(MEMBLK);
+				checkptr(dt, dt.txt[dt.lns], "alloc byte in the new line\0");
 			}
-			if(dt.lns % MEMBLK == 0) // Allocates with the one line reserve.
+			else
 			{
-				dt.txt = realloc(dt.txt, sizeof(dt.txt) * (dt.lns + MEMBLK));
+				dt.lns = MAX_LNS;
+				dt.txt[dt.lns][0] = NTERM;
 			}
-			dt.chrs_ln = 0;
-			dt.txt[dt.lns] = malloc(MEMBLK);
-			checkptr(dt, dt.txt[dt.lns], "alloc byte in the new line\0");
 		break;
 	}
 	return dt;
@@ -123,20 +128,29 @@ buf freeblk(buf dt)
 		realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
 		checkptr(dt, dt.txt[dt.lns], "free the memory block with chars\0");
 	}
-	if(dt.chrs > 0)
+	_Bool return_up = 0;
+	if(dt.chrs_ln > 0)
 	{
 		dt.chrs_ln--;
 		dt.chrs--;
 	}
+	else if(dt.chrs_ln == 0)
+	{
+		return_up = 1;
+	}
 	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-	// TODO: LINE DELETION.
-	if(dt.lns > 0 && dt.chrs_ln == 0
-	&& dt.txt[dt.lns - 1][strlen(dt.txt[dt.lns - 1]) - NTERM_SZ] == LF)
+
+	if(return_up == 1 && dt.lns > 0
+	&& dt.txt[UPLN][strlen(dt.txt[UPLN]) - NTERM_SZ] == LF)
 	{
 		free(dt.txt[dt.lns]);
 		dt.lns--;
 		dt.chrs_ln = strlen(dt.txt[dt.lns]) - NTERM_SZ;
 		dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+		if(dt.chrs > 0) // Just for the LF removal.
+		{
+			dt.chrs--;
+		}
 	}
 	return dt;
 }
@@ -156,10 +170,11 @@ buf charadd(buf dt, char key)
 {
 	dt = allocblk(dt, 'c');
 	dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = key;
+	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 	switch(key)
 	{
-		case TAB:
-			if(dt.chrs_ln % 8 == 1) // TODO: TAB SUPPORT WITH CURSOR.
+		case TAB: // TODO: TAB SUPPORT WITH CURSOR.
+			if(dt.chrs_ln % 8 == 1)
 			{
 				puts("dividable");
 				dt.cusr_x += 8;
@@ -171,15 +186,14 @@ buf charadd(buf dt, char key)
 		break;			
 
 		case LF:
-			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 			dt = allocblk(dt, 'l');
 		break;
 	}
-	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+	
 	return dt;
 }
 
-buf keyboard_shortcut(buf dt, char key)
+void keyboard_shortcut(buf dt, char key)
 {
 	switch(key)
 	{
@@ -191,7 +205,6 @@ buf keyboard_shortcut(buf dt, char key)
 			freeallexit(dt, 0);
 		break;
 	}
-	return dt;
 }
 
 buf recochar(buf dt, char key)
@@ -209,7 +222,7 @@ buf recochar(buf dt, char key)
 
 			case CTRL_D:
 			case CTRL_X:
-				dt = keyboard_shortcut(dt, key);
+				keyboard_shortcut(dt, key);
 			break;
 
 			case BACKSPACE:
@@ -221,7 +234,6 @@ buf recochar(buf dt, char key)
 			break;
 		}
 	}
-	printf("%d\n", dt.chrs_ln);
 	return dt;
 }
 

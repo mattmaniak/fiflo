@@ -20,6 +20,7 @@
 
 #define INDEX 1
 #define NTERM_SZ 1
+#define UPLN dt.lns - 1
 
 void fnameset(buf dt, const char* passed);
 buf readfile(buf dt);
@@ -30,7 +31,7 @@ buf freeblk(buf dt);
 void freeallexit(buf dt, _Bool code);
 
 buf charadd(buf dt, char key);
-buf keyboard_shortcut(buf dt, char key);
+void keyboard_shortcut(buf dt, char key);
 buf recochar(buf dt, char key);
 
 #endif
