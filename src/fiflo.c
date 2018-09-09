@@ -72,7 +72,7 @@ char nix_getch(void)
 
 _Noreturn void run(const char* passed)
 {
-	buff dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0};
+	buff dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0, 0};
 	checkptr(dt, dt.fname, "alloc memory for the filename\0");
 	checkptr(dt, dt.txt, "alloc memory for lines\0");
 

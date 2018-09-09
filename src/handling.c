@@ -147,18 +147,21 @@ void freeallexit(buff dt, _Bool code)
 buff charadd(buff dt, char key)
 {
 	dt = allocblk(dt, 'c');
+	dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = key;
 	switch(key)
 	{
-		default:
-			dt.txt[dt.lns][dt.chrs_ln - INDEX] = key;
-		break;
-
-		case TAB: // Actually converts TAB to the one space.
-			dt.txt[dt.lns][dt.chrs_ln - INDEX] = ' ';
+		case TAB:
+			if((dt.chrs_ln + INDEX) % 8 == 0) // TODO: TAB SUPPORT WITH CURSOR.
+			{
+				dt.cusr_x += 8;
+			}
+			else
+			{
+				dt.cusr_x += (dt.chrs_ln + INDEX) % 8;
+			}
 		break;			
 
 		case LF:
-			dt.txt[dt.lns][dt.chrs_ln - INDEX] = LF;
 			dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 			dt = allocblk(dt, 'l');
 		break;
@@ -175,7 +178,7 @@ buff keyboard_shortcut(buff dt, char key)
 			savefile(dt);
 		break;
 
-		case CTRL_X: // Frees everything and exits the program.
+		case CTRL_X:
 			freeallexit(dt, 0);
 		break;
 	}

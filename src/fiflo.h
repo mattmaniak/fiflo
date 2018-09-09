@@ -26,6 +26,7 @@ typedef struct
 	buff_t chrs;
 	buff_t chrs_ln; // Chars in the current line.
 	buff_t lns;
+	term_t cusr_x;
 }
 buff;
 
