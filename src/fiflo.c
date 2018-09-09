@@ -10,7 +10,7 @@ void sigignore(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 	if(nothing == 0) {}
 }
 
-void checkptr(buff dt, void* ptr, const char* errmsg)
+void checkptr(buf dt, void* ptr, const char* errmsg)
 {
 	if(!ptr)
 	{
@@ -72,7 +72,7 @@ char nix_getch(void)
 
 _Noreturn void run(const char* passed)
 {
-	buff dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0, 0};
+	buf dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0, 0};
 	checkptr(dt, dt.fname, "alloc memory for the filename\0");
 	checkptr(dt, dt.txt, "alloc memory for lines\0");
 

@@ -42,7 +42,7 @@ void flushwin(void)
 	fflush(stdout);
 }
 
-void bar(buff dt, char key)
+void bar(buf dt, char key)
 {
 	const char* title = "fiflo | filename: \0";
 	term_t fname_max = termgetsz('X') - (term_t) (strlen(title) + strlen(DOTS));
@@ -75,7 +75,7 @@ void lower_fill(buff_t lns)
 	}
 }
 
-void set_cursor_pos(buff dt)
+void set_cursor_pos(buf dt)
 {
 	SAVE_CURSOR_POS();
 	if(dt.lns < TXT_AREA - CURRENT)
@@ -94,7 +94,7 @@ void set_cursor_pos(buff dt)
 	// Else by default on the bottom && auto-positioned.
 }
 
-void window(buff dt, char key) // TODO: SIMPLIFY
+void window(buf dt, char key) // TODO: SIMPLIFY
 {
 	buff_t hidden_lns = 0;
 	bar(dt, key);
@@ -108,22 +108,26 @@ void window(buff dt, char key) // TODO: SIMPLIFY
 	{
 		if(strlen(dt.txt[ln]) + STRLENBUFF >= termgetsz('X'))
 		{
-			_Bool fill;
+			_Bool left;
 			if(dt.txt[ln][strlen(dt.txt[ln]) - INDEX] == LF) // Move one right.
 			{
-				fill = 0;
+				left = 0;
 			}
 			else
 			{
-				fill = 1;
+				left = 1;
 			}
 			printf("%s%s%s%s", INVERT, DOTS, RESET, dt.txt[ln]
-			+ strlen(dt.txt[ln]) + strlen(DOTS) - termgetsz('X') + fill);
+			+ strlen(dt.txt[ln]) + strlen(DOTS) - termgetsz('X') + left);
 		}
 		else
 		{
-			printf("%s%*d%s%s", INVERT, STRLENBUFF, ln + INDEX, RESET,
-			dt.txt[ln]);
+			printf("%s%*d%s", INVERT, STRLENBUFF, ln + INDEX, RESET);
+			if(dt.txt[ln][0] == TAB)
+			{
+				printf("%*s", STRLENBUFF, " ");
+			}
+			fputs(dt.txt[ln], stdout);
 		}
 	}
 	lower_fill(dt.lns);

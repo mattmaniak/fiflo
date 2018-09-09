@@ -28,10 +28,10 @@ typedef struct
 	buff_t lns;
 	term_t cusr_x;
 }
-buff;
+buf;
 
 void sigignore(int nothing);
-void checkptr(buff dt, void* ptr, const char* errmsg);
+void checkptr(buf dt, void* ptr, const char* errmsg);
 void argc_check(int arg_count);
 void options(const char* arg);
 void run(const char* passed);

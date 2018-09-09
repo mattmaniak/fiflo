@@ -30,10 +30,10 @@
 term_t termgetsz(char axis); // Check if to small or big.
 void flushwin(void); // For rendering in a one frame.
 
-void bar(buff dt, char key); // Upper bar.
+void bar(buf dt, char key); // Upper bar.
 void lower_fill(buff_t lns); // Empty space below the text.
-void set_cursor_pos(buff dt);
-void window(buff dt, char key); // Bar + rendered text + fill + cursor.
+void set_cursor_pos(buf dt);
+void window(buf dt, char key); // Bar + rendered text + fill + cursor.
 
 #endif
 

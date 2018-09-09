@@ -1,6 +1,6 @@
 #include "handling.h"
 
-void fnameset(buff dt, const char* passed)
+void fnameset(buf dt, const char* passed)
 {
 	if(passed[strlen(passed) - NTERM_SZ] == '/')
 	{
@@ -40,7 +40,7 @@ void fnameset(buff dt, const char* passed)
 	}
 }
 
-buff readfile(buff dt)
+buf readfile(buf dt)
 {
 	FILE* textfile = fopen(dt.fname, "r");
 	char chr;
@@ -60,7 +60,7 @@ buff readfile(buff dt)
 	return dt;
 }
 
-void savefile(buff dt)
+void savefile(buf dt)
 	{
 	if(access(dt.fname, F_OK) == -1) // There is no file.
 	{
@@ -81,7 +81,7 @@ void savefile(buff dt)
 	fclose(textfile);
 }
 
-buff allocblk(buff dt, char mode)
+buf allocblk(buf dt, char mode)
 {
 	switch(mode)
 	{
@@ -109,14 +109,13 @@ buff allocblk(buff dt, char mode)
 			}
 			dt.chrs_ln = 0;
 			dt.txt[dt.lns] = malloc(MEMBLK);
-			checkptr(dt, dt.txt[dt.lns], "malloc byte in the new line\0");
+			checkptr(dt, dt.txt[dt.lns], "alloc byte in the new line\0");
 		break;
 	}
-//	limits(dt);
 	return dt;
 }
 
-buff freeblk(buff dt)
+buf freeblk(buf dt)
 {
 	if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1)
 	{
@@ -129,11 +128,20 @@ buff freeblk(buff dt)
 		dt.chrs_ln--;
 		dt.chrs--;
 	}
+	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 	// TODO: LINE DELETION.
+	if(dt.lns > 0 && dt.chrs_ln == 0
+	&& dt.txt[dt.lns - 1][strlen(dt.txt[dt.lns - 1]) - NTERM_SZ] == LF)
+	{
+		free(dt.txt[dt.lns]);
+		dt.lns--;
+		dt.chrs_ln = strlen(dt.txt[dt.lns]) - NTERM_SZ;
+		dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+	}
 	return dt;
 }
 
-void freeallexit(buff dt, _Bool code)
+void freeallexit(buf dt, _Bool code)
 {
 	free(dt.fname);
 	for(buff_t ln = 0; ln <= dt.lns; ln++)
@@ -144,20 +152,21 @@ void freeallexit(buff dt, _Bool code)
 	exit(code);
 }
 
-buff charadd(buff dt, char key)
+buf charadd(buf dt, char key)
 {
 	dt = allocblk(dt, 'c');
 	dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = key;
 	switch(key)
 	{
 		case TAB:
-			if((dt.chrs_ln + INDEX) % 8 == 0) // TODO: TAB SUPPORT WITH CURSOR.
+			if(dt.chrs_ln % 8 == 1) // TODO: TAB SUPPORT WITH CURSOR.
 			{
+				puts("dividable");
 				dt.cusr_x += 8;
 			}
 			else
 			{
-				dt.cusr_x += (dt.chrs_ln + INDEX) % 8;
+				dt.cusr_x += dt.chrs_ln % 8;
 			}
 		break;			
 
@@ -170,7 +179,7 @@ buff charadd(buff dt, char key)
 	return dt;
 }
 
-buff keyboard_shortcut(buff dt, char key)
+buf keyboard_shortcut(buf dt, char key)
 {
 	switch(key)
 	{
@@ -185,12 +194,12 @@ buff keyboard_shortcut(buff dt, char key)
 	return dt;
 }
 
-buff recochar(buff dt, char key)
+buf recochar(buf dt, char key)
 {
-	if(key == NEG || key == NTERM || key == CTRL_D || key == BELL
-	|| key == BACKSPACE || key == TAB || key == LF || key == VTAB
-	|| key == FORMFEED || key == CR || key == CTRL_X
-	|| (key >= 32 && key < 127))
+	if(1)//(key == NEG || key == NTERM || key == CTRL_D || key == BELL
+//	|| key == BACKSPACE || key == TAB || key == LF || key == VTAB
+//	|| key == FORMFEED || key == CR || key == CTRL_X
+//	|| (key >= 32 && key < 127))
 	{
 		switch(key)
 		{
@@ -205,7 +214,6 @@ buff recochar(buff dt, char key)
 
 			case BACKSPACE:
 				dt = freeblk(dt);
-				dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 			break;
 
 			default:
@@ -213,6 +221,7 @@ buff recochar(buff dt, char key)
 			break;
 		}
 	}
+	printf("%d\n", dt.chrs_ln);
 	return dt;
 }
 

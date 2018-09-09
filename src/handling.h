@@ -9,7 +9,6 @@
 #define NTERM 0
 #define CTRL_D 4
 #define BELL 7
-#define BACKSPACE 8
 #define TAB 9
 #define LF 10
 #define VTAB 11
@@ -17,21 +16,22 @@
 #define CR 13
 #define CTRL_X 24
 #define ESCAPE 27
+#define BACKSPACE 127
 
 #define INDEX 1
 #define NTERM_SZ 1
 
-void fnameset(buff dt, const char* passed);
-buff readfile(buff dt);
-void savefile(buff dt);
+void fnameset(buf dt, const char* passed);
+buf readfile(buf dt);
+void savefile(buf dt);
 
-buff allocblk(buff dt, char mode);
-buff freeblk(buff dt);
-void freeallexit(buff dt, _Bool code);
+buf allocblk(buf dt, char mode);
+buf freeblk(buf dt);
+void freeallexit(buf dt, _Bool code);
 
-buff charadd(buff dt, char key);
-buff keyboard_shortcut(buff dt, char key);
-buff recochar(buff dt, char key);
+buf charadd(buf dt, char key);
+buf keyboard_shortcut(buf dt, char key);
+buf recochar(buf dt, char key);
 
 #endif
 
