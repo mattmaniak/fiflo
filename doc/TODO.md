@@ -6,6 +6,7 @@
 - pipe support,
 - simplify syntax (less numbers - more defines and variables),
 - improve sig handlers,
+- fix to big memory usage (blocks),
 - bigger buffer,
 - move cursor,
 - simplify Makefile,

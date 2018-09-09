@@ -86,11 +86,8 @@ buf allocblk(buf dt, char mode)
 	switch(mode)
 	{
 		case 'c':
-			if(dt.chrs < MAX_CHRS)
-			{
-				dt.chrs++;
-				dt.chrs_ln++;
-			}
+			dt.chrs++;
+			dt.chrs_ln++;
 			if(dt.chrs_ln % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
 				dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLK);
@@ -98,23 +95,21 @@ buf allocblk(buf dt, char mode)
 			}
 		break;
 
-		case 'l': // TODO: MAX_LNS handling.
-			if(dt.lns < MAX_LNS)
+		case 'l':
+			if(dt.lns++ >= MAX_LNS)
 			{
-				dt.lns++;
+				dt.lns = MAX_LNS;
+			}
+			else
+			{
 				if(dt.lns % MEMBLK == 0) // Allocates with the one line reserve.
 				{
 					dt.txt = realloc(dt.txt, sizeof(dt.txt) * (dt.lns + MEMBLK));
 				}
-				dt.chrs_ln = 0;
 				dt.txt[dt.lns] = malloc(MEMBLK);
 				checkptr(dt, dt.txt[dt.lns], "alloc byte in the new line\0");
 			}
-			else
-			{
-				dt.lns = MAX_LNS;
-				dt.txt[dt.lns][0] = NTERM;
-			}
+			dt.txt[dt.lns][dt.chrs_ln = 0] = NTERM;
 		break;
 	}
 	return dt;
@@ -122,13 +117,13 @@ buf allocblk(buf dt, char mode)
 
 buf freeblk(buf dt)
 {
+	_Bool line_back = 0;
 	if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1)
 	{
 		dt.txt[dt.lns] =
 		realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
 		checkptr(dt, dt.txt[dt.lns], "free the memory block with chars\0");
 	}
-	_Bool return_up = 0;
 	if(dt.chrs_ln > 0)
 	{
 		dt.chrs_ln--;
@@ -136,11 +131,11 @@ buf freeblk(buf dt)
 	}
 	else if(dt.chrs_ln == 0)
 	{
-		return_up = 1;
+		line_back = 1;
 	}
 	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
 
-	if(return_up == 1 && dt.lns > 0
+	if(line_back == 1 && dt.lns > 0
 	&& dt.txt[UPLN][strlen(dt.txt[UPLN]) - NTERM_SZ] == LF)
 	{
 		free(dt.txt[dt.lns]);
@@ -168,28 +163,30 @@ void freeallexit(buf dt, _Bool code)
 
 buf charadd(buf dt, char key)
 {
-	dt = allocblk(dt, 'c');
-	dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = key;
-	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
-	switch(key)
+	if(dt.chrs <= MAX_CHRS)
 	{
-		case TAB: // TODO: TAB SUPPORT WITH CURSOR.
-			if(dt.chrs_ln % 8 == 1)
-			{
-				puts("dividable");
-				dt.cusr_x += 8;
-			}
-			else
-			{
-				dt.cusr_x += dt.chrs_ln % 8;
-			}
-		break;			
+		dt = allocblk(dt, 'c');
+		dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = key;
+		dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+		switch(key)
+		{
+			case TAB: // TODO: TAB SUPPORT WITH CURSOR.
+				if(dt.chrs_ln % 8 == 1)
+				{
+					puts("dividable");
+					dt.cusr_x += 8;
+				}
+				else
+				{
+					dt.cusr_x += dt.chrs_ln % 8;
+				}
+			break;			
 
-		case LF:
-			dt = allocblk(dt, 'l');
-		break;
+			case LF:
+				dt = allocblk(dt, 'l');
+			break;
+		}	
 	}
-	
 	return dt;
 }
 

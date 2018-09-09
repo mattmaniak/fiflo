@@ -60,8 +60,8 @@ void bar(buf dt, char key)
 	}
 	// Lower part of the bar.
 	printf("chars (all | line | last):%*s%*d | %*d | %*d%s\n",
-	termgetsz('X') - TERM_X_MIN + 1, " ", 5, dt.chrs, 5, dt.chrs_ln, 3, key,
-	RESET);
+	termgetsz('X') - TERM_X_MIN + 1, " ", STRLENBUFF, dt.chrs, STRLENBUFF,
+	dt.chrs_ln, 3, key, RESET);
 }
 
 void lower_fill(buff_t lns)
