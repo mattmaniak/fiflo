@@ -43,13 +43,12 @@ void flushwin(buf dt)
 void bar(buf dt, char key)
 {
 	const char* title = "fiflo | filename: \0";
-	term_t fname_max = termgetsz(dt, 'X')
-	- (term_t) (strlen(title) + strlen(DOTS));
+	term_t fnmax = termgetsz(dt, 'X') - (term_t) (strlen(title) + strlen(DOTS));
 
 	printf("%s%s", INVERT, title);
-	if(strlen(dt.fname) > fname_max)
+	if(strlen(dt.fname) > fnmax)
 	{
-		printf("%.*s%s\n", fname_max, dt.fname, DOTS);
+		printf("%.*s%s\n", fnmax, dt.fname, DOTS);
 	}
 	else
 	{
@@ -57,7 +56,7 @@ void bar(buf dt, char key)
 		- (term_t) (strlen(title) + strlen(dt.fname)), " ");
 	}
 	printf(
-	"chars (all, ln, last): %*d, %*d, %*d%*s| CTRL: D - save, X - exit%s\n",
+	"chars (all, ln, last): %*d, %*d, %*d%*s| CTRL+: D - save, X - exit%s\n",
 	STRLENBUFF, dt.chrs, STRLENBUFF, dt.chrs_ln, 3, key,
 	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
 }
@@ -75,7 +74,7 @@ void window(buf dt, char key)
 	}
 	for(term_t ln = hidden_lns; ln <= dt.lns; ln++)
 	{
-		if(strlen(dt.txt[ln]) + STRLENBUFF >= termgetsz(dt, 'X')) // V. scroll.
+		if(STRLENBUFF + strlen(dt.txt[ln]) >= termgetsz(dt, 'X'))
 		{
 			_Bool left;
 			if(dt.txt[ln][strlen(dt.txt[ln]) - INDEX] == LF) // Move one right.
@@ -119,10 +118,9 @@ void setcurspos(buf dt)
 	SAVE_CURSOR_POS();
 	if(dt.lns < TXT_AREA - CURRENT)
 	{
-		if(strlen(dt.txt[dt.lns]) < termgetsz(dt, 'X') - strlen(DOTS))
+		if(strlen(CURRLN) < termgetsz(dt, 'X') - strlen(DOTS))
 		{
-			CURSOR_RIGHT((term_t) (strlen(dt.txt[dt.lns]) + strlen(DOTS))
-			+ dt.cusr_x);
+			CURSOR_RIGHT((term_t) (strlen(CURRLN) + strlen(DOTS)));
 		}
 		else
 		{

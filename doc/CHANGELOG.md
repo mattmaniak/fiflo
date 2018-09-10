@@ -13,6 +13,7 @@ files use git-show or git-log.
 - arrows are ignored,
 - line numbers,
 - better performance (block-allocated memory),
+- TAB as one SPACE,
 - max. buffer of size 64K.
 
 ### v1.1.0 (2018, August 12):

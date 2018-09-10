@@ -55,7 +55,7 @@ buf readfile(buf dt)
 	}
 	else
 	{
-		dt.txt[dt.lns][dt.chrs] = NTERM;
+		CURRLN[dt.chrs] = NTERM;
 	}
 	return dt;
 }
@@ -97,9 +97,9 @@ buf freeblk(buf dt)
 	_Bool line_back = 0;
 	if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1)
 	{
-		dt.txt[dt.lns] =
-		realloc(dt.txt[dt.lns], (2 * dt.chrs_ln) - MEMBLK);
-		checkptr(dt, dt.txt[dt.lns], "free the memblock with chars\0");
+		CURRLN =
+		realloc(CURRLN, (2 * dt.chrs_ln) - MEMBLK);
+		checkptr(dt, CURRLN, "free the memblock with chars\0");
 	}
 	if(dt.chrs_ln > 0)
 	{
@@ -110,15 +110,15 @@ buf freeblk(buf dt)
 	{
 		line_back = 1;
 	}
-	dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+	CURRLN[dt.chrs_ln] = NTERM;
 
 	if(line_back == 1 && dt.lns > 0
-	&& dt.txt[UPLN][strlen(dt.txt[UPLN]) - NTERM_SZ] == LF)
+	&& UPLN[strlen(UPLN) - NTERM_SZ] == LF)
 	{
-		free(dt.txt[dt.lns]);
+		free(CURRLN);
 		dt.lns--;
-		dt.chrs_ln = (buf_t) strlen(dt.txt[dt.lns]) - NTERM_SZ;
-		dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+		dt.chrs_ln = (buf_t) strlen(CURRLN) - NTERM_SZ;
+		CURRLN[dt.chrs_ln] = NTERM;
 		if(dt.chrs > 0) // Just for the LF removal.
 		{
 			dt.chrs--;
@@ -136,8 +136,8 @@ buf allocblk(buf dt, char mode)
 			dt.chrs_ln++;
 			if(dt.chrs_ln % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
-				dt.txt[dt.lns] = realloc(dt.txt[dt.lns], dt.chrs_ln + MEMBLK);
-				checkptr(dt, dt.txt[dt.lns], "alloc new memblock for chars\0");
+				CURRLN = realloc(CURRLN, dt.chrs_ln + MEMBLK);
+				checkptr(dt, CURRLN, "alloc new memblock for chars\0");
 			}
 		break;
 
@@ -153,34 +153,26 @@ buf allocblk(buf dt, char mode)
 					dt.txt =
 					realloc(dt.txt, sizeof(dt.txt) * (dt.lns + MEMBLK));
 				}
-				dt.txt[dt.lns] = malloc(MEMBLK);
-				checkptr(dt, dt.txt[dt.lns], "alloc byte in the new line\0");
+				CURRLN = malloc(MEMBLK);
+				checkptr(dt, CURRLN, "alloc byte in the new line\0");
 			}
-			dt.txt[dt.lns][dt.chrs_ln = 0] = NTERM;
+			CURRLN[dt.chrs_ln = 0] = NTERM;
 		break;
 	}
 	return dt;
 }
 
-buf charadd(buf dt, char key) // TODO: TAB SUPPORT WITH CURSOR.
+buf charadd(buf dt, char key)
 {
 	if(dt.chrs <= MAX_CHRS)
 	{
 		dt = allocblk(dt, 'c');
-		dt.txt[dt.lns][dt.chrs_ln - NTERM_SZ] = key;
-		dt.txt[dt.lns][dt.chrs_ln] = NTERM;
+		CURRLN[dt.chrs_ln - NTERM_SZ] = key;
+		CURRLN[dt.chrs_ln] = NTERM;
 		switch(key)
 		{
 			case TAB:
-				if(dt.chrs_ln % 8 == 1)
-				{
-					puts("dividable");
-					dt.cusr_x += 8;
-				}
-				else
-				{
-					dt.cusr_x += dt.chrs_ln % 8;
-				}
+				CURRLN[dt.chrs_ln - NTERM_SZ] = ' '; // Converts TAB to SPACE.
 			break;			
 
 			case LF:
@@ -189,20 +181,6 @@ buf charadd(buf dt, char key) // TODO: TAB SUPPORT WITH CURSOR.
 		}	
 	}
 	return dt;
-}
-
-void keyboardshort(buf dt, char key)
-{
-	switch(key)
-	{
-		case CTRL_D:
-			savefile(dt);
-		break;
-
-		case CTRL_X:
-			freeallexit(dt, 0);
-		break;
-	}
 }
 
 buf recochar(buf dt, char key)
@@ -216,8 +194,11 @@ buf recochar(buf dt, char key)
 			break;
 
 			case CTRL_D:
+				savefile(dt);
+			break;
+
 			case CTRL_X:
-				keyboardshort(dt, key);
+				freeallexit(dt, 0);
 			break;
 
 			case BACKSPACE:

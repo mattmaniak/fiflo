@@ -16,7 +16,10 @@
 
 #define INDEX 1
 #define NTERM_SZ 1
-#define UPLN dt.lns - 1
+#define UPLN dt.txt[dt.lns - 1]
+#define CURRLN dt.txt[dt.lns]
+
+extern term_t termgetsz(buf dt, char axis); // Check if a term to small or big.
 
 void fnameset(buf dt, const char* passed); // Optionally get current dir.
 buf readfile(buf dt);
@@ -27,7 +30,6 @@ buf freeblk(buf dt); // Check and free memblock.
 buf allocblk(buf dt, char mode); // Check and alloc block of memory.
 
 buf charadd(buf dt, char key); // If a char is not the BACKSPACE.
-void keyboardshort(buf dt, char key); // Done if pressed key is shortcut.
 buf recochar(buf dt, char key); // Recognize type of a passed char.
 
 #endif

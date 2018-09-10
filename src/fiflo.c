@@ -73,18 +73,17 @@ char nix_getch(void)
 
 _Noreturn void run(const char* passed)
 {
-	buf dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0, 0};
+	buf dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0};
 	checkptr(dt, dt.fname, "alloc memory for the filename\0");
 	checkptr(dt, dt.txt, "alloc memory for lines\0");
 
 	fnameset(dt, passed);
 
-	dt.txt[dt.lns] = malloc(MEMBLK);
+	CURRLN = malloc(MEMBLK);
 	checkptr(dt, dt.txt, "alloc memory for chars in the first line\0");
 
 	dt = readfile(dt);
 	char pressed = NTERM; // Initializer too.
-
 	for(;;) // Main program loop.
 	{
 		signal(SIGTSTP, sigignore); // CTRL_Z

@@ -11,7 +11,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define MEMBLK 1024 // For optimal allocation Must be > 1 and should be % 8 = 0.
+#define MEMBLK 512 // For optimal allocation Must be > 1 and should be % 8 = 0.
 #define STRLENBUFF 5 // Eg. USHRT_MAX (65535) => 5 as the strlen.  
 #define MAX_LNS USHRT_MAX - 1 // - 1 is index.
 #define MAX_CHRS MAX_LNS
@@ -19,14 +19,13 @@
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 typedef uint16_t buf_t; // Only for amount indicators.
 
-typedef struct
+typedef struct // TODO: STRUCT PADDING.
 {
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt; // Eg. txt[lns][chrs].
 	buf_t chrs; // All chars index.
 	buf_t chrs_ln; // Chars in the current line (index).
 	buf_t lns; // Lines index.
-	term_t cusr_x; // Horizontal user's cursor offset. Used in TAB.
 }
 buf;
 
