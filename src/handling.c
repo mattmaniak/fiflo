@@ -167,12 +167,12 @@ buf charadd(buf dt, char key)
 	if(dt.chrs <= MAX_CHRS)
 	{
 		dt = allocblk(dt, 'c');
-		CURRLN[dt.chrs_ln - NTERM_SZ] = key;
+		CURRLN[LASTCHR] = key;
 		CURRLN[dt.chrs_ln] = NTERM;
 		switch(key)
 		{
 			case TAB:
-				CURRLN[dt.chrs_ln - NTERM_SZ] = ' '; // Converts TAB to SPACE.
+				CURRLN[LASTCHR] = ' '; // Converts TAB to SPACE.
 			break;			
 
 			case LF:

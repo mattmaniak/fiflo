@@ -1,7 +1,7 @@
 # fiflo - workflow
 
 ## Remote repo (is upstream)
-https://gitlab.com/mattmaniak/fiflo
+https://gitlab.com/mattmaniak/fiflo.git
 
 ## Branches
 Everything happens on three branches:
@@ -27,6 +27,7 @@ commits to provide updated code on the "develop" branch.
 - https://nvie.com/posts/a-successful-git-branching-model/.
 
 ## Coding rules:
+- Standard: C11 excluding "pragma pack",
 - use Allman's brace style, indentation: hard tab (4 spaces wide),
 - max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
 - single line can't exceed 80 characters, function - 40,

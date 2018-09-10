@@ -2,7 +2,7 @@
 ## delete one if done:
 - TAB,
 - cursor handling,
-- pointer to struct or/and struct padding,
+- pointer to struct,
 - pipe support,
 - improve sig handlers,
 - fix to big memory usage (blocks),

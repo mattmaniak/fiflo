@@ -4,7 +4,6 @@
 // Common rest is included in 'fiflo.h' There are only file-specific imports.
 #include <linux/limits.h>
 
-// Required keymap.
 #define NEG -1
 #define NTERM 0
 #define CTRL_D 4
@@ -16,10 +15,12 @@
 
 #define INDEX 1
 #define NTERM_SZ 1
-#define UPLN dt.txt[dt.lns - 1]
-#define CURRLN dt.txt[dt.lns]
 
-extern term_t termgetsz(buf dt, char axis); // Check if a term to small or big.
+#define LASTCHR dt.chrs_ln - NTERM_SZ
+#define CURRLN dt.txt[dt.lns]
+#define UPLN dt.txt[dt.lns - 1]
+
+extern term_t termgetsz(buf dt, char axis); // From "render.h";
 
 void fnameset(buf dt, const char* passed); // Optionally get current dir.
 buf readfile(buf dt);

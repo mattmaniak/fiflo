@@ -19,7 +19,8 @@
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 typedef uint16_t buf_t; // Only for amount indicators.
 
-typedef struct // TODO: STRUCT PADDING.
+#pragma pack(push, 2)
+typedef struct
 {
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt; // Eg. txt[lns][chrs].
@@ -28,6 +29,7 @@ typedef struct // TODO: STRUCT PADDING.
 	buf_t lns; // Lines index.
 }
 buf;
+#pragma pack(pop)
 
 void sigignore(int nothing); // Ignore signal when activated.
 void checkptr(buf dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
