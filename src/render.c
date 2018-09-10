@@ -30,12 +30,12 @@ term_t termgetsz(buf dt, char axis)
 
 void flushwin(buf dt)
 {
-	RESTORE_CURSOR_POS();
-	printf("%s", CLEAN_LN);
+	RESTORECURSPOS();
+	printf("%s", CLEANLN);
 
 	for(term_t y = 0; y <= TXT_AREA; y++)
 	{
-		printf("%s%s", LINE_UP, CLEAN_LN);
+		printf("%s%s", LINE_UP, CLEANLN);
 	}
 	fflush(stdout);
 }
@@ -115,18 +115,18 @@ void lower_fill(buf dt)
 
 void setcurspos(buf dt)
 {
-	SAVE_CURSOR_POS();
+	SAVECURSPOS();
 	if(dt.lns < TXT_AREA - CURRENT)
 	{
 		if(strlen(CURRLN) < termgetsz(dt, 'X') - strlen(DOTS))
 		{
-			CURSOR_RIGHT((term_t) (strlen(CURRLN) + strlen(DOTS)));
+			CURSRIGHT((term_t) (strlen(CURRLN) + strlen(DOTS)));
 		}
 		else
 		{
-			CURSOR_RIGHT((term_t) termgetsz(dt, 'X') - CURRENT);
+			CURSRIGHT((term_t) termgetsz(dt, 'X') - CURRENT);
 		}
-		CURSOR_UP(TXT_AREA - dt.lns - CURRENT);
+		CURSUP(TXT_AREA - dt.lns - CURRENT);
 	}
 	// Else by default on the bottom && auto-positioned.
 }

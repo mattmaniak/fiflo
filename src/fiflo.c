@@ -20,7 +20,7 @@ void checkptr(buf dt, void* ptr, const char* errmsg)
 }
 
 void argc_check(int arg_count)
-	{
+{
 	if(arg_count != 1 && arg_count != 2)
 	{
 		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
@@ -36,11 +36,11 @@ void options(const char* arg)
 		"Usage: fiflo [option].",
 
 		"Options:      Description:",
-		"<NULL>        Set the filename to \"/<current_path>/noname.asdf\"",
+		"<NULL>        Set the filename to \"/<current_path>/noname.asdf\".",
 		"basename      Open the textfile \"basename\" using your current path.",
 		"/dir/bname    Open the textfile \"bname\" from the \"/dir\" folder.",
 		"-h, --help    Show program help.",
-		"-v, --version Display some info about the current version.");
+		"-v, --version Display info about the current version.");
 		exit(0);
 	}
 	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)

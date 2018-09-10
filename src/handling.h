@@ -13,9 +13,6 @@
 #define ESCAPE 27
 #define BACKSPACE 127
 
-#define INDEX 1
-#define NTERM_SZ 1
-
 #define LASTCHR dt.chrs_ln - NTERM_SZ
 #define CURRLN dt.txt[dt.lns]
 #define UPLN dt.txt[dt.lns - 1]

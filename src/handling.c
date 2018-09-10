@@ -7,7 +7,6 @@ void fnameset(buf dt, const char* passed)
 		fputs("Can't open the directory as a file, exited.\n", stderr);
 		freeallexit(dt, 1);
 	}
-
 	if(passed[0] == '/') // Is absolute path.
 	{
 		if(strlen(passed) + NTERM_SZ > PATH_MAX)
@@ -97,8 +96,7 @@ buf freeblk(buf dt)
 	_Bool line_back = 0;
 	if(dt.chrs_ln - 1 % MEMBLK == MEMBLK - 1)
 	{
-		CURRLN =
-		realloc(CURRLN, (2 * dt.chrs_ln) - MEMBLK);
+		CURRLN = realloc(CURRLN, (2 * dt.chrs_ln) - MEMBLK);
 		checkptr(dt, CURRLN, "free the memblock with chars\0");
 	}
 	if(dt.chrs_ln > 0)

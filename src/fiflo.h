@@ -11,6 +11,10 @@
 #include <termios.h>
 #include <unistd.h>
 
+#define CURRENT 1
+#define INDEX 1
+#define NTERM_SZ 1
+
 #define MEMBLK 512 // For optimal allocation Must be > 1 and should be % 8 = 0.
 #define STRLENBUFF 5 // Eg. USHRT_MAX (65535) => 5 as the strlen.  
 #define MAX_LNS USHRT_MAX - 1 // - 1 is index.
