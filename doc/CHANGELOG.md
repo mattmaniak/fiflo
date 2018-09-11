@@ -7,14 +7,13 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
-### v2.0.0 (2018, WIP):
+### v2.0.0 (2018, September 11):
 - vertical && horizontal scroll,
 - new allocation method (lines as a separate strings),
 - arrows are ignored,
 - line numbers,
-- better performance (block-allocated memory),
 - TAB as one SPACE,
-- max. buffer of size 64K.
+- dynamic buffer of size 64K.
 
 ### v1.1.0 (2018, August 12):
 - dynamically allocated text (2018, in theory max. 2G - 1),

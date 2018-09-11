@@ -30,21 +30,13 @@ commits to provide updated code on the "develop" branch.
 - Standard: C11 excluding "pragma pack",
 - use Allman's brace style, indentation: hard tab (4 spaces wide),
 - max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
-- single line can't exceed 80 characters, function - 40,
+- single line can't exceed 80 characters, function - 40 lines,
 - funcion names shouldn't contain underscore, variables should,
 - keep names semantic shortened, eg. "fname_max",
 - write short TODOs near thing to fix as uppercase comments,
 - keep docs up-to-date with the code in stable releases,
-- function"s args names need to be shorter than variables names.
+- function"s args names need to be shorter than variables' names.
 
 ## Testing
-Before the stable release, "fiflo" is tested with:
-- LXTerminal,
-- Terminology,
-- Gnome Terminal,
-- xterm
-emulators
-and with the native Linux text-mode wnich is priority in tests.
-
-I do my best for proper rendering in every above. In other cases editor can
-work but there could be some glitches because of ther quirk modes.
+Before the stable release, fiflo is tested with the native Linux tty. 
+Correct rendering of the window depends on terminal emulator's implementations.

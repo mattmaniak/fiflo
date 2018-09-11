@@ -7,7 +7,7 @@
 - improve sig handlers,
 - fix to big memory usage (blocks),
 - bigger buffer,
-- move cursor,
+- move cursor (YVFH keys),
 - simplify Makefile,
 - config file (colors),
 - usability for other *nixes,

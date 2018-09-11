@@ -46,7 +46,7 @@ void options(const char* arg)
 	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo v2.0.0 (WIP)",
+		"fiflo v2.0.0",
 		"https://gitlab.com/mattmaniak/fiflo.git",
 		"(C) 2018 mattmaniak under the MIT License.");
 		exit(0);
@@ -56,17 +56,21 @@ void options(const char* arg)
 
 char nix_getch(void)
 {
-	struct termios old, new;
+	struct termios old, new; // From sys/ioctl.h.
 	char key;
 
 	tcgetattr(STDIN_FILENO, &old); // Put the state of STDIN_FILENO into *old.
-	new = old;
+	new = old; // Create the copy of old terminal settings to modify it's.
+
 	// Disable buffered I/O and echo mode.
 	new.c_lflag &= (unsigned int) ~(ICANON | ECHO);
-	
+	// Immediately set the state of STDIN_FILENO to *new.
 	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
+
 	key = (char) getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &old); // Restore terminal settings.
+
+	// Immediately restore the state of STDIN_FILENO to *new.
+	tcsetattr(STDIN_FILENO, TCSANOW, &old);
 
 	return key;
 }
