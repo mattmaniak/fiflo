@@ -1,60 +1,115 @@
 #ifdef __linux__
 
-#include "fiflo.h"
+#include "fiflo.h" // All typedefs are here.
 
-#include "hardware.c"
-#include "logic.c"
+#include "handling.c"
+#include "render.c"
 
-void showHelp(void)
+void sigignore(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 {
-	printf("%s\n%s\n%s\n%s\n%s\n",
-	"Usage: fiflo [option].",
-	"Options:     Description:",
-	"<NULL>       Create and open the default file - 'noname.asdf'.",
-	"<file>       Open the textfile named 'file'.",
-	"-h, --help   Show program help.");
+	if(nothing == 0) {}
 }
 
-void programRound(char *name)
+void checkptr(buf dt, void* ptr, const char* errmsg)
 {
-	struct Data buff = readFile(buff, name);
-	window(buff, TERMINATOR);
-
-	for(;;)
+	if(!ptr)
 	{
-		char pressed_key = unixGetch();
-		cleanFrame();
-		buff = window(buff, pressed_key);
+		fprintf(stderr, "Can't %s, exited.\n", errmsg);
+		freeallexit(dt, 1);
 	}
 }
 
-void argcCheck(int arg_count)
+void argc_check(int arg_count)
 {
-	if(arg_count > 2)
+	if(arg_count != 1 && arg_count != 2)
 	{
-		fputs("Fiflo can handle max. one parameter.\n", stderr);
+		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
 		exit(1);
 	}
 }
 
-int main(int argc, char *argv[])
+void options(const char* arg)
 {
-	signal(SIGTSTP, sigHandler); // CTRL_X
-	signal(SIGINT, sigHandler); // CTRL_C
+	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
+	{
+		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
+		"Usage: fiflo [option].",
 
-	argcCheck(argc);
+		"Options:      Description:",
+		"<NULL>        Set the filename to \"/<current_path>/noname.asdf\".",
+		"basename      Open the textfile \"basename\" using your current path.",
+		"/dir/bname    Open the textfile \"bname\" from the \"/dir\" folder.",
+		"-h, --help    Show program help.",
+		"-v, --version Display info about the current version.");
+		exit(0);
+	}
+	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
+	{
+		printf("%s\n%s\n%s\n",
+		"fiflo v2.0.0",
+		"https://gitlab.com/mattmaniak/fiflo.git",
+		"(C) 2018 mattmaniak under the MIT License.");
+		exit(0);
+	}
+	run(arg);
+}
+
+char nix_getch(void)
+{
+	struct termios old, new; // From sys/ioctl.h.
+	char key;
+
+	tcgetattr(STDIN_FILENO, &old); // Put the state of STDIN_FILENO into *old.
+	new = old; // Create the copy of old terminal settings to modify it's.
+
+	// Disable buffered I/O and echo mode.
+	new.c_lflag &= (unsigned int) ~(ICANON | ECHO);
+	// Immediately set the state of STDIN_FILENO to *new.
+	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
+
+	key = (char) getchar();
+
+	// Immediately restore the state of STDIN_FILENO to *new.
+	tcsetattr(STDIN_FILENO, TCSANOW, &old);
+
+	return key;
+}
+
+_Noreturn void run(const char* passed)
+{
+	buf dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0};
+	checkptr(dt, dt.fname, "alloc memory for the filename\0");
+	checkptr(dt, dt.txt, "alloc memory for lines\0");
+
+	fnameset(dt, passed);
+
+	CURRLN = malloc(MEMBLK);
+	checkptr(dt, dt.txt, "alloc memory for chars in the first line\0");
+
+	dt = readfile(dt);
+	char pressed = NTERM; // Initializer too.
+	for(;;) // Main program loop.
+	{
+		signal(SIGTSTP, sigignore); // CTRL_Z
+		signal(SIGINT, sigignore); // CTRL_C
+
+		dt = recochar(dt, pressed);
+		window(dt, pressed);
+		pressed = nix_getch();
+		flushwin(dt);
+	}
+}
+
+int main(int argc, char** argv)
+{
+	argc_check(argc);
 	if(argv[1] == NULL)
 	{
-		programRound("noname.asdf\0");
-	}
-	else if(strcmp(argv[1], "-h\0") == 0 || strcmp(argv[1], "--help\0") == 0)
-	{
-		showHelp();
-		exit(0);
+		run("noname.asdf\0");
 	}
 	else
 	{
-		programRound(argv[1]);
+		options(argv[1]);
 	}
 	return 0;
 }
