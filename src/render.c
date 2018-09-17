@@ -1,6 +1,6 @@
 #include "render.h"
 
-term_t termgetsz(buf dt, char axis)
+term_t termgetsz(buf* dt, char axis)
 {
 	const uint8_t y_min = 4;
 	const term_t sz_max = USHRT_MAX;
@@ -28,7 +28,7 @@ term_t termgetsz(buf dt, char axis)
 	return 0; // Required -Wreturn-type.
 }
 
-void flushwin(buf dt)
+void flushwin(buf* dt)
 {
 	RESTORECURSPOS();
 	printf("%s", CLEANLN);
@@ -40,44 +40,44 @@ void flushwin(buf dt)
 	fflush(stdout);
 }
 
-void bar(buf dt, char key)
+void bar(buf* dt, char key)
 {
 	const char* title = "fiflo | filename: \0";
 	term_t fnmax = termgetsz(dt, 'X') - (term_t) (strlen(title) + strlen(DOTS));
 
 	printf("%s%s", INVERT, title);
-	if(strlen(dt.fname) > fnmax)
+	if(strlen(dt->fname) > fnmax)
 	{
-		printf("%.*s%s\n", fnmax, dt.fname, DOTS);
+		printf("%.*s%s\n", fnmax, dt->fname, DOTS);
 	}
 	else
 	{
-		printf("%s%*s\n", dt.fname, termgetsz(dt, 'X')
-		- (term_t) (strlen(title) + strlen(dt.fname)), " ");
+		printf("%s%*s\n", dt->fname, termgetsz(dt, 'X')
+		- (term_t) (strlen(title) + strlen(dt->fname)), " ");
 	}
 	printf(
 	"chars (all, ln, last): %*d, %*d, %*d%*s| CTRL+: D - save, X - exit%s\n",
-	STRLENBUFF, dt.chrs, STRLENBUFF, dt.chrs_ln, 3, key,
+	STRLENBUFF, dt->chrs, STRLENBUFF, dt->chrs_ln, 3, key,
 	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
 }
 
 
-void window(buf dt, char key)
+void window(buf* dt, char key)
 {
 	buf_t hidden_lns = 0;
 	bar(dt, key);
 
-	if(dt.lns >= TXT_AREA) // Horizontal scroll.
+	if(dt->lns >= TXT_AREA) // Horizontal scroll.
 	{
-		hidden_lns = dt.lns - TXT_AREA + CURRENT + 1; // 1 - DOTS in Y.
+		hidden_lns = dt->lns - TXT_AREA + CURRENT + 1; // 1 - DOTS in Y.
 		printf("%s%s%s\n", INVERT, DOTS, INVERT);
 	}
-	for(term_t ln = hidden_lns; ln <= dt.lns; ln++)
+	for(term_t ln = hidden_lns; ln <= dt->lns; ln++)
 	{
-		if(STRLENBUFF + strlen(dt.txt[ln]) >= termgetsz(dt, 'X'))
+		if(STRLENBUFF + strlen(dt->txt[ln]) >= termgetsz(dt, 'X'))
 		{
 			_Bool left;
-			if(dt.txt[ln][strlen(dt.txt[ln]) - INDEX] == LF) // Move one right.
+			if(dt->txt[ln][strlen(dt->txt[ln]) - INDEX] == LF) // Move one right.
 			{
 				left = 0;
 			}
@@ -85,38 +85,38 @@ void window(buf dt, char key)
 			{
 				left = 1;
 			}
-			printf("%s%s%s%s", INVERT, DOTS, RESET, dt.txt[ln]
-			+ strlen(dt.txt[ln]) + strlen(DOTS) - termgetsz(dt, 'X') + left);
+			printf("%s%s%s%s", INVERT, DOTS, RESET, dt->txt[ln]
+			+ strlen(dt->txt[ln]) + strlen(DOTS) - termgetsz(dt, 'X') + left);
 		}
 		else
 		{
 			printf("%s%*d%s", INVERT, STRLENBUFF, ln + INDEX, RESET);
-			if(dt.txt[ln][0] == TAB)
+			if(dt->txt[ln][0] == TAB)
 			{
 				printf("%*s", STRLENBUFF, " ");
 			}
-			fputs(dt.txt[ln], stdout);
+			fputs(dt->txt[ln], stdout);
 		}
 	}
 	lower_fill(dt);
 	setcurspos(dt);
 }
 
-void lower_fill(buf dt)
+void lower_fill(buf* dt)
 {
-	if(dt.lns < TXT_AREA)
+	if(dt->lns < TXT_AREA)
 	{
-		for(term_t ln = dt.lns; ln < TXT_AREA - CURRENT; ln++)
+		for(term_t ln = dt->lns; ln < TXT_AREA - CURRENT; ln++)
 		{
 			putchar(LF);
 		}
 	}
 }
 
-void setcurspos(buf dt)
+void setcurspos(buf* dt)
 {
 	SAVECURSPOS();
-	if(dt.lns < TXT_AREA - CURRENT)
+	if(dt->lns < TXT_AREA - CURRENT)
 	{
 		if(strlen(CURRLN) < termgetsz(dt, 'X') - strlen(DOTS))
 		{
@@ -126,7 +126,7 @@ void setcurspos(buf dt)
 		{
 			CURSRIGHT((term_t) termgetsz(dt, 'X') - CURRENT);
 		}
-		CURSUP(TXT_AREA - dt.lns - CURRENT);
+		CURSUP(TXT_AREA - dt->lns - CURRENT);
 	}
 	// Else by default on the bottom && auto-positioned.
 }

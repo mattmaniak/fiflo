@@ -10,7 +10,7 @@ void sigignore(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 	if(nothing == 0) {}
 }
 
-void checkptr(buf dt, void* ptr, const char* errmsg)
+void checkptr(buf* dt, void* ptr, const char* errmsg)
 {
 	if(!ptr)
 	{
@@ -77,14 +77,22 @@ char nix_getch(void)
 
 _Noreturn void run(const char* passed)
 {
-	buf dt = {malloc(PATH_MAX), malloc(sizeof(dt.txt) * MEMBLK), 0, 0, 0};
-	checkptr(dt, dt.fname, "alloc memory for the filename\0");
-	checkptr(dt, dt.txt, "alloc memory for lines\0");
+	buf* dt = malloc(22);
+	checkptr(dt, dt, "alloc memory metadata\0");
+
+	dt->fname = malloc(PATH_MAX);
+	dt->txt = malloc(sizeof(dt->txt) * MEMBLK);
+	checkptr(dt, dt->txt, "alloc memory for lines\0");
+	checkptr(dt, dt->fname, "alloc memory for the filename\0");
+
+	dt->chrs = 0;
+	dt->chrs_ln = 0;
+	dt->lns = 0;
 
 	fnameset(dt, passed);
 
 	CURRLN = malloc(MEMBLK);
-	checkptr(dt, dt.txt, "alloc memory for chars in the first line\0");
+	checkptr(dt, dt->txt, "alloc memory for chars in the first line\0");
 
 	dt = readfile(dt);
 	char pressed = NTERM; // Initializer too.

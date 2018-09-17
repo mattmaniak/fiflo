@@ -1,12 +1,11 @@
 # fiflo - TODOs
 ## delete one if done:
 - TAB,
-- cursor handling,
-- pointer to struct,
 - pipe support,
 - improve sig handlers,
 - fix to big memory usage (blocks),
 - bigger buffer,
+- paging mechanism,
 - move cursor (YVFH keys),
 - simplify Makefile,
 - config file (colors),

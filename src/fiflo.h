@@ -37,7 +37,7 @@ buf;
 #pragma pack(pop)
 
 void sigignore(int nothing); // Ignore signal when activated.
-void checkptr(buf dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
+void checkptr(buf* dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
 
 void argc_check(int arg_count); // How many args were passed.
 void options(const char* arg); // Eg. -v, --version et al infos.
