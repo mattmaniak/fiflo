@@ -27,6 +27,7 @@ typedef uint16_t buf_t; // Only for amount indicators.
 #pragma pack(push, 2)
 typedef struct
 {
+	FILE* txtf;
 	char* fname; // Full filename, eg. /home/user/basename
 	char** txt; // Eg. txt[lns][chrs].
 	buf_t chrs; // All chars index.
@@ -36,7 +37,7 @@ typedef struct
 buf;
 #pragma pack(pop)
 
-void sigignore(int nothing); // Ignore signal when activated.
+void ignoresig(int nothing); // Ignore signal when activated.
 void checkptr(buf* dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
 
 void argc_check(int arg_count); // How many args were passed.

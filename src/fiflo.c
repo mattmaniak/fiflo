@@ -5,7 +5,9 @@
 #include "handling.c"
 #include "render.c"
 
-void sigignore(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
+static volatile int sig = 0;
+
+void ignoresig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
 {
 	if(nothing == 0) {}
 }
@@ -46,7 +48,7 @@ void options(const char* arg)
 	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo v2.0.0",
+		"fiflo vX.Y.Z (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
 		"(C) 2018 mattmaniak under the MIT License.");
 		exit(0);
@@ -77,39 +79,51 @@ char nix_getch(void)
 
 _Noreturn void run(const char* passed)
 {
-	buf* dt = malloc(22);
-	checkptr(dt, dt, "alloc memory metadata\0");
+	buf* data = malloc(sizeof(buf));
+	checkptr(data, data, "alloc memory for metadata\0");
 
-	dt->fname = malloc(PATH_MAX);
-	dt->txt = malloc(sizeof(dt->txt) * MEMBLK);
-	checkptr(dt, dt->txt, "alloc memory for lines\0");
-	checkptr(dt, dt->fname, "alloc memory for the filename\0");
+	data->fname = malloc(PATH_MAX);
+	data->txt = malloc(sizeof(data->txt) * MEMBLK);
+	checkptr(data, data->txt, "alloc memory for lines\0");
+	checkptr(data, data->fname, "alloc memory for the filename\0");
 
-	dt->chrs = 0;
-	dt->chrs_ln = 0;
-	dt->lns = 0;
+	data->chrs = 0;
+	data->chrs_ln = 0;
+	data->lns = 0;
 
-	fnameset(dt, passed);
+	fnameset(data, passed);
 
-	CURRLN = malloc(MEMBLK);
-	checkptr(dt, dt->txt, "alloc memory for chars in the first line\0");
+	data->txt[0] = malloc(MEMBLK);
+	checkptr(data, data->txt, "alloc memory for the first line\0");
 
-	dt = readfile(dt);
+	data = readfile(data);
 	char pressed = NTERM; // Initializer too.
 	for(;;) // Main program loop.
 	{
-		signal(SIGTSTP, sigignore); // CTRL_Z
-		signal(SIGINT, sigignore); // CTRL_C
+//		signal(SIGTSTP, ignoresig); // CTRL_Z
+//		signal(SIGINT, ignoresig); // CTRL_C
 
-		dt = recochar(dt, pressed);
-		window(dt, pressed);
+		data = recochar(data, pressed);
+		window(data, pressed);
 		pressed = nix_getch();
-		flushwin(dt);
+		flushwin(data);
 	}
 }
 
 int main(int argc, char** argv)
 {
+
+    if(signal(SIGINT, ignoresig) == SIG_ERR)
+    {
+        fputs("Couldn't catch CTRL+C, exited.\n", stderr);
+    }
+    if (sig == 1)
+    {
+        puts("CTRL+C");
+        sig = 0;
+    }
+
+
 	argc_check(argc);
 	if(argv[1] == NULL)
 	{

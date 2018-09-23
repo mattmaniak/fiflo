@@ -1,0 +1,22 @@
+CC=gcc
+CFLAGS=-std=gnu11 -Wall -Wextra -O3
+TARGET=fiflo
+BIN_ODIR=/usr/bin/$(TARGET)
+MAN_ODIR=/usr/share/man/man1/$(TARGET).1
+
+build:
+	$(CC) src/$(TARGET).c -o $(TARGET) $(CFLAGS)
+
+install:
+	cp $(TARGET) $(BIN_ODIR)
+	cp man/$(TARGET).1 $(MAN_ODIR)
+	gzip $(MAN_ODIR)
+
+uninstall:
+	$(RM) $(BIN_ODIR)
+	$(RM) $(MAN_ODIR).gz
+
+.PHONY: clean
+clean:
+	$(RM) $(TARGET)
+

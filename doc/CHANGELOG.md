@@ -7,6 +7,9 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
+### vX.Y.Z (WIP):
+- configure.ac added.
+
 ### v2.0.0 (2018, September 11):
 - vertical && horizontal scroll,
 - new allocation method (lines as a separate strings),
@@ -81,3 +84,4 @@ Not merged with "master" so look for it with tags.)
 
 ### v0.0.0 (2018, May 27):
 - initial release (basic window rendering).
+

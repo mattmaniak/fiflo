@@ -1,16 +1,16 @@
 # fiflo - TODOs
 ## delete one if done:
-- TAB,
-- pipe support,
+- improve configure.ac and Makefile,
+- TAB key,
+- pipe support or abort message,
 - improve sig handlers,
 - fix to big memory usage (blocks),
 - bigger buffer,
 - paging mechanism,
 - move cursor (YVFH keys),
-- simplify Makefile,
-- config file (colors),
-- usability for other *nixes,
-- "configure.sh" file,
+- config file (theme),
+- syntax highlighting,
 - search option,
 - lock on a file,
 - hex mode.
+

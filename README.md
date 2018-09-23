@@ -6,6 +6,7 @@ Simple terminal-based text editor.
 ## Minimal requirements:
 - Linux-based OS,
 - gcc >= 4.8,
+- autoconf,
 - make,
 - terminal with an ANSI escape codes support.
 
@@ -13,9 +14,9 @@ Simple terminal-based text editor.
 - cp for installation,
 - gzip for man-pages packing.
 
-## Compilation
+## Building from source
 ```
-make
+autoconf && ./configure && make
 ```
 
 ## Installation

@@ -1,5 +1,11 @@
 *.asdf
+autom4te.cache/
+config.log
+config.status
+configure
 fiflo
+makefile
+Makefile
 *.out
 *.save
 *.swp

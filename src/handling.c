@@ -41,7 +41,7 @@ void fnameset(buf* dt, const char* passed)
 
 buf* readfile(buf* dt)
 {
-	FILE* textfile = fopen(dt->fname, "r");
+	FILE* textfile = fopen(dt->fname, "rt");
 	char chr;
 
 	if(textfile)
@@ -70,7 +70,7 @@ void savefile(buf* dt)
 			freeallexit(dt, 1);
 		}
 	}
-	FILE* textfile = fopen(dt->fname, "w");
+	FILE* textfile = fopen(dt->fname, "wt");
 	checkptr(dt, textfile, "write to the file\0");
 
 	for(buf_t ln = 0; ln <= dt->lns; ln++)
@@ -146,7 +146,7 @@ buf* allocblk(buf* dt, char mode)
 			}
 			else
 			{
-				if(dt->lns % MEMBLK == 0) // Allocates with the one line reserve.
+				if(dt->lns % MEMBLK == 0) // Allocates with a one line reserve.
 				{
 					dt->txt =
 					realloc(dt->txt, sizeof(dt->txt) * (dt->lns + MEMBLK));
@@ -170,7 +170,7 @@ buf* charadd(buf* dt, char key)
 		switch(key)
 		{
 			case TAB:
-				CURRLN[LASTCHR] = ' '; // Converts TAB to SPACE.
+				CURRLN[LASTCHR] = ' '; // Currently onverts TAB to SPACE.
 			break;
 
 			case LF:
@@ -187,9 +187,12 @@ buf* recochar(buf* dt, char key)
 	{
 		switch(key)
 		{
-			case NEG: // Eg. CTRL+C - singal.
 			case NTERM: // Only for the initialization.
 			break;
+
+			case NEG: // Pipe prevention.
+				fputs("Pipe isn't supported by fiflo, exited.\n", stderr);
+				freeallexit(dt, 0);
 
 			case CTRL_D:
 				savefile(dt);
