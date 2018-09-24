@@ -8,7 +8,8 @@ files use git-show or git-log.
 
 ## Versions:
 ### vX.Y.Z (WIP):
-- configure.ac added.
+- configure.ac added,
+- control keys changed.
 
 ### v2.0.0 (2018, September 11):
 - vertical && horizontal scroll,

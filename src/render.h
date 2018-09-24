@@ -11,16 +11,16 @@
 #define DOTS "[...]"
 
 // ANSI escape codes..
-#define RESET "\033[0m"
-#define INVERT "\033[7m"
-#define LINE_UP "\033[F"
-#define CLEANLN "\033[2K"
-#define CURSUP(n) printf("\033[%dA", n)
-#define CURSDOWN(n) printf("\033[%dB", n)
-#define CURSRIGHT(n) printf("\033[%dC", n)
-#define CURSLEFT(n) printf("\033[%dD", n)
-#define SAVECURSPOS() printf("%s", "\033[s");
-#define RESTORECURSPOS() printf("%s", "\033[u");
+#define RESET "\e[0m"
+#define INVERT "\e[7m"
+#define LINE_UP "\e[F"
+#define CLEANLN "\e[2K"
+#define CURSUP(n) printf("\e[%dA", n)
+#define CURSDOWN(n) printf("\e[%dB", n)
+#define CURSRIGHT(n) printf("\e[%dC", n)
+#define CURSLEFT(n) printf("\e[%dD", n)
+#define SAVECURSPOS() printf("%s", "\e[s");
+#define RESTORECURSPOS() printf("%s", "\e[u");
 
 term_t termgetsz(buf* dt, char axis); // Check if a term to small or big.
 void flushwin(buf* dt); // For rendering in a one frame.

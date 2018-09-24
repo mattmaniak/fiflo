@@ -1,5 +1,5 @@
-#ifndef HANDLING_H
-#define HANDLING_H // Non-seen API things that makes text && misc. things works.
+#ifndef API_H
+#define API_H // Magic non-seen things that makes text && misc. them work.
 
 // Common rest is included in 'fiflo.h' There are only file-specific imports.
 #include <linux/limits.h>

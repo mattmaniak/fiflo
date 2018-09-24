@@ -1,5 +1,6 @@
 # fiflo - TODOs
 ## delete one if done:
+- keymap,
 - improve configure.ac and Makefile,
 - TAB key,
 - fix to big memory usage (blocks),

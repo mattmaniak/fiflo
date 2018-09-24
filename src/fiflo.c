@@ -2,7 +2,7 @@
 
 #include "fiflo.h" // All typedefs are here.
 
-#include "handling.c"
+#include "api.c"
 #include "render.c"
 
 void sighandler(int nothing)
@@ -54,7 +54,7 @@ void options(const char* arg)
 	run(arg);
 }
 
-char nix_getch(void)
+char nixgetch(void)
 {
 	struct termios old, new; // From sys/ioctl.h.
 	char key;
@@ -75,24 +75,29 @@ char nix_getch(void)
 	return key;
 }
 
+buf* init(buf* dt, const char* passed)
+{
+	dt->fname = malloc(PATH_MAX);
+	dt->txt = malloc(sizeof(dt->txt) * MEMBLK);
+	checkptr(dt, dt->txt, "alloc memory for lines\0");
+	checkptr(dt, dt->fname, "alloc memory for the filename\0");
+
+	dt->chrs = 0;
+	dt->chrs_ln = 0;
+	dt->lns = 0;
+
+	fnameset(dt, passed);
+	dt->txt[0] = malloc(MEMBLK);
+	checkptr(dt, dt->txt, "alloc memory for the first line\0");
+
+	return dt;
+}
+
 _Noreturn void run(const char* passed)
 {
 	buf* data = malloc(sizeof(buf));
 	checkptr(data, data, "alloc memory for metadata\0");
-
-	data->fname = malloc(PATH_MAX);
-	data->txt = malloc(sizeof(data->txt) * MEMBLK);
-	checkptr(data, data->txt, "alloc memory for lines\0");
-	checkptr(data, data->fname, "alloc memory for the filename\0");
-
-	data->chrs = 0;
-	data->chrs_ln = 0;
-	data->lns = 0;
-
-	fnameset(data, passed);
-
-	data->txt[0] = malloc(MEMBLK);
-	checkptr(data, data->txt, "alloc memory for the first line\0");
+	data = init(data, passed);
 
 	data = readfile(data);
 	char pressed = NTERM; // Initializer.
@@ -101,7 +106,7 @@ _Noreturn void run(const char* passed)
 	{
 		data = recochar(data, pressed);
 		window(data, pressed);
-		pressed = nix_getch();
+		pressed = nixgetch();
 		flushwin(data);
 	}
 }

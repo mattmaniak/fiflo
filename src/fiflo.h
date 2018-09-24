@@ -24,12 +24,15 @@
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 typedef uint16_t buf_t; // Only for amount indicators.
 
-#pragma pack(push, 2)
+#pragma pack(push, 2) // sizeof(buf) = 30. Align to 32 that can be divided by 8.
 typedef struct
 {
+	// Metadata.
 	FILE* txtf;
 	char* fname; // Full filename, eg. /home/user/basename
+	// Main buffer.
 	char** txt; // Eg. txt[lns][chrs].
+	// Indicators.
 	buf_t chrs; // All chars index.
 	buf_t chrs_ln; // Chars in the current line (index).
 	buf_t lns; // Lines index.
@@ -42,8 +45,9 @@ void checkptr(buf* dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
 
 void argc_check(int arg_count); // How many args were passed.
 void options(const char* arg); // Eg. -v, --version et al infos.
-char nix_getch(void); // Getchar without confirming by ENTER.
+char nixgetch(void); // Getchar without confirming by ENTER.
 
+buf* init(buf* dt, const char* passed);
 _Noreturn void run(const char* passed); // Contains program loop.
 int main(int argc, char** argv);
 
