@@ -13,6 +13,11 @@
 #define ESCAPE 27
 #define BACKSPACE 127
 
+#define CTRL_T 25
+#define CTRL_G 7
+#define CTRL_H 8
+#define CTRL_B 2 
+
 #define LASTCHR dt->chrs_ln - NTERM_SZ
 #define CURRLN dt->txt[dt->lns]
 #define UPLN dt->txt[dt->lns - 1]

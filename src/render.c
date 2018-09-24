@@ -120,7 +120,7 @@ void setcurspos(buf* dt)
 	{
 		if(strlen(CURRLN) < termgetsz(dt, 'X') - strlen(DOTS))
 		{
-			CURSRIGHT((term_t) (strlen(CURRLN) + strlen(DOTS)));
+			CURSRIGHT((term_t) (strlen(CURRLN) + strlen(DOTS)) + dt->cusr_x);
 		}
 		else
 		{

@@ -168,6 +168,10 @@ buf* charadd(buf* dt, char key)
 		dt = allocblk(dt, 'c');
 		CURRLN[LASTCHR] = key;
 		CURRLN[dt->chrs_ln] = NTERM;
+		if(dt->cusr_x > 0)
+		{
+			dt->cusr_x--;
+		}
 		switch(key)
 		{
 			case TAB:
@@ -176,13 +180,14 @@ buf* charadd(buf* dt, char key)
 
 			case LF:
 				dt = allocblk(dt, 'l');
+				dt->cusr_x = 0;
 			break;
 		}
 	}
 	return dt;
 }
 
-buf* recochar(buf* dt, char key)
+buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 {
 	if(key != ESCAPE)
 	{
@@ -191,11 +196,25 @@ buf* recochar(buf* dt, char key)
 			case NTERM: // Only for the initialization.
 			break;
 
-			case NEG: // Pipe prevention. TODO: FULL UPPER BAR FLUSH.
+			case NEG: // Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH.
 				freeallexit(dt, 0);
 
 			case CTRL_D:
 				savefile(dt);
+			break;
+
+			case CTRL_H:
+				if(dt->cusr_x < termgetsz(dt, 'X') - 5 - dt->chrs_ln - CURRENT)
+				{
+					dt->cusr_x++;
+				}
+			break;
+
+			case CTRL_G:
+				if(dt->cusr_x > -dt->chrs_ln)
+				{
+					dt->cusr_x--;
+				}
 			break;
 
 			case BACKSPACE:
@@ -207,6 +226,7 @@ buf* recochar(buf* dt, char key)
 			break;
 		}
 	}
+	printf("cusr_x: %d\n", dt->cusr_x); // DEBUG
 	return dt;
 }
 

@@ -86,6 +86,9 @@ buf* init(buf* dt, const char* passed)
 	dt->chrs_ln = 0;
 	dt->lns = 0;
 
+	dt->cusr_x = 0;
+	dt->cusr_y = 0;
+
 	fnameset(dt, passed);
 	dt->txt[0] = malloc(MEMBLK);
 	checkptr(dt, dt->txt, "alloc memory for the first line\0");
@@ -98,10 +101,9 @@ _Noreturn void run(const char* passed)
 	buf* data = malloc(sizeof(buf));
 	checkptr(data, data, "alloc memory for metadata\0");
 	data = init(data, passed);
-
 	data = readfile(data);
-	char pressed = NTERM; // Initializer.
 
+	char pressed = NTERM; // Initializer.
 	for(;;) // Main program loop.
 	{
 		data = recochar(data, pressed);
