@@ -41,16 +41,16 @@ void fnameset(buf* dt, const char* passed)
 
 buf* readfile(buf* dt)
 {
-	FILE* textfile = fopen(dt->fname, "rt");
 	char chr;
+	dt->txtf = fopen(dt->fname, "rt");
 
-	if(textfile)
+	if(dt->txtf)
 	{
-		while((chr = (char) getc(textfile)) != EOF)
+		while((chr = (char) getc(dt->txtf)) != EOF)
 		{
 			dt = charadd(dt, chr);
 		}
-		fclose(textfile);
+		fclose(dt->txtf);
 	}
 	else
 	{
@@ -70,14 +70,14 @@ void savefile(buf* dt)
 			freeallexit(dt, 1);
 		}
 	}
-	FILE* textfile = fopen(dt->fname, "wt");
-	checkptr(dt, textfile, "write to the file\0");
+	dt->txtf = fopen(dt->fname, "wt");
+	checkptr(dt, dt->txtf, "write to the file\0");
 
 	for(buf_t ln = 0; ln <= dt->lns; ln++)
 	{
-		fputs(dt->txt[ln], textfile);
+		fputs(dt->txt[ln], dt->txtf);
 	}
-	fclose(textfile);
+	fclose(dt->txtf);
 }
 
 _Noreturn void freeallexit(buf* dt, _Bool code)
@@ -88,6 +88,7 @@ _Noreturn void freeallexit(buf* dt, _Bool code)
 		free(dt->txt[ln]);
 	}
 	free(dt->txt);
+	free(dt);
 	exit(code);
 }
 
@@ -190,16 +191,11 @@ buf* recochar(buf* dt, char key)
 			case NTERM: // Only for the initialization.
 			break;
 
-			case NEG: // Pipe prevention.
-				fputs("Pipe isn't supported by fiflo, exited.\n", stderr);
+			case NEG: // Pipe prevention. TODO: FULL UPPER BAR FLUSH.
 				freeallexit(dt, 0);
 
 			case CTRL_D:
 				savefile(dt);
-			break;
-
-			case CTRL_X:
-				freeallexit(dt, 0);
 			break;
 
 			case BACKSPACE:

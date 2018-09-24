@@ -5,11 +5,9 @@
 #include "handling.c"
 #include "render.c"
 
-static volatile int sig = 0;
-
-void ignoresig(int nothing) // Arg for "‘__sighandler_t {aka void (*)(int)}".
+void sighandler(int nothing)
 {
-	if(nothing == 0) {}
+	if(nothing) {}
 }
 
 void checkptr(buf* dt, void* ptr, const char* errmsg)
@@ -97,12 +95,10 @@ _Noreturn void run(const char* passed)
 	checkptr(data, data->txt, "alloc memory for the first line\0");
 
 	data = readfile(data);
-	char pressed = NTERM; // Initializer too.
+	char pressed = NTERM; // Initializer.
+
 	for(;;) // Main program loop.
 	{
-//		signal(SIGTSTP, ignoresig); // CTRL_Z
-//		signal(SIGINT, ignoresig); // CTRL_C
-
 		data = recochar(data, pressed);
 		window(data, pressed);
 		pressed = nix_getch();
@@ -112,17 +108,12 @@ _Noreturn void run(const char* passed)
 
 int main(int argc, char** argv)
 {
+	struct sigaction sig;
 
-    if(signal(SIGINT, ignoresig) == SIG_ERR)
-    {
-        fputs("Couldn't catch CTRL+C, exited.\n", stderr);
-    }
-    if (sig == 1)
-    {
-        puts("CTRL+C");
-        sig = 0;
-    }
-
+    sig.sa_handler = sighandler;
+	sigemptyset(&sig.sa_mask);
+	sig.sa_flags = 0;
+    sigaction(SIGINT, &sig, NULL);
 
 	argc_check(argc);
 	if(argv[1] == NULL)

@@ -37,7 +37,7 @@ typedef struct
 buf;
 #pragma pack(pop)
 
-void ignoresig(int nothing); // Ignore signal when activated.
+void sighandler(int nothing);
 void checkptr(buf* dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
 
 void argc_check(int arg_count); // How many args were passed.

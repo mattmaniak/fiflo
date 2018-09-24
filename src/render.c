@@ -56,7 +56,7 @@ void bar(buf* dt, char key)
 		- (term_t) (strlen(title) + strlen(dt->fname)), " ");
 	}
 	printf(
-	"chars (all, ln, last): %*d, %*d, %*d%*s| CTRL+: D - save, X - exit%s\n",
+	"chars (all, ln, last): %*d, %*d, %*d%*s| CTRL+: D - save, C - exit%s\n",
 	STRLENBUFF, dt->chrs, STRLENBUFF, dt->chrs_ln, 3, key,
 	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
 }
