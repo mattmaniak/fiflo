@@ -13,7 +13,7 @@
 #define ESCAPE 27
 #define BACKSPACE 127
 
-#define CTRL_T 25
+#define CTRL_Y 25
 #define CTRL_G 7
 #define CTRL_H 8
 #define CTRL_B 2 

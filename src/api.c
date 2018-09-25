@@ -138,7 +138,7 @@ buf* allocblk(buf* dt, char mode)
 				CURRLN = realloc(CURRLN, dt->chrs_ln + MEMBLK);
 				checkptr(dt, CURRLN, "alloc new memblock for chars\0");
 			}
-		break;
+			break;
 
 		case 'l':
 			if(dt->lns++ >= MAX_LNS)
@@ -156,7 +156,7 @@ buf* allocblk(buf* dt, char mode)
 				checkptr(dt, CURRLN, "alloc byte in the new line\0");
 			}
 			CURRLN[dt->chrs_ln = 0] = NTERM;
-		break;
+			break;
 	}
 	return dt;
 }
@@ -168,20 +168,23 @@ buf* charadd(buf* dt, char key)
 		dt = allocblk(dt, 'c');
 		CURRLN[LASTCHR] = key;
 		CURRLN[dt->chrs_ln] = NTERM;
-		if(dt->cusr_x > 0)
+
+		dt->cusr_x = dt->chrs_ln;
+		if(dt->cusr_x > termgetsz(dt, 'X') - CURRENT - 5)
 		{
-			dt->cusr_x--;
+			dt->cusr_x = termgetsz(dt, 'X') - CURRENT - 5;
 		}
 		switch(key)
 		{
 			case TAB:
 				CURRLN[LASTCHR] = ' '; // Currently onverts TAB to SPACE.
-			break;
+				break;
 
 			case LF:
 				dt = allocblk(dt, 'l');
+				dt->cusr_y = dt->lns;
 				dt->cusr_x = 0;
-			break;
+				break;
 		}
 	}
 	return dt;
@@ -194,39 +197,55 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 		switch(key)
 		{
 			case NTERM: // Only for the initialization.
-			break;
+				break;
 
 			case NEG: // Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH.
 				freeallexit(dt, 0);
 
 			case CTRL_D:
 				savefile(dt);
-			break;
+				break;
 
 			case CTRL_H:
-				if(dt->cusr_x < termgetsz(dt, 'X') - 5 - dt->chrs_ln - CURRENT)
+				if(dt->cusr_x < termgetsz(dt, 'X') - CURRENT - 5)
 				{
 					dt->cusr_x++;
 				}
-			break;
+				break;
 
 			case CTRL_G:
-				if(dt->cusr_x > -dt->chrs_ln)
+				if(dt->cusr_x > 0)
 				{
 					dt->cusr_x--;
 				}
-			break;
+				break;
+
+			case CTRL_Y:
+				if(dt->cusr_y > 0)
+				{
+					dt->cusr_y--;
+				}
+				break;
+
+			case CTRL_B:
+				if(dt->cusr_y < (termgetsz(dt, 'Y') - 2) - CURRENT)
+				{
+					dt->cusr_y++;
+				}
+				break;
 
 			case BACKSPACE:
+				dt->cusr_x = dt->chrs_ln;
+				dt->cusr_y = dt->lns - 1;
 				dt = freeblk(dt);
-			break;
+				break;
 
 			default:
 				dt = charadd(dt, key);
-			break;
+				break;
 		}
 	}
-	printf("cusr_x: %d\n", dt->cusr_x); // DEBUG
+	printf("cusr_x: %d cusr_y: %d\n", dt->cusr_x, dt->cusr_y); // DEBUG
 	return dt;
 }
 

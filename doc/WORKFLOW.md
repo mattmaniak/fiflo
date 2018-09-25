@@ -21,8 +21,8 @@ provide updated code on the "develop" branch.
 
 ## Coding rules:
 - Allman's brace style, indentation: hard tab (4 spaces wide),
-- max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "enter",
-- single line can't exceed 80 characters, function - 40 lines,
+- max. amount of '\n' in the row is: 2, eg. "}\n\n" - 1 seen "ENTER",
+- single line can't exceed 80 characters, function - 40 lines (ex. "develop"),
 - funcion names shouldn't contain underscore, variables should,
 - keep names semantic shortened, eg. "fname_max",
 - write short TODOs near thing to fix as uppercase comments,

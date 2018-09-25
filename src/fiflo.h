@@ -37,8 +37,8 @@ typedef struct
 	buf_t chrs_ln; // Chars in the current line (index).
 	buf_t lns; // Lines index.
 	// User's cursor position.
-	int32_t cusr_x;
-	int32_t cusr_y;	
+	term_t cusr_x;
+	term_t cusr_y;	
 }
 buf;
 #pragma pack(pop)

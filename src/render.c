@@ -120,13 +120,13 @@ void setcurspos(buf* dt)
 	{
 		if(strlen(CURRLN) < termgetsz(dt, 'X') - strlen(DOTS))
 		{
-			CURSRIGHT((term_t) (strlen(CURRLN) + strlen(DOTS)) + dt->cusr_x);
+			CURSRIGHT((term_t) strlen(DOTS) + dt->cusr_x);
 		}
 		else
 		{
 			CURSRIGHT((term_t) termgetsz(dt, 'X') - CURRENT);
 		}
-		CURSUP(TXT_AREA - dt->lns - CURRENT);
+		CURSUP(TXT_AREA - dt->cusr_y - CURRENT);
 	}
 	// Else by default on the bottom && auto-positioned.
 }
