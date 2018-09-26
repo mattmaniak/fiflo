@@ -166,7 +166,7 @@ buf* charadd(buf* dt, char key)
 	if(dt->chrs <= MAX_CHRS)
 	{
 		dt = allocblk(dt, 'c');
-		CURRLN[LASTCHR] = key;
+		CURRLN[LASTCHR - dt->cusr_x] = key;
 		CURRLN[dt->chrs_ln] = NTERM;
 
 		switch(key)
