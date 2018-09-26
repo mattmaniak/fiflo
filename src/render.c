@@ -33,7 +33,7 @@ void flushwin(buf* dt)
 	RESTORECURSPOS();
 	printf("%s", CLEANLN);
 
-	for(term_t y = 0; y <= TXT_AREA; y++)
+	for(term_t y = 0; y <= TXT_Y; y++)
 	{
 		printf("%s%s", LINE_UP, CLEANLN);
 	}
@@ -67,9 +67,9 @@ void window(buf* dt, char key)
 	buf_t hidden_lns = 0;
 	bar(dt, key);
 
-	if(dt->lns >= TXT_AREA) // Horizontal scroll.
+	if(dt->lns >= TXT_Y) // Horizontal scroll.
 	{
-		hidden_lns = dt->lns - TXT_AREA + CURRENT + 1; // 1 - DOTS in Y.
+		hidden_lns = dt->lns - TXT_Y + CURRENT + 1; // 1 - DOTS in Y.
 		printf("%s%s%s\n", INVERT, DOTS, INVERT);
 	}
 	for(term_t ln = hidden_lns; ln <= dt->lns; ln++)
@@ -104,9 +104,9 @@ void window(buf* dt, char key)
 
 void lower_fill(buf* dt)
 {
-	if(dt->lns < TXT_AREA)
+	if(dt->lns < TXT_Y)
 	{
-		for(term_t ln = dt->lns; ln < TXT_AREA - CURRENT; ln++)
+		for(term_t ln = dt->lns; ln < TXT_Y - CURRENT; ln++)
 		{
 			putchar(LF);
 		}
@@ -116,17 +116,17 @@ void lower_fill(buf* dt)
 void setcurspos(buf* dt)
 {
 	SAVECURSPOS();
-	if(dt->lns < TXT_AREA - CURRENT)
+	if(dt->lns < TXT_Y - CURRENT)
 	{
 		if(strlen(CURRLN) < termgetsz(dt, 'X') - strlen(DOTS))
 		{
-			CURSRIGHT((term_t) strlen(DOTS) + dt->cusr_x);
+			CURSRIGHT((term_t) strlen(DOTS) + dt->chrs_ln - dt->cusr_x);
 		}
 		else
 		{
 			CURSRIGHT((term_t) termgetsz(dt, 'X') - CURRENT);
 		}
-		CURSUP(TXT_AREA - dt->cusr_y - CURRENT);
+		CURSUP(TXT_Y - dt->lns + dt->cusr_y - CURRENT);
 	}
 	// Else by default on the bottom && auto-positioned.
 }

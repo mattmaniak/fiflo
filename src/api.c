@@ -169,11 +169,6 @@ buf* charadd(buf* dt, char key)
 		CURRLN[LASTCHR] = key;
 		CURRLN[dt->chrs_ln] = NTERM;
 
-		dt->cusr_x = dt->chrs_ln;
-		if(dt->cusr_x > termgetsz(dt, 'X') - CURRENT - 5)
-		{
-			dt->cusr_x = termgetsz(dt, 'X') - CURRENT - 5;
-		}
 		switch(key)
 		{
 			case TAB:
@@ -182,8 +177,6 @@ buf* charadd(buf* dt, char key)
 
 			case LF:
 				dt = allocblk(dt, 'l');
-				dt->cusr_y = dt->lns;
-				dt->cusr_x = 0;
 				break;
 		}
 	}
@@ -207,36 +200,34 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 				break;
 
 			case CTRL_H:
-				if(dt->cusr_x < termgetsz(dt, 'X') - CURRENT - 5)
-				{
-					dt->cusr_x++;
-				}
-				break;
-
-			case CTRL_G:
 				if(dt->cusr_x > 0)
 				{
 					dt->cusr_x--;
 				}
 				break;
 
+			case CTRL_G:
+				if(dt->cusr_x < dt->chrs_ln)
+				{
+					dt->cusr_x++;
+				}
+				break;
+
 			case CTRL_Y:
+				if(dt->cusr_y < dt->lns)
+				{
+					dt->cusr_y++;
+				}
+				break;
+
+			case CTRL_B:
 				if(dt->cusr_y > 0)
 				{
 					dt->cusr_y--;
 				}
 				break;
 
-			case CTRL_B:
-				if(dt->cusr_y < (termgetsz(dt, 'Y') - 2) - CURRENT)
-				{
-					dt->cusr_y++;
-				}
-				break;
-
 			case BACKSPACE:
-				dt->cusr_x = dt->chrs_ln;
-				dt->cusr_y = dt->lns - 1;
 				dt = freeblk(dt);
 				break;
 

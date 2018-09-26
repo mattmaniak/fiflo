@@ -6,7 +6,7 @@
 
 // UI areas.
 #define BAR_SZ 2
-#define TXT_AREA (termgetsz(dt, 'Y') - BAR_SZ)
+#define TXT_Y (termgetsz(dt, 'Y') - BAR_SZ)
 #define TERM_X_MIN 68
 #define DOTS "[...]"
 
