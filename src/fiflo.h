@@ -24,7 +24,7 @@
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 typedef uint16_t buf_t; // Only for amount indicators.
 
-#pragma pack(push, 2) // sizeof(buf) = 30. Align to 32 that can be divided by 8.
+#pragma pack(push, 2) // sizeof(meta) = 30. Align to 32 that can be divided by 8.
 typedef struct
 {
 	// Metadata.
@@ -40,17 +40,16 @@ typedef struct
 	term_t cusr_x;
 	term_t cusr_y;	
 }
-buf;
+meta;
 #pragma pack(pop)
 
 void sighandler(int nothing);
-void checkptr(buf* dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
+void checkptr(meta* dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
 
-void argc_check(int arg_count); // How many args were passed.
 void options(const char* arg); // Eg. -v, --version et al infos.
 char nixgetch(void); // Getchar without confirming by ENTER.
 
-buf* init(buf* dt, const char* passed);
+meta* init(meta* dt, const char* passed);
 _Noreturn void run(const char* passed); // Contains program loop.
 int main(int argc, char** argv);
 

@@ -2,6 +2,7 @@
 
 #include "fiflo.h" // All typedefs are here.
 
+#include "files.c"
 #include "api.c"
 #include "render.c"
 
@@ -10,21 +11,12 @@ void sighandler(int nothing)
 	if(nothing) {}
 }
 
-void checkptr(buf* dt, void* ptr, const char* errmsg)
+void checkptr(meta* dt, void* ptr, const char* errmsg)
 {
 	if(!ptr)
 	{
 		fprintf(stderr, "Can't %s, exited.\n", errmsg);
 		freeallexit(dt, 1);
-	}
-}
-
-void argc_check(int arg_count)
-{
-	if(arg_count != 1 && arg_count != 2)
-	{
-		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
-		exit(1);
 	}
 }
 
@@ -75,7 +67,7 @@ char nixgetch(void)
 	return key;
 }
 
-buf* init(buf* dt, const char* passed)
+meta* init(meta* dt, const char* passed)
 {
 	dt->fname = malloc(PATH_MAX);
 	dt->txt = malloc(sizeof(dt->txt) * MEMBLK);
@@ -98,7 +90,7 @@ buf* init(buf* dt, const char* passed)
 
 _Noreturn void run(const char* passed)
 {
-	buf* data = malloc(sizeof(buf));
+	meta* data = malloc(sizeof(meta));
 	checkptr(data, data, "alloc memory for metadata\0");
 	data = init(data, passed);
 	data = readfile(data);
@@ -115,6 +107,11 @@ _Noreturn void run(const char* passed)
 
 int main(int argc, char** argv)
 {
+	if(argc != 1 && argc != 2)
+	{
+		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
+		exit(1);
+	}
 	struct sigaction sig;
 
     sig.sa_handler = sighandler;
@@ -122,7 +119,6 @@ int main(int argc, char** argv)
 	sig.sa_flags = 0;
     sigaction(SIGINT, &sig, NULL);
 
-	argc_check(argc);
 	if(argv[1] == NULL)
 	{
 		run("noname.asdf\0");

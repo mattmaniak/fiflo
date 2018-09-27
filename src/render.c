@@ -1,6 +1,6 @@
 #include "render.h"
 
-term_t termgetsz(buf* dt, char axis)
+term_t termgetsz(meta* dt, char axis)
 {
 	const uint8_t y_min = 4;
 	const term_t sz_max = USHRT_MAX;
@@ -28,7 +28,7 @@ term_t termgetsz(buf* dt, char axis)
 	return 0; // Required -Wreturn-type.
 }
 
-void flushwin(buf* dt)
+void flushwin(meta* dt)
 {
 	RESTORECURSPOS();
 	printf("%s", CLEANLN);
@@ -40,7 +40,7 @@ void flushwin(buf* dt)
 	fflush(stdout);
 }
 
-void bar(buf* dt, char key)
+void bar(meta* dt, char key)
 {
 	const char* title = "fiflo | filename: \0";
 	term_t fnmax = termgetsz(dt, 'X') - (term_t) (strlen(title) + strlen(DOTS));
@@ -62,7 +62,7 @@ void bar(buf* dt, char key)
 }
 
 
-void window(buf* dt, char key)
+void window(meta* dt, char key)
 {
 	buf_t hidden_lns = 0;
 	bar(dt, key);
@@ -102,7 +102,7 @@ void window(buf* dt, char key)
 	setcurspos(dt);
 }
 
-void lower_fill(buf* dt)
+void lower_fill(meta* dt)
 {
 	if(dt->lns < TXT_Y)
 	{
@@ -113,7 +113,7 @@ void lower_fill(buf* dt)
 	}
 }
 
-void setcurspos(buf* dt)
+void setcurspos(meta* dt)
 {
 	SAVECURSPOS();
 	if(dt->lns < TXT_Y - CURRENT)

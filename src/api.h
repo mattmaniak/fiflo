@@ -22,18 +22,14 @@
 #define CURRLN dt->txt[dt->lns]
 #define UPLN dt->txt[dt->lns - 1]
 
-extern term_t termgetsz(buf* dt, char axis); // From "render.h";
+extern term_t termgetsz(meta* dt, char axis); // From "render.h";
 
-void fnameset(buf* dt, const char* passed); // Optionally get current dir.
-buf* readfile(buf* dt);
-void savefile(buf* dt);
+_Noreturn void freeallexit(meta* dt, _Bool code); // Free everything from heap.
+meta* freeblk(meta* dt); // Check and free memblock.
+meta* allocblk(meta* dt, char mode); // Check and alloc block of memory.
 
-_Noreturn void freeallexit(buf* dt, _Bool code); // Free everything from heap.
-buf* freeblk(buf* dt); // Check and free memblock.
-buf* allocblk(buf* dt, char mode); // Check and alloc block of memory.
-
-buf* charadd(buf* dt, char key); // If a char is not the BACKSPACE.
-buf* recochar(buf* dt, char key); // Recognize type of a passed char.
+meta* charadd(meta* dt, char key); // If a char is not the BACKSPACE.
+meta* recochar(meta* dt, char key); // Recognize type of a passed char.
 
 #endif
 

@@ -22,13 +22,13 @@
 #define SAVECURSPOS() printf("%s", "\e[s");
 #define RESTORECURSPOS() printf("%s", "\e[u");
 
-term_t termgetsz(buf* dt, char axis); // Check if a term to small or big.
-void flushwin(buf* dt); // For rendering in a one frame.
+term_t termgetsz(meta* dt, char axis); // Check if a term to small or big.
+void flushwin(meta* dt); // For rendering in a one frame.
 
-void bar(buf* dt, char key); // Render upper bar.
-void window(buf* dt, char key); // Bar + rendered text + fill + cursor.
-void lower_fill(buf* dt); // Empty space below the text.
-void setcurspos(buf* dt); // Set cursor position from the rendered bottom.
+void bar(meta* dt, char key); // Render upper bar.
+void window(meta* dt, char key); // Bar + rendered text + fill + cursor.
+void lower_fill(meta* dt); // Empty space below the text.
+void setcurspos(meta* dt); // Set cursor position from the rendered bottom.
 
 #endif
 
