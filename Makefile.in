@@ -16,6 +16,9 @@ uninstall:
 	$(RM) $(BIN_ODIR)
 	$(RM) $(MAN_ODIR).gz
 
+sanitize:
+	$(CC) src/$(TARGET).c -o $(TARGET) $(CFLAGS) -fsanitize=address
+
 .PHONY: clean
 clean:
 	$(RM) $(TARGET)

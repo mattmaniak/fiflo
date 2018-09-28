@@ -1,6 +1,6 @@
 #include "files.h"
 
-void fnameset(meta* dt, const char* passed)
+void fnameset(buf* dt, const char* passed)
 {
 	if(passed[strlen(passed) - NTERM_SZ] == '/')
 	{
@@ -27,7 +27,6 @@ void fnameset(meta* dt, const char* passed)
 			fputs("Given filename is too long, exited.\n", stderr);
 			freeallexit(dt, 1);
 		}
-
 		strcpy(dt->fname, abs_path); // Copy the path.
 		dt->fname[strlen(abs_path)] = '/'; // Add the slash between.
 		for(uint16_t pos = 0; pos < strlen(passed); pos++) // Append basename.
@@ -38,7 +37,7 @@ void fnameset(meta* dt, const char* passed)
 	}
 }
 
-meta* readfile(meta* dt)
+buf* readfile(buf* dt)
 {
 	char chr;
 	dt->txtf = fopen(dt->fname, "rt");
@@ -53,12 +52,12 @@ meta* readfile(meta* dt)
 	}
 	else
 	{
-		CURRLN[dt->chrs] = NTERM;
+		dt->txt[dt->lns][dt->chrs] = NTERM;
 	}
 	return dt;
 }
 
-void savefile(meta* dt)
+void savefile(buf* dt)
 {
 	if(access(dt->fname, F_OK) == -1) // There is no file.
 	{

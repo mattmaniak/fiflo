@@ -1,6 +1,6 @@
 #include "render.h"
 
-term_t termgetsz(meta* dt, char axis)
+term_t termgetsz(buf* dt, char axis)
 {
 	const uint8_t y_min = 4;
 	const term_t sz_max = USHRT_MAX;
@@ -28,7 +28,7 @@ term_t termgetsz(meta* dt, char axis)
 	return 0; // Required -Wreturn-type.
 }
 
-void flushwin(meta* dt)
+void flushwin(buf* dt)
 {
 	RESTORECURSPOS();
 	printf("%s", CLEANLN);
@@ -40,7 +40,7 @@ void flushwin(meta* dt)
 	fflush(stdout);
 }
 
-void bar(meta* dt, char key)
+void bar(buf* dt, char key)
 {
 	const char* title = "fiflo | filename: \0";
 	term_t fnmax = termgetsz(dt, 'X') - (term_t) (strlen(title) + strlen(DOTS));
@@ -56,13 +56,13 @@ void bar(meta* dt, char key)
 		- (term_t) (strlen(title) + strlen(dt->fname)), " ");
 	}
 	printf(
-	"chars (all, ln, last): %*d, %*d, %*d%*s| CTRL+: D - save, C - exit%s\n",
+	"chars [all, ln, last]: %*d, %*d, %*d%*s| CTRL+: D - save, C - exit%s\n",
 	STRLENBUFF, dt->chrs, STRLENBUFF, dt->chrs_ln, 3, key,
 	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
 }
 
 
-void window(meta* dt, char key)
+void window(buf* dt, char key)
 {
 	buf_t hidden_lns = 0;
 	bar(dt, key);
@@ -102,7 +102,7 @@ void window(meta* dt, char key)
 	setcurspos(dt);
 }
 
-void lower_fill(meta* dt)
+void lower_fill(buf* dt)
 {
 	if(dt->lns < TXT_Y)
 	{
@@ -113,7 +113,7 @@ void lower_fill(meta* dt)
 	}
 }
 
-void setcurspos(meta* dt)
+void setcurspos(buf* dt)
 {
 	SAVECURSPOS();
 	if(dt->lns < TXT_Y - CURRENT)
@@ -124,7 +124,7 @@ void setcurspos(meta* dt)
 		}
 		else
 		{
-			CURSRIGHT((term_t) termgetsz(dt, 'X') - CURRENT);
+			CURSRIGHT((term_t) termgetsz(dt, 'X') - dt->cusr_x - CURRENT);
 		}
 		CURSUP(TXT_Y - dt->lns + dt->cusr_y - CURRENT);
 	}

@@ -1,6 +1,6 @@
 #include "api.h"
 
-_Noreturn void freeallexit(meta* dt, _Bool code)
+_Noreturn void freeallexit(buf* dt, _Bool code)
 {
 	free(dt->fname);
 	for(buf_t ln = 0; ln <= dt->lns; ln++)
@@ -12,7 +12,7 @@ _Noreturn void freeallexit(meta* dt, _Bool code)
 	exit(code);
 }
 
-meta* freeblk(meta* dt)
+buf* freeblk(buf* dt)
 {
 	_Bool line_back = 0;
 	if(dt->chrs_ln - 1 % MEMBLK == MEMBLK - 1)
@@ -28,11 +28,11 @@ meta* freeblk(meta* dt)
 	else if(dt->chrs_ln == 0)
 	{
 		line_back = 1;
+		dt->cusr_y = 0;
 	}
 	CURRLN[dt->chrs_ln] = NTERM;
 
-	if(line_back == 1 && dt->lns > 0
-	&& UPLN[strlen(UPLN) - NTERM_SZ] == LF)
+	if(line_back == 1 && dt->lns > 0 && UPLN[strlen(UPLN) - NTERM_SZ] == LF)
 	{
 		free(CURRLN);
 		dt->lns--;
@@ -46,7 +46,7 @@ meta* freeblk(meta* dt)
 	return dt;
 }
 
-meta* allocblk(meta* dt, char mode)
+buf* allocblk(buf* dt, char mode)
 {
 	switch(mode)
 	{
@@ -81,11 +81,21 @@ meta* allocblk(meta* dt, char mode)
 	return dt;
 }
 
-meta* charadd(meta* dt, char key)
+buf* txtshift(buf* dt)
+{
+	for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
+	{
+		CURRLN[x] = CURRLN[x - 1];
+	}
+	return dt;
+}
+
+buf* charadd(buf* dt, char key)
 {
 	if(dt->chrs <= MAX_CHRS)
 	{
 		dt = allocblk(dt, 'c');
+
 		if(dt->cusr_x > 0)
 		{
 			for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
@@ -93,32 +103,42 @@ meta* charadd(meta* dt, char key)
 				CURRLN[x] = CURRLN[x - 1];
 			}
 		}
-		CURRLN[LASTCHR - dt->cusr_x] = key;
-		CURRLN[dt->chrs_ln] = NTERM;
-
+		dt->txt[dt->lns - dt->cusr_y][LASTCHR - dt->cusr_x] = key;
+		dt->txt[dt->lns - dt->cusr_y][dt->chrs_ln] = NTERM;
+		if(key == NTERM && dt->chrs > 0) // Initializer.
+		{
+			dt->chrs--;
+			dt->chrs_ln--;
+		}
 		switch(key)
 		{
 			case TAB:
 				CURRLN[LASTCHR] = ' '; // Currently onverts TAB to SPACE.
 				break;
 
-			case LF:
+			case LF: // TODO: WHEN ENTER.
+				dt->cusr_y = 0;
 				dt = allocblk(dt, 'l');
+				if(dt->cusr_x > 0)
+				{
+					for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
+					{
+						CURRLN[x] = CURRLN[x - 1];
+						strcpy(&dt->txt[dt->lns][x], &dt->txt[dt->lns - 1][x]);
+					}
+				}
 				break;
 		}
 	}
 	return dt;
 }
 
-meta* recochar(meta* dt, char key) // TODO: KEYMAP.
+buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 {
 	if(key != ESCAPE)
 	{
 		switch(key)
 		{
-			case NTERM: // Only for the initialization.
-				break;
-
 			case NEG: // Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH.
 				freeallexit(dt, 0);
 

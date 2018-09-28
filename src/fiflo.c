@@ -11,7 +11,7 @@ void sighandler(int nothing)
 	if(nothing) {}
 }
 
-void checkptr(meta* dt, void* ptr, const char* errmsg)
+void checkptr(buf* dt, void* ptr, const char* errmsg)
 {
 	if(!ptr)
 	{
@@ -67,7 +67,7 @@ char nixgetch(void)
 	return key;
 }
 
-meta* init(meta* dt, const char* passed)
+buf* init(buf* dt, const char* passed)
 {
 	dt->fname = malloc(PATH_MAX);
 	dt->txt = malloc(sizeof(dt->txt) * MEMBLK);
@@ -90,7 +90,7 @@ meta* init(meta* dt, const char* passed)
 
 _Noreturn void run(const char* passed)
 {
-	meta* data = malloc(sizeof(meta));
+	buf* data = malloc(sizeof(buf));
 	checkptr(data, data, "alloc memory for metadata\0");
 	data = init(data, passed);
 	data = readfile(data);
