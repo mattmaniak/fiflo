@@ -10,19 +10,19 @@ term_t termgetsz(buf* dt, char axis)
 
 	if(win.ws_col < TERM_X_MIN || win.ws_row < y_min)
 	{
-		fprintf(stderr, "Min. term size: %dx%d, exited.\n", TERM_X_MIN, y_min);
+		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", TERM_X_MIN, y_min);
 		freeallexit(dt, 1);
 	}
 	else if(win.ws_col > sz_max || win.ws_row > sz_max)
 	{
-		fprintf(stderr, "Max. term size: %dx%d, exited.\n", sz_max, sz_max);
+		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
 		freeallexit(dt, 1);
 	}
 	switch(axis)
 	{
-		case 'X':
+		case 'x':
 			return win.ws_col;
-		case 'Y':
+		case 'y':
 			return win.ws_row;
 	}
 	return 0; // Required -Wreturn-type.
@@ -43,7 +43,7 @@ void flushwin(buf* dt)
 void upbar(buf* dt)
 {
 	const char* title = "fiflo | filename: \0";
-	term_t fnmax = termgetsz(dt, 'X') - (term_t) (strlen(title) + strlen(DOTS));
+	term_t fnmax = termgetsz(dt, 'x') - (term_t) (strlen(title) + strlen(DOTS));
 
 	printf("%s%s", INVERT, title);
 	if(strlen(dt->fname) > fnmax)
@@ -52,7 +52,7 @@ void upbar(buf* dt)
 	}
 	else
 	{
-		printf("%s%*s\n", dt->fname, termgetsz(dt, 'X')
+		printf("%s%*s\n", dt->fname, termgetsz(dt, 'x')
 		- (term_t) (strlen(title) + strlen(dt->fname)), " ");
 	}
 }
@@ -61,8 +61,8 @@ void lowbar(buf* dt, char key)
 {
 	printf(
 	"%s\nchars [all, ln, last]: %*d, %*d, %*d%*s| CTRL+: D - save, C - exit%s",
-	INVERT, STRLENBUF, dt->chrs, STRLENBUF, dt->chrs_ln, 3, key,
-	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
+	INVERT, STRLENBUF_T, dt->chrs, STRLENBUF_T, dt->chrs_ln, 3, key,
+	termgetsz(dt, 'x') - TERM_X_MIN + 1, " ", RESET);
 }
 
 void window(buf* dt, char key)
@@ -76,9 +76,9 @@ void window(buf* dt, char key)
 	}
 	for(term_t ln = hidden_lns; ln <= dt->lns; ln++)
 	{
-		if((STRLENBUF + strlen(dt->txt[ln])) < termgetsz(dt, 'X'))
+		if((STRLENBUF_T + strlen(dt->txt[ln])) < termgetsz(dt, 'x'))
 		{
-			printf("%s%*d%s%s", INVERT, STRLENBUF, ln + INDEX, RESET,
+			printf("%s%*d%s%s", INVERT, STRLENBUF_T, ln + INDEX, RESET,
 			dt->txt[ln]);
 		}
 		else
@@ -92,8 +92,19 @@ void window(buf* dt, char key)
 			{
 				left = 1;
 			}
-			printf("%s%s%s%s", INVERT, DOTS, RESET, dt->txt[ln]
-			+ strlen(dt->txt[ln]) + strlen(DOTS) - termgetsz(dt, 'X') + left);
+			if(dt->cusr_x > (termgetsz(dt, 'x') - (2 * STRLENBUF_T) - CURRENT))
+			{
+				dt->cusr_x = termgetsz(dt, 'x') - (2 * STRLENBUF_T) - CURRENT;
+			} // TODO: SCROLLING TO LEFT;
+			printf("%s%s%s", INVERT, DOTS, RESET);
+
+			for(buf_t x = dt->chrs_ln + strlen(DOTS)
+			- termgetsz(dt, 'x') + left; x < dt->chrs_ln; x++)
+			{
+				putchar(dt->txt[ln][x]);
+			}
+//			printf("%s%s%s%s", INVERT, DOTS, RESET, dt->txt[ln]
+//			+ strlen(dt->txt[ln]) + strlen(DOTS) - termgetsz(dt, 'x') + left);
 		}
 	}
 	fill(dt);
@@ -114,15 +125,15 @@ void fill(buf* dt)
 
 void setcurspos(buf* dt)
 {
-	CURSLEFT((int32_t) termgetsz(dt, 'X'));
+	CURSLEFT((int32_t) termgetsz(dt, 'x'));
 	SAVECURSPOS();
-	if(strlen(CURRLN) < (termgetsz(dt, 'X') - strlen(DOTS)))
+	if(strlen(CURRLN) < (termgetsz(dt, 'x') - strlen(DOTS)))
 	{
 		CURSRIGHT((term_t) strlen(DOTS) + dt->chrs_ln - dt->cusr_x);
 	}
 	else
 	{
-		CURSRIGHT((term_t) termgetsz(dt, 'X') - dt->cusr_x - CURRENT);
+		CURSRIGHT((term_t) termgetsz(dt, 'x') - dt->cusr_x - CURRENT);
 	}
 	if((dt->lns + INDEX) <= TXT_Y)
 	{

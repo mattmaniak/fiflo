@@ -6,6 +6,18 @@
 #include "api.c"
 #include "render.c"
 
+_Noreturn void freeallexit(buf* dt, _Bool code)
+{
+	free(dt->fname);
+	for(buf_t ln = 0; ln <= dt->lns; ln++)
+	{
+		free(dt->txt[ln]);
+	}
+	free(dt->txt);
+	free(dt);
+	exit(code);
+}
+
 void sighandler(int nothing)
 {
 	if(nothing) {}
@@ -15,7 +27,7 @@ void checkptr(buf* dt, void* ptr, const char* errmsg)
 {
 	if(!ptr)
 	{
-		fprintf(stderr, "Can't %s, exited.\n", errmsg);
+		fprintf(stderr, "Can't %s, exit(1).\n", errmsg);
 		freeallexit(dt, 1);
 	}
 }
@@ -109,7 +121,7 @@ int main(int argc, char** argv)
 {
 	if(argc != 1 && argc != 2)
 	{
-		fputs("Fiflo can handle max. one additional arg, exited.\n", stderr);
+		fputs("Fiflo can handle max. one additional arg, exit(1).\n", stderr);
 		exit(1);
 	}
 	struct sigaction sig;
@@ -136,7 +148,7 @@ int main(int argc, char** argv)
 
 int main(void)
 {
-	fputs("Only Linux-based systems are supported, exited.\n", stderr);
+	fputs("Only Linux-based systems are supported, exit(1).\n", stderr);
 	return 0;
 }
 

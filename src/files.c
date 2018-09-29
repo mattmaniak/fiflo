@@ -4,14 +4,14 @@ void fnameset(buf* dt, const char* passed)
 {
 	if(passed[strlen(passed) - NTERM_SZ] == '/')
 	{
-		fputs("Can't open the directory as a file, exited.\n", stderr);
+		fputs("Can't open the directory as a file, exit(1).\n", stderr);
 		freeallexit(dt, 1);
 	}
 	if(passed[0] == '/') // Is absolute path.
 	{
 		if(strlen(passed) + NTERM_SZ > PATH_MAX)
 		{
-			fputs("Given path is too long, exited.\n", stderr);
+			fputs("Given path is too long, exit(1).\n", stderr);
 			freeallexit(dt, 1);
 		}
 		strcpy(dt->fname, passed); // Malloc'ed so doesn't need 'n' for size.
@@ -24,7 +24,7 @@ void fnameset(buf* dt, const char* passed)
 
 		if((strlen(abs_path) + strlen(passed) + NTERM_SZ) > PATH_MAX)
 		{
-			fputs("Given filename is too long, exited.\n", stderr);
+			fputs("Given filename is too long, exit(1).\n", stderr);
 			freeallexit(dt, 1);
 		}
 		strcpy(dt->fname, abs_path); // Copy the path.
@@ -60,7 +60,7 @@ void savefile(buf* dt)
 		int create = open(dt->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if(create == -1)
 		{
-			fputs("Failed to create the new file, exited.\n", stderr);
+			fputs("Failed to create the new file, exit(1).\n", stderr);
 			freeallexit(dt, 1);
 		}
 	}

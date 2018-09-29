@@ -5,7 +5,6 @@
 #define NTERM 0
 #define SLASH_SZ 1
 
-extern _Noreturn void freeallexit(buf* dt, _Bool code);
 extern buf* charadd(buf* dt, char key);
 
 void fnameset(buf* dt, const char* passed); // Optionally get current dir.

@@ -24,11 +24,10 @@
 
 extern term_t termgetsz(buf* dt, char axis); // From "render.h";
 
-_Noreturn void freeallexit(buf* dt, _Bool code); // Free everything from heap.
 buf* freeblk(buf* dt); // Check and free memblock.
 buf* allocblk(buf* dt, char mode); // Check and alloc block of memory.
 
-buf* txtshift(buf* dt);
+buf* txtshift(buf* dt, char direction);
 buf* charadd(buf* dt, char key); // If a char is not the BACKSPACE.
 buf* recochar(buf* dt, char key); // Recognize type of a passed char.
 

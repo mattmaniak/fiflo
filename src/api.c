@@ -1,26 +1,14 @@
 #include "api.h"
 
-_Noreturn void freeallexit(buf* dt, _Bool code)
-{
-	free(dt->fname);
-	for(buf_t ln = 0; ln <= dt->lns; ln++)
-	{
-		free(dt->txt[ln]);
-	}
-	free(dt->txt);
-	free(dt);
-	exit(code);
-}
-
 buf* freeblk(buf* dt)
 {
 	_Bool line_back = 0;
 	if(dt->chrs_ln - 1 % MEMBLK == MEMBLK - 1)
 	{
 		CURRLN = realloc(CURRLN, (2 * dt->chrs_ln) - MEMBLK);
-		checkptr(dt, CURRLN, "free the memblock with chars\0");
+		checkptr(dt, CURRLN, "free the memblock with a line\0");
 	}
-	if(dt->chrs_ln > 0)
+	if(dt->chrs_ln > 0 && dt->cusr_x != (dt->chrs_ln + INDEX))
 	{
 		dt->chrs_ln--;
 		dt->chrs--;
@@ -81,11 +69,30 @@ buf* allocblk(buf* dt, char mode)
 	return dt;
 }
 
-buf* txtshift(buf* dt)
+buf* txtshift(buf* dt, char direction)
 {
-	for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
+	switch(direction)
 	{
-		CURRLN[x] = CURRLN[x - 1];
+		case 'l':
+			if(dt->cusr_x > dt->chrs_ln - 1 && dt->chrs_ln > 0)
+			{
+				dt->cusr_x = dt->chrs_ln - 1;
+			}
+			if(dt->chrs_ln > 0)
+			{
+				for(term_t x = dt->chrs_ln - dt->cusr_x; x <= dt->chrs_ln; x++)
+				{
+					CURRLN[x - 1] = CURRLN[x];
+				}
+			}
+			break;
+
+		case 'r':
+			for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
+			{
+				CURRLN[x] = CURRLN[x - 1];
+			}
+			break;
 	}
 	return dt;
 }
@@ -97,7 +104,7 @@ buf* charadd(buf* dt, char key)
 		dt = allocblk(dt, 'c');
 		if(dt->cusr_x > 0)
 		{
-			txtshift(dt);
+			txtshift(dt, 'r');
 		}
 		dt->txt[dt->lns - dt->cusr_y][LASTCHR - dt->cusr_x] = key;
 		dt->txt[dt->lns - dt->cusr_y][dt->chrs_ln] = NTERM;
@@ -107,23 +114,19 @@ buf* charadd(buf* dt, char key)
 			dt->chrs--;
 			dt->chrs_ln--;
 		}
-		switch(key)
+		switch(key) // TODO: TAB
 		{
-			case TAB:
-				CURRLN[LASTCHR] = ' '; // Currently onverts TAB to SPACE.
-				break;
-
 			case LF: // TODO: WHEN ENTER.
 				dt = allocblk(dt, 'l');
 				if(dt->cusr_x > 0)
 				{
-					for(term_t x = strlen(UPLN) - dt->cusr_x; x <= strlen(UPLN); x++)
+/*					for(term_t x = strlen(UPLN) - dt->cusr_x; x <= strlen(UPLN); x++)
 					{
 						CURRLN[dt->chrs_ln++] = UPLN[x];
 					}
 					UPLN[strlen(UPLN) - dt->cusr_x] = NTERM;
 					dt->cusr_x = dt->chrs_ln;
-				}
+*/				}
 				break;
 		}
 	}
@@ -180,15 +183,11 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 				break;
 
 			case BACKSPACE:
-				if(dt->cusr_x > dt->chrs_ln)
+				if(dt->cusr_x != dt->chrs_ln) // Left side protection.
 				{
-					dt->cusr_x = dt->chrs_ln;
+					dt = txtshift(dt, 'l');
+					dt = freeblk(dt);
 				}
-				for(term_t x = dt->chrs_ln - dt->cusr_x; x <= dt->chrs_ln; x++)
-				{
-					CURRLN[x - 1] = CURRLN[x];
-				}
-				dt = freeblk(dt);
 				break;
 
 			default:
