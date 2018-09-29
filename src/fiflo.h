@@ -18,7 +18,7 @@
 #define MAX_LNS USHRT_MAX - 1 // - 1 is index.
 #define MAX_CHRS MAX_LNS
 #define MEMBLK 512 // For optimal allocation Must be > 1 and should be % 8 = 0.
-#define STRLENBUFF 5 // Eg. USHRT_MAX (65535) => 5 as the strlen.  
+#define STRLENBUF 5 // Eg. USHRT_MAX (65535) => 5 as the strlen.  
 
 typedef uint16_t buf_t; // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".

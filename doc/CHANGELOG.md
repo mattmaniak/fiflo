@@ -10,6 +10,7 @@ files use git-show or git-log.
 ### vX.Y.Z (WIP):
 - configure.ac added,
 - control keys changed,
+- upper bar splitted,
 - moveable cursor.
 
 ### v2.0.0 (2018, September 11):

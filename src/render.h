@@ -5,8 +5,8 @@
 #include <sys/ioctl.h>
 
 // UI areas.
-#define BAR_SZ 2
-#define TXT_Y (termgetsz(dt, 'Y') - BAR_SZ)
+#define BARS_SZ 2
+#define TXT_Y (termgetsz(dt, 'Y') - BARS_SZ)
 #define TERM_X_MIN 68
 #define DOTS "[...]"
 
@@ -25,9 +25,10 @@
 term_t termgetsz(buf* dt, char axis); // Check if a term to small or big.
 void flushwin(buf* dt); // For rendering in a one frame.
 
-void bar(buf* dt, char key); // Render upper bar.
+void upbar(buf* dt); // Render upper bar.
+void lowbar(buf* dt, char key);
 void window(buf* dt, char key); // Bar + rendered text + fill + cursor.
-void lowerfill(buf* dt); // Empty space below the text.
+void fill(buf* dt); // Empty space below the text.
 void setcurspos(buf* dt); // Set cursor position from the rendered bottom.
 
 #endif

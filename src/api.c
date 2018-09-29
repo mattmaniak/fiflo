@@ -97,10 +97,7 @@ buf* charadd(buf* dt, char key)
 		dt = allocblk(dt, 'c');
 		if(dt->cusr_x > 0)
 		{
-			for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
-			{
-				CURRLN[x] = CURRLN[x - 1];
-			}
+			txtshift(dt);
 		}
 		dt->txt[dt->lns - dt->cusr_y][LASTCHR - dt->cusr_x] = key;
 		dt->txt[dt->lns - dt->cusr_y][dt->chrs_ln] = NTERM;
@@ -183,6 +180,14 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 				break;
 
 			case BACKSPACE:
+				if(dt->cusr_x > dt->chrs_ln)
+				{
+					dt->cusr_x = dt->chrs_ln;
+				}
+				for(term_t x = dt->chrs_ln - dt->cusr_x; x <= dt->chrs_ln; x++)
+				{
+					CURRLN[x - 1] = CURRLN[x];
+				}
 				dt = freeblk(dt);
 				break;
 

@@ -40,7 +40,7 @@ void flushwin(buf* dt)
 	fflush(stdout);
 }
 
-void bar(buf* dt, char key)
+void upbar(buf* dt)
 {
 	const char* title = "fiflo | filename: \0";
 	term_t fnmax = termgetsz(dt, 'X') - (term_t) (strlen(title) + strlen(DOTS));
@@ -55,28 +55,30 @@ void bar(buf* dt, char key)
 		printf("%s%*s\n", dt->fname, termgetsz(dt, 'X')
 		- (term_t) (strlen(title) + strlen(dt->fname)), " ");
 	}
-	printf(
-	"chars [all, ln, last]: %*d, %*d, %*d%*s| CTRL+: D - save, C - exit%s\n",
-	STRLENBUFF, dt->chrs, STRLENBUFF, dt->chrs_ln, 3, key,
-	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
 }
 
+void lowbar(buf* dt, char key)
+{
+	printf(
+	"%s\nchars [all, ln, last]: %*d, %*d, %*d%*s| CTRL+: D - save, C - exit%s",
+	INVERT, STRLENBUF, dt->chrs, STRLENBUF, dt->chrs_ln, 3, key,
+	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
+}
 
 void window(buf* dt, char key)
 {
 	buf_t hidden_lns = 0;
-	bar(dt, key);
+	upbar(dt);
 
 	if(dt->lns >= TXT_Y) // Horizontal scroll.
 	{
-		hidden_lns = dt->lns - TXT_Y + CURRENT + 1; // 1 - DOTS in Y.
-		printf("%s%s%s\n", INVERT, DOTS, INVERT);
+		hidden_lns = dt->lns - TXT_Y + CURRENT;
 	}
 	for(term_t ln = hidden_lns; ln <= dt->lns; ln++)
 	{
-		if((STRLENBUFF + strlen(dt->txt[ln])) < termgetsz(dt, 'X'))
+		if((STRLENBUF + strlen(dt->txt[ln])) < termgetsz(dt, 'X'))
 		{
-			printf("%s%*d%s%s", INVERT, STRLENBUFF, ln + INDEX, RESET,
+			printf("%s%*d%s%s", INVERT, STRLENBUF, ln + INDEX, RESET,
 			dt->txt[ln]);
 		}
 		else
@@ -94,11 +96,12 @@ void window(buf* dt, char key)
 			+ strlen(dt->txt[ln]) + strlen(DOTS) - termgetsz(dt, 'X') + left);
 		}
 	}
-	lowerfill(dt);
+	fill(dt);
+	lowbar(dt, key);
 	setcurspos(dt);
 }
 
-void lowerfill(buf* dt)
+void fill(buf* dt)
 {
 	if(dt->lns < TXT_Y)
 	{
@@ -111,19 +114,24 @@ void lowerfill(buf* dt)
 
 void setcurspos(buf* dt)
 {
+	CURSLEFT((int32_t) termgetsz(dt, 'X'));
 	SAVECURSPOS();
-	if((dt->lns + INDEX) < TXT_Y)
+	if(strlen(CURRLN) < (termgetsz(dt, 'X') - strlen(DOTS)))
 	{
-		if(strlen(CURRLN) < (termgetsz(dt, 'X') - strlen(DOTS)))
-		{
-			CURSRIGHT((term_t) strlen(DOTS) + dt->chrs_ln - dt->cusr_x);
-		}
-		else
-		{
-			CURSRIGHT((term_t) termgetsz(dt, 'X') - dt->cusr_x - CURRENT);
-		}
-		CURSUP(TXT_Y - dt->lns + dt->cusr_y - CURRENT);
+		CURSRIGHT((term_t) strlen(DOTS) + dt->chrs_ln - dt->cusr_x);
 	}
-	// Else by default on the bottom && auto-positioned. TODO: BOTTOM BAR
+	else
+	{
+		CURSRIGHT((term_t) termgetsz(dt, 'X') - dt->cusr_x - CURRENT);
+	}
+	if((dt->lns + INDEX) <= TXT_Y)
+	{
+		CURSUP(TXT_Y - dt->lns + dt->cusr_y);
+	}
+	else
+	{
+		CURSUP(1 + dt->cusr_y);
+	}
+	// Else by default on the bottom && auto-positioned. TODO: BOTTOM upbar
 }
 
