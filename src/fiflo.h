@@ -11,7 +11,6 @@
 #include <termios.h>
 #include <unistd.h>
 
-// Misc. placeholders.
 #define CURRENT 1
 #define INDEX 1
 #define NTERM_SZ 1
@@ -24,21 +23,17 @@
 typedef uint16_t buf_t; // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
-#pragma pack(push, 2) // sizeof(buf) = 30. Align to 32 that can be divided by 8.
+#pragma pack(push, 1)
 typedef struct
 {
-	// Metadata.
 	FILE* txtf;
-	char* fname; // Full filename, eg. /home/user/basename
-	// Main buffer.
-	char** txt; // Eg. txt[lns][chrs].
-	// Indicators.
+	char* fname; // Full filename, eg. /home/user/basename.
+	char** txt; // Text buffer. Eg. txt[lns][chrs].
 	buf_t chrs; // All chars index.
 	buf_t chrs_ln; // Chars in the current line (index).
 	buf_t lns; // Lines index.
-	// User's cursor position.
 	buf_t cusr_x;
-	buf_t cusr_y;	
+	buf_t cusr_y;
 }
 buf;
 #pragma pack(pop)

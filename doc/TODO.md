@@ -3,7 +3,7 @@
 - keymap,
 - improve configure.ac and Makefile,
 - TAB key,
-- fix to big memory usage (blocks),
+- fix too big memory usage (blocks),
 - bigger buffer,
 - paging mechanism,
 - move cursor (YVFH keys),

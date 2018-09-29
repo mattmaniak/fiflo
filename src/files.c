@@ -50,10 +50,6 @@ buf* readfile(buf* dt)
 		}
 		fclose(dt->txtf);
 	}
-	else
-	{
-		dt->txt[dt->lns][dt->chrs] = NTERM;
-	}
 	return dt;
 }
 

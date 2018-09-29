@@ -74,7 +74,12 @@ void window(buf* dt, char key)
 	}
 	for(term_t ln = hidden_lns; ln <= dt->lns; ln++)
 	{
-		if(STRLENBUFF + strlen(dt->txt[ln]) >= termgetsz(dt, 'X'))
+		if((STRLENBUFF + strlen(dt->txt[ln])) < termgetsz(dt, 'X'))
+		{
+			printf("%s%*d%s%s", INVERT, STRLENBUFF, ln + INDEX, RESET,
+			dt->txt[ln]);
+		}
+		else
 		{
 			_Bool left;
 			if(dt->txt[ln][strlen(dt->txt[ln]) - INDEX] == LF) // Move one right.
@@ -88,21 +93,12 @@ void window(buf* dt, char key)
 			printf("%s%s%s%s", INVERT, DOTS, RESET, dt->txt[ln]
 			+ strlen(dt->txt[ln]) + strlen(DOTS) - termgetsz(dt, 'X') + left);
 		}
-		else
-		{
-			printf("%s%*d%s", INVERT, STRLENBUFF, ln + INDEX, RESET);
-			if(dt->txt[ln][0] == TAB)
-			{
-				printf("%*s", STRLENBUFF, " ");
-			}
-			fputs(dt->txt[ln], stdout);
-		}
 	}
-	lower_fill(dt);
+	lowerfill(dt);
 	setcurspos(dt);
 }
 
-void lower_fill(buf* dt)
+void lowerfill(buf* dt)
 {
 	if(dt->lns < TXT_Y)
 	{
@@ -116,9 +112,9 @@ void lower_fill(buf* dt)
 void setcurspos(buf* dt)
 {
 	SAVECURSPOS();
-	if(dt->lns < TXT_Y - CURRENT)
+	if((dt->lns + INDEX) < TXT_Y)
 	{
-		if(strlen(CURRLN) < termgetsz(dt, 'X') - strlen(DOTS))
+		if(strlen(CURRLN) < (termgetsz(dt, 'X') - strlen(DOTS)))
 		{
 			CURSRIGHT((term_t) strlen(DOTS) + dt->chrs_ln - dt->cusr_x);
 		}
@@ -128,6 +124,6 @@ void setcurspos(buf* dt)
 		}
 		CURSUP(TXT_Y - dt->lns + dt->cusr_y - CURRENT);
 	}
-	// Else by default on the bottom && auto-positioned.
+	// Else by default on the bottom && auto-positioned. TODO: BOTTOM BAR
 }
 

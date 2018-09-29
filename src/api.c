@@ -95,7 +95,6 @@ buf* charadd(buf* dt, char key)
 	if(dt->chrs <= MAX_CHRS)
 	{
 		dt = allocblk(dt, 'c');
-
 		if(dt->cusr_x > 0)
 		{
 			for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
@@ -105,6 +104,7 @@ buf* charadd(buf* dt, char key)
 		}
 		dt->txt[dt->lns - dt->cusr_y][LASTCHR - dt->cusr_x] = key;
 		dt->txt[dt->lns - dt->cusr_y][dt->chrs_ln] = NTERM;
+
 		if(key == NTERM && dt->chrs > 0) // Initializer.
 		{
 			dt->chrs--;
@@ -117,15 +117,15 @@ buf* charadd(buf* dt, char key)
 				break;
 
 			case LF: // TODO: WHEN ENTER.
-				dt->cusr_y = 0;
 				dt = allocblk(dt, 'l');
 				if(dt->cusr_x > 0)
 				{
-					for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
+					for(term_t x = strlen(UPLN) - dt->cusr_x; x <= strlen(UPLN); x++)
 					{
-						CURRLN[x] = CURRLN[x - 1];
-						strcpy(&dt->txt[dt->lns][x], &dt->txt[dt->lns - 1][x]);
+						CURRLN[dt->chrs_ln++] = UPLN[x];
 					}
+					UPLN[strlen(UPLN) - dt->cusr_x] = NTERM;
+					dt->cusr_x = dt->chrs_ln;
 				}
 				break;
 		}
@@ -164,6 +164,14 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 				if(dt->cusr_y < dt->lns)
 				{
 					dt->cusr_y++;
+					if(strlen(UPLN) == 1) // Must contain at least newline.
+					{
+						dt->chrs = 1;
+					}
+					else
+					{
+						dt->chrs_ln = strlen(UPLN) - INDEX;
+					}
 				}
 				break;
 

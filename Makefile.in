@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=gnu11 -Wall -Wextra -O3
+CFLAGS=-std=gnu99 -Wall -Wextra -O3
 TARGET=fiflo
 BIN_ODIR=/usr/bin/$(TARGET)
 MAN_ODIR=/usr/share/man/man1/$(TARGET).1
