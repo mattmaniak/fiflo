@@ -183,7 +183,7 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 				break;
 
 			case BACKSPACE:
-				if(dt->cusr_x != dt->chrs_ln) // Left side protection.
+				if((dt->cusr_x != dt->chrs_ln) || dt->chrs_ln == 0) // Left side protection.
 				{
 					dt = txtshift(dt, 'l');
 					dt = freeblk(dt);

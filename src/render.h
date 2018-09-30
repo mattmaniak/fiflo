@@ -6,9 +6,13 @@
 
 // UI areas.
 #define BARS_SZ 2
-#define TXT_Y (termgetsz(dt, 'y') - BARS_SZ)
+#define LBAR_SZ 1
 #define TERM_X_MIN 68
 #define DOTS "[...]"
+#define CUR_SZ 1
+
+#define TXT_X (termgetsz(dt, 'x') - STRLEN_BUF_T)
+#define TXT_Y (termgetsz(dt, 'y') - BARS_SZ)
 
 // ANSI escape codes..
 #define RESET "\033[0m"
@@ -29,7 +33,7 @@ void upbar(buf* dt); // Render upper bar.
 void lowbar(buf* dt, char key);
 void window(buf* dt, char key); // Bar + rendered text + fill + cursor.
 void fill(buf* dt); // Empty space below the text.
-void setcurspos(buf* dt); // Set cursor position from the rendered bottom.
+void setcurpos(buf* dt); // Set cursor position from the rendered bottom.
 
 #endif
 

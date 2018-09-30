@@ -5,9 +5,10 @@ term_t termgetsz(buf* dt, char axis)
 	const uint8_t y_min = 4;
 	const term_t sz_max = USHRT_MAX;
 
-	struct winsize win; // From "sys/ioctl.h".
+	struct winsize win;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
 
+	// Terminal size check.
 	if(win.ws_col < TERM_X_MIN || win.ws_row < y_min)
 	{
 		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", TERM_X_MIN, y_min);
@@ -22,10 +23,17 @@ term_t termgetsz(buf* dt, char axis)
 	{
 		case 'x':
 			return win.ws_col;
+
 		case 'y':
 			return win.ws_row;
+
+		default:
+			printf("%s", RESET);
+			fputs("Check termgetsz function params, exit(1).\n", stderr);
+			exit(1);
 	}
-	return 0; // Required -Wreturn-type.
+	// Required -Wreturn-type.
+	return 1;
 }
 
 void flushwin(buf* dt)
@@ -48,10 +56,12 @@ void upbar(buf* dt)
 	printf("%s%s", INVERT, title);
 	if(strlen(dt->fname) > fnmax)
 	{
+		// Filename will be visually shrinked and terminated by "[...]".
 		printf("%.*s%s\n", fnmax, dt->fname, DOTS);
 	}
 	else
 	{
+		// Whole filename will be displayed.
 		printf("%s%*s\n", dt->fname, termgetsz(dt, 'x')
 		- (term_t) (strlen(title) + strlen(dt->fname)), " ");
 	}
@@ -61,28 +71,31 @@ void lowbar(buf* dt, char key)
 {
 	printf(
 	"%s\nchars [all, ln, last]: %*d, %*d, %*d%*s| CTRL+: D - save, C - exit%s",
-	INVERT, STRLENBUF_T, dt->chrs, STRLENBUF_T, dt->chrs_ln, 3, key,
+	INVERT, STRLEN_BUF_T, dt->chrs, STRLEN_BUF_T, dt->chrs_ln, 3, key,
 	termgetsz(dt, 'x') - TERM_X_MIN + 1, " ", RESET);
 }
 
-void window(buf* dt, char key)
+void window(buf* dt, char key) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 {
 	buf_t hidden_lns = 0;
 	upbar(dt);
 
-	if(dt->lns >= TXT_Y) // Horizontal scroll.
+	// Horizontal scroll set.
+	if(dt->lns >= TXT_Y)
 	{
 		hidden_lns = dt->lns - TXT_Y + CURRENT;
 	}
 	for(term_t ln = hidden_lns; ln <= dt->lns; ln++)
 	{
-		if((STRLENBUF_T + strlen(dt->txt[ln])) < termgetsz(dt, 'x'))
+		if((STRLEN_BUF_T + strlen(dt->txt[ln])) < termgetsz(dt, 'x'))
 		{
-			printf("%s%*d%s%s", INVERT, STRLENBUF_T, ln + INDEX, RESET,
+			// There is small amount of chars. X-scroll isn't required.
+			printf("%s%*d%s%s", INVERT, STRLEN_BUF_T, ln + INDEX, RESET,
 			dt->txt[ln]);
 		}
 		else
 		{
+			// Horizontal scroll required.
 			_Bool left;
 			if(dt->txt[ln][strlen(dt->txt[ln]) - INDEX] == LF) // Move one right.
 			{
@@ -92,30 +105,37 @@ void window(buf* dt, char key)
 			{
 				left = 1;
 			}
-			if(dt->cusr_x > (termgetsz(dt, 'x') - (2 * STRLENBUF_T) - CURRENT))
-			{
-				dt->cusr_x = termgetsz(dt, 'x') - (2 * STRLENBUF_T) - CURRENT;
-			} // TODO: SCROLLING TO LEFT;
+			// TODO: SCROLLING TO LEFT;
 			printf("%s%s%s", INVERT, DOTS, RESET);
 
-			for(buf_t x = dt->chrs_ln + strlen(DOTS)
-			- termgetsz(dt, 'x') + left; x < dt->chrs_ln; x++)
+			if((dt->chrs_ln - TXT_X) >= dt->cusr_x) // TODO: LEFT.
 			{
-				putchar(dt->txt[ln][x]);
+				// Text will be scrolled. Not cursor.
+				for(buf_t x = dt->chrs_ln - TXT_X + left - dt->cusr_x;
+				x <= dt->chrs_ln - dt->cusr_x; x++)
+				{
+					putchar(dt->txt[ln][x]);
+				}
 			}
-//			printf("%s%s%s%s", INVERT, DOTS, RESET, dt->txt[ln]
+			else
+			{
+				// Scrolled to start of the line. Now cursor will be scrolled.
+				printf("%.*s", TXT_X, dt->txt[ln]);
+			}
+//			printf("%s", dt->txt[ln]
 //			+ strlen(dt->txt[ln]) + strlen(DOTS) - termgetsz(dt, 'x') + left);
 		}
 	}
 	fill(dt);
 	lowbar(dt, key);
-	setcurspos(dt);
+	setcurpos(dt);
 }
 
 void fill(buf* dt)
 {
 	if(dt->lns < TXT_Y)
 	{
+		// Fill the empty area below the text to position lower bar.
 		for(term_t ln = dt->lns; ln < TXT_Y - CURRENT; ln++)
 		{
 			putchar(LF);
@@ -123,26 +143,44 @@ void fill(buf* dt)
 	}
 }
 
-void setcurspos(buf* dt)
+void setcurpos(buf* dt)
 {
-	CURSLEFT((int32_t) termgetsz(dt, 'x'));
+	// Cursor is moved by default to the right side by lower bar. Move it back.
+	CURSLEFT(termgetsz(dt, 'x') - CUR_SZ);
+	// Will be used in the flushwin().
 	SAVECURSPOS();
-	if(strlen(CURRLN) < (termgetsz(dt, 'x') - strlen(DOTS)))
+
+	// X axis.
+	if((term_t) strlen(CURRLN) < TXT_X) // TODO: MAYBE dt->chrs_ln INSTEAD STRLEN.
 	{
+		// No horizontal scroll.
 		CURSRIGHT((term_t) strlen(DOTS) + dt->chrs_ln - dt->cusr_x);
 	}
 	else
 	{
-		CURSRIGHT((term_t) termgetsz(dt, 'x') - dt->cusr_x - CURRENT);
+		// Only last TXT_X chars are seen.
+		if((dt->chrs_ln - TXT_X) > dt->cusr_x)
+		{
+			// Fixed position. Current line is scrolled, not cursor.
+			CURSRIGHT(termgetsz(dt, 'x') - CUR_SZ);
+		}
+		else
+		{
+			// Text is scrolled to the start. Cursor can be moved.
+			CURSRIGHT(dt->chrs_ln - dt->cusr_x + STRLEN_BUF_T);
+		}
 	}
+
+	// Y axis.
 	if((dt->lns + INDEX) <= TXT_Y)
 	{
+		// All lines fits in the vertical text area.
 		CURSUP(TXT_Y - dt->lns + dt->cusr_y);
 	}
 	else
 	{
-		CURSUP(1 + dt->cusr_y);
+		// Lines are scrolled.
+		CURSUP(LBAR_SZ + dt->cusr_y);
 	}
-	// Else by default on the bottom && auto-positioned. TODO: BOTTOM upbar
 }
 
