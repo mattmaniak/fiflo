@@ -1,4 +1,4 @@
-# fiflo - TODOs
+# fiflo - TODOs and ideas
 ## delete one if done:
 - keymap,
 - improve configure.ac and Makefile,
@@ -7,7 +7,7 @@
 - bigger buffer,
 - paging mechanism,
 - move cursor (YVFH keys),
-- config file (theme),
+- fiflorc file && colors,
 - syntax highlighting,
 - search option,
 - lock on a file,

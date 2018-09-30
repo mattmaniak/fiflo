@@ -1,12 +1,12 @@
 #include "files.h"
 
-void fnameset(buf* dt, const char* passed)
+void set_fname(meta* dt, const char* passed)
 {
 	if(passed[strlen(passed) - NTERM_SZ] == '/')
 	{
 		// Is folder.
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
-		freeallexit(dt, 1);
+		free_all_exit(dt, 1);
 	}
 	if(passed[0] == '/')
 	{
@@ -14,7 +14,7 @@ void fnameset(buf* dt, const char* passed)
 		if(strlen(passed) + NTERM_SZ > PATH_MAX)
 		{
 			fputs("Given path is too long, exit(1).\n", stderr);
-			freeallexit(dt, 1);
+			free_all_exit(dt, 1);
 		}
 		strcpy(dt->fname, passed); // Malloc'ed so doesn't need 'n' for size.
 	}
@@ -22,14 +22,14 @@ void fnameset(buf* dt, const char* passed)
 	{
 		// Is relative path or basename.
 		char* abs_path = malloc(PATH_MAX);
-		checkptr(dt, (getcwd(abs_path, PATH_MAX)),
+		check_ptr(dt, (getcwd(abs_path, PATH_MAX)),
 		"get your current path. Can be too long\0");
 
 		if((strlen(abs_path) + strlen(passed) + NTERM_SZ) > PATH_MAX)
 		{
 			// Exceeded 4096 chars.
 			fputs("Given filename is too long, exit(1).\n", stderr);
-			freeallexit(dt, 1);
+			free_all_exit(dt, 1);
 		}
 		// TODO: COMMENTS && HOW DOES IT WORKS?
 		strcpy(dt->fname, abs_path); // Copy the path.
@@ -42,7 +42,7 @@ void fnameset(buf* dt, const char* passed)
 	}
 }
 
-buf* readfile(buf* dt)
+meta* read_file(meta* dt)
 {
 	char chr;
 	dt->txtf = fopen(dt->fname, "rt");
@@ -52,14 +52,14 @@ buf* readfile(buf* dt)
 		while((chr = (char) getc(dt->txtf)) != EOF)
 		{
 			// Read all chars before end of file.
-			dt = charadd(dt, chr);
+			dt = add_char(dt, chr);
 		}
 		fclose(dt->txtf);
 	}
 	return dt;
 }
 
-void savefile(buf* dt)
+void save_file(meta* dt)
 {
 	if(access(dt->fname, F_OK) == -1)
 	{
@@ -68,11 +68,11 @@ void savefile(buf* dt)
 		if(create == -1)
 		{
 			fputs("Failed to create the new file, exit(1).\n", stderr);
-			freeallexit(dt, 1);
+			free_all_exit(dt, 1);
 		}
 	}
 	dt->txtf = fopen(dt->fname, "wt");
-	checkptr(dt, dt->txtf, "write to the file\0");
+	check_ptr(dt, dt->txtf, "write to the file\0");
 
 	for(buf_t ln = 0; ln <= dt->lns; ln++)
 	{

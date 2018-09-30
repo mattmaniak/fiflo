@@ -1,12 +1,12 @@
 #include "api.h"
 
-buf* freeblk(buf* dt)
+meta* freeblk(meta* dt)
 {
 	_Bool line_back = 0;
 	if(dt->chrs_ln - 1 % MEMBLK == MEMBLK - 1)
 	{
-		CURRLN = realloc(CURRLN, (2 * dt->chrs_ln) - MEMBLK);
-		checkptr(dt, CURRLN, "free the memblock with a line\0");
+		CURR_LN = realloc(CURR_LN, (2 * dt->chrs_ln) - MEMBLK);
+		check_ptr(dt, CURR_LN, "free the memblock with a line\0");
 	}
 	if(dt->chrs_ln > 0 && dt->cusr_x != (dt->chrs_ln + INDEX))
 	{
@@ -18,14 +18,14 @@ buf* freeblk(buf* dt)
 		line_back = 1;
 		dt->cusr_y = 0;
 	}
-	CURRLN[dt->chrs_ln] = NTERM;
+	CURR_LN[dt->chrs_ln] = NTERM;
 
-	if(line_back == 1 && dt->lns > 0 && UPLN[strlen(UPLN) - NTERM_SZ] == LF)
+	if(line_back == 1 && dt->lns > 0 && LN_ABOVE[strlen(LN_ABOVE) - NTERM_SZ] == LF)
 	{
-		free(CURRLN);
+		free(CURR_LN);
 		dt->lns--;
-		dt->chrs_ln = (buf_t) strlen(CURRLN) - NTERM_SZ;
-		CURRLN[dt->chrs_ln] = NTERM;
+		dt->chrs_ln = (buf_t) strlen(CURR_LN) - NTERM_SZ;
+		CURR_LN[dt->chrs_ln] = NTERM;
 		if(dt->chrs > 0) // Just for the LF removal.
 		{
 			dt->chrs--;
@@ -34,7 +34,7 @@ buf* freeblk(buf* dt)
 	return dt;
 }
 
-buf* allocblk(buf* dt, char mode)
+meta* alloc_block(meta* dt, char mode)
 {
 	switch(mode)
 	{
@@ -43,8 +43,8 @@ buf* allocblk(buf* dt, char mode)
 			dt->chrs_ln++;
 			if(dt->chrs_ln % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
-				CURRLN = realloc(CURRLN, dt->chrs_ln + MEMBLK);
-				checkptr(dt, CURRLN, "alloc new memblock for chars\0");
+				CURR_LN = realloc(CURR_LN, dt->chrs_ln + MEMBLK);
+				check_ptr(dt, CURR_LN, "alloc new memblock for chars\0");
 			}
 			break;
 
@@ -60,16 +60,16 @@ buf* allocblk(buf* dt, char mode)
 					dt->txt =
 					realloc(dt->txt, sizeof(dt->txt) * (dt->lns + MEMBLK));
 				}
-				CURRLN = malloc(MEMBLK);
-				checkptr(dt, CURRLN, "alloc byte in the new line\0");
+				CURR_LN = malloc(MEMBLK);
+				check_ptr(dt, CURR_LN, "alloc byte in the new line\0");
 			}
-			CURRLN[dt->chrs_ln = 0] = NTERM;
+			CURR_LN[dt->chrs_ln = 0] = NTERM;
 			break;
 	}
 	return dt;
 }
 
-buf* txtshift(buf* dt, char direction)
+meta* shift_txt(meta* dt, char direction)
 {
 	switch(direction)
 	{
@@ -82,7 +82,7 @@ buf* txtshift(buf* dt, char direction)
 			{
 				for(term_t x = dt->chrs_ln - dt->cusr_x; x <= dt->chrs_ln; x++)
 				{
-					CURRLN[x - 1] = CURRLN[x];
+					CURR_LN[x - 1] = CURR_LN[x];
 				}
 			}
 			break;
@@ -90,23 +90,23 @@ buf* txtshift(buf* dt, char direction)
 		case 'r':
 			for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
 			{
-				CURRLN[x] = CURRLN[x - 1];
+				CURR_LN[x] = CURR_LN[x - 1];
 			}
 			break;
 	}
 	return dt;
 }
 
-buf* charadd(buf* dt, char key)
+meta* add_char(meta* dt, char key)
 {
 	if(dt->chrs <= MAX_CHRS)
 	{
-		dt = allocblk(dt, 'c');
+		dt = alloc_block(dt, 'c');
 		if(dt->cusr_x > 0)
 		{
-			txtshift(dt, 'r');
+			shift_txt(dt, 'r');
 		}
-		dt->txt[dt->lns - dt->cusr_y][LASTCHR - dt->cusr_x] = key;
+		dt->txt[dt->lns - dt->cusr_y][LAST_CHAR - dt->cusr_x] = key;
 		dt->txt[dt->lns - dt->cusr_y][dt->chrs_ln] = NTERM;
 
 		if(key == NTERM && dt->chrs > 0) // Initializer.
@@ -117,35 +117,37 @@ buf* charadd(buf* dt, char key)
 		switch(key) // TODO: TAB
 		{
 			case LF: // TODO: WHEN ENTER.
-				dt = allocblk(dt, 'l');
+				dt = alloc_block(dt, 'l');
 				if(dt->cusr_x > 0)
 				{
-/*					for(term_t x = strlen(UPLN) - dt->cusr_x; x <= strlen(UPLN); x++)
+					for(term_t x = strlen(LN_ABOVE) - dt->cusr_x; x <= strlen(LN_ABOVE); x++)
 					{
-						CURRLN[dt->chrs_ln++] = UPLN[x];
+						CURR_LN[dt->chrs_ln++] = LN_ABOVE[x];
 					}
-					UPLN[strlen(UPLN) - dt->cusr_x] = NTERM;
+					LN_ABOVE[strlen(LN_ABOVE) - dt->cusr_x] = NTERM;
 					dt->cusr_x = dt->chrs_ln;
-*/				}
+				}
 				break;
 		}
 	}
 	return dt;
 }
 
-buf* recochar(buf* dt, char key) // TODO: KEYMAP.
+meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 {
 	if(key != ESCAPE)
 	{
 		switch(key)
 		{
-			case NEG: // Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH.
-				freeallexit(dt, 0);
+			// Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH.
+			case NEG:
+				free_all_exit(dt, 0);
 
 			case CTRL_D:
-				savefile(dt);
+				save_file(dt);
 				break;
 
+			// Move cursor right.
 			case CTRL_H:
 				if(dt->cusr_x > 0)
 				{
@@ -153,6 +155,7 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 				}
 				break;
 
+			// Move cursor left.
 			case CTRL_G:
 				if(dt->cusr_x < dt->chrs_ln)
 				{
@@ -160,21 +163,23 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 				}
 				break;
 
+			// Move cursor up.
 			case CTRL_Y:
 				if(dt->cusr_y < dt->lns)
 				{
 					dt->cusr_y++;
-					if(strlen(UPLN) == 1) // Must contain at least newline.
+					if(strlen(LN_ABOVE) == 1) // Must contain at least newline.
 					{
 						dt->chrs = 1;
 					}
 					else
 					{
-						dt->chrs_ln = strlen(UPLN) - INDEX;
+						dt->chrs_ln = strlen(LN_ABOVE) - INDEX;
 					}
 				}
 				break;
 
+			// Move cursor down.
 			case CTRL_B:
 				if(dt->cusr_y > 0)
 				{
@@ -183,15 +188,16 @@ buf* recochar(buf* dt, char key) // TODO: KEYMAP.
 				break;
 
 			case BACKSPACE:
-				if((dt->cusr_x != dt->chrs_ln) || dt->chrs_ln == 0) // Left side protection.
+				// Left side protection.
+				if((dt->cusr_x != dt->chrs_ln) || dt->chrs_ln == 0)
 				{
-					dt = txtshift(dt, 'l');
+					dt = shift_txt(dt, 'l');
 					dt = freeblk(dt);
 				}
 				break;
 
 			default:
-				dt = charadd(dt, key);
+				dt = add_char(dt, key);
 				break;
 		}
 	}

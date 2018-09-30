@@ -22,8 +22,8 @@ provide updated code on the "develop" branch.
 ## Coding rules:
 - Allman's brace style, indentation: hard tab (4 spaces wide),
 - use only snake_case,
-- keep names semantic shortened, eg. "fname_max",
 - write short TODOs near thing to fix as uppercase comments,
+- insert inline comments above messed procedures,
 - keep docs up-to-date with the code in stable releases,
 - function"s args names need to be shorter than variables' names.
 

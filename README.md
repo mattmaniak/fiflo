@@ -10,7 +10,7 @@ Simple terminal-based text editor.
 - gcc,
 - terminal with an ANSI escape codes support.
 
-# Additional requirements:
+## Additional requirements:
 - gzip for man-pages packing,
 - cp for installation.
 
@@ -29,7 +29,7 @@ sudo make install
 sudo make uninstall
 ```
 
-## Building with AddressSanitizer
+## Building with AddressSanitizer for memory errors handling
 ```
 make sanitize
 ```
@@ -40,3 +40,4 @@ Will you port it into the Windows?
 
 How can I contribute?
 - Read the doc/WORKFLOW.md and send any request.
+

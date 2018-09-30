@@ -1,12 +1,11 @@
 #ifdef __linux__
 
 #include "fiflo.h" // All typedefs are here.
-
 #include "files.c"
 #include "api.c"
 #include "render.c"
 
-_Noreturn void freeallexit(buf* dt, _Bool code)
+_Noreturn void free_all_exit(meta* dt, _Bool code)
 {
 	free(dt->fname);
 	for(buf_t ln = 0; ln <= dt->lns; ln++)
@@ -18,17 +17,17 @@ _Noreturn void freeallexit(buf* dt, _Bool code)
 	exit(code);
 }
 
-void sighandler(int nothing)
+void sig_handler(int nothing)
 {
 	if(nothing) {}
 }
 
-void checkptr(buf* dt, void* ptr, const char* errmsg)
+void check_ptr(meta* dt, void* ptr, const char* err_msg)
 {
 	if(!ptr)
 	{
-		fprintf(stderr, "Can't %s, exit(1).\n", errmsg);
-		freeallexit(dt, 1);
+		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
+		free_all_exit(dt, 1);
 	}
 }
 
@@ -58,7 +57,7 @@ void options(const char* arg)
 	run(arg);
 }
 
-char nixgetch(void)
+char getch(void) // TODO: COMMENT.
 {
 	struct termios old, new; // From sys/ioctl.h.
 	char key;
@@ -79,12 +78,12 @@ char nixgetch(void)
 	return key;
 }
 
-buf* init(buf* dt, const char* passed)
+meta* init(meta* dt, const char* passed)
 {
 	dt->fname = malloc(PATH_MAX);
 	dt->txt = malloc(sizeof(dt->txt) * MEMBLK);
-	checkptr(dt, dt->txt, "alloc memory for lines\0");
-	checkptr(dt, dt->fname, "alloc memory for the filename\0");
+	check_ptr(dt, dt->txt, "alloc memory for lines\0");
+	check_ptr(dt, dt->fname, "alloc memory for the filename\0");
 
 	dt->chrs = 0;
 	dt->chrs_ln = 0;
@@ -93,27 +92,28 @@ buf* init(buf* dt, const char* passed)
 	dt->cusr_x = 0;
 	dt->cusr_y = 0;
 
-	fnameset(dt, passed);
+	set_fname(dt, passed);
 	dt->txt[0] = malloc(MEMBLK);
-	checkptr(dt, dt->txt, "alloc memory for the first line\0");
+	check_ptr(dt, dt->txt, "alloc memory for the first line\0");
 
 	return dt;
 }
 
 _Noreturn void run(const char* passed)
 {
-	buf* data = malloc(sizeof(buf));
-	checkptr(data, data, "alloc memory for metadata\0");
+	meta* data = malloc(sizeof(meta));
+	check_ptr(data, data, "alloc memory for metadata\0");
 	data = init(data, passed);
-	data = readfile(data);
+	data = read_file(data);
 
 	char pressed = NTERM; // Initializer.
-	for(;;) // Main program loop.
+	// Main program loop.
+	for(;;)
 	{
-		data = recochar(data, pressed);
+		data = recognize_char(data, pressed);
 		window(data, pressed);
-		pressed = nixgetch();
-		flushwin(data);
+		pressed = getch();
+		flush_win(data);
 	}
 }
 
@@ -121,14 +121,14 @@ int main(int argc, char** argv)
 {
 	if(argc != 1 && argc != 2)
 	{
-		fputs("Fiflo can handle max. one additional arg, exit(1).\n", stderr);
+		fputs("Only one additional arg can be passed, exit(1).\n", stderr);
 		exit(1);
 	}
 	struct sigaction sig;
 
-    sig.sa_handler = sighandler;
+    sig.sa_handler = sig_handler;
 	sigemptyset(&sig.sa_mask);
-	sig.sa_flags = 0;
+	sig.sa_flags = 0; // TODO: IS REQUIRED?
     sigaction(SIGINT, &sig, NULL);
 
 	if(argv[1] == NULL)
@@ -143,14 +143,6 @@ int main(int argc, char** argv)
 }
 
 #else
-
-#include <stdio.h>
-
-int main(void)
-{
-	fputs("Only Linux-based systems are supported, exit(1).\n", stderr);
-	return 0;
-}
-
+#error "Only Linux-based systems are supported."
 #endif
 
