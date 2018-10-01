@@ -81,9 +81,11 @@ char getch(void) // TODO: COMMENT.
 meta* init(meta* dt, const char* passed)
 {
 	dt->fname = malloc(PATH_MAX);
+	check_ptr(dt, dt->fname, "alloc memory for the filename\0");
+	set_fname(dt, passed);
+
 	dt->txt = malloc(sizeof(dt->txt) * MEMBLK);
 	check_ptr(dt, dt->txt, "alloc memory for lines\0");
-	check_ptr(dt, dt->fname, "alloc memory for the filename\0");
 
 	dt->chrs = 0;
 	dt->chrs_ln = 0;
@@ -92,7 +94,6 @@ meta* init(meta* dt, const char* passed)
 	dt->cusr_x = 0;
 	dt->cusr_y = 0;
 
-	set_fname(dt, passed);
 	dt->txt[0] = malloc(MEMBLK);
 	check_ptr(dt, dt->txt, "alloc memory for the first line\0");
 

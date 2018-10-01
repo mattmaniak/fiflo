@@ -5,11 +5,16 @@
 #include <sys/ioctl.h>
 
 // UI areas.
-#define UPBAR_SZ   1
-#define LBAR_SZ    2
-#define BARS_SZ    (UPBAR_SZ + LBAR_SZ)
-#define TERM_X_MIN 57
-#define CUR_SZ     1
+#define AT_LEAST_1_CHAR 1
+#define SPACE_SZ        1
+#define CUR_SZ          1
+#define UPBAR_SZ        1
+#define SLASH_SZ        1
+#define LBAR_SZ         1
+#define BARS_SZ         (UPBAR_SZ + LBAR_SZ)
+
+#define TINIEST_BAR "CTRL+: C - exit/Z - minimize/D - save/YGHB - move cursor\0"
+#define TERM_X_MIN     (term_t) (strlen(TINIEST_BAR) + AT_LEAST_1_CHAR)
 
 #define TXT_X (term_sz(dt, 'x') - STRLEN_BUF_T)
 #define TXT_Y (term_sz(dt, 'y') - BARS_SZ)
@@ -30,9 +35,9 @@ term_t term_sz(meta* dt, char axis); // Check if a term to small or big.
 void flush_win(meta* dt); // For rendering in a one frame.
 
 void upper_bar(meta* dt); // Render upper bar.
+void fill(meta* dt); // Empty space below the text.
 void lower_bar(meta* dt);
 void window(meta* dt); // Bar + rendered text + fill + cursor.
-void fill(meta* dt); // Empty space below the text.
 void set_cursor_pos(meta* dt); // Set cursor position from the rendered bottom.
 #endif
 

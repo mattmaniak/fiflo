@@ -51,39 +51,55 @@ void flush_win(meta* dt)
 	fflush(stdout);
 }
 
-void upper_bar(meta* dt)
+void upper_bar(meta* dt) // TODO: SIMPLIFY.
 {
-	const char* title = "fiflo | filename: \0";
-	term_t fnmax = term_sz(dt, 'x') - (term_t) (strlen(title) + 3);
+	const char* title = "fiflo: \0";
+	const char* dots = "...\0";
+	const char* indicators = " linelen/chars: \0";
+	term_t fname_max = term_sz(dt, 'x')
+	- (term_t) (strlen(title) + strlen(dots)
+	+ strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
 	ANSI_INVERT();
 	printf("%s", title);
-	if(strlen(dt->fname) > fnmax)
+	if(strlen(dt->fname) > fname_max)
 	{
 		// Filename will be visually shrinked and terminated by dots.
-		printf("%.*s%s\n", fnmax, dt->fname, "...");
+		printf("%.*s%s", fname_max, dt->fname, dots);
 	}
 	else
 	{
 		// Whole filename will be displayed.
-		printf("%s%*s\n", dt->fname,
-		term_sz(dt, 'x') - (term_t) (strlen(title) + strlen(dt->fname)), " ");
+		printf("%s%*s", dt->fname,
+		term_sz(dt, 'x') - (term_t) (strlen(dt->fname) + 34), " ");
+	}
+	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, dt->chrs_ln,
+	STRLEN_BUF_T, dt->chrs);
+}
+
+void fill(meta* dt)
+{
+	if(dt->lns < TXT_Y)
+	{
+		// Fill the empty area below the text to position lower bar.
+		for(term_t ln = dt->lns; ln < TXT_Y - CURRENT; ln++)
+		{
+			putchar(LF);
+		}
 	}
 }
 
 void lower_bar(meta* dt)
 {
 	ANSI_INVERT();
-	printf(
-	"\nchars [all, ln]: %*d, %*d%*s| CTRL+: D - save, C - exit",
-	STRLEN_BUF_T, dt->chrs, STRLEN_BUF_T, dt->chrs_ln,
-	term_sz(dt, 'x') - TERM_X_MIN + 1, " ");
 
-	printf("\n%*s", term_sz(dt, 'x'), " ");
+	printf("\n%s%*s", TINIEST_BAR,
+	term_sz(dt, 'x') - TERM_X_MIN + AT_LEAST_1_CHAR, " ");
 
 	ANSI_RESET();
 }
 
+// TODO: CURSOR AND RENDERING ON SMALLER THAN TERMINAL STTY SIZE.
 void window(meta* dt) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 {
 	buf_t hidden_lns = 0;
@@ -126,18 +142,6 @@ void window(meta* dt) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 	fill(dt);
 	lower_bar(dt);
 	set_cursor_pos(dt);
-}
-
-void fill(meta* dt)
-{
-	if(dt->lns < TXT_Y)
-	{
-		// Fill the empty area below the text to position lower bar.
-		for(term_t ln = dt->lns; ln < TXT_Y - CURRENT; ln++)
-		{
-			putchar(LF);
-		}
-	}
 }
 
 void set_cursor_pos(meta* dt) // TODO
