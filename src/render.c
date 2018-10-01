@@ -2,7 +2,7 @@
 
 term_t term_sz(meta* dt, char axis)
 {
-	const uint8_t y_min = 4;
+	const uint8_t y_min = BARS_SZ + CURRENT;
 	const term_t sz_max = USHRT_MAX;
 
 	struct winsize win;
@@ -43,7 +43,7 @@ void flush_win(meta* dt)
 	RESTORE_CUR_POS();
 	CLEANLN();
 
-	for(term_t y = 0; y <= TXT_Y; y++)
+	for(term_t y = 0; y < term_sz(dt, 'y'); y++)
 	{
 		LINE_UP();
 		CLEANLN();
@@ -54,14 +54,14 @@ void flush_win(meta* dt)
 void upper_bar(meta* dt)
 {
 	const char* title = "fiflo | filename: \0";
-	term_t fnmax = term_sz(dt, 'x') - (term_t) (strlen(title) + STRLEN_BUF_T);
+	term_t fnmax = term_sz(dt, 'x') - (term_t) (strlen(title) + 3);
 
 	ANSI_INVERT();
 	printf("%s", title);
 	if(strlen(dt->fname) > fnmax)
 	{
 		// Filename will be visually shrinked and terminated by dots.
-		printf("%.*s%s\n", fnmax, dt->fname, "[...]");
+		printf("%.*s%s\n", fnmax, dt->fname, "...");
 	}
 	else
 	{
@@ -71,17 +71,20 @@ void upper_bar(meta* dt)
 	}
 }
 
-void lower_bar(meta* dt, char key)
+void lower_bar(meta* dt)
 {
 	ANSI_INVERT();
 	printf(
-	"\nchars [all, ln, last]: %*d, %*d, %*d%*s| CTRL+: D - save, C - exit",
-	STRLEN_BUF_T, dt->chrs, STRLEN_BUF_T, dt->chrs_ln, 3, key,
+	"\nchars [all, ln]: %*d, %*d%*s| CTRL+: D - save, C - exit",
+	STRLEN_BUF_T, dt->chrs, STRLEN_BUF_T, dt->chrs_ln,
 	term_sz(dt, 'x') - TERM_X_MIN + 1, " ");
+
+	printf("\n%*s", term_sz(dt, 'x'), " ");
+
 	ANSI_RESET();
 }
 
-void window(meta* dt, char key) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
+void window(meta* dt) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 {
 	buf_t hidden_lns = 0;
 	upper_bar(dt);
@@ -121,7 +124,7 @@ void window(meta* dt, char key) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 		}
 	}
 	fill(dt);
-	lower_bar(dt, key);
+	lower_bar(dt);
 	set_cursor_pos(dt);
 }
 
@@ -137,16 +140,15 @@ void fill(meta* dt)
 	}
 }
 
-void set_cursor_pos(meta* dt)
+void set_cursor_pos(meta* dt) // TODO
 {
 	// Cursor is moved by default to the right side by lower bar. Move it back.
 	MV_CUR_LEFT(term_sz(dt, 'x') - CUR_SZ);
-	// Will be used in the flush_win().
+	// Left bottom corner. Will be used in the flush_win().
 	SAVE_CUR_POS();
 
 	// X axis.
-	// TODO: MAYBE dt->chrs_ln INSTEAD STRLEN.
-	if((term_t) strlen(CURR_LN) < TXT_X)
+	if((term_t) strlen(CURR_LN) < TXT_X) // TODO: MAYBE dt->chrs_ln INSTEAD STRLEN.
 	{
 		// No horizontal scroll.
 		MV_CUR_RIGHT((term_t) STRLEN_BUF_T + dt->chrs_ln - dt->cusr_x);
@@ -170,7 +172,7 @@ void set_cursor_pos(meta* dt)
 	if((dt->lns + INDEX) <= TXT_Y)
 	{
 		// All lines fits in the vertical text area.
-		MV_CUR_UP(TXT_Y - dt->lns + dt->cusr_y);
+		MV_CUR_UP(TXT_Y - (dt->lns + INDEX) + LBAR_SZ + dt->cusr_y);
 	}
 	else
 	{

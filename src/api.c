@@ -201,7 +201,8 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 				break;
 		}
 	}
-	printf("cusr_x: %d cusr_y: %d\n", dt->cusr_x, dt->cusr_y); // DEBUG
+	// DEBUG
+	printf("last: %d cusr_x: %d cusr_y: %d\n", key, dt->cusr_x, dt->cusr_y);
 	return dt;
 }
 

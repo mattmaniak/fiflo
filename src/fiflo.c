@@ -1,6 +1,6 @@
 #ifdef __linux__
-
 #include "fiflo.h" // All typedefs are here.
+
 #include "files.c"
 #include "api.c"
 #include "render.c"
@@ -111,7 +111,7 @@ _Noreturn void run(const char* passed)
 	for(;;)
 	{
 		data = recognize_char(data, pressed);
-		window(data, pressed);
+		window(data);
 		pressed = getch();
 		flush_win(data);
 	}
