@@ -46,7 +46,7 @@ meta* alloc_block(meta* dt, char mode)
 				CURR_LN = realloc(CURR_LN, dt->chrs_ln + MEMBLK);
 				check_ptr(dt, CURR_LN, "alloc new memblock for chars\0");
 			}
-		break;
+			break;
 
 		case 'l':
 			if(dt->lns++ >= MAX_LNS)
@@ -64,7 +64,7 @@ meta* alloc_block(meta* dt, char mode)
 				check_ptr(dt, CURR_LN, "alloc byte in the new line\0");
 			}
 			CURR_LN[dt->chrs_ln = 0] = NTERM;
-		break;
+			break;
 	}
 	return dt;
 }
@@ -85,14 +85,14 @@ meta* shift_txt(meta* dt, char direction)
 					CURR_LN[x - 1] = CURR_LN[x];
 				}
 			}
-		break;
+			break;
 
 		case 'r':
 			for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
 			{
 				CURR_LN[x] = CURR_LN[x - 1];
 			}
-		break;
+			break;
 	}
 	return dt;
 }
@@ -147,7 +147,7 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 
 			case CTRL_D:
 				save_file(dt);
-			break;
+				break;
 
 			// Move cursor right.
 			case CTRL_H:
@@ -155,7 +155,7 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 				{
 					dt->cusr_x--;
 				}
-			break;
+				break;
 
 			// Move cursor left.
 			case CTRL_G:
@@ -163,7 +163,7 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 				{
 					dt->cusr_x++;
 				}
-			break;
+				break;
 
 			// Move cursor up.
 			case CTRL_Y:
@@ -179,7 +179,7 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 						dt->chrs_ln = strlen(LN_ABOVE) - INDEX;
 					}
 				}
-			break;
+				break;
 
 			// Move cursor down.
 			case CTRL_B:
@@ -187,7 +187,7 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 				{
 					dt->cusr_y--;
 				}
-			break;
+				break;
 
 			case BACKSPACE:
 				// Left side protection.
@@ -196,11 +196,11 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 					dt = shift_txt(dt, 'l');
 					dt = freeblk(dt);
 				}
-			break;
+				break;
 
 			default:
 				dt = add_char(dt, key);
-			break;
+				break;
 		}
 	}
 	// DEBUG

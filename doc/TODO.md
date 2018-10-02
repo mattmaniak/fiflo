@@ -1,6 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
 - keymap,
+- "/usr/share/doc/fiflo/" dir after installation,
 - edited/save indicator,
 - improve configure.ac and Makefile.in,
 - TAB key,

@@ -13,8 +13,8 @@
 #define LBAR_SZ         1
 #define BARS_SZ         (UPBAR_SZ + LBAR_SZ)
 
-#define TINIEST_BAR "CTRL+: C - exit/Z - minimize/D - save/YGHB - move cursor\0"
-#define TERM_X_MIN     (term_t) (strlen(TINIEST_BAR) + AT_LEAST_1_CHAR)
+#define LBAR_STR "CTRL+: C - exit/Z - minimize/D - save/YGHB - move cursor\0"
+#define TERM_X_MIN     (term_t) (strlen(LBAR_STR) + AT_LEAST_1_CHAR)
 
 #define TXT_X (term_sz(dt, 'x') - STRLEN_BUF_T)
 #define TXT_Y (term_sz(dt, 'y') - BARS_SZ)

@@ -93,7 +93,7 @@ void lower_bar(meta* dt)
 {
 	ANSI_INVERT();
 
-	printf("\n%s%*s", TINIEST_BAR,
+	printf("\n%s%*s", LBAR_STR,
 	term_sz(dt, 'x') - TERM_X_MIN + AT_LEAST_1_CHAR, " ");
 
 	ANSI_RESET();
@@ -131,11 +131,16 @@ void window(meta* dt) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 				{
 					putchar(dt->txt[ln][x]);
 				}
+				if(dt->txt[ln][dt->chrs_ln - dt->cusr_x - CUR_SZ] != LF
+				&& dt->cusr_x != 0)
+				{
+					putchar(LF); // TODO: WHEN LF ISN'T RENDERED - PLACEHOLDER.
+				}
 			}
 			else
 			{
 				// Scrolled to start of the line. Now cursor will be scrolled.
-				printf("%.*s", TXT_X, dt->txt[ln]);
+				printf("%.*s\n", TXT_X, dt->txt[ln]);
 			}
 		}
 	}
@@ -144,7 +149,7 @@ void window(meta* dt) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 	set_cursor_pos(dt);
 }
 
-void set_cursor_pos(meta* dt) // TODO
+void set_cursor_pos(meta* dt) // TODO WHEN STTY SIZE IS SMALLER THAN A TERM.
 {
 	// Cursor is moved by default to the right side by lower bar. Move it back.
 	MV_CUR_LEFT(term_sz(dt, 'x') - CUR_SZ);
