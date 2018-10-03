@@ -20,16 +20,16 @@
 #define TXT_Y (term_sz(dt, 'y') - BARS_SZ)
 
 // ANSI escape codes. TODO: NAMES.
-#define ANSI_RESET()      printf("%s", "\033[0m")
-#define ANSI_INVERT()     printf("%s", "\033[7m")
-#define ANSI_PTR_UP()     printf("%s", "\033[F")
-#define ANSI_CLEANLN()    printf("%s", "\033[2K")
-#define ANSI_CUR_UP(n)    printf("\033[%dA", n)
-#define ANSI_CUR_DOWN(n)  printf("\033[%dB", n)
-#define ANSI_CUR_RIGHT(n) printf("\033[%dC", n)
-#define ANSI_CUR_LEFT(n)  printf("\033[%dD", n)
-#define SAVE_CUR_POS()    printf("%s", "\033[s")
-#define RESTORE_CUR_POS() printf("%s", "\033[u")
+#define ANSI_RESET()           printf("%s", "\033[0m")
+#define ANSI_INVERT()          printf("%s", "\033[7m")
+#define ANSI_PTR_UP()          printf("%s", "\033[F")
+#define ANSI_CLEAN_LN()        printf("%s", "\033[2K")
+#define ANSI_CUR_UP(n)         printf("\033[%dA", n)
+#define ANSI_CUR_DOWN(n)       printf("\033[%dB", n)
+#define ANSI_CUR_RIGHT(n)      printf("\033[%dC", n)
+#define ANSI_CUR_LEFT(n)       printf("\033[%dD", n)
+#define ANSI_SAVE_CUR_POS()    printf("%s", "\033[s")
+#define ANSI_RESTORE_CUR_POS() printf("%s", "\033[u")
 
 term_t term_sz(meta* dt, char axis); // Check if a term to small or big.
 void flush_win(meta* dt); // For rendering in a one frame.
@@ -38,6 +38,6 @@ void upper_bar(meta* dt); // Render upper bar.
 void fill(meta* dt); // Empty space below the text.
 void lower_bar(meta* dt);
 void window(meta* dt); // Bar + rendered text + fill + cursor.
-void set_cur_pos(meta* dt); // Set cursor position from the rendered bottom.
+void set_cursor(meta* dt); // Set cursor position from the rendered bottom.
 #endif
 

@@ -4,11 +4,10 @@
 Simple terminal-based text editor.
 
 ## Minimal requirements for compilation:
-- Linux-based OS,
+- Linux kernel,
 - autoconf,
 - make,
-- gcc,
-- terminal with an ANSI escape codes support.
+- gcc.
 
 ## Additional requirements for man-page installation and VCS:
 - gzip,
@@ -39,7 +38,7 @@ sudo make install
 sudo make uninstall
 ```
 
-## Building with AddressSanitizer for memory errors handling
+## Building with the AddressSanitizer for memory errors handling
 ```
 make sanitize
 ```

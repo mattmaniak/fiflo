@@ -88,7 +88,7 @@ meta* init(meta* dt, const char* passed)
 	check_ptr(dt, dt->txt, "alloc memory for lines\0");
 
 	dt->chrs = 0;
-	dt->chrs_ln = 0;
+	dt->ln_len = 0;
 	dt->lns = 0;
 
 	dt->cusr_x = 0;

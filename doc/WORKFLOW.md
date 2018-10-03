@@ -23,7 +23,7 @@ provide updated code on the "develop" branch.
 - Allman's brace style, indentation: hard tab (4 spaces wide), only snake_case,
 - insert short TODOs near thing to fix as uppercase comments,
 - write doc comments in .c files above statements, in .h at the right side.
-- align comments, values of defines && structures' members,
+- visually align values of defines && structures' members,
 - keep docs up-to-date with the code in stable releases,
 - function"s args names need to be shorter than variables' names.
 

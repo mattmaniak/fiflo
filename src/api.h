@@ -19,11 +19,11 @@
 #define CTRL_H 8  // right.
 #define CTRL_Y 25 // up.
 
-#define LAST_CHAR dt->chrs_ln - NTERM_SZ
+#define LAST_CHAR dt->ln_len - NTERM_SZ
 #define CURR_LN   dt->txt[dt->lns]
 #define LN_ABOVE  dt->txt[dt->lns - 1]
 
-meta* freeblk(meta* dt); // Check and free memblock.
+meta* dealloc_block(meta* dt); // Check and free memblock.
 meta* alloc_block(meta* dt, char mode); // Check and alloc block of memory.
 
 meta* shift_txt(meta* dt, char direction);

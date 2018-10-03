@@ -1,31 +1,31 @@
 #include "api.h"
 
-meta* freeblk(meta* dt)
+meta* dealloc_block(meta* dt)
 {
 	_Bool line_back = 0;
-	if(dt->chrs_ln - 1 % MEMBLK == MEMBLK - 1)
+	if(dt->ln_len - 1 % MEMBLK == MEMBLK - 1)
 	{
-		CURR_LN = realloc(CURR_LN, (2 * dt->chrs_ln) - MEMBLK);
+		CURR_LN = realloc(CURR_LN, (2 * dt->ln_len) - MEMBLK);
 		check_ptr(dt, CURR_LN, "free the memblock with a line\0");
 	}
-	if(dt->chrs_ln > 0 && dt->cusr_x != (dt->chrs_ln + INDEX))
+	if(dt->ln_len > 0 && dt->cusr_x != (dt->ln_len + INDEX))
 	{
-		dt->chrs_ln--;
+		dt->ln_len--;
 		dt->chrs--;
 	}
-	else if(dt->chrs_ln == 0)
+	else if(dt->ln_len == 0)
 	{
 		line_back = 1;
 		dt->cusr_y = 0;
 	}
-	CURR_LN[dt->chrs_ln] = NTERM;
+	CURR_LN[dt->ln_len] = NTERM;
 
 	if(line_back == 1 && dt->lns > 0 && LN_ABOVE[strlen(LN_ABOVE) - NTERM_SZ] == LF)
 	{
 		free(CURR_LN);
 		dt->lns--;
-		dt->chrs_ln = (buf_t) strlen(CURR_LN) - NTERM_SZ;
-		CURR_LN[dt->chrs_ln] = NTERM;
+		dt->ln_len = (buf_t) strlen(CURR_LN) - NTERM_SZ;
+		CURR_LN[dt->ln_len] = NTERM;
 		if(dt->chrs > 0) // Just for the LF removal.
 		{
 			dt->chrs--;
@@ -40,10 +40,10 @@ meta* alloc_block(meta* dt, char mode)
 	{
 		case 'c':
 			dt->chrs++;
-			dt->chrs_ln++;
-			if(dt->chrs_ln % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
+			dt->ln_len++;
+			if(dt->ln_len % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
-				CURR_LN = realloc(CURR_LN, dt->chrs_ln + MEMBLK);
+				CURR_LN = realloc(CURR_LN, dt->ln_len + MEMBLK);
 				check_ptr(dt, CURR_LN, "alloc new memblock for chars\0");
 			}
 			break;
@@ -63,7 +63,7 @@ meta* alloc_block(meta* dt, char mode)
 				CURR_LN = malloc(MEMBLK);
 				check_ptr(dt, CURR_LN, "alloc byte in the new line\0");
 			}
-			CURR_LN[dt->chrs_ln = 0] = NTERM;
+			CURR_LN[dt->ln_len = 0] = NTERM;
 			break;
 	}
 	return dt;
@@ -74,13 +74,13 @@ meta* shift_txt(meta* dt, char direction)
 	switch(direction)
 	{
 		case 'l':
-			if(dt->cusr_x > dt->chrs_ln - 1 && dt->chrs_ln > 0)
+			if(dt->cusr_x > dt->ln_len - 1 && dt->ln_len > 0)
 			{
-				dt->cusr_x = dt->chrs_ln - 1;
+				dt->cusr_x = dt->ln_len - 1;
 			}
-			if(dt->chrs_ln > 0)
+			if(dt->ln_len > 0)
 			{
-				for(term_t x = dt->chrs_ln - dt->cusr_x; x <= dt->chrs_ln; x++)
+				for(term_t x = dt->ln_len - dt->cusr_x; x <= dt->ln_len; x++)
 				{
 					CURR_LN[x - 1] = CURR_LN[x];
 				}
@@ -88,7 +88,7 @@ meta* shift_txt(meta* dt, char direction)
 			break;
 
 		case 'r':
-			for(term_t x = dt->chrs_ln; x >= dt->chrs_ln - dt->cusr_x; x--)
+			for(term_t x = dt->ln_len; x >= dt->ln_len - dt->cusr_x; x--)
 			{
 				CURR_LN[x] = CURR_LN[x - 1];
 			}
@@ -107,12 +107,12 @@ meta* add_char(meta* dt, char key)
 			shift_txt(dt, 'r');
 		}
 		dt->txt[dt->lns - dt->cusr_y][LAST_CHAR - dt->cusr_x] = key;
-		dt->txt[dt->lns - dt->cusr_y][dt->chrs_ln] = NTERM;
+		dt->txt[dt->lns - dt->cusr_y][dt->ln_len] = NTERM;
 
 		if(key == NTERM && dt->chrs > 0) // Initializer.
 		{
 			dt->chrs--;
-			dt->chrs_ln--;
+			dt->ln_len--;
 		}
 		switch(key) // TODO: TAB
 		{
@@ -123,10 +123,10 @@ meta* add_char(meta* dt, char key)
 				{
 					for(term_t x = strlen(LN_ABOVE) - dt->cusr_x; x <= strlen(LN_ABOVE); x++)
 					{
-						CURR_LN[dt->chrs_ln++] = LN_ABOVE[x];
+						CURR_LN[dt->ln_len++] = LN_ABOVE[x];
 					}
 					LN_ABOVE[strlen(LN_ABOVE) - dt->cusr_x] = NTERM;
-					dt->cusr_x = dt->chrs_ln;
+					dt->cusr_x = dt->ln_len;
 				}
 			}
 			break;
@@ -159,7 +159,7 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 
 			// Move cursor left.
 			case CTRL_G:
-				if(dt->cusr_x < dt->chrs_ln)
+				if(dt->cusr_x < dt->ln_len)
 				{
 					dt->cusr_x++;
 				}
@@ -176,7 +176,7 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 					}
 					else
 					{
-						dt->chrs_ln = strlen(LN_ABOVE) - INDEX;
+						dt->ln_len = strlen(LN_ABOVE) - INDEX;
 					}
 				}
 				break;
@@ -191,10 +191,10 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 
 			case BACKSPACE:
 				// Left side protection.
-				if((dt->cusr_x != dt->chrs_ln) || dt->chrs_ln == 0)
+				if((dt->cusr_x != dt->ln_len) || dt->ln_len == 0)
 				{
 					dt = shift_txt(dt, 'l');
-					dt = freeblk(dt);
+					dt = dealloc_block(dt);
 				}
 				break;
 

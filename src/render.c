@@ -40,13 +40,13 @@ term_t term_sz(meta* dt, char axis)
 
 void flush_win(meta* dt)
 {
-	RESTORE_CUR_POS();
-	ANSI_CLEANLN();
+	ANSI_RESTORE_CUR_POS();
+	ANSI_CLEAN_LN();
 
 	for(term_t y = 0; y < term_sz(dt, 'y'); y++)
 	{
 		ANSI_PTR_UP();
-		ANSI_CLEANLN();
+		ANSI_CLEAN_LN();
 	}
 	fflush(stdout);
 }
@@ -73,7 +73,7 @@ void upper_bar(meta* dt) // TODO: SIMPLIFY.
 		printf("%s%*s", dt->fname,
 		term_sz(dt, 'x') - (term_t) (strlen(dt->fname) + 34), " ");
 	}
-	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, dt->chrs_ln,
+	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, dt->ln_len,
 	STRLEN_BUF_T, dt->chrs);
 }
 
@@ -102,89 +102,90 @@ void lower_bar(meta* dt)
 // TODO: CURSOR AND RENDERING ON SMALLER THAN TERMINAL STTY SIZE.
 void window(meta* dt)
 {
-	buf_t hidden_lns = 0;
+	buf_t scrolled_lns = 0;
 	upper_bar(dt);
 
-	// Horizontal scroll set.
 	if(dt->lns >= TXT_Y)
 	{
-		hidden_lns = dt->lns + INDEX - TXT_Y;
+		// Horizontal scrolling.
+		scrolled_lns = dt->lns + INDEX - TXT_Y;
 	}
-	for(term_t ln = hidden_lns; ln <= dt->lns; ln++) // TODO: LINES > 1.
+	for(term_t ln = scrolled_lns; ln <= dt->lns; ln++) // TODO: DON'T SCROLL EVERYTHING.
 	{
 		ANSI_INVERT();
 		printf("%*d", STRLEN_BUF_T, ln + INDEX);
 		ANSI_RESET();
 
-		// There is small amount of chars. X-scroll isn't required.
-		if((term_t) strlen(dt->txt[ln]) < TXT_X) // TODO: LF SHIFT.
+		if((term_t) strlen(dt->txt[ln]) < TXT_X)
 		{
+			// There is small amount of chars. X-scroll isn't required.
 			printf("%s", dt->txt[ln]);
 		}
-		// Horizontal scroll required.
 		else
 		{
-			// Text will be scrolled. Not cursor.
+			// Horizontal scroll required.
 			if((strlen(dt->txt[ln]) - TXT_X) >= dt->cusr_x)
 			{
-				for(buf_t x = strlen(dt->txt[ln]) - dt->cusr_x - TXT_X + CUR_SZ;
-				x <= strlen(dt->txt[ln]) - dt->cusr_x - CUR_SZ; x++)
+				_Bool mv_right = 0;
+				if(dt->txt[ln][strlen(dt->txt[ln]) - NTERM_SZ] == LF)
+				{
+					mv_right = 1;
+				}
+				// Text will be scrolled. Not cursor.
+				for(buf_t x = strlen(dt->txt[ln]) - dt->cusr_x - TXT_X + CUR_SZ - mv_right;
+				x <= strlen(dt->txt[ln]) - dt->cusr_x - CUR_SZ - mv_right; x++)
 				{
 					putchar(dt->txt[ln][x]);
 				}
+				if(mv_right == 1)
+				{
+					// Text is shifted so LF in dt->txt isn't rendered.
+					putchar(LF);
+				}
 			}
-			// Scrolled to start of the line. Now cursor will be scrolled.
 			else
 			{
+				// Scrolled to start of the line. Now cursor will be scrolled.
 				printf("%.*s", TXT_X, dt->txt[ln]);
 			}
 		}
 	}
 	fill(dt);
 	lower_bar(dt);
-	set_cur_pos(dt);
+	set_cursor(dt);
 }
 
 // TODO WHEN STTY SIZE IS SMALLER THAN A TERM.
-void set_cur_pos(meta* dt)
+void set_cursor(meta* dt)
 {
 	// Cursor is moved by default to the right side by lower bar. Move it back.
 	ANSI_CUR_LEFT(term_sz(dt, 'x') - CUR_SZ);
 	// Left bottom corner. Will be used in the flush_win().
-	SAVE_CUR_POS();
+	ANSI_SAVE_CUR_POS();
 
-	// X axis.
-	if(dt->chrs_ln < TXT_X)
+	if(dt->ln_len < TXT_X)
 	{
-		// No horizontal scroll.
-		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + dt->chrs_ln - dt->cusr_x);
+		// No horizontal scrolling.
+		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + dt->ln_len - dt->cusr_x);
+	}
+	else if((dt->ln_len - TXT_X) >= dt->cusr_x)
+	{
+		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
+		ANSI_CUR_RIGHT(term_sz(dt, 'x') - CUR_SZ);
 	}
 	else
 	{
-		// Only last TXT_X chars are seen.
-		if((dt->chrs_ln - TXT_X) >= dt->cusr_x)
-		{
-			// Fixed position. Current line is scrolled, not cursor.
-			ANSI_CUR_RIGHT(term_sz(dt, 'x') - CUR_SZ);
-		}
-		else
-		{
-			// Text is scrolled to the start. Cursor can be moved.
-			ANSI_CUR_RIGHT(dt->chrs_ln - dt->cusr_x + STRLEN_BUF_T);
-		}
+		// Text is scrolled horizontally to the start. Cursor can be moved.
+		ANSI_CUR_RIGHT(dt->ln_len - dt->cusr_x + STRLEN_BUF_T);	
 	}
 
-	// Y axis.
+	// All lines fits in the window.
+	int32_t mv_up = TXT_Y - (dt->lns + INDEX);
+	// Lines are scrolled.
 	if(dt->lns >= TXT_Y)
 	{
-		// Lines are scrolled.
-		ANSI_CUR_UP(LBAR_SZ + dt->cusr_y);
+		mv_up = 0;
 	}
-	else
-	{
-		// All lines fits in the vertical text area.
-		ANSI_CUR_UP(TXT_Y - (dt->lns + INDEX) + LBAR_SZ + dt->cusr_y);
-
-	}
+	ANSI_CUR_UP(LBAR_SZ + dt->cusr_y + mv_up);
 }
 
