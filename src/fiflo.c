@@ -102,19 +102,19 @@ meta* init(meta* dt, const char* passed)
 
 _Noreturn void run(const char* passed)
 {
-	meta* data = malloc(sizeof(meta));
-	check_ptr(data, data, "alloc memory for metadata\0");
-	data = init(data, passed);
-	data = read_file(data);
+	meta* dt = malloc(sizeof(meta));
+	check_ptr(dt, dt, "alloc memory for metadt\0");
+	dt = init(dt, passed);
+	dt = read_file(dt);
 
 	char pressed = NTERM; // Initializer.
 	// Main program loop.
 	for(;;)
 	{
-		data = recognize_char(data, pressed);
-		window(data);
+		dt = recognize_char(dt, pressed);
+		window(dt);
 		pressed = getch();
-		flush_win(data);
+		flush_win(dt);
 	}
 }
 

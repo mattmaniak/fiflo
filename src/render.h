@@ -13,7 +13,7 @@
 #define LBAR_SZ         1
 #define BARS_SZ         (UPBAR_SZ + LBAR_SZ)
 
-#define LBAR_STR "CTRL+: C - exit/Z - minimize/D - save/YGHB - move cursor\0"
+#define LBAR_STR "CTRL+: C - exit/ Z - minimize/ D - save/ YGHB - move cursor\0"
 #define TERM_X_MIN     (term_t) (strlen(LBAR_STR) + AT_LEAST_1_CHAR)
 
 #define TXT_X (term_sz(dt, 'x') - STRLEN_BUF_T)
@@ -38,6 +38,6 @@ void upper_bar(meta* dt); // Render upper bar.
 void fill(meta* dt); // Empty space below the text.
 void lower_bar(meta* dt);
 void window(meta* dt); // Bar + rendered text + fill + cursor.
-void set_cursor_pos(meta* dt); // Set cursor position from the rendered bottom.
+void set_cur_pos(meta* dt); // Set cursor position from the rendered bottom.
 #endif
 
