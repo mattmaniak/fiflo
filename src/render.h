@@ -22,12 +22,12 @@
 // ANSI escape codes. TODO: NAMES.
 #define ANSI_RESET()      printf("%s", "\033[0m")
 #define ANSI_INVERT()     printf("%s", "\033[7m")
-#define LINE_UP()         printf("%s", "\033[F")
-#define CLEANLN()         printf("%s", "\033[2K")
-#define MV_CUR_UP(n)      printf("\033[%dA", n)
-#define MV_CUR_DOWN(n)    printf("\033[%dB", n)
-#define MV_CUR_RIGHT(n)   printf("\033[%dC", n)
-#define MV_CUR_LEFT(n)    printf("\033[%dD", n)
+#define ANSI_PTR_UP()     printf("%s", "\033[F")
+#define ANSI_CLEANLN()    printf("%s", "\033[2K")
+#define ANSI_CUR_UP(n)    printf("\033[%dA", n)
+#define ANSI_CUR_DOWN(n)  printf("\033[%dB", n)
+#define ANSI_CUR_RIGHT(n) printf("\033[%dC", n)
+#define ANSI_CUR_LEFT(n)  printf("\033[%dD", n)
 #define SAVE_CUR_POS()    printf("%s", "\033[s")
 #define RESTORE_CUR_POS() printf("%s", "\033[u")
 

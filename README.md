@@ -3,16 +3,26 @@
 ## Description
 Simple terminal-based text editor.
 
-## Minimal requirements:
+## Minimal requirements for compilation:
 - Linux-based OS,
 - autoconf,
 - make,
 - gcc,
 - terminal with an ANSI escape codes support.
 
-## Additional requirements:
-- gzip for man-pages packing,
-- cp for installation.
+## Additional requirements for man-page installation and VCS:
+- gzip,
+- git.
+
+## Downloading
+Current stable release:
+```
+git clone https://gitlab.com/mattmaniak/fiflo.git
+```
+Latest unstable snapshot:
+```
+git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
+```
 
 ## Building from source
 ```
@@ -35,9 +45,9 @@ make sanitize
 ```
 
 ## FAQ
+How can I contribute?
+- Read the doc/WORKFLOW.md and send request.
+
 Will you port it into the Windows?
 - No.
-
-How can I contribute?
-- Read the doc/WORKFLOW.md and send any request.
 

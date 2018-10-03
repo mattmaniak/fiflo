@@ -41,12 +41,12 @@ term_t term_sz(meta* dt, char axis)
 void flush_win(meta* dt)
 {
 	RESTORE_CUR_POS();
-	CLEANLN();
+	ANSI_CLEANLN();
 
 	for(term_t y = 0; y < term_sz(dt, 'y'); y++)
 	{
-		LINE_UP();
-		CLEANLN();
+		ANSI_PTR_UP();
+		ANSI_CLEANLN();
 	}
 	fflush(stdout);
 }
@@ -115,32 +115,33 @@ void window(meta* dt) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 		ANSI_INVERT();
 		printf("%*d", STRLEN_BUF_T, ln + INDEX);
 		ANSI_RESET();
+
+		// There is small amount of chars. X-scroll isn't required.
 		if((STRLEN_BUF_T + strlen(dt->txt[ln])) < term_sz(dt, 'x'))
 		{
-			// There is small amount of chars. X-scroll isn't required.
 			printf("%s", dt->txt[ln]);
 		}
+		// Horizontal scroll required.
 		else
 		{
-			// Horizontal scroll required.
+			// Text will be scrolled. Not cursor.
 			if((dt->chrs_ln - TXT_X) >= dt->cusr_x)
 			{
-				// Text will be scrolled. Not cursor.
 				for(buf_t x = dt->chrs_ln - dt->cusr_x - TXT_X + CUR_SZ;
 				x <= dt->chrs_ln - dt->cusr_x - CUR_SZ; x++)
 				{
 					putchar(dt->txt[ln][x]);
 				}
-				if(dt->txt[ln][dt->chrs_ln - dt->cusr_x - CUR_SZ] != LF
+/*				if(dt->txt[ln][dt->chrs_ln - dt->cusr_x - CUR_SZ] != LF
 				&& dt->cusr_x != 0)
 				{
 					putchar(LF); // TODO: WHEN LF ISN'T RENDERED - PLACEHOLDER.
 				}
-			}
+*/			}
+			// Scrolled to start of the line. Now cursor will be scrolled.
 			else
 			{
-				// Scrolled to start of the line. Now cursor will be scrolled.
-				printf("%.*s\n", TXT_X, dt->txt[ln]);
+				printf("%.*s", TXT_X, dt->txt[ln]);
 			}
 		}
 	}
@@ -152,7 +153,7 @@ void window(meta* dt) // TODO: SPLIT SCROLLING TO SEPARATE FUNCS.
 void set_cursor_pos(meta* dt) // TODO WHEN STTY SIZE IS SMALLER THAN A TERM.
 {
 	// Cursor is moved by default to the right side by lower bar. Move it back.
-	MV_CUR_LEFT(term_sz(dt, 'x') - CUR_SZ);
+	ANSI_CUR_LEFT(term_sz(dt, 'x') - CUR_SZ);
 	// Left bottom corner. Will be used in the flush_win().
 	SAVE_CUR_POS();
 
@@ -160,20 +161,20 @@ void set_cursor_pos(meta* dt) // TODO WHEN STTY SIZE IS SMALLER THAN A TERM.
 	if((term_t) strlen(CURR_LN) < TXT_X) // TODO: MAYBE dt->chrs_ln INSTEAD STRLEN.
 	{
 		// No horizontal scroll.
-		MV_CUR_RIGHT((term_t) STRLEN_BUF_T + dt->chrs_ln - dt->cusr_x);
+		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + dt->chrs_ln - dt->cusr_x);
 	}
 	else
 	{
 		// Only last TXT_X chars are seen.
-		if((dt->chrs_ln - TXT_X) > dt->cusr_x)
+		if((dt->chrs_ln - TXT_X) >= dt->cusr_x)
 		{
 			// Fixed position. Current line is scrolled, not cursor.
-			MV_CUR_RIGHT(term_sz(dt, 'x') - CUR_SZ);
+			ANSI_CUR_RIGHT(term_sz(dt, 'x') - CUR_SZ);
 		}
 		else
 		{
 			// Text is scrolled to the start. Cursor can be moved.
-			MV_CUR_RIGHT(dt->chrs_ln - dt->cusr_x + STRLEN_BUF_T);
+			ANSI_CUR_RIGHT(dt->chrs_ln - dt->cusr_x + STRLEN_BUF_T);
 		}
 	}
 
@@ -181,12 +182,12 @@ void set_cursor_pos(meta* dt) // TODO WHEN STTY SIZE IS SMALLER THAN A TERM.
 	if((dt->lns + INDEX) <= TXT_Y)
 	{
 		// All lines fits in the vertical text area.
-		MV_CUR_UP(TXT_Y - (dt->lns + INDEX) + LBAR_SZ + dt->cusr_y);
+		ANSI_CUR_UP(TXT_Y - (dt->lns + INDEX) + LBAR_SZ + dt->cusr_y);
 	}
 	else
 	{
 		// Lines are scrolled.
-		MV_CUR_UP(LBAR_SZ + dt->cusr_y);
+		ANSI_CUR_UP(LBAR_SZ + dt->cusr_y);
 	}
 }
 
