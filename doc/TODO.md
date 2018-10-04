@@ -6,7 +6,7 @@
 - improve configure.ac and Makefile.in,
 - TAB key,
 - fix too big memory usage (blocks),
-- bigger buffer,
+- bigger buffer with memory limits,
 - paging mechanism,
 - move cursor (YVFH keys),
 - fiflorc file && colors,

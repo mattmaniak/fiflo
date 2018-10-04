@@ -121,7 +121,7 @@ meta* add_char(meta* dt, char key)
 				dt = alloc_block(dt, 'l');
 				if(dt->cusr_x > 0)
 				{
-					for(term_t x = strlen(LN_ABOVE) - dt->cusr_x; x <= strlen(LN_ABOVE); x++)
+					for(term_t x = (term_t) (strlen(LN_ABOVE) - dt->cusr_x); x <= strlen(LN_ABOVE); x++)
 					{
 						CURR_LN[dt->ln_len++] = LN_ABOVE[x];
 					}
@@ -176,7 +176,7 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 					}
 					else
 					{
-						dt->ln_len = strlen(LN_ABOVE) - INDEX;
+						dt->ln_len = (buf_t) (strlen(LN_ABOVE) - INDEX);
 					}
 				}
 				break;

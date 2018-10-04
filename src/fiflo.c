@@ -2,6 +2,7 @@
 #include "fiflo.h" // All typedefs are here.
 
 #include "files.c"
+#include "keys.c"
 #include "api.c"
 #include "render.c"
 
@@ -31,7 +32,7 @@ void check_ptr(meta* dt, void* ptr, const char* err_msg)
 	}
 }
 
-void options(const char* arg)
+void options(const char* arg) // TODO: NORETURN?
 {
 	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
 	{

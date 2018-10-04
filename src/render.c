@@ -55,9 +55,9 @@ void upper_bar(meta* dt) // TODO: SIMPLIFY.
 {
 	const char* title = "fiflo: \0";
 	const char* dots = "...\0";
-	const char* indicators = " linelen/chars: \0";
-	term_t fname_max = term_sz(dt, 'x')
-	- (term_t) (strlen(title) + strlen(dots)
+	const char* indicators = " line length/chars: \0";
+
+	term_t fname_max = term_sz(dt, 'x') - (term_t) (strlen(title) + strlen(dots)
 	+ strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
 	ANSI_INVERT();
@@ -71,46 +71,21 @@ void upper_bar(meta* dt) // TODO: SIMPLIFY.
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s", dt->fname,
-		term_sz(dt, 'x') - (term_t) (strlen(dt->fname) + 34), " ");
+		term_sz(dt, 'x') - (term_t) (strlen(dt->fname) + 28 + (2 * STRLEN_BUF_T)), " ");
 	}
 	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, dt->ln_len,
 	STRLEN_BUF_T, dt->chrs);
 }
 
-void fill(meta* dt)
-{
-	if(dt->lns < TXT_Y)
-	{
-		// Fill the empty area below the text to position lower bar.
-		for(term_t ln = dt->lns; ln < TXT_Y - CURRENT; ln++)
-		{
-			putchar(LF);
-		}
-	}
-}
-
-void lower_bar(meta* dt)
-{
-	ANSI_INVERT();
-
-	printf("\n%s%*s", LBAR_STR,
-	term_sz(dt, 'x') - TERM_X_MIN + AT_LEAST_1_CHAR, " ");
-
-	ANSI_RESET();
-}
-
-// TODO: CURSOR AND RENDERING ON SMALLER THAN TERMINAL STTY SIZE.
-void window(meta* dt)
+void render_txt(meta* dt)
 {
 	buf_t scrolled_lns = 0;
-	upper_bar(dt);
-
-	if(dt->lns >= TXT_Y)
+	if((dt->lns + INDEX) > TXT_Y)
 	{
 		// Horizontal scrolling.
 		scrolled_lns = dt->lns + INDEX - TXT_Y;
 	}
-	for(term_t ln = scrolled_lns; ln <= dt->lns; ln++) // TODO: DON'T SCROLL EVERYTHING.
+	for(term_t ln = scrolled_lns; ln <= dt->lns; ln++)
 	{
 		ANSI_INVERT();
 		printf("%*d", STRLEN_BUF_T, ln + INDEX);
@@ -132,7 +107,7 @@ void window(meta* dt)
 					mv_right = 1;
 				}
 				// Text will be scrolled. Not cursor.
-				for(buf_t x = strlen(dt->txt[ln]) - dt->cusr_x - TXT_X + CUR_SZ - mv_right;
+				for(buf_t x = (buf_t) (strlen(dt->txt[ln]) - dt->cusr_x - TXT_X + CUR_SZ - mv_right);
 				x <= strlen(dt->txt[ln]) - dt->cusr_x - CUR_SZ - mv_right; x++)
 				{
 					putchar(dt->txt[ln][x]);
@@ -150,16 +125,42 @@ void window(meta* dt)
 			}
 		}
 	}
+}
+
+void fill(meta* dt)
+{
+	if((dt->lns + INDEX) <= TXT_Y)
+	{
+		// Fill the empty area below the text to position lower bar.
+		for(term_t ln = dt->lns; ln < TXT_Y - CURRENT; ln++)
+		{
+			putchar(LF);
+		}
+	}
+}
+
+void lower_bar(meta* dt)
+{
+	ANSI_INVERT();
+	printf("\n%s%*s",
+	LBAR_STR, term_sz(dt, 'x') - TERM_X_MIN + AT_LEAST_CHAR, " ");
+
+	ANSI_RESET();
+}
+
+void window(meta* dt)
+{
+	upper_bar(dt);
+	render_txt(dt);
 	fill(dt);
 	lower_bar(dt);
 	set_cursor(dt);
 }
 
-// TODO WHEN STTY SIZE IS SMALLER THAN A TERM.
 void set_cursor(meta* dt)
 {
 	// Cursor is moved by default to the right side by lower bar. Move it back.
-	ANSI_CUR_LEFT(term_sz(dt, 'x') - CUR_SZ);
+	ANSI_CUR_LEFT(term_sz(dt, 'x'));
 	// Left bottom corner. Will be used in the flush_win().
 	ANSI_SAVE_CUR_POS();
 
