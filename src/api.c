@@ -109,27 +109,25 @@ meta* add_char(meta* dt, char key)
 		dt->txt[dt->lns - dt->cusr_y][LAST_CHAR - dt->cusr_x] = key;
 		dt->txt[dt->lns - dt->cusr_y][dt->ln_len] = NTERM;
 
-		if(key == NTERM && dt->chrs > 0) // Initializer.
+		// Initializer. TODO
+		if(key == NTERM && dt->chrs > 0)
 		{
 			dt->chrs--;
 			dt->ln_len--;
 		}
-		switch(key) // TODO: TAB
+
+		if(key == LF)
 		{
-			case LF: // TODO: WHEN ENTER.
+			dt = alloc_block(dt, 'l');
+			if(dt->cusr_x > 0)
 			{
-				dt = alloc_block(dt, 'l');
-				if(dt->cusr_x > 0)
+				for(term_t x = (term_t) (strlen(LN_ABOVE) - dt->cusr_x); x <= strlen(LN_ABOVE); x++)
 				{
-					for(term_t x = (term_t) (strlen(LN_ABOVE) - dt->cusr_x); x <= strlen(LN_ABOVE); x++)
-					{
-						CURR_LN[dt->ln_len++] = LN_ABOVE[x];
-					}
-					LN_ABOVE[strlen(LN_ABOVE) - dt->cusr_x] = NTERM;
-					dt->cusr_x = dt->ln_len;
+					CURR_LN[dt->ln_len++] = LN_ABOVE[x];
 				}
+				LN_ABOVE[strlen(LN_ABOVE) - dt->cusr_x] = NTERM;
+				dt->cusr_x = dt->ln_len;
 			}
-			break;
 		}
 	}
 	return dt;
@@ -137,10 +135,15 @@ meta* add_char(meta* dt, char key)
 
 meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 {
+	// Prevent inputting ANSI escape sequences.
 	if(key != ESCAPE)
 	{
 		switch(key)
 		{
+			default:
+				dt = add_char(dt, key);
+				break;
+
 			// Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH.
 			case NEG:
 				free_all_exit(dt, 0);
@@ -149,57 +152,24 @@ meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
 				save_file(dt);
 				break;
 
-			// Move cursor right.
 			case CTRL_H:
-				if(dt->cusr_x > 0)
-				{
-					dt->cusr_x--;
-				}
+				dt = ctrl_h(dt);
 				break;
 
-			// Move cursor left.
 			case CTRL_G:
-				if(dt->cusr_x < dt->ln_len)
-				{
-					dt->cusr_x++;
-				}
+				dt = ctrl_g(dt);
 				break;
 
-			// Move cursor up.
 			case CTRL_Y:
-				if(dt->cusr_y < dt->lns)
-				{
-					dt->cusr_y++;
-					if(strlen(LN_ABOVE) == 1) // Must contain at least newline.
-					{
-						dt->chrs = 1;
-					}
-					else
-					{
-						dt->ln_len = (buf_t) (strlen(LN_ABOVE) - INDEX);
-					}
-				}
+				dt = ctrl_y(dt);
 				break;
 
-			// Move cursor down.
 			case CTRL_B:
-				if(dt->cusr_y > 0)
-				{
-					dt->cusr_y--;
-				}
+				dt = ctrl_b(dt);
 				break;
 
 			case BACKSPACE:
-				// Left side protection.
-				if((dt->cusr_x != dt->ln_len) || dt->ln_len == 0)
-				{
-					dt = shift_txt(dt, 'l');
-					dt = dealloc_block(dt);
-				}
-				break;
-
-			default:
-				dt = add_char(dt, key);
+				dt = backspace(dt);
 				break;
 		}
 	}

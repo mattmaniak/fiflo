@@ -30,7 +30,7 @@ term_t term_sz(meta* dt, char axis)
 			return win.ws_row;
 
 		default:
-			ANSI_RESET();
+			A_RESET();
 			fputs("Check term_sz function params, exit(1).\n", stderr);
 			exit(1);
 	}
@@ -40,18 +40,18 @@ term_t term_sz(meta* dt, char axis)
 
 void flush_win(meta* dt)
 {
-	ANSI_RESTORE_CUR_POS();
-	ANSI_CLEAN_LN();
+	A_RESTORE_CUR_POS();
+	A_CLEAN_LN();
 
 	for(term_t y = 0; y < term_sz(dt, 'y'); y++)
 	{
-		ANSI_PTR_UP();
-		ANSI_CLEAN_LN();
+		A_CUR_UP(1);
+		A_CLEAN_LN();
 	}
 	fflush(stdout);
 }
 
-void upper_bar(meta* dt) // TODO: SIMPLIFY.
+void upper_bar(meta* dt) // TODO: SIMPLIFY, BIGGER VALUES FOR STRLEN_BUF_T.
 {
 	const char* title = "fiflo: \0";
 	const char* dots = "...\0";
@@ -60,7 +60,7 @@ void upper_bar(meta* dt) // TODO: SIMPLIFY.
 	term_t fname_max = term_sz(dt, 'x') - (term_t) (strlen(title) + strlen(dots)
 	+ strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
-	ANSI_INVERT();
+	A_INVERT_COLORS();
 	printf("%s", title);
 	if(strlen(dt->fname) > fname_max)
 	{
@@ -71,7 +71,8 @@ void upper_bar(meta* dt) // TODO: SIMPLIFY.
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s", dt->fname,
-		term_sz(dt, 'x') - (term_t) (strlen(dt->fname) + 28 + (2 * STRLEN_BUF_T)), " ");
+		term_sz(dt, 'x') - (term_t) (strlen(dt->fname) + strlen(title)
+		+ strlen(indicators) + SLASH_SZ + (2 * STRLEN_BUF_T)), " ");
 	}
 	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, dt->ln_len,
 	STRLEN_BUF_T, dt->chrs);
@@ -87,9 +88,9 @@ void render_txt(meta* dt)
 	}
 	for(term_t ln = scrolled_lns; ln <= dt->lns; ln++)
 	{
-		ANSI_INVERT();
+		A_INVERT_COLORS();
 		printf("%*d", STRLEN_BUF_T, ln + INDEX);
-		ANSI_RESET();
+		A_RESET();
 
 		if((term_t) strlen(dt->txt[ln]) < TXT_X)
 		{
@@ -107,7 +108,8 @@ void render_txt(meta* dt)
 					mv_right = 1;
 				}
 				// Text will be scrolled. Not cursor.
-				for(buf_t x = (buf_t) (strlen(dt->txt[ln]) - dt->cusr_x - TXT_X + CUR_SZ - mv_right);
+				for(buf_t x = (buf_t) (strlen(dt->txt[ln]) - dt->cusr_x - TXT_X
+				+ CUR_SZ - mv_right);
 				x <= strlen(dt->txt[ln]) - dt->cusr_x - CUR_SZ - mv_right; x++)
 				{
 					putchar(dt->txt[ln][x]);
@@ -141,11 +143,11 @@ void fill(meta* dt)
 
 void lower_bar(meta* dt)
 {
-	ANSI_INVERT();
+	A_INVERT_COLORS();
 	printf("\n%s%*s",
 	LBAR_STR, term_sz(dt, 'x') - TERM_X_MIN + AT_LEAST_CHAR, " ");
 
-	ANSI_RESET();
+	A_RESET();
 }
 
 void window(meta* dt)
@@ -160,24 +162,24 @@ void window(meta* dt)
 void set_cursor(meta* dt)
 {
 	// Cursor is moved by default to the right side by lower bar. Move it back.
-	ANSI_CUR_LEFT(term_sz(dt, 'x'));
-	// Left bottom corner. Will be used in the flush_win().
-	ANSI_SAVE_CUR_POS();
+	A_CUR_LEFT(term_sz(dt, 'x'));
+	// Left bottom corner [0, 0]. Will be used in the flush_win().
+	A_SAVE_CUR_POS();
 
 	if(dt->ln_len < TXT_X)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + dt->ln_len - dt->cusr_x);
+		A_CUR_RIGHT((term_t) STRLEN_BUF_T + dt->ln_len - dt->cusr_x);
 	}
 	else if((dt->ln_len - TXT_X) >= dt->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
-		ANSI_CUR_RIGHT(term_sz(dt, 'x') - CUR_SZ);
+		A_CUR_RIGHT(term_sz(dt, 'x') - CUR_SZ);
 	}
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		ANSI_CUR_RIGHT(dt->ln_len - dt->cusr_x + STRLEN_BUF_T);	
+		A_CUR_RIGHT(dt->ln_len - dt->cusr_x + STRLEN_BUF_T);	
 	}
 
 	// All lines fits in the window.
@@ -187,6 +189,6 @@ void set_cursor(meta* dt)
 	{
 		mv_up = 0;
 	}
-	ANSI_CUR_UP(LBAR_SZ + dt->cusr_y + mv_up);
+	A_CUR_UP(LBAR_SZ + dt->cusr_y + mv_up);
 }
 

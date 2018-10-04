@@ -10,7 +10,7 @@
 #define TAB       9
 #define LF        10
 #define CTRL_X    24
-#define ESCAPE    27
+#define ESCAPE    27  // '\033'
 #define BACKSPACE 127
 
 // These keys moves the cursor...
