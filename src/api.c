@@ -1,86 +1,87 @@
 #include "api.h"
 
-meta* dealloc_block(meta* dt)
+meta* dealloc_block(meta* Dat)
 {
 	_Bool line_back = 0;
-	if(dt->ln_len - 1 % MEMBLK == MEMBLK - 1)
+	if(Dat->ln_len[Dat->lns] - 1 % MEMBLK == MEMBLK - 1)
 	{
-		CURR_LN = realloc(CURR_LN, (2 * dt->ln_len) - MEMBLK);
-		check_ptr(dt, CURR_LN, "free the memblock with a line\0");
+		CURR_LN = realloc(CURR_LN, (2 * Dat->ln_len[Dat->lns]) - MEMBLK);
+		check_ptr(Dat, CURR_LN, "free the memblock with a line\0");
 	}
-	if(dt->ln_len > 0 && dt->cusr_x != (dt->ln_len + INDEX))
+	if(Dat->ln_len[Dat->lns] > 0 && Dat->cusr_x != (Dat->ln_len[Dat->lns] + INDEX))
 	{
-		dt->ln_len--;
-		dt->chrs--;
+		Dat->ln_len[Dat->lns]--;
+		Dat->chrs--;
 	}
-	else if(dt->ln_len == 0)
+	else if(Dat->ln_len[Dat->lns] == 0)
 	{
 		line_back = 1;
-		dt->cusr_y = 0;
+		Dat->cusr_y = 0;
 	}
-	CURR_LN[dt->ln_len] = NTERM;
+	CURR_LN[Dat->ln_len[Dat->lns]] = NTERM;
 
-	if(line_back == 1 && dt->lns > 0 && LN_ABOVE[strlen(LN_ABOVE) - NTERM_SZ] == LF)
+	if(line_back == 1 && Dat->lns > 0 && LN_ABOVE[strlen(LN_ABOVE) - NTERM_SZ] == LF)
 	{
 		free(CURR_LN);
-		dt->lns--;
-		dt->ln_len = (buf_t) strlen(CURR_LN) - NTERM_SZ;
-		CURR_LN[dt->ln_len] = NTERM;
-		if(dt->chrs > 0) // Just for the LF removal.
+		CURR_LN = NULL;
+		Dat->lns--;
+		Dat->ln_len[Dat->lns] = (buf_t) strlen(CURR_LN) - NTERM_SZ;
+		CURR_LN[Dat->ln_len[Dat->lns]] = NTERM;
+		if(Dat->chrs > 0) // Just for the LF removal.
 		{
-			dt->chrs--;
+			Dat->chrs--;
 		}
 	}
-	return dt;
+	return Dat;
 }
 
-meta* alloc_block(meta* dt, char mode)
+meta* alloc_block(meta* Dat, char mode)
 {
 	switch(mode)
 	{
 		case 'c':
-			dt->chrs++;
-			dt->ln_len++;
-			if(dt->ln_len % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
+			Dat->chrs++;
+			Dat->ln_len[Dat->lns]++;
+			if(Dat->ln_len[Dat->lns] % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
-				CURR_LN = realloc(CURR_LN, dt->ln_len + MEMBLK);
-				check_ptr(dt, CURR_LN, "alloc new memblock for chars\0");
+				CURR_LN = realloc(CURR_LN, Dat->ln_len[Dat->lns] + MEMBLK);
+				check_ptr(Dat, CURR_LN, "alloc new memblock for chars\0");
 			}
 			break;
 
 		case 'l':
-			if(dt->lns++ >= MAX_LNS)
+			if(Dat->lns++ >= MAX_LNS)
 			{
-				dt->lns = MAX_LNS;
+				Dat->lns = MAX_LNS;
 			}
 			else
 			{
-				if(dt->lns % MEMBLK == 0) // Allocates with a one line reserve.
+				if(Dat->lns % MEMBLK == 0) // Allocates with a one line reserve.
 				{
-					dt->txt =
-					realloc(dt->txt, sizeof(dt->txt) * (dt->lns + MEMBLK));
+					Dat->txt =
+					realloc(Dat->txt, sizeof(Dat->txt) * (Dat->lns + MEMBLK));
 				}
 				CURR_LN = malloc(MEMBLK);
-				check_ptr(dt, CURR_LN, "alloc byte in the new line\0");
+				check_ptr(Dat, CURR_LN, "alloc byte in the new line\0");
 			}
-			CURR_LN[dt->ln_len = 0] = NTERM;
+			CURR_LN[Dat->ln_len[Dat->lns] = 0] = NTERM;
 			break;
 	}
-	return dt;
+	return Dat;
 }
 
-meta* shift_txt(meta* dt, char direction)
+meta* shift_txt(meta* Dat, char direction)
 {
 	switch(direction)
 	{
 		case 'l':
-			if(dt->cusr_x > dt->ln_len - 1 && dt->ln_len > 0)
+			if(Dat->cusr_x > Dat->ln_len[Dat->lns] - 1 && Dat->ln_len[Dat->lns] > 0)
 			{
-				dt->cusr_x = dt->ln_len - 1;
+				Dat->cusr_x = Dat->ln_len[Dat->lns] - 1;
 			}
-			if(dt->ln_len > 0)
+			if(Dat->ln_len[Dat->lns] > 0)
 			{
-				for(term_t x = dt->ln_len - dt->cusr_x; x <= dt->ln_len; x++)
+				for(term_t x = Dat->ln_len[Dat->lns] - Dat->cusr_x; x <= Dat->ln_len[Dat->lns]; x++)
 				{
 					CURR_LN[x - 1] = CURR_LN[x];
 				}
@@ -88,93 +89,93 @@ meta* shift_txt(meta* dt, char direction)
 			break;
 
 		case 'r':
-			for(term_t x = dt->ln_len; x >= dt->ln_len - dt->cusr_x; x--)
+			for(term_t x = Dat->ln_len[Dat->lns]; x >= Dat->ln_len[Dat->lns] - Dat->cusr_x; x--)
 			{
 				CURR_LN[x] = CURR_LN[x - 1];
 			}
 			break;
 	}
-	return dt;
+	return Dat;
 }
 
-meta* add_char(meta* dt, char key)
+meta* add_char(meta* Dat, char key)
 {
-	if(dt->chrs <= MAX_CHRS)
+	if(Dat->chrs <= MAX_CHRS)
 	{
-		dt = alloc_block(dt, 'c');
-		if(dt->cusr_x > 0)
+		Dat = alloc_block(Dat, 'c');
+		if(Dat->cusr_x > 0)
 		{
-			shift_txt(dt, 'r');
+			shift_txt(Dat, 'r');
 		}
-		dt->txt[dt->lns - dt->cusr_y][LAST_CHAR - dt->cusr_x] = key;
-		dt->txt[dt->lns - dt->cusr_y][dt->ln_len] = NTERM;
+		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns] - NTERM_SZ - Dat->cusr_x] = key;
+		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns]] = NTERM;
 
 		// Initializer. TODO
-		if(key == NTERM && dt->chrs > 0)
+		if(key == NTERM && Dat->chrs > 0)
 		{
-			dt->chrs--;
-			dt->ln_len--;
+			Dat->chrs--;
+			Dat->ln_len[Dat->lns]--;
 		}
 
 		if(key == LF)
 		{
-			dt = alloc_block(dt, 'l');
-			if(dt->cusr_x > 0)
+			Dat = alloc_block(Dat, 'l');
+			if(Dat->cusr_x > 0)
 			{
-				for(term_t x = (term_t) (strlen(LN_ABOVE) - dt->cusr_x); x <= strlen(LN_ABOVE); x++)
+				for(term_t x = (term_t) (strlen(LN_ABOVE) - Dat->cusr_x); x <= strlen(LN_ABOVE); x++)
 				{
-					CURR_LN[dt->ln_len++] = LN_ABOVE[x];
+					CURR_LN[Dat->ln_len[Dat->lns]++] = LN_ABOVE[x];
 				}
-				LN_ABOVE[strlen(LN_ABOVE) - dt->cusr_x] = NTERM;
-				dt->cusr_x = dt->ln_len;
+				LN_ABOVE[strlen(LN_ABOVE) - Dat->cusr_x] = NTERM;
+				Dat->cusr_x = Dat->ln_len[Dat->lns];
 			}
 		}
 	}
-	return dt;
+	return Dat;
 }
 
-meta* recognize_char(meta* dt, char key) // TODO: KEYMAP.
+meta* recognize_char(meta* Dat, char key) // TODO: KEYMAP.
 {
 	// Prevent inputting ANSI escape sequences.
 	if(key != ESCAPE)
 	{
 		switch(key)
 		{
-			default:
-				dt = add_char(dt, key);
-				break;
-
 			// Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH.
 			case NEG:
-				free_all_exit(dt, 0);
+				free_all_exit(Dat, 0);
 
-			case CTRL_D:
-				save_file(dt);
-				break;
-
-			case CTRL_H:
-				dt = ctrl_h(dt);
-				break;
-
-			case CTRL_G:
-				dt = ctrl_g(dt);
-				break;
-
-			case CTRL_Y:
-				dt = ctrl_y(dt);
-				break;
-
-			case CTRL_B:
-				dt = ctrl_b(dt);
+			default:
+				Dat = add_char(Dat, key);
 				break;
 
 			case BACKSPACE:
-				dt = backspace(dt);
+				Dat = backspace(Dat);
+				break;
+
+			case CTRL_D:
+				save_file(Dat);
+				break;
+
+			case CTRL_H:
+				Dat = ctrl_h(Dat);
+				break;
+
+			case CTRL_G:
+				Dat = ctrl_g(Dat);
+				break;
+
+			case CTRL_Y:
+				Dat = ctrl_y(Dat);
+				break;
+
+			case CTRL_B:
+				Dat = ctrl_b(Dat);
 				break;
 		}
 	}
 	// DEBUG
-	printf("last: %d cusr_x: %d cusr_y: %d\n", key, dt->cusr_x, dt->cusr_y);
-	return dt;
+	printf("last: %d cusr_x: %d cusr_y: %d\n", key, Dat->cusr_x, Dat->cusr_y);
+	return Dat;
 }
 

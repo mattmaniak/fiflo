@@ -1,20 +1,30 @@
 #ifdef __linux__
 #include "fiflo.h" // All typedefs are here.
 
-#include "files.c"
+#include "file.c"
 #include "keys.c"
 #include "api.c"
 #include "render.c"
 
-_Noreturn void free_all_exit(meta* dt, _Bool code)
+_Noreturn void free_all_exit(meta* Dat, _Bool code)
 {
-	free(dt->fname);
-	for(buf_t ln = 0; ln <= dt->lns; ln++)
+	free(Dat->fname);
+	Dat->fname = NULL;
+
+	for(buf_t ln = 0; ln <= Dat->lns; ln++)
 	{
-		free(dt->txt[ln]);
+		free(Dat->txt[ln]);
+		Dat->txt[ln] = NULL;
 	}
-	free(dt->txt);
-	free(dt);
+	free(Dat->ln_len);
+	Dat->ln_len = NULL;
+
+	free(Dat->txt);
+	Dat->txt = NULL;
+
+	free(Dat);
+	Dat = NULL;
+
 	exit(code);
 }
 
@@ -23,12 +33,12 @@ void sig_handler(int nothing)
 	if(nothing) {}
 }
 
-void check_ptr(meta* dt, void* ptr, const char* err_msg)
+void check_ptr(meta* Dat, void* ptr, const char* err_msg)
 {
 	if(!ptr)
 	{
 		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
-		free_all_exit(dt, 1);
+		free_all_exit(Dat, 1);
 	}
 }
 
@@ -50,7 +60,7 @@ void options(const char* arg) // TODO: NORETURN?
 	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo vX.Y.Z (WIP)",
+		"fiflo v2.1.0 (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
 		"(C) 2018 mattmaniak under the MIT License.");
 		exit(0);
@@ -79,43 +89,44 @@ char getch(void) // TODO: COMMENT.
 	return key;
 }
 
-meta* init(meta* dt, const char* passed)
+meta* init(meta* Dat, const char* passed)
 {
-	dt->fname = malloc(PATH_MAX);
-	check_ptr(dt, dt->fname, "alloc memory for the filename\0");
-	set_fname(dt, passed);
+	Dat->fname = malloc(PATH_MAX);
+	check_ptr(Dat, Dat->fname, "alloc memory for the filename\0");
+	set_fname(Dat, passed);
 
-	dt->txt = malloc(sizeof(dt->txt) * MEMBLK);
-	check_ptr(dt, dt->txt, "alloc memory for lines\0");
+	Dat->txt = malloc(sizeof(Dat->txt) * MEMBLK);
+	check_ptr(Dat, Dat->txt, "alloc memory for lines\0");
 
-	dt->chrs = 0;
-	dt->ln_len = 0;
-	dt->lns = 0;
+	Dat->ln_len = malloc(MAX_CHRS + NTERM_SZ); // TODO: DYNAMIC.
+	Dat->ln_len[0] = 0;
+	Dat->chrs = 0;
+	Dat->lns = 0;
 
-	dt->cusr_x = 0;
-	dt->cusr_y = 0;
+	Dat->cusr_x = 0;
+	Dat->cusr_y = 0;
 
-	dt->txt[0] = malloc(MEMBLK);
-	check_ptr(dt, dt->txt, "alloc memory for the first line\0");
+	Dat->txt[0] = malloc(MEMBLK);
+	check_ptr(Dat, Dat->txt, "alloc memory for the first line\0");
 
-	return dt;
+	return Dat;
 }
 
 _Noreturn void run(const char* passed)
 {
-	meta* dt = malloc(sizeof(meta));
-	check_ptr(dt, dt, "alloc memory for metadt\0");
-	dt = init(dt, passed);
-	dt = read_file(dt);
+	meta* Dat = malloc(sizeof(meta));
+	check_ptr(Dat, Dat, "alloc memory for metaDat\0");
+	Dat = init(Dat, passed);
+	Dat = read_file(Dat);
 
 	char pressed = NTERM; // Initializer.
 	// Main program loop.
 	for(;;)
 	{
-		dt = recognize_char(dt, pressed);
-		window(dt);
+		Dat = recognize_char(Dat, pressed);
+		window(Dat);
 		pressed = getch();
-		flush_win(dt);
+		flush_win(Dat);
 	}
 }
 

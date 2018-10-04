@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- add .gitlab-ci.yml,
 - keymap,
 - "/usr/share/doc/fiflo/" dir after installation,
 - edited/save indicator,

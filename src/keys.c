@@ -1,62 +1,62 @@
 #include "keys.h"
 
-meta* ctrl_h(meta* dt)
+meta* ctrl_h(meta* Dat)
 {
-	if(dt->cusr_x > 0)
+	if(Dat->cusr_x > 0)
 	{
 		// Move the cursor right.
-		dt->cusr_x--;
+		Dat->cusr_x--;
 	}
-	return dt;
+	return Dat;
 }
 
-meta* ctrl_g(meta* dt)
+meta* ctrl_g(meta* Dat)
 {
-	if(dt->cusr_x < dt->ln_len)
+	if(Dat->cusr_x < Dat->ln_len[Dat->lns])
 	{
 		// Move the cursor left.
-		dt->cusr_x++;
+		Dat->cusr_x++;
 	}
-	return dt;
+	return Dat;
 }
 
-meta* ctrl_y(meta* dt)
+meta* ctrl_y(meta* Dat)
 {
-	if(dt->cusr_y < dt->lns)
+	if(Dat->cusr_y < Dat->lns)
 	{
 		// Move the cursor up.
-		dt->cusr_y++;
+		Dat->cusr_y++;
 		// Must contain at least newline.
 		if(strlen(LN_ABOVE) == 1)
 		{
-			dt->chrs = 1;
+			Dat->chrs = 1;
 		}
 		else
 		{
-			dt->ln_len = (buf_t) (strlen(LN_ABOVE) - INDEX);
+			Dat->ln_len[Dat->lns] = (buf_t) (strlen(LN_ABOVE) - INDEX);
 		}
 	}
-	return dt;
+	return Dat;
 }
 
-meta* ctrl_b(meta* dt)
+meta* ctrl_b(meta* Dat)
 {
-	if(dt->cusr_y > 0)
+	if(Dat->cusr_y > 0)
 	{
 		// Move the cursor down.
-		dt->cusr_y--;
+		Dat->cusr_y--;
 	}
-	return dt;
+	return Dat;
 }
 
-meta* backspace(meta* dt)
+meta* backspace(meta* Dat)
 {
 	// Prevent first char deletion in line.
-	if((dt->cusr_x != dt->ln_len) || dt->ln_len == 0)
+	if((Dat->cusr_x != Dat->ln_len[Dat->lns]) || Dat->ln_len[Dat->lns] == 0)
 	{
-		dt = shift_txt(dt, 'l');
-		dt = dealloc_block(dt);
+		Dat = shift_txt(Dat, 'l');
+		Dat = dealloc_block(Dat);
 	}
-	return dt;
+	return Dat;
 }
 

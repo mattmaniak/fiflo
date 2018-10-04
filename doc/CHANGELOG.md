@@ -7,8 +7,8 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
-### vX.Y.Z (WIP):
-- configure.ac added,
+### v2.1.0 (WIP):
+- autoconf files added,
 - control keys changed,
 - upper bar splitted,
 - moveable cursor.

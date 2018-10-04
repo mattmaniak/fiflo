@@ -30,7 +30,7 @@ typedef struct
 	FILE*  txtf;    // File handle.
 	char*  fname;   // Full filename. Eg. /home/user/basename.
 	char** txt;     // Text buffer. Eg. txt[lns][chrs].
-	buf_t  ln_len;  // Chars in the current line (index).
+	buf_t* ln_len;  // Chars in the current line (index).
 	buf_t  chrs;    // All chars index.
 	buf_t  lns;     // Lines index.
 	buf_t  cusr_x;  // User's cursor position in reversed X.
@@ -39,14 +39,14 @@ typedef struct
 meta;
 #pragma pack(pop)
 
-_Noreturn void free_all_exit(meta* dt, _Bool code);
+_Noreturn void free_all_exit(meta* Dat, _Bool code);
 void sig_handler(int nothing);
-void check_ptr(meta* dt, void* ptr, const char* errmsg); // Check if ptr is NULL.
+void check_ptr(meta* Dat, void* ptr, const char* errmsg); // Check if ptr is NULL.
 
 void options(const char* arg); // Eg. -v, --version et al infos.
 char getch(void); // Getchar without confirming by ENTER.
 
-meta* init(meta* dt, const char* passed);
+meta* init(meta* Dat, const char* passed);
 _Noreturn void run(const char* passed); // Contains program loop.
 int main(int argc, char** argv);
 #endif
