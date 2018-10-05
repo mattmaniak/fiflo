@@ -46,8 +46,8 @@ void check_ptr(meta* Dat, void* ptr, const char* errmsg); // Check if ptr is NUL
 void options(const char* arg); // Eg. -v, --version et al infos.
 char getch(void); // Getchar without confirming by ENTER.
 
-meta* init(meta* Dat, const char* passed);
-_Noreturn void run(const char* passed); // Contains program loop.
+meta* init(meta* Dat, const char* arg);
+_Noreturn void run(const char* arg); // Contains program loop.
 int main(int argc, char** argv);
 #endif
 

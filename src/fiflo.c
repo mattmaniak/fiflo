@@ -1,7 +1,6 @@
 #ifdef __linux__
 #include "fiflo.h" // All typedefs are here.
 
-#include "file.c"
 #include "keys.c"
 #include "api.c"
 #include "render.c"
@@ -42,7 +41,7 @@ void check_ptr(meta* Dat, void* ptr, const char* err_msg)
 	}
 }
 
-void options(const char* arg) // TODO: NORETURN?
+void options(const char* arg)
 {
 	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
 	{
@@ -54,7 +53,7 @@ void options(const char* arg) // TODO: NORETURN?
 		"basename      Open the textfile \"basename\" using your current path.",
 		"/dir/bname    Open the textfile \"bname\" from the \"/dir\" folder.",
 		"-h, --help    Show program help.",
-		"-v, --version Display info about the current version.");
+		"-v, --version Display information about the version.");
 		exit(0);
 	}
 	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
@@ -65,7 +64,6 @@ void options(const char* arg) // TODO: NORETURN?
 		"(C) 2018 mattmaniak under the MIT License.");
 		exit(0);
 	}
-	run(arg);
 }
 
 char getch(void) // TODO: COMMENT.
@@ -89,11 +87,11 @@ char getch(void) // TODO: COMMENT.
 	return key;
 }
 
-meta* init(meta* Dat, const char* passed)
+meta* init(meta* Dat, const char* arg)
 {
 	Dat->fname = malloc(PATH_MAX);
 	check_ptr(Dat, Dat->fname, "alloc memory for the filename\0");
-	set_fname(Dat, passed);
+	set_fname(Dat, arg);
 
 	Dat->txt = malloc(sizeof(Dat->txt) * MEMBLK);
 	check_ptr(Dat, Dat->txt, "alloc memory for lines\0");
@@ -112,18 +110,19 @@ meta* init(meta* Dat, const char* passed)
 	return Dat;
 }
 
-_Noreturn void run(const char* passed)
+_Noreturn void run(const char* arg)
 {
 	meta* Dat = malloc(sizeof(meta));
-	check_ptr(Dat, Dat, "alloc memory for metaDat\0");
-	Dat = init(Dat, passed);
-	Dat = read_file(Dat);
+	check_ptr(Dat, Dat, "alloc memory for metadata\0");
 
-	char pressed = NTERM; // Initializer.
+	Dat = init(Dat, arg);
+	Dat = read_file(Dat);
+	char pressed = NTERM;
+
 	// Main program loop.
 	for(;;)
 	{
-		Dat = recognize_char(Dat, pressed);
+		Dat = reco_key(Dat, pressed);
 		window(Dat);
 		pressed = getch();
 		flush_win(Dat);
@@ -139,7 +138,7 @@ int main(int argc, char** argv)
 	}
 	struct sigaction sig;
 
-    sig.sa_handler = sig_handler;
+    sig.sa_handler = sig_handler; // TODO: MACRO EXPANSION.
 	sigemptyset(&sig.sa_mask);
 	sig.sa_flags = 0; // TODO: IS REQUIRED?
     sigaction(SIGINT, &sig, NULL);
@@ -151,8 +150,8 @@ int main(int argc, char** argv)
 	else
 	{
 		options(argv[1]);
+		run(argv[1]);
 	}
-	return 0;
 }
 
 #else

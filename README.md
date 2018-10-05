@@ -13,6 +13,10 @@ Simple terminal-based text editor.
 - gzip,
 - git.
 
+## Development requirements:
+- clang,
+- valgrind.
+
 ## Downloading
 Current stable release:
 ```

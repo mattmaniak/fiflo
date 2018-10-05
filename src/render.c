@@ -5,29 +5,29 @@ term_t term_sz(meta* Dat, char axis)
 	const uint8_t y_min = BARS_SZ + CURRENT;
 	const term_t sz_max = USHRT_MAX;
 
-	struct winsize win;
+	struct winsize term;
 
 	// TODO: COMMENT HOW WORKS.
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &term);
 
 	// Terminal size check.
-	if(win.ws_col < TERM_X_MIN || win.ws_row < y_min)
+	if(term.ws_col < TERM_X_MIN || term.ws_row < y_min)
 	{
 		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", TERM_X_MIN, y_min);
 		free_all_exit(Dat, 1);
 	}
-	else if(win.ws_col > sz_max || win.ws_row > sz_max)
+	else if(term.ws_col > sz_max || term.ws_row > sz_max)
 	{
 		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
 		free_all_exit(Dat, 1);
 	}
 	switch(axis)
 	{
-		case 'x':
-			return win.ws_col;
+		case 'X':
+			return term.ws_col;
 
-		case 'y':
-			return win.ws_row;
+		case 'Y':
+			return term.ws_row;
 
 		default:
 			A_RESET();
@@ -43,7 +43,7 @@ void flush_win(meta* Dat)
 	A_RESTORE_CUR_POS();
 	A_CLEAN_LN();
 
-	for(term_t y = 0; y < term_sz(Dat, 'y'); y++)
+	for(term_t y = 0; y < term_sz(Dat, 'Y'); y++)
 	{
 		A_CUR_UP(1);
 		A_CLEAN_LN();
@@ -57,7 +57,7 @@ void upper_bar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES FOR STRLEN_BUF_T.
 	const char* dots = "...\0";
 	const char* indicators = " line length/chars: \0";
 
-	term_t fname_max = term_sz(Dat, 'x') - (term_t) (strlen(title) + strlen(dots)
+	term_t fname_max = term_sz(Dat, 'X') - (term_t) (strlen(title) + strlen(dots)
 	+ strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
 	A_INVERT_COLORS();
@@ -71,11 +71,32 @@ void upper_bar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES FOR STRLEN_BUF_T.
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s", Dat->fname,
-		term_sz(Dat, 'x') - (term_t) (strlen(Dat->fname) + strlen(title)
+		term_sz(Dat, 'X') - (term_t) (strlen(Dat->fname) + strlen(title)
 		+ strlen(indicators) + SLASH_SZ + (2 * STRLEN_BUF_T)), " ");
 	}
 	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, Dat->ln_len[Dat->lns],
 	STRLEN_BUF_T, Dat->chrs);
+}
+
+void scroll_txt(meta* Dat, buf_t ln)
+{
+	_Bool mv_right = 0;
+	if(Dat->txt[ln][Dat->ln_len[ln] - NTERM_SZ] == LF)
+	{
+		mv_right = 1;
+	}
+	// Text will be scrolled. Not cursor.
+	for(buf_t x = (buf_t) (Dat->ln_len[ln] - Dat->cusr_x - TXT_X
+	+ CUR_SZ - mv_right);
+	x <= strlen(Dat->txt[ln]) - Dat->cusr_x - CUR_SZ - mv_right; x++)
+	{
+		putchar(Dat->txt[ln][x]);
+	}
+	if(mv_right == 1)
+	{
+		// Text is shifted so LF in Dat->txt isn't rendered.
+		putchar(LF);
+	}
 }
 
 void render_txt(meta* Dat)
@@ -102,23 +123,7 @@ void render_txt(meta* Dat)
 			// Horizontal scroll required.
 			if((Dat->ln_len[Dat->lns] - TXT_X) >= Dat->cusr_x)
 			{
-				_Bool mv_right = 0;
-				if(Dat->txt[ln][Dat->ln_len[ln] - NTERM_SZ] == LF)
-				{
-					mv_right = 1;
-				}
-				// Text will be scrolled. Not cursor.
-				for(buf_t x = (buf_t) (Dat->ln_len[ln] - Dat->cusr_x - TXT_X
-				+ CUR_SZ - mv_right);
-				x <= strlen(Dat->txt[ln]) - Dat->cusr_x - CUR_SZ - mv_right; x++)
-				{
-					putchar(Dat->txt[ln][x]);
-				}
-				if(mv_right == 1)
-				{
-					// Text is shifted so LF in Dat->txt isn't rendered.
-					putchar(LF);
-				}
+				scroll_txt(Dat, ln);
 			}
 			else
 			{
@@ -129,7 +134,7 @@ void render_txt(meta* Dat)
 	}
 }
 
-void fill(meta* Dat)
+void fill_l_bar(meta* Dat)
 {
 	if((Dat->lns + INDEX) <= TXT_Y)
 	{
@@ -139,13 +144,10 @@ void fill(meta* Dat)
 			putchar(LF);
 		}
 	}
-}
-
-void lower_bar(meta* Dat)
-{
 	A_INVERT_COLORS();
+
 	printf("\n%s%*s",
-	LBAR_STR, term_sz(Dat, 'x') - TERM_X_MIN + AT_LEAST_CHAR, " ");
+	LBAR_STR, term_sz(Dat, 'X') - TERM_X_MIN + AT_LEAST_CHAR, " ");
 
 	A_RESET();
 }
@@ -154,15 +156,14 @@ void window(meta* Dat)
 {
 	upper_bar(Dat);
 	render_txt(Dat);
-	fill(Dat);
-	lower_bar(Dat);
-	set_cursor(Dat);
+	fill_l_bar(Dat);
+	set_cur_pos(Dat);
 }
 
-void set_cursor(meta* Dat)
+void set_cur_pos(meta* Dat)
 {
 	// Cursor is moved by default to the right side by lower bar. Move it back.
-	A_CUR_LEFT(term_sz(Dat, 'x'));
+	A_CUR_LEFT(term_sz(Dat, 'X'));
 	// Left bottom corner [0, 0]. Will be used in the flush_win().
 	A_SAVE_CUR_POS();
 
@@ -174,7 +175,7 @@ void set_cursor(meta* Dat)
 	else if((Dat->ln_len[Dat->lns] - TXT_X) >= Dat->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
-		A_CUR_RIGHT(term_sz(Dat, 'x') - CUR_SZ);
+		A_CUR_RIGHT(term_sz(Dat, 'X') - CUR_SZ);
 	}
 	else
 	{
