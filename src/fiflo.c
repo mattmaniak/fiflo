@@ -1,9 +1,9 @@
 #ifdef __linux__
 #include "fiflo.h" // All typedefs are here.
 
-#include "keys.c"
-#include "api.c"
-#include "render.c"
+//#include "keys.c"
+//#include "api.c"
+//#include "render.c"
 
 _Noreturn void free_all_exit(meta* Dat, _Bool code)
 {

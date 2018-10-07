@@ -25,7 +25,13 @@
 #define CURR_LN   Dat->txt[Dat->lns]
 #define LN_ABOVE  Dat->txt[Dat->lns - 1]
 
-void set_fname(meta* Dat, const char* passed); // Optionally get current dir.
+extern meta* ctrl_h(meta* Dat);
+extern meta* ctrl_g(meta* Dat);
+extern meta* ctrl_y(meta* Dat);
+extern meta* ctrl_b(meta* Dat);
+extern meta* backspace(meta* Dat);
+
+void set_fname(meta* Dat, const char* arg); // Optionally get current dir.
 meta* read_file(meta* Dat);
 void save_file(meta* Dat);
 

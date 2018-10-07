@@ -1,3 +1,4 @@
+#include "fiflo.h"
 #include "render.h"
 
 term_t term_sz(meta* Dat, char axis)

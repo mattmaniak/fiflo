@@ -1,23 +1,24 @@
+#include "fiflo.h"
 #include "api.h"
 
-void set_fname(meta* Dat, const char* passed)
+void set_fname(meta* Dat, const char* arg)
 {
-	if(passed[strlen(passed) - NTERM_SZ] == '/')
+	if(arg[strlen(arg) - NTERM_SZ] == '/')
 	{
 		// Is folder.
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
 		free_all_exit(Dat, 1);
 	}
-	if(passed[0] == '/')
+	if(arg[0] == '/')
 	{
 		// Is absolute path.
-		if(strlen(passed) + NTERM_SZ > PATH_MAX)
+		if(strlen(arg) + NTERM_SZ > PATH_MAX)
 		{
 			fputs("Given path is too long, exit(1).\n", stderr);
 			free_all_exit(Dat, 1);
 		}
 		// Malloc'ed so doesn't need 'n' for size.
-		strcpy(Dat->fname, passed);
+		strcpy(Dat->fname, arg);
 	}
 	else
 	{
@@ -27,7 +28,7 @@ void set_fname(meta* Dat, const char* passed)
 		check_ptr(Dat, (getcwd(abs_path, PATH_MAX)),
 		"get your current path. Can be too long\0");
 
-		if((strlen(abs_path) + strlen(passed) + NTERM_SZ) > PATH_MAX)
+		if((strlen(abs_path) + strlen(arg) + NTERM_SZ) > PATH_MAX)
 		{
 			// Exceeded 4096 chars.
 			fputs("Given filename is too long, exit(1).\n", stderr);
@@ -39,9 +40,9 @@ void set_fname(meta* Dat, const char* passed)
 		// Add the slash between.
 		Dat->fname[strlen(abs_path)] = '/';
 		// Append a basename.
-		for(uint16_t pos = 0; pos < strlen(passed); pos++)
+		for(uint16_t pos = 0; pos < strlen(arg); pos++)
 		{
-			strcpy(&Dat->fname[strlen(abs_path) + SLASH_SZ + pos], &passed[pos]);
+			strcpy(&Dat->fname[strlen(abs_path) + SLASH_SZ + pos], &arg[pos]);
 		}
 		free(abs_path);
 	}
@@ -93,6 +94,8 @@ meta* dealloc_block(meta* Dat)
 	if(Dat->ln_len[Dat->lns] - 1 % MEMBLK == MEMBLK - 1)
 	{
 		CURR_LN = realloc(CURR_LN, (2 * Dat->ln_len[Dat->lns]) - MEMBLK);
+		check_ptr(Dat, CURR_LN, "free the memblock with a line\0");
+		Dat->ln_len = realloc(Dat->ln_len, Dat->lns + MEMBLK);
 		check_ptr(Dat, CURR_LN, "free the memblock with a line\0");
 	}
 	if(Dat->ln_len[Dat->lns] > 0 && Dat->cusr_x != (Dat->ln_len[Dat->lns] + INDEX))
@@ -147,9 +150,15 @@ meta* alloc_block(meta* Dat, char mode)
 				{
 					Dat->txt =
 					realloc(Dat->txt, sizeof(Dat->txt) * (Dat->lns + MEMBLK));
+					check_ptr(Dat, CURR_LN,
+					"alloc the memblock with lines numbers\0");
+
+					Dat->ln_len = realloc(Dat->ln_len, Dat->lns + MEMBLK);
+					check_ptr(Dat, Dat->ln_len,
+					"alloc the memblock for sizes of lines.\0");
 				}
 				CURR_LN = malloc(MEMBLK);
-				check_ptr(Dat, CURR_LN, "alloc byte in the new line\0");
+				check_ptr(Dat, CURR_LN, "alloc memblock in the line\0");
 			}
 			CURR_LN[Dat->ln_len[Dat->lns] = 0] = NTERM;
 			break;

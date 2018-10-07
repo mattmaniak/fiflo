@@ -2,9 +2,9 @@
 ## delete one if done:
 - add .gitlab-ci.yml,
 - keymap,
+- improve Makefile,
 - "/usr/share/doc/fiflo/" dir after installation,
 - edited/save indicator,
-- improve configure.ac and Makefile.in,
 - TAB key,
 - fix too big memory usage (blocks),
 - bigger buffer with memory limits,

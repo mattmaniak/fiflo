@@ -31,6 +31,8 @@
 #define A_SAVE_CUR_POS()    printf("%s", "\033[s")
 #define A_RESTORE_CUR_POS() printf("%s", "\033[u")
 
+#define LF 10
+
 term_t term_sz(meta* Dat, char axis); // Check if a term to small or big.
 void flush_win(meta* Dat);            // Clean the old rendered window.
 

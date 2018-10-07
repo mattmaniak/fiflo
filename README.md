@@ -4,8 +4,7 @@
 Simple terminal-based text editor.
 
 ## Minimal requirements for compilation:
-- Linux kernel,
-- autoconf,
+- Linux-based system,
 - make,
 - gcc.
 
@@ -29,22 +28,12 @@ git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 
 ## Building from source
 ```
-autoconf && ./configure && make
+make
 ```
 
-## Installation
+## Removing binaries
 ```
-sudo make install
-```
-
-## Uninstallation
-```
-sudo make uninstall
-```
-
-## Building with the AddressSanitizer for memory errors handling
-```
-make sanitize
+make clean
 ```
 
 ## FAQ

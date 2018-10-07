@@ -14,6 +14,7 @@
 #define CURRENT  1
 #define INDEX    1
 #define NTERM_SZ 1
+#define NTERM    0
 
 #define MAX_LNS      USHRT_MAX - 1 // - 1 is index.
 #define MAX_CHRS     MAX_LNS - 1   // Same as above but with the terminator.
@@ -23,7 +24,6 @@
 typedef uint16_t buf_t;  // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
-// TODO: REPLACE ln_len WITH ln_len[LNS].
 #pragma pack(push, 1)
 typedef struct
 {
@@ -38,6 +38,15 @@ typedef struct
 }
 meta;
 #pragma pack(pop)
+
+// API
+extern meta* reco_key(meta* Dat, char key);
+extern void set_fname(meta* Dat, const char* arg);
+extern meta* read_file(meta* Dat);
+
+// RENDER
+extern void flush_win(meta* Dat);
+extern void window(meta* Dat);
 
 _Noreturn void free_all_exit(meta* Dat, _Bool code);
 void sig_handler(int nothing);
