@@ -40,20 +40,21 @@ meta;
 #pragma pack(pop)
 
 // API
-extern meta* reco_key(meta* Dat, char key);
-extern void set_fname(meta* Dat, const char* arg);
-extern meta* read_file(meta* Dat);
+extern meta* keymap(meta* Dat, char key);
+extern void fnameset(meta* Dat, const char* arg);
+extern meta* readfile(meta* Dat);
 
 // RENDER
-extern void flush_win(meta* Dat);
+extern void flushwin(meta* Dat);
 extern void window(meta* Dat);
 
-_Noreturn void free_all_exit(meta* Dat, _Bool code);
-void sig_handler(int nothing);
-void check_ptr(meta* Dat, void* ptr, const char* errmsg); // Check if ptr is NULL.
+_Noreturn void freeallexit(_Bool code, meta* Dat);
+void handlesig(int nothing);
+// Checks if the passed pointer is NULL. If yes - frees memory and exits.
+void ptrcheck(void* ptr, const char* err_msg, meta* Dat);
 
 void options(const char* arg); // Eg. -v, --version et al infos.
-char getch(void); // Getchar without confirming by ENTER.
+char getch(void);              // Getchar without ENTER confirmation.
 
 meta* init(meta* Dat, const char* arg);
 _Noreturn void run(const char* arg); // Contains program loop.

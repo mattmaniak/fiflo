@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "keys.h"
 
-meta* ctrl_h(meta* Dat)
+meta* ctrlh(meta* Dat)
 {
 	if(Dat->cusr_x > 0)
 	{
@@ -11,7 +11,7 @@ meta* ctrl_h(meta* Dat)
 	return Dat;
 }
 
-meta* ctrl_g(meta* Dat)
+meta* ctrlg(meta* Dat)
 {
 	if(Dat->cusr_x < Dat->ln_len[Dat->lns])
 	{
@@ -21,7 +21,7 @@ meta* ctrl_g(meta* Dat)
 	return Dat;
 }
 
-meta* ctrl_y(meta* Dat)
+meta* ctrly(meta* Dat)
 {
 	if(Dat->cusr_y < Dat->lns)
 	{
@@ -40,7 +40,7 @@ meta* ctrl_y(meta* Dat)
 	return Dat;
 }
 
-meta* ctrl_b(meta* Dat)
+meta* ctrlb(meta* Dat)
 {
 	if(Dat->cusr_y > 0)
 	{
@@ -55,8 +55,8 @@ meta* backspace(meta* Dat)
 	// Prevent first char deletion in line.
 	if((Dat->cusr_x != Dat->ln_len[Dat->lns]) || Dat->ln_len[Dat->lns] == 0)
 	{
-		Dat = shift_txt(Dat, 'l');
-		Dat = dealloc_block(Dat);
+		Dat = txtshift(Dat, '<');
+		Dat = freeblk(Dat);
 	}
 	return Dat;
 }

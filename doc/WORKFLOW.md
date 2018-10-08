@@ -20,7 +20,8 @@ any development commit. Everything is pushed between one or a few commits to
 provide updated code on the "develop" branch.
 
 ## Coding rules:
-- Allman's brace style, indentation: hard tab (4 spaces wide), only snake_case,
+- Allman's brace style, indentation: hard tab (4 spaces wide),
+- use snake_case for variables and others, nounderscoresyntax for functions.
 - insert short TODOs near thing to fix as uppercase comments,
 - write doc comments in .c files above statements, in .h at the right side.
 - visually align values of defines && structures' members,

@@ -3,13 +3,13 @@
 
 #define LN_ABOVE Dat->txt[Dat->lns - 1]
 
-extern meta* dealloc_block(meta* Dat);
-extern meta* shift_txt(meta* Dat, char direction);
+extern meta* freeblk(meta* Dat);
+extern meta* txtshift(meta* Dat, char direction);
 
-meta* ctrl_h(meta* Dat);
-meta* ctrl_g(meta* Dat);
-meta* ctrl_y(meta* Dat);
-meta* ctrl_b(meta* Dat);
+meta* ctrlh(meta* Dat);
+meta* ctrlg(meta* Dat);
+meta* ctrly(meta* Dat);
+meta* ctrlb(meta* Dat);
 meta* backspace(meta* Dat);
 #endif
 

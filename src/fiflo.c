@@ -5,7 +5,7 @@
 //#include "api.c"
 //#include "render.c"
 
-_Noreturn void free_all_exit(meta* Dat, _Bool code)
+_Noreturn void freeallexit(_Bool code, meta* Dat)
 {
 	free(Dat->fname);
 	Dat->fname = NULL;
@@ -27,17 +27,17 @@ _Noreturn void free_all_exit(meta* Dat, _Bool code)
 	exit(code);
 }
 
-void sig_handler(int nothing)
+void handlesig(int nothing)
 {
 	if(nothing) {}
 }
 
-void check_ptr(meta* Dat, void* ptr, const char* err_msg)
+void ptrcheck(void* ptr, const char* err_msg, meta* Dat)
 {
 	if(!ptr)
 	{
 		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
-		free_all_exit(Dat, 1);
+		freeallexit(1, Dat);
 	}
 }
 
@@ -90,11 +90,11 @@ char getch(void) // TODO: COMMENT.
 meta* init(meta* Dat, const char* arg)
 {
 	Dat->fname = malloc(PATH_MAX);
-	check_ptr(Dat, Dat->fname, "alloc memory for the filename\0");
-	set_fname(Dat, arg);
+	ptrcheck(Dat->fname, "alloc memory for the filename\0", Dat);
+	fnameset(Dat, arg);
 
 	Dat->txt = malloc(sizeof(Dat->txt) * MEMBLK);
-	check_ptr(Dat, Dat->txt, "alloc memory for lines\0");
+	ptrcheck(Dat->txt, "alloc memory for lines\0", Dat);
 
 	Dat->ln_len = malloc(MAX_CHRS + NTERM_SZ); // TODO: DYNAMIC.
 	Dat->ln_len[0] = 0;
@@ -105,7 +105,7 @@ meta* init(meta* Dat, const char* arg)
 	Dat->cusr_y = 0;
 
 	Dat->txt[0] = malloc(MEMBLK);
-	check_ptr(Dat, Dat->txt, "alloc memory for the first line\0");
+	ptrcheck(Dat->txt, "alloc memory for the first line\0", Dat);
 
 	return Dat;
 }
@@ -113,19 +113,19 @@ meta* init(meta* Dat, const char* arg)
 _Noreturn void run(const char* arg)
 {
 	meta* Dat = malloc(sizeof(meta));
-	check_ptr(Dat, Dat, "alloc memory for metadata\0");
+	ptrcheck(Dat, "alloc memory for metadata\0", Dat);
 
 	Dat = init(Dat, arg);
-	Dat = read_file(Dat);
+	Dat = readfile(Dat);
 	char pressed = NTERM;
 
 	// Main program loop.
 	for(;;)
 	{
-		Dat = reco_key(Dat, pressed);
+		Dat = keymap(Dat, pressed);
 		window(Dat);
 		pressed = getch();
-		flush_win(Dat);
+		flushwin(Dat);
 	}
 }
 
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 	}
 	struct sigaction sig;
 
-    sig.sa_handler = sig_handler; // TODO: MACRO EXPANSION.
+    sig.sa_handler = handlesig; // TODO: MACRO EXPANSION.
 	sigemptyset(&sig.sa_mask);
 	sig.sa_flags = 0; // TODO: IS REQUIRED?
     sigaction(SIGINT, &sig, NULL);

@@ -5,20 +5,19 @@
 #include <sys/ioctl.h>
 
 // UI areas.
-#define AT_LEAST_CHAR   1 // Needed to printf's wiDath specifier wnich is >= 1.
-#define SPACE_SZ        1
-#define CUR_SZ          1
-#define UPBAR_SZ        1
-#define SLASH_SZ        1
-#define LBAR_SZ         1
-#define BARS_SZ         (UPBAR_SZ + LBAR_SZ)
+#define AT_LEAST_CHAR 1 // Needed to printf's wiDath specifier wnich is >= 1.
+#define SPACE_SZ      1
+#define CUR_SZ        1
+#define UPBAR_SZ      1
+#define SLASH_SZ      1
+#define LBAR_SZ       1
+#define BARS_SZ       (UPBAR_SZ + LBAR_SZ)
+#define LBAR_STR      "CTRL+: C - exit/ Z - minimize/ D - save\
+YGHB - move cursor\0"
+#define TERM_X_MIN    (term_t) (strlen(LBAR_STR) + AT_LEAST_CHAR)
 
-#define LBAR_STR        "CTRL+: C - exit/ Z - minimize/ D - save\
-/ YGHB - move cursor\0"
-#define TERM_X_MIN      (term_t) (strlen(LBAR_STR) + AT_LEAST_CHAR)
-
-#define TXT_X (term_sz(Dat, 'X') - STRLEN_BUF_T)
-#define TXT_Y (term_sz(Dat, 'Y') - BARS_SZ)
+#define TXT_X (termgetsz('X', Dat) - STRLEN_BUF_T)
+#define TXT_Y (termgetsz('Y', Dat) - BARS_SZ)
 
 // ANSI escape codes. TODO: NAMES.
 #define A_RESET()           printf("%s", "\033[0m")
@@ -33,15 +32,16 @@
 
 #define LF 10
 
-term_t term_sz(meta* Dat, char axis); // Check if a term to small or big.
-void flush_win(meta* Dat);            // Clean the old rendered window.
+term_t termgetsz(char axis, meta* Dat); // Check if a term to small or big.
+void flushwin(meta* Dat);               // Clean the old rendered window.
 
-void upper_bar(meta* Dat);   // Render the upper bar.
-void scroll_txt(meta* Dat, buf_t ln);
-void render_txt(meta* Dat);  // And care about Dat->txt scrolling.
+void ubar(meta* Dat);        // Render the upper bar.
+void xscrolltxt(buf_t ln, meta* Dat);
+buf_t yscrolltxt(meta* Dat);
+void rendertxt(meta* Dat);   // And care about Dat->txt scrolling.
 void fill(meta* Dat);        // Empty space below the text.
-void fill_l_bar(meta* Dat);  // Render the lower bar that contains keyboard info.
-void window(meta* Dat);      // Uppetr bar + rendered text + fill + lower bar.
-void set_cur_pos(meta* Dat); // Set cursor position from the rendered bottom.
+void lbar(meta* Dat);        // Render the lower bar that contains keyboard info.
+void window(meta* Dat);      // Fills the whole visible terminal area.
+void setcurpos(meta* Dat);   // Set cursor position from the rendered bottom.
 #endif
 

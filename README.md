@@ -26,12 +26,12 @@ Latest unstable snapshot:
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
 
-## Building from source
+## Build from source
 ```
 make
 ```
 
-## Removing binaries
+## Delete object files and the binary
 ```
 make clean
 ```

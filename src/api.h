@@ -11,7 +11,6 @@
 #define CTRL_D    4
 #define TAB       9
 #define LF        10
-#define CTRL_X    24
 #define ESCAPE    27  // '\033'
 #define BACKSPACE 127
 
@@ -25,21 +24,21 @@
 #define CURR_LN   Dat->txt[Dat->lns]
 #define LN_ABOVE  Dat->txt[Dat->lns - 1]
 
-extern meta* ctrl_h(meta* Dat);
-extern meta* ctrl_g(meta* Dat);
-extern meta* ctrl_y(meta* Dat);
-extern meta* ctrl_b(meta* Dat);
+extern meta* ctrlh(meta* Dat);
+extern meta* ctrlg(meta* Dat);
+extern meta* ctrly(meta* Dat);
+extern meta* ctrlb(meta* Dat);
 extern meta* backspace(meta* Dat);
 
-void set_fname(meta* Dat, const char* arg); // Optionally get current dir.
-meta* read_file(meta* Dat);
-void save_file(meta* Dat);
+void fnameset(meta* Dat, const char* arg); // Optionally get current dir.
+meta* readfile(meta* Dat);
+void savefile(meta* Dat);
 
-meta* dealloc_block(meta* Dat); // Check and free memblock.
-meta* alloc_block(meta* Dat, char mode); // Check and alloc block of memory.
+meta* deallocblk(meta* Dat); // Check and free memblock.
+meta* allocblk(meta* Dat, char mode); // Check and alloc block of memory.
 
-meta* shift_txt(meta* Dat, char direction);
-meta* add_char(meta* Dat, char key); // If a char is not the BACKSPACE.
-meta* reco_key(meta* Dat, char key); // Recognize type of a passed char.
+meta* txtshift(meta* Dat, char direction);
+meta* addchar(meta* Dat, char key); // If a char is not the BACKSPACE.
+meta* keymap(meta* Dat, char key); // Recognize type of a passed char.
 #endif
 

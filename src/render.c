@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "render.h"
 
-term_t term_sz(meta* Dat, char axis)
+term_t termgetsz(char axis, meta* Dat)
 {
 	const uint8_t y_min = BARS_SZ + CURRENT;
 	const term_t sz_max = USHRT_MAX;
@@ -15,12 +15,12 @@ term_t term_sz(meta* Dat, char axis)
 	if(term.ws_col < TERM_X_MIN || term.ws_row < y_min)
 	{
 		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", TERM_X_MIN, y_min);
-		free_all_exit(Dat, 1);
+		freeallexit(1, Dat);
 	}
 	else if(term.ws_col > sz_max || term.ws_row > sz_max)
 	{
 		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
-		free_all_exit(Dat, 1);
+		freeallexit(1, Dat);
 	}
 	switch(axis)
 	{
@@ -32,19 +32,19 @@ term_t term_sz(meta* Dat, char axis)
 
 		default:
 			A_RESET();
-			fputs("Check term_sz function params, exit(1).\n", stderr);
+			fputs("Check \"termgetsz\" function params, exit(1).\n", stderr);
 			exit(1);
 	}
 	// Required -Wreturn-type.
-	return 1;
+	return 0;
 }
 
-void flush_win(meta* Dat)
+void flushwin(meta* Dat)
 {
 	A_RESTORE_CUR_POS();
 	A_CLEAN_LN();
 
-	for(term_t y = 0; y < term_sz(Dat, 'Y'); y++)
+	for(term_t y = 0; y < termgetsz('Y', Dat); y++)
 	{
 		A_CUR_UP(1);
 		A_CLEAN_LN();
@@ -52,13 +52,13 @@ void flush_win(meta* Dat)
 	fflush(stdout);
 }
 
-void upper_bar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES FOR STRLEN_BUF_T.
+void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 {
 	const char* title = "fiflo: \0";
 	const char* dots = "...\0";
 	const char* indicators = " line length/chars: \0";
 
-	term_t fname_max = term_sz(Dat, 'X') - (term_t) (strlen(title) + strlen(dots)
+	term_t fname_max = termgetsz('X', Dat) - (term_t) (strlen(title) + strlen(dots)
 	+ strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
 	A_INVERT_COLORS();
@@ -68,18 +68,18 @@ void upper_bar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES FOR STRLEN_BUF_T.
 		// Filename will be visually shrinked and terminated by dots.
 		printf("%.*s%s", fname_max, Dat->fname, dots);
 	}
-	else
+	else // TODO: VARIABLE INSTEAD OF THESE CENTEPIDE.
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s", Dat->fname,
-		term_sz(Dat, 'X') - (term_t) (strlen(Dat->fname) + strlen(title)
+		termgetsz('X', Dat) - (term_t) (strlen(Dat->fname) + strlen(title)
 		+ strlen(indicators) + SLASH_SZ + (2 * STRLEN_BUF_T)), " ");
 	}
 	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, Dat->ln_len[Dat->lns],
 	STRLEN_BUF_T, Dat->chrs);
 }
 
-void scroll_txt(meta* Dat, buf_t ln)
+void xscrolltxt(buf_t ln, meta* Dat)
 {
 	_Bool mv_right = 0;
 	if(Dat->txt[ln][Dat->ln_len[ln] - NTERM_SZ] == LF)
@@ -100,20 +100,27 @@ void scroll_txt(meta* Dat, buf_t ln)
 	}
 }
 
-void render_txt(meta* Dat)
+buf_t yscrolltxt(meta* Dat)
 {
-	buf_t scrolled_lns = 0;
+	buf_t scrolled = 0;
 	if((Dat->lns + INDEX) > TXT_Y)
 	{
-		// Horizontal scrolling.
-		scrolled_lns = Dat->lns + INDEX - TXT_Y;
+		// Amount of lines to hide in the magic upper area.
+		scrolled = Dat->lns + INDEX - TXT_Y;
 	}
-	for(term_t ln = scrolled_lns; ln <= Dat->lns; ln++)
+	return scrolled;
+}
+
+void rendertxt(meta* Dat)
+{
+	// Vertical rendering.
+	for(term_t ln = yscrolltxt(Dat); ln <= Dat->lns; ln++)
 	{
 		A_INVERT_COLORS();
 		printf("%*d", STRLEN_BUF_T, ln + INDEX);
 		A_RESET();
 
+		// Horizontal rendering.
 		if((term_t) strlen(Dat->txt[ln]) < TXT_X)
 		{
 			// There is small amount of chars. X-scroll isn't required.
@@ -121,51 +128,58 @@ void render_txt(meta* Dat)
 		}
 		else
 		{
-			// Horizontal scroll required.
+			// Chars won't fits in the horizontal space.
 			if((Dat->ln_len[Dat->lns] - TXT_X) >= Dat->cusr_x)
 			{
-				scroll_txt(Dat, ln);
+				// Render only right part of the line.
+				xscrolltxt(ln, Dat);
 			}
 			else
 			{
-				// Scrolled to start of the line. Now cursor will be scrolled.
+				// Render only left part of the line. Cursor can scrolled.
 				printf("%.*s", TXT_X, Dat->txt[ln]);
 			}
 		}
 	}
 }
 
-void fill_l_bar(meta* Dat)
+void fill(meta* Dat)
 {
 	if((Dat->lns + INDEX) <= TXT_Y)
 	{
-		// Fill the empty area below the text to position lower bar.
+		// Fill the empty area below the text to position the lower bar.
 		for(term_t ln = Dat->lns; ln < TXT_Y - CURRENT; ln++)
 		{
 			putchar(LF);
 		}
 	}
+	// Else the bar will by positioned by the text.
+}
+
+void lbar(meta* Dat)
+{
 	A_INVERT_COLORS();
 
 	printf("\n%s%*s",
-	LBAR_STR, term_sz(Dat, 'X') - TERM_X_MIN + AT_LEAST_CHAR, " ");
+	LBAR_STR, termgetsz('X', Dat) - TERM_X_MIN + AT_LEAST_CHAR, " ");
 
 	A_RESET();
 }
 
 void window(meta* Dat)
 {
-	upper_bar(Dat);
-	render_txt(Dat);
-	fill_l_bar(Dat);
-	set_cur_pos(Dat);
+	ubar(Dat);
+	rendertxt(Dat);
+	fill(Dat);
+	lbar(Dat);
+	setcurpos(Dat);
 }
 
-void set_cur_pos(meta* Dat)
+void setcurpos(meta* Dat)
 {
 	// Cursor is moved by default to the right side by lower bar. Move it back.
-	A_CUR_LEFT(term_sz(Dat, 'X'));
-	// Left bottom corner [0, 0]. Will be used in the flush_win().
+	A_CUR_LEFT(termgetsz('X', Dat));
+	// Left bottom corner [0, 0]. Will be used in the flushwin().
 	A_SAVE_CUR_POS();
 
 	if(Dat->ln_len[Dat->lns] < TXT_X)
@@ -176,7 +190,7 @@ void set_cur_pos(meta* Dat)
 	else if((Dat->ln_len[Dat->lns] - TXT_X) >= Dat->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
-		A_CUR_RIGHT(term_sz(Dat, 'X') - CUR_SZ);
+		A_CUR_RIGHT(termgetsz('X', Dat) - CUR_SZ);
 	}
 	else
 	{
@@ -186,9 +200,10 @@ void set_cur_pos(meta* Dat)
 
 	// All lines fits in the window.
 	int32_t mv_up = TXT_Y - (Dat->lns + INDEX);
-	// Lines are scrolled.
+
 	if(Dat->lns >= TXT_Y)
 	{
+		// Scrolled so cursor is moved only 1 line above.
 		mv_up = 0;
 	}
 	A_CUR_UP(LBAR_SZ + Dat->cusr_y + mv_up);

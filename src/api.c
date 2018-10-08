@@ -1,13 +1,13 @@
 #include "fiflo.h"
 #include "api.h"
 
-void set_fname(meta* Dat, const char* arg)
+void fnameset(meta* Dat, const char* arg)
 {
 	if(arg[strlen(arg) - NTERM_SZ] == '/')
 	{
 		// Is folder.
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
-		free_all_exit(Dat, 1);
+		freeallexit(1, Dat);
 	}
 	if(arg[0] == '/')
 	{
@@ -15,7 +15,7 @@ void set_fname(meta* Dat, const char* arg)
 		if(strlen(arg) + NTERM_SZ > PATH_MAX)
 		{
 			fputs("Given path is too long, exit(1).\n", stderr);
-			free_all_exit(Dat, 1);
+			freeallexit(1, Dat);
 		}
 		// Malloc'ed so doesn't need 'n' for size.
 		strcpy(Dat->fname, arg);
@@ -25,14 +25,14 @@ void set_fname(meta* Dat, const char* arg)
 		// Is relative path or basename.
 		char* abs_path = malloc(PATH_MAX);
 
-		check_ptr(Dat, (getcwd(abs_path, PATH_MAX)),
-		"get your current path. Can be too long\0");
+		ptrcheck((getcwd(abs_path, PATH_MAX)),
+		"get your current path. Can be too long\0", Dat);
 
 		if((strlen(abs_path) + strlen(arg) + NTERM_SZ) > PATH_MAX)
 		{
 			// Exceeded 4096 chars.
 			fputs("Given filename is too long, exit(1).\n", stderr);
-			free_all_exit(Dat, 1);
+			freeallexit(1, Dat);
 		}
 
 		// Copy the path.
@@ -48,7 +48,7 @@ void set_fname(meta* Dat, const char* arg)
 	}
 }
 
-meta* read_file(meta* Dat)
+meta* readfile(meta* Dat)
 {
 	char chr;
 	Dat->txtf = fopen(Dat->fname, "rt");
@@ -58,14 +58,14 @@ meta* read_file(meta* Dat)
 		while((chr = (char) getc(Dat->txtf)) != EOF)
 		{
 			// Read all chars before end of file.
-			Dat = add_char(Dat, chr);
+			Dat = addchar(Dat, chr);
 		}
 		fclose(Dat->txtf);
 	}
 	return Dat;
 }
 
-void save_file(meta* Dat)
+void savefile(meta* Dat)
 {
 	if(access(Dat->fname, F_OK) == -1)
 	{
@@ -74,11 +74,11 @@ void save_file(meta* Dat)
 		if(create == -1)
 		{
 			fputs("Failed to create the new file, exit(1).\n", stderr);
-			free_all_exit(Dat, 1);
+			freeallexit(1, Dat);
 		}
 	}
 	Dat->txtf = fopen(Dat->fname, "wt");
-	check_ptr(Dat, Dat->txtf, "write to the file\0");
+	ptrcheck(Dat->txtf, "write to the file\0", Dat);
 
 	for(buf_t ln = 0; ln <= Dat->lns; ln++)
 	{
@@ -88,15 +88,15 @@ void save_file(meta* Dat)
 	fclose(Dat->txtf);
 }
 
-meta* dealloc_block(meta* Dat)
+meta* freeblk(meta* Dat)
 {
 	_Bool line_back = 0;
 	if(Dat->ln_len[Dat->lns] - 1 % MEMBLK == MEMBLK - 1)
 	{
 		CURR_LN = realloc(CURR_LN, (2 * Dat->ln_len[Dat->lns]) - MEMBLK);
-		check_ptr(Dat, CURR_LN, "free the memblock with a line\0");
+		ptrcheck(CURR_LN, "free the memblock with a line\0", Dat);
 		Dat->ln_len = realloc(Dat->ln_len, Dat->lns + MEMBLK);
-		check_ptr(Dat, CURR_LN, "free the memblock with a line\0");
+		ptrcheck(CURR_LN, "free the memblock with a line\0", Dat);
 	}
 	if(Dat->ln_len[Dat->lns] > 0 && Dat->cusr_x != (Dat->ln_len[Dat->lns] + INDEX))
 	{
@@ -125,7 +125,7 @@ meta* dealloc_block(meta* Dat)
 	return Dat;
 }
 
-meta* alloc_block(meta* Dat, char mode)
+meta* allocblk(meta* Dat, char mode)
 {
 	switch(mode)
 	{
@@ -135,7 +135,7 @@ meta* alloc_block(meta* Dat, char mode)
 			if(Dat->ln_len[Dat->lns] % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
 				CURR_LN = realloc(CURR_LN, Dat->ln_len[Dat->lns] + MEMBLK);
-				check_ptr(Dat, CURR_LN, "alloc new memblock for chars\0");
+				ptrcheck(CURR_LN, "alloc new memblock for chars\0", Dat);
 			}
 			break;
 
@@ -150,15 +150,15 @@ meta* alloc_block(meta* Dat, char mode)
 				{
 					Dat->txt =
 					realloc(Dat->txt, sizeof(Dat->txt) * (Dat->lns + MEMBLK));
-					check_ptr(Dat, CURR_LN,
-					"alloc the memblock with lines numbers\0");
+					ptrcheck(CURR_LN,
+					"alloc the memblock with lines numbers\0", Dat);
 
 					Dat->ln_len = realloc(Dat->ln_len, Dat->lns + MEMBLK);
-					check_ptr(Dat, Dat->ln_len,
-					"alloc the memblock for sizes of lines.\0");
+					ptrcheck(Dat->ln_len,
+					"alloc the memblock for sizes of lines.\0", Dat);
 				}
 				CURR_LN = malloc(MEMBLK);
-				check_ptr(Dat, CURR_LN, "alloc memblock in the line\0");
+				ptrcheck(CURR_LN, "alloc memblock in the line\0", Dat);
 			}
 			CURR_LN[Dat->ln_len[Dat->lns] = 0] = NTERM;
 			break;
@@ -166,11 +166,11 @@ meta* alloc_block(meta* Dat, char mode)
 	return Dat;
 }
 
-meta* shift_txt(meta* Dat, char direction)
+meta* txtshift(meta* Dat, char direction)
 {
 	switch(direction)
 	{
-		case 'l':
+		case '<':
 			if(Dat->cusr_x > Dat->ln_len[Dat->lns] - 1
 			&& Dat->ln_len[Dat->lns] > 0)
 			{
@@ -186,25 +186,30 @@ meta* shift_txt(meta* Dat, char direction)
 			}
 			break;
 
-		case 'r':
+		case '>':
 			for(term_t x = Dat->ln_len[Dat->lns];
 			x >= Dat->ln_len[Dat->lns] - Dat->cusr_x; x--)
 			{
 				CURR_LN[x] = CURR_LN[x - 1];
 			}
 			break;
+
+		default:
+			fputs("Check \"txtshift\" function params, exit(1).\n", stderr);
+			freeallexit(1, Dat);
+			break;
 	}
 	return Dat;
 }
 
-meta* add_char(meta* Dat, char key)
+meta* addchar(meta* Dat, char key)
 {
 	if(Dat->chrs <= MAX_CHRS)
 	{
-		Dat = alloc_block(Dat, 'c');
+		Dat = allocblk(Dat, 'c');
 		if(Dat->cusr_x > 0)
 		{
-			shift_txt(Dat, 'r');
+			txtshift(Dat, '>');
 		}
 		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns] - NTERM_SZ - Dat->cusr_x] = key;
 		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns]] = NTERM;
@@ -218,7 +223,7 @@ meta* add_char(meta* Dat, char key)
 
 		if(key == LF)
 		{
-			Dat = alloc_block(Dat, 'l');
+			Dat = allocblk(Dat, 'l');
 			if(Dat->cusr_x > 0)
 			{
 				for(term_t x = (term_t) (strlen(LN_ABOVE) - Dat->cusr_x);
@@ -234,7 +239,7 @@ meta* add_char(meta* Dat, char key)
 	return Dat;
 }
 
-meta* reco_key(meta* Dat, char key) // TODO: KEYMAP.
+meta* keymap(meta* Dat, char key) // TODO: KEYMAP.
 {
 	// Prevent inputting ANSI escape sequences.
 	if(key != ESCAPE)
@@ -243,10 +248,10 @@ meta* reco_key(meta* Dat, char key) // TODO: KEYMAP.
 		{
 			// Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH (PIPE).
 			case NEG:
-				free_all_exit(Dat, 0);
+				freeallexit(0, Dat);
 
 			default:
-				Dat = add_char(Dat, key);
+				Dat = addchar(Dat, key);
 				break;
 
 			case BACKSPACE:
@@ -254,23 +259,23 @@ meta* reco_key(meta* Dat, char key) // TODO: KEYMAP.
 				break;
 
 			case CTRL_D:
-				save_file(Dat);
+				savefile(Dat);
 				break;
 
 			case CTRL_H:
-				Dat = ctrl_h(Dat);
+				Dat = ctrlh(Dat);
 				break;
 
 			case CTRL_G:
-				Dat = ctrl_g(Dat);
+				Dat = ctrlg(Dat);
 				break;
 
 			case CTRL_Y:
-				Dat = ctrl_y(Dat);
+				Dat = ctrly(Dat);
 				break;
 
 			case CTRL_B:
-				Dat = ctrl_b(Dat);
+				Dat = ctrlb(Dat);
 				break;
 		}
 	}
