@@ -1,7 +1,5 @@
 *.asdf
 fiflo
-makefile
-Makefile
 *.o
 obj/
 *.out

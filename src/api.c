@@ -280,7 +280,7 @@ meta* keymap(meta* Dat, char key) // TODO: KEYMAP.
 		}
 	}
 	// DEBUG
-//	printf("last: %d cusr_x: %d cusr_y: %d\n", key, Dat->cusr_x, Dat->cusr_y);
+	printf("last: %d cusr_x: %d cusr_y: %d\n", key, Dat->cusr_x, Dat->cusr_y);
 	return Dat;
 }
 
