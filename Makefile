@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -std=gnu99 -O3 -I./src
+CFLAGS=-std=gnu99 -O3 -I./src -Wall -Wextra
 
 TARGET=fiflo
 

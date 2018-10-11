@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- fix tab upper bar shift (LXTerminal),
 - add .gitlab-ci.yml,
 - keymap,
 - improve Makefile,

@@ -13,7 +13,7 @@
 #define LBAR_SZ       1
 #define BARS_SZ       (UPBAR_SZ + LBAR_SZ)
 #define LBAR_STR      "CTRL+: C - exit/ Z - minimize/ D - save\
-YGHB - move cursor\0"
+/ YGHB - move cursor\0"
 #define TERM_X_MIN    (term_t) (strlen(LBAR_STR) + AT_LEAST_CHAR)
 
 #define TXT_X (termgetsz('X', Dat) - STRLEN_BUF_T)
@@ -21,6 +21,7 @@ YGHB - move cursor\0"
 
 // ANSI escape codes. TODO: NAMES.
 #define A_RESET()           printf("%s", "\033[0m")
+#define A_BOLD()            printf("%s", "\033[1m")
 #define A_INVERT_COLORS()   printf("%s", "\033[7m")
 #define A_CLEAN_LN()        printf("%s", "\033[2K")
 #define A_CUR_UP(n)         printf("\033[%dA", n)

@@ -1,10 +1,6 @@
 #ifdef __linux__
 #include "fiflo.h" // All typedefs are here.
 
-//#include "keys.c"
-//#include "api.c"
-//#include "render.c"
-
 _Noreturn void freeallexit(_Bool code, meta* Dat)
 {
 	free(Dat->fname);

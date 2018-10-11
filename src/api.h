@@ -34,7 +34,7 @@ void fnameset(meta* Dat, const char* arg); // Optionally get current dir.
 meta* readfile(meta* Dat);
 void savefile(meta* Dat);
 
-meta* deallocblk(meta* Dat); // Check and free memblock.
+meta* freeblk(meta* Dat); // Check and free memblock.
 meta* allocblk(meta* Dat, char mode); // Check and alloc block of memory.
 
 meta* txtshift(meta* Dat, char direction);

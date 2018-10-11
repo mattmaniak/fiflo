@@ -22,6 +22,7 @@ term_t termgetsz(char axis, meta* Dat)
 		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
 		freeallexit(1, Dat);
 	}
+
 	switch(axis)
 	{
 		case 'X':
@@ -35,8 +36,6 @@ term_t termgetsz(char axis, meta* Dat)
 			fputs("Check \"termgetsz\" function params, exit(1).\n", stderr);
 			exit(1);
 	}
-	// Required -Wreturn-type.
-	return 0;
 }
 
 void flushwin(meta* Dat)
@@ -44,7 +43,7 @@ void flushwin(meta* Dat)
 	A_RESTORE_CUR_POS();
 	A_CLEAN_LN();
 
-	for(term_t y = 0; y < termgetsz('Y', Dat); y++)
+	for(term_t y = 0; y <= termgetsz('Y', Dat); y++)
 	{
 		A_CUR_UP(1);
 		A_CLEAN_LN();
@@ -61,8 +60,11 @@ void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 	term_t fname_max = termgetsz('X', Dat) - (term_t) (strlen(title) + strlen(dots)
 	+ strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
+	putchar(LF);
+
 	A_INVERT_COLORS();
 	printf("%s", title);
+
 	if(strlen(Dat->fname) > fname_max)
 	{
 		// Filename will be visually shrinked and terminated by dots.
@@ -82,10 +84,13 @@ void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 void xscrolltxt(buf_t ln, meta* Dat)
 {
 	_Bool mv_right = 0;
+
 	if(Dat->txt[ln][Dat->ln_len[ln] - NTERM_SZ] == LF)
 	{
+		// Shifts the line right because the linefeed is also rendered.
 		mv_right = 1;
 	}
+
 	// Text will be scrolled. Not cursor.
 	for(buf_t x = (buf_t) (Dat->ln_len[ln] - Dat->cusr_x - TXT_X
 	+ CUR_SZ - mv_right);
@@ -103,6 +108,7 @@ void xscrolltxt(buf_t ln, meta* Dat)
 buf_t yscrolltxt(meta* Dat)
 {
 	buf_t scrolled = 0;
+
 	if((Dat->lns + INDEX) > TXT_Y)
 	{
 		// Amount of lines to hide in the magic upper area.
@@ -148,7 +154,7 @@ void fill(meta* Dat)
 	if((Dat->lns + INDEX) <= TXT_Y)
 	{
 		// Fill the empty area below the text to position the lower bar.
-		for(term_t ln = Dat->lns; ln < TXT_Y - CURRENT; ln++)
+		for(term_t ln = Dat->lns; ln < (TXT_Y - CURRENT); ln++)
 		{
 			putchar(LF);
 		}
@@ -177,8 +183,12 @@ void window(meta* Dat)
 
 void setcurpos(meta* Dat)
 {
+	// All lines fits in the window.
+	int32_t mv_up = TXT_Y - (Dat->lns + INDEX);
+
 	// Cursor is moved by default to the right side by lower bar. Move it back.
 	A_CUR_LEFT(termgetsz('X', Dat));
+
 	// Left bottom corner [0, 0]. Will be used in the flushwin().
 	A_SAVE_CUR_POS();
 
@@ -197,9 +207,6 @@ void setcurpos(meta* Dat)
 		// Text is scrolled horizontally to the start. Cursor can be moved.
 		A_CUR_RIGHT(Dat->ln_len[Dat->lns] - Dat->cusr_x + STRLEN_BUF_T);
 	}
-
-	// All lines fits in the window.
-	int32_t mv_up = TXT_Y - (Dat->lns + INDEX);
 
 	if(Dat->lns >= TXT_Y)
 	{
