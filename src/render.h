@@ -12,8 +12,7 @@
 #define UPBAR_SZ      1
 #define LBAR_SZ       1
 #define BARS_SZ       (UPBAR_SZ + LBAR_SZ)
-#define LBAR_STR      "CTRL+: C - exit/ Z - minimize/ D - save\
-/ YGHB - move cursor\0"
+#define LBAR_STR      "CTRL+: X - exit/ D - save/ YGHB - move cursor\0"
 #define TERM_X_MIN    (term_t) (strlen(LBAR_STR) + AT_LEAST_CHAR)
 
 #define TXT_X (termgetsz('X', Dat) - STRLEN_BUF_T)

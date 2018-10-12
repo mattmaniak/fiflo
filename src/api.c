@@ -47,6 +47,7 @@ void fnameset(meta* Dat, const char* arg)
 			strcpy(&Dat->fname[strlen(abs_path) + SLASH_SZ + pos], &arg[pos]);
 		}
 		free(abs_path);
+		abs_path = NULL;
 	}
 }
 
@@ -257,7 +258,10 @@ meta* keymap(meta* Dat, char key) // TODO: KEYMAP.
 		switch(key)
 		{
 			// Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH (PIPE).
-			case NEG:
+//			case NEG:
+//				freeallexit(0, Dat);
+
+			case CTRL_X:
 				freeallexit(0, Dat);
 
 			default:
@@ -289,7 +293,7 @@ meta* keymap(meta* Dat, char key) // TODO: KEYMAP.
 				break;
 		}
 	}
-	// DEBUG
+	// DEBUG ONLY - BREAKS RENDERING AND FLUSHING.
 //	printf("\rlast: %d cusr_x: %d cusr_y: %d\n", key, Dat->cusr_x, Dat->cusr_y);
 	return Dat;
 }

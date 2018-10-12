@@ -1,20 +1,27 @@
-CC=gcc
-CFLAGS=-std=gnu99 -O3 -I./src -Wall -Wextra
+CC=clang
+CFLAGS=-std=gnu99 -O3 -Weverything
 
 TARGET=fiflo
 
-SDIR=./src
-ODIR=./obj
-MDIR=./man
+SDIR=src
+ODIR=obj
+MDIR=man
 
-DEPS=$(SDIR)/$(TARGET).h
-OBJ=$(SDIR)/$(TARGET).o $(SDIR)/keys.o $(SDIR)/api.o $(SDIR)/render.o
+DEPS=$(TARGET).h
+OBJ=$(ODIR)/$(TARGET).o $(ODIR)/keys.o $(ODIR)/api.o $(ODIR)/render.o
 
-%.o: %.c $(DEPS)
+# Compilation of object files depends on source files wnich depends on headers.
+# "$@" - alias to name at the left of ':', "$^" - right.
+# "$<" is a first item in dependencies list.
+$(ODIR)/%.o: $(SDIR)/%.c $(SDIR)/$(DEPS)
+	mkdir -p $(ODIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
+
+sanitize: $(OBJ)
+	$(CC) -o $(TARGET) $^ $(CFLAGS) -fsanitize=address
 
 install:
 	sudo cp $(TARGET) /usr/bin/$(TARGET)
@@ -27,5 +34,5 @@ uninstall:
 .PHONY: clean
 
 clean:
-	$(RM) $(TARGET) $(SDIR)/*.o
+	$(RM) $(TARGET) -r $(ODIR)
 

@@ -175,10 +175,8 @@ void fill(meta* Dat)
 
 void lbar(void)
 {
-	ANSI_INVERT();
-
+	ANSI_BOLD();
 	printf("\n%s", LBAR_STR);
-
 	ANSI_RESET();
 }
 
@@ -205,7 +203,8 @@ void setcurpos(meta* Dat)
 	if(Dat->ln_len[Dat->lns] < TXT_X)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + Dat->ln_len[Dat->lns] - Dat->cusr_x);
+		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + Dat->ln_len[Dat->lns]
+		- Dat->cusr_x);
 	}
 	else if((Dat->ln_len[Dat->lns] - TXT_X) >= Dat->cusr_x)
 	{

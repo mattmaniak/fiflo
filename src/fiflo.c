@@ -116,6 +116,7 @@ _Noreturn void run(const char* arg)
 	meta* Dat = malloc(sizeof(meta));
 	ptrcheck(Dat, "alloc memory for metadata\0", Dat);
 
+
 	Dat = init(Dat, arg);
 	Dat = readfile(Dat);
 	char pressed = NTERM;
@@ -132,17 +133,16 @@ _Noreturn void run(const char* arg)
 
 int main(int argc, char** argv)
 {
+	// Catch CTRL+C.
+	signal(SIGINT, handlesig);
+	// Catch CTRL+Z.
+	signal(SIGTSTP, handlesig);
+
 	if(argc != 1 && argc != 2)
 	{
 		fputs("Only one additional arg can be passed, exit(1).\n", stderr);
 		exit(1);
 	}
-	struct sigaction sig;
-
-    sig.sa_handler = handlesig; // TODO: MACRO EXPANSION.
-	sigemptyset(&sig.sa_mask);
-	sig.sa_flags = 0; // TODO: IS REQUIRED?
-    sigaction(SIGINT, &sig, NULL);
 
 	if(argv[1] == NULL)
 	{
