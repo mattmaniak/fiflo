@@ -32,7 +32,7 @@ term_t termgetsz(char axis, meta* Dat)
 			return term.ws_row;
 
 		default:
-			A_RESET();
+			ANSI_RESET();
 			fputs("Check \"termgetsz\" function params, exit(1).\n", stderr);
 			exit(1);
 	}
@@ -40,13 +40,13 @@ term_t termgetsz(char axis, meta* Dat)
 
 void flushwin(meta* Dat)
 {
-	A_RESTORE_CUR_POS();
-	A_CLEAN_LN();
+	ANSI_RESTORE_CUR_POS();
+	ANSI_CLEAN_LN();
 
-	for(term_t y = 0; y <= termgetsz('Y', Dat); y++)
+	for(term_t y = 0; y < termgetsz('Y', Dat); y++)
 	{
-		A_CUR_UP(1);
-		A_CLEAN_LN();
+		ANSI_CUR_UP(1);
+		ANSI_CLEAN_LN();
 	}
 	fflush(stdout);
 }
@@ -60,10 +60,13 @@ void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 	term_t fname_max = termgetsz('X', Dat) - (term_t) (strlen(title) + strlen(dots)
 	+ strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
-	putchar(LF);
+	ANSI_INVERT();
 
-	A_INVERT_COLORS();
-	printf("%s", title);
+	/*
+	Sometimes the empty space of width STRLEN_BUF_T is inserted before the
+	upper bar. Inserting the carriage return before it fixes the problems. Just
+	handling with terminals' quirk modes. */
+	printf("\r%s", title);
 
 	if(strlen(Dat->fname) > fname_max)
 	{
@@ -79,6 +82,7 @@ void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 	}
 	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, Dat->ln_len[Dat->lns],
 	STRLEN_BUF_T, Dat->chrs);
+	ANSI_RESET();
 }
 
 void xscrolltxt(buf_t ln, meta* Dat)
@@ -122,9 +126,9 @@ void rendertxt(meta* Dat)
 	// Vertical rendering.
 	for(term_t ln = yscrolltxt(Dat); ln <= Dat->lns; ln++)
 	{
-		A_INVERT_COLORS();
+		ANSI_INVERT();
 		printf("%*d", STRLEN_BUF_T, ln + INDEX);
-		A_RESET();
+		ANSI_RESET();
 
 		// Horizontal rendering.
 		if((term_t) strlen(Dat->txt[ln]) < TXT_X)
@@ -162,14 +166,13 @@ void fill(meta* Dat)
 	// Else the bar will by positioned by the text.
 }
 
-void lbar(meta* Dat)
+void lbar(void)
 {
-	A_INVERT_COLORS();
+	ANSI_INVERT();
 
-	printf("\n%s%*s",
-	LBAR_STR, termgetsz('X', Dat) - TERM_X_MIN + AT_LEAST_CHAR, " ");
+	printf("\n%s", LBAR_STR);
 
-	A_RESET();
+	ANSI_RESET();
 }
 
 void window(meta* Dat)
@@ -177,7 +180,7 @@ void window(meta* Dat)
 	ubar(Dat);
 	rendertxt(Dat);
 	fill(Dat);
-	lbar(Dat);
+	lbar();
 	setcurpos(Dat);
 }
 
@@ -186,26 +189,26 @@ void setcurpos(meta* Dat)
 	// All lines fits in the window.
 	int32_t mv_up = TXT_Y - (Dat->lns + INDEX);
 
-	// Cursor is moved by default to the right side by lower bar. Move it back.
-	A_CUR_LEFT(termgetsz('X', Dat));
+	// Cursor is pushed right by the lower bar. Move it back.
+	ANSI_CUR_LEFT((term_t) strlen(LBAR_STR));
 
-	// Left bottom corner [0, 0]. Will be used in the flushwin().
-	A_SAVE_CUR_POS();
+	// Lower left side. Will be used to position the cursor and flush each line.
+	ANSI_SAVE_CUR_POS();
 
 	if(Dat->ln_len[Dat->lns] < TXT_X)
 	{
 		// No horizontal scrolling.
-		A_CUR_RIGHT((term_t) STRLEN_BUF_T + Dat->ln_len[Dat->lns] - Dat->cusr_x);
+		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + Dat->ln_len[Dat->lns] - Dat->cusr_x);
 	}
 	else if((Dat->ln_len[Dat->lns] - TXT_X) >= Dat->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
-		A_CUR_RIGHT(termgetsz('X', Dat) - CUR_SZ);
+		ANSI_CUR_RIGHT(termgetsz('X', Dat) - CUR_SZ);
 	}
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		A_CUR_RIGHT(Dat->ln_len[Dat->lns] - Dat->cusr_x + STRLEN_BUF_T);
+		ANSI_CUR_RIGHT(Dat->ln_len[Dat->lns] - Dat->cusr_x + STRLEN_BUF_T);
 	}
 
 	if(Dat->lns >= TXT_Y)
@@ -213,6 +216,6 @@ void setcurpos(meta* Dat)
 		// Scrolled so cursor is moved only 1 line above.
 		mv_up = 0;
 	}
-	A_CUR_UP(LBAR_SZ + Dat->cusr_y + mv_up);
+	ANSI_CUR_UP(LBAR_SZ + Dat->cusr_y + mv_up);
 }
 
