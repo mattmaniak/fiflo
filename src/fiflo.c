@@ -64,16 +64,21 @@ void options(const char* arg)
 
 char getch(void) // TODO: COMMENT.
 {
-	struct termios old, new; // From sys/ioctl.h.
+	struct termios old, new;
 	char key;
 
-	tcgetattr(STDIN_FILENO, &old); // Put the state of STDIN_FILENO into *old.
-	new = old; // Create the copy of old terminal settings to modify it's.
+	// Put the state of STDIN_FILENO into *old.
+	tcgetattr(STDIN_FILENO, &old);
+
+	// Create the copy of old terminal settings to modify it's.
+	new = old;
 
 	// Disable buffered I/O and echo mode.
 	new.c_lflag &= (unsigned int) ~(ICANON | ECHO);
+
 	// Immediately set the state of STDIN_FILENO to *new.
-	tcsetattr(STDIN_FILENO, TCSANOW, &new); // Use new terminal I/O settings.
+	// Use new terminal I/O settings.
+	tcsetattr(STDIN_FILENO, TCSANOW, &new);
 
 	key = (char) getchar();
 

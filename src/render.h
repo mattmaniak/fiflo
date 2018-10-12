@@ -39,6 +39,7 @@ void flushwin(meta* Dat);               // Clean the old rendered window.
 void ubar(meta* Dat);        // Render the upper bar.
 void xscrolltxt(buf_t ln, meta* Dat);
 buf_t yscrolltxt(meta* Dat);
+void numln(buf_t ln);
 void rendertxt(meta* Dat); // And care about Dat->txt scrolling.
 void fill(meta* Dat);      // Empty space below the text.
 void lbar(void);           // Render the lower bar that contains keyboard info.

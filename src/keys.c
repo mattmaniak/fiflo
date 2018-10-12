@@ -3,6 +3,7 @@
 
 meta* ctrlh(meta* Dat)
 {
+	// Cursor can be moved right if is shifted left. 0 - default right position.
 	if(Dat->cusr_x > 0)
 	{
 		// Move the cursor right.
@@ -13,6 +14,7 @@ meta* ctrlh(meta* Dat)
 
 meta* ctrlg(meta* Dat)
 {
+	// Move only when the cursor isn't at the start of the line.
 	if(Dat->cusr_x < Dat->ln_len[Dat->lns])
 	{
 		// Move the cursor left.

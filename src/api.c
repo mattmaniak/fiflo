@@ -3,15 +3,15 @@
 
 void fnameset(meta* Dat, const char* arg)
 {
+	// Is directory.
 	if(arg[strlen(arg) - NTERM_SZ] == '/')
 	{
-		// Is folder.
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
 		freeallexit(1, Dat);
 	}
+	// Is absolute path.
 	if(arg[0] == '/')
 	{
-		// Is absolute path.
 		if(strlen(arg) + NTERM_SZ > PATH_MAX)
 		{
 			fputs("Given path is too long, exit(1).\n", stderr);
@@ -20,25 +20,27 @@ void fnameset(meta* Dat, const char* arg)
 		// Malloc'ed so doesn't need 'n' for size.
 		strcpy(Dat->fname, arg);
 	}
+	// Is relative path or basename.
 	else
 	{
-		// Is relative path or basename.
 		char* abs_path = malloc(PATH_MAX);
 
 		ptrcheck((getcwd(abs_path, PATH_MAX)),
 		"get your current path. Can be too long\0", Dat);
 
+		// Exceeded 4096 chars.
 		if((strlen(abs_path) + strlen(arg) + NTERM_SZ) > PATH_MAX)
 		{
-			// Exceeded 4096 chars.
 			fputs("Given filename is too long, exit(1).\n", stderr);
 			freeallexit(1, Dat);
 		}
 
 		// Copy the path.
 		strcpy(Dat->fname, abs_path);
+
 		// Add the slash between.
 		Dat->fname[strlen(abs_path)] = '/';
+
 		// Append a basename.
 		for(uint16_t pos = 0; pos < strlen(arg); pos++)
 		{
@@ -142,6 +144,7 @@ meta* allocblk(meta* Dat, char mode)
 		case 'l':
 			if(Dat->lns++ >= MAX_LNS)
 			{
+				// TODO: COMMENTS.
 				Dat->lns = MAX_LNS;
 			}
 			else
@@ -170,6 +173,7 @@ meta* txtshift(meta* Dat, char direction)
 {
 	switch(direction)
 	{
+		// Move left.
 		case '<':
 			if(Dat->cusr_x > Dat->ln_len[Dat->lns] - 1
 			&& Dat->ln_len[Dat->lns] > 0)
@@ -186,6 +190,7 @@ meta* txtshift(meta* Dat, char direction)
 			}
 			break;
 
+		// Move right.
 		case '>':
 			for(term_t x = Dat->ln_len[Dat->lns];
 			x >= Dat->ln_len[Dat->lns] - Dat->cusr_x; x--)
@@ -206,11 +211,17 @@ meta* addchar(meta* Dat, char key)
 	if(Dat->chrs <= MAX_CHRS)
 	{
 		Dat = allocblk(Dat, 'c');
+
+		/* If the cursor is moved to the left and a char is inserted, rest of
+		the text will be shifted to the right side. */
 		if(Dat->cusr_x > 0)
 		{
 			txtshift(Dat, '>');
 		}
-		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns] - NTERM_SZ - Dat->cusr_x] = key;
+
+		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns]
+		 - NTERM_SZ - Dat->cusr_x] = key;
+
 		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns]] = NTERM;
 
 		// Fixes incremented value by terminator.
@@ -279,7 +290,7 @@ meta* keymap(meta* Dat, char key) // TODO: KEYMAP.
 		}
 	}
 	// DEBUG
-//	printf("last: %d cusr_x: %d cusr_y: %d\n", key, Dat->cusr_x, Dat->cusr_y);
+//	printf("\rlast: %d cusr_x: %d cusr_y: %d\n", key, Dat->cusr_x, Dat->cusr_y);
 	return Dat;
 }
 

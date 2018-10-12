@@ -57,14 +57,18 @@ void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 	const char* dots = "...\0";
 	const char* indicators = " line length/chars: \0";
 
-	term_t fname_max = termgetsz('X', Dat) - (term_t) (strlen(title) + strlen(dots)
-	+ strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
+	// Whitespace betweet a filename and indicators.
+	term_t space = termgetsz('X', Dat) - (term_t) (strlen(Dat->fname)
+	+ strlen(title) + strlen(indicators) + SLASH_SZ + (2 * STRLEN_BUF_T));
+
+	// Maximum length of a filename that can be fully displayed.
+	term_t fname_max = termgetsz('X', Dat) - (term_t) (strlen(title)
+	+ strlen(dots) + strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
 	ANSI_INVERT();
 
-	/*
-	Sometimes the empty space of width STRLEN_BUF_T is inserted before the
-	upper bar. Inserting the carriage return before it fixes the problems. Just
+	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
+	upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. */
 	printf("\r%s", title);
 
@@ -73,12 +77,10 @@ void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 		// Filename will be visually shrinked and terminated by dots.
 		printf("%.*s%s", fname_max, Dat->fname, dots);
 	}
-	else // TODO: VARIABLE INSTEAD OF THESE CENTEPIDE.
+	else
 	{
 		// Whole filename will be displayed.
-		printf("%s%*s", Dat->fname,
-		termgetsz('X', Dat) - (term_t) (strlen(Dat->fname) + strlen(title)
-		+ strlen(indicators) + SLASH_SZ + (2 * STRLEN_BUF_T)), " ");
+		printf("%s%*s", Dat->fname, space, " ");
 	}
 	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, Dat->ln_len[Dat->lns],
 	STRLEN_BUF_T, Dat->chrs);
@@ -121,14 +123,19 @@ buf_t yscrolltxt(meta* Dat)
 	return scrolled;
 }
 
+void numln(buf_t ln)
+{
+	ANSI_INVERT();
+	printf("%*d", STRLEN_BUF_T, ln + INDEX);
+	ANSI_RESET();	
+}
+
 void rendertxt(meta* Dat)
 {
 	// Vertical rendering.
 	for(term_t ln = yscrolltxt(Dat); ln <= Dat->lns; ln++)
 	{
-		ANSI_INVERT();
-		printf("%*d", STRLEN_BUF_T, ln + INDEX);
-		ANSI_RESET();
+		numln(ln);
 
 		// Horizontal rendering.
 		if((term_t) strlen(Dat->txt[ln]) < TXT_X)
@@ -186,7 +193,7 @@ void window(meta* Dat)
 
 void setcurpos(meta* Dat)
 {
-	// All lines fits in the window.
+	// Case when all lines fits in the window.
 	int32_t mv_up = TXT_Y - (Dat->lns + INDEX);
 
 	// Cursor is pushed right by the lower bar. Move it back.

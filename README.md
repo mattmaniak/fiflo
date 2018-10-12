@@ -3,20 +3,21 @@
 ## Description
 Simple terminal-based text editor.
 
-## Minimal requirements for compilation:
-- Linux-based system,
+## Requirements for:
+### 1. Compilation:
+- Linux-based desktop,
 - make,
-- gcc.
+- clang or gcc.
 
-## Additional requirements for man-page installation and VCS:
-- gzip,
-- git.
+### 2. Installation:
+- gzip.
 
-## Development requirements:
-- clang,
+### 3. Developent and testing:
+- git,
 - valgrind.
 
 ## Downloading
+### Using git:
 Current stable release:
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git
@@ -26,9 +27,21 @@ Latest unstable snapshot:
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
 
-## Build from source
+### Or just click "Download" on the GitLab's repository page.
+
+## Building from source
 ```
 make
+```
+
+## Installation
+```
+sudo make install
+```
+
+## Uninstallation
+```
+sudo make uninstall
 ```
 
 ## Delete object files and the binary

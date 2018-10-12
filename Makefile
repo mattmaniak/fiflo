@@ -5,6 +5,7 @@ TARGET=fiflo
 
 SDIR=./src
 ODIR=./obj
+MDIR=./man
 
 DEPS=$(SDIR)/$(TARGET).h
 OBJ=$(SDIR)/$(TARGET).o $(SDIR)/keys.o $(SDIR)/api.o $(SDIR)/render.o
@@ -14,6 +15,14 @@ OBJ=$(SDIR)/$(TARGET).o $(SDIR)/keys.o $(SDIR)/api.o $(SDIR)/render.o
 
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
+
+install:
+	sudo cp $(TARGET) /usr/bin/$(TARGET)
+	sudo cp $(MDIR)/$(TARGET).1 /usr/share/man/man1/$(TARGET).1
+	sudo gzip /usr/share/man/man1/$(TARGET).1
+
+uninstall:
+	sudo $(RM) /usr/bin/$(TARGET) /usr/share/man/man1/$(TARGET).1.gz
 
 .PHONY: clean
 
