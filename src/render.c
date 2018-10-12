@@ -65,7 +65,7 @@ void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 	term_t fname_max = termgetsz('X', Dat) - (term_t) (strlen(title)
 	+ strlen(dots) + strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
-	ANSI_INVERT();
+	ANSI_BOLD();
 
 	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
 	upper bar. Adding the carriage return before it fixes the problems. Just
@@ -125,9 +125,12 @@ buf_t yscrolltxt(meta* Dat)
 
 void numln(buf_t ln)
 {
-	ANSI_INVERT();
-	printf("%*d", STRLEN_BUF_T, ln + INDEX);
-	ANSI_RESET();	
+	_Bool space_sz = 1;
+
+	ANSI_BOLD();
+	printf("%*d", STRLEN_BUF_T - space_sz, ln + INDEX);
+	ANSI_RESET();
+	putchar(' ');
 }
 
 void rendertxt(meta* Dat)

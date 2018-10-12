@@ -19,7 +19,7 @@
 #define MAX_LNS      USHRT_MAX - 1 // - 1 is index.
 #define MAX_CHRS     MAX_LNS - 1   // Same as above but with the terminator.
 #define MEMBLK       512           // Must be > 1 and should be % 8 = 0.
-#define STRLEN_BUF_T 5             // Eg. Strlen("255"). Must be > term_sz('X').
+#define STRLEN_BUF_T 6             // Eg. Strlen("255"). Must be > term_sz('X').
 
 typedef uint16_t buf_t;  // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".

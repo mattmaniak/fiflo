@@ -8,10 +8,12 @@ files use git-show or git-log.
 
 ## Versions:
 ### v2.1.0 (WIP):
-- autoconf files added,
+- improved Makefile,
+- main compiler switched to clang,
 - control keys changed,
-- upper bar splitted,
-- moveable cursor.
+- upper bar splitted to 2 smaller ones,
+- moveable cursor,
+- transparent UI.
 
 ### v2.0.0 (2018, September 11):
 - vertical && horizontal scroll,
@@ -22,8 +24,8 @@ files use git-show or git-log.
 - dynamic buffer of size 64K.
 
 ### v1.1.0 (2018, August 12):
-- dynamically allocated text (2018, in theory max. 2G - 1),
-- real stdin (2018, built-in terminal) cursor,
+- dynamically allocated text (in theory max. 2G - 1),
+- real stdin (built-in terminal) cursor,
 - version info,
 - soft horizontal scrolling,
 - file is no longer created at the program's start,
