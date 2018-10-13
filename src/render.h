@@ -15,8 +15,8 @@
 #define LBAR_STR      "CTRL+: X - exit/ D - save/ YGHB - move cursor\0"
 #define TERM_X_MIN    (term_t) (strlen(LBAR_STR) + AT_LEAST_CHAR)
 
-#define TXT_X (termgetsz('X', Dat) - STRLEN_BUF_T)
-#define TXT_Y (termgetsz('Y', Dat) - BARS_SZ)
+#define TXT_X (termgetsz('X', Dt) - STRLEN_BUF_T)
+#define TXT_Y (termgetsz('Y', Dt) - BARS_SZ)
 
 
 #define ANSI_RESET()           printf("\033[%s", "0m")
@@ -32,17 +32,17 @@
 
 #define LF 10
 
-term_t termgetsz(char axis, meta* Dat); // Check if a term to small or big.
-void flushwin(meta* Dat);               // Clean the old rendered window.
+term_t termgetsz(char axis, meta* Dt); // Check if a term to small or big.
+void flushwin(meta* Dt);               // Clean the old rendered window.
 
-void ubar(meta* Dat);        // Render the upper bar.
-void xscrolltxt(buf_t ln, meta* Dat);
-buf_t yscrolltxt(meta* Dat);
+void ubar(meta* Dt);      // Render the upper bar.
+void xscrolltxt(buf_t ln, meta* Dt);
+buf_t yscrolltxt(meta* Dt);
 void numln(buf_t ln);
-void rendertxt(meta* Dat); // And care about Dat->txt scrolling.
-void fill(meta* Dat);      // Empty space below the text.
-void lbar(void);           // Render the lower bar that contains keyboard info.
-void window(meta* Dat);    // Fills the whole visible terminal area.
-void setcurpos(meta* Dat); // Set cursor position from the rendered bottom.
+void rendertxt(meta* Dt); // And care about Dt->txt scrolling.
+void fill(meta* Dt);      // Empty space below the text.
+void lbar(void);          // Render the lower bar that contains keyboard info.
+void window(meta* Dt);    // Fills the whole visible terminal area.
+void setcurpos(meta* Dt); // Set cursor position from the rendered bottom.
 #endif
 

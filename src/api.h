@@ -21,25 +21,22 @@
 #define CTRL_H 8  // right.
 #define CTRL_Y 25 // up.
 
-#define LAST_CHAR Dat->ln_len - NTERM_SZ
-#define CURR_LN   Dat->txt[Dat->lns]
-#define LN_ABOVE  Dat->txt[Dat->lns - 1]
+extern meta* ctrlh(meta* Dt);
+extern meta* ctrlg(meta* Dt);
+extern meta* ctrly(meta* Dt);
+extern meta* ctrlb(meta* Dt);
+extern meta* backspace(meta* Dt);
+extern meta* linefeed(meta* Dt);
 
-extern meta* ctrlh(meta* Dat);
-extern meta* ctrlg(meta* Dat);
-extern meta* ctrly(meta* Dat);
-extern meta* ctrlb(meta* Dat);
-extern meta* backspace(meta* Dat);
+void fnameset(meta* Dt, const char* arg); // Optionally get current dir.
+meta* readfile(meta* Dt);
+void savefile(meta* Dt);
 
-void fnameset(meta* Dat, const char* arg); // Optionally get current dir.
-meta* readfile(meta* Dat);
-void savefile(meta* Dat);
+meta* freeblk(meta* Dt); // Check and free memblock.
+meta* allocblk(meta* Dt, char mode); // Check and alloc block of memory.
 
-meta* freeblk(meta* Dat); // Check and free memblock.
-meta* allocblk(meta* Dat, char mode); // Check and alloc block of memory.
-
-meta* txtshift(meta* Dat, char direction);
-meta* addchar(meta* Dat, char key); // If a char is not the BACKSPACE.
-meta* keymap(meta* Dat, char key); // Recognize type of a passed char.
+meta* txtshift(meta* Dt, char direction);
+meta* addchar(char key, meta* Dt); // If a char is not the BACKSPACE.
+meta* keymap(meta* Dt, char key); // Recognize type of a passed char.
 #endif
 

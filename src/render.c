@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "render.h"
 
-term_t termgetsz(char axis, meta* Dat)
+term_t termgetsz(char axis, meta* Dt)
 {
 	const uint8_t y_min = BARS_SZ + CURRENT;
 	const term_t sz_max = USHRT_MAX;
@@ -15,12 +15,12 @@ term_t termgetsz(char axis, meta* Dat)
 	if(term.ws_col < TERM_X_MIN || term.ws_row < y_min)
 	{
 		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", TERM_X_MIN, y_min);
-		freeallexit(1, Dat);
+		freeallexit(1, Dt);
 	}
 	else if(term.ws_col > sz_max || term.ws_row > sz_max)
 	{
 		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
-		freeallexit(1, Dat);
+		freeallexit(1, Dt);
 	}
 
 	switch(axis)
@@ -38,12 +38,12 @@ term_t termgetsz(char axis, meta* Dat)
 	}
 }
 
-void flushwin(meta* Dat)
+void flushwin(meta* Dt)
 {
 	ANSI_RESTORE_CUR_POS();
 	ANSI_CLEAN_LN();
 
-	for(term_t y = 0; y < termgetsz('Y', Dat); y++)
+	for(term_t y = 0; y < termgetsz('Y', Dt); y++)
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LN();
@@ -51,18 +51,18 @@ void flushwin(meta* Dat)
 	fflush(stdout);
 }
 
-void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
+void ubar(meta* Dt) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 {
 	const char* title = "fiflo: \0";
 	const char* dots = "...\0";
 	const char* indicators = " line length/chars: \0";
 
 	// Whitespace betweet a filename and indicators.
-	term_t space = termgetsz('X', Dat) - (term_t) (strlen(Dat->fname)
+	term_t space = termgetsz('X', Dt) - (term_t) (strlen(Dt->fname)
 	+ strlen(title) + strlen(indicators) + SLASH_SZ + (2 * STRLEN_BUF_T));
 
 	// Maximum length of a filename that can be fully displayed.
-	term_t fname_max = termgetsz('X', Dat) - (term_t) (strlen(title)
+	term_t fname_max = termgetsz('X', Dt) - (term_t) (strlen(title)
 	+ strlen(dots) + strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
 	ANSI_BOLD();
@@ -72,53 +72,53 @@ void ubar(meta* Dat) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 	handling with terminals' quirk modes. */
 	printf("\r%s", title);
 
-	if(strlen(Dat->fname) > fname_max)
+	if(strlen(Dt->fname) > fname_max)
 	{
 		// Filename will be visually shrinked and terminated by dots.
-		printf("%.*s%s", fname_max, Dat->fname, dots);
+		printf("%.*s%s", fname_max, Dt->fname, dots);
 	}
 	else
 	{
 		// Whole filename will be displayed.
-		printf("%s%*s", Dat->fname, space, " ");
+		printf("%s%*s", Dt->fname, space, " ");
 	}
-	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, Dat->ln_len[Dat->lns],
-	STRLEN_BUF_T, Dat->chrs);
+	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, LAST_LN_LEN,
+	STRLEN_BUF_T, Dt->chrs);
 	ANSI_RESET();
 }
 
-void xscrolltxt(buf_t ln, meta* Dat)
+void xscrolltxt(buf_t ln, meta* Dt)
 {
 	_Bool mv_right = 0;
 
-	if(Dat->txt[ln][Dat->ln_len[ln] - NTERM_SZ] == LF)
+	if(Dt->txt[ln][Dt->ln_len[ln] - NTERM_SZ] == LF)
 	{
 		// Shifts the line right because the linefeed is also rendered.
 		mv_right = 1;
 	}
 
 	// Text will be scrolled. Not cursor.
-	for(buf_t x = (buf_t) (Dat->ln_len[ln] - Dat->cusr_x - TXT_X
+	for(buf_t x = (buf_t) (Dt->ln_len[ln] - Dt->cusr_x - TXT_X
 	+ CUR_SZ - mv_right);
-	x <= strlen(Dat->txt[ln]) - Dat->cusr_x - CUR_SZ - mv_right; x++)
+	x <= strlen(Dt->txt[ln]) - Dt->cusr_x - CUR_SZ - mv_right; x++)
 	{
-		putchar(Dat->txt[ln][x]);
+		putchar(Dt->txt[ln][x]);
 	}
 	if(mv_right == 1)
 	{
-		// Text is shifted so LF in Dat->txt isn't rendered.
+		// Text is shifted so LF in Dt->txt isn't rendered.
 		putchar(LF);
 	}
 }
 
-buf_t yscrolltxt(meta* Dat)
+buf_t yscrolltxt(meta* Dt)
 {
 	buf_t scrolled = 0;
 
-	if((Dat->lns + INDEX) > TXT_Y)
+	if((Dt->lns + INDEX) > TXT_Y)
 	{
 		// Amount of lines to hide in the magic upper area.
-		scrolled = Dat->lns + INDEX - TXT_Y;
+		scrolled = Dt->lns + INDEX - TXT_Y;
 	}
 	return scrolled;
 }
@@ -133,42 +133,42 @@ void numln(buf_t ln)
 	putchar(' ');
 }
 
-void rendertxt(meta* Dat)
+void rendertxt(meta* Dt)
 {
 	// Vertical rendering.
-	for(term_t ln = yscrolltxt(Dat); ln <= Dat->lns; ln++)
+	for(term_t ln = yscrolltxt(Dt); ln <= Dt->lns; ln++)
 	{
 		numln(ln);
 
 		// Horizontal rendering.
-		if((term_t) strlen(Dat->txt[ln]) < TXT_X)
+		if((term_t) strlen(Dt->txt[ln]) < TXT_X)
 		{
 			// There is small amount of chars. X-scroll isn't required.
-			printf("%s", Dat->txt[ln]);
+			printf("%s", Dt->txt[ln]);
 		}
 		else
 		{
 			// Chars won't fits in the horizontal space.
-			if((Dat->ln_len[Dat->lns] - TXT_X) >= Dat->cusr_x)
+			if((LAST_LN_LEN - TXT_X) >= Dt->cusr_x)
 			{
 				// Render only right part of the line.
-				xscrolltxt(ln, Dat);
+				xscrolltxt(ln, Dt);
 			}
 			else
 			{
 				// Render only left part of the line. Cursor can scrolled.
-				printf("%.*s", TXT_X, Dat->txt[ln]);
+				printf("%.*s", TXT_X, Dt->txt[ln]);
 			}
 		}
 	}
 }
 
-void fill(meta* Dat)
+void fill(meta* Dt)
 {
-	if((Dat->lns + INDEX) <= TXT_Y)
+	if((Dt->lns + INDEX) <= TXT_Y)
 	{
 		// Fill the empty area below the text to position the lower bar.
-		for(term_t ln = Dat->lns; ln < (TXT_Y - CURRENT); ln++)
+		for(term_t ln = Dt->lns; ln < (TXT_Y - CURRENT); ln++)
 		{
 			putchar(LF);
 		}
@@ -183,19 +183,19 @@ void lbar(void)
 	ANSI_RESET();
 }
 
-void window(meta* Dat)
+void window(meta* Dt)
 {
-	ubar(Dat);
-	rendertxt(Dat);
-	fill(Dat);
+	ubar(Dt);
+	rendertxt(Dt);
+	fill(Dt);
 	lbar();
-	setcurpos(Dat);
+	setcurpos(Dt);
 }
 
-void setcurpos(meta* Dat)
+void setcurpos(meta* Dt)
 {
 	// Case when all lines fits in the window.
-	int32_t mv_up = TXT_Y - (Dat->lns + INDEX);
+	int32_t mv_up = TXT_Y - (Dt->lns + INDEX);
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT((term_t) strlen(LBAR_STR));
@@ -203,28 +203,28 @@ void setcurpos(meta* Dat)
 	// Lower left side. Will be used to position the cursor and flush each line.
 	ANSI_SAVE_CUR_POS();
 
-	if(Dat->ln_len[Dat->lns] < TXT_X)
+	if(LAST_LN_LEN < TXT_X)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + Dat->ln_len[Dat->lns]
-		- Dat->cusr_x);
+		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + LAST_LN_LEN
+		- Dt->cusr_x);
 	}
-	else if((Dat->ln_len[Dat->lns] - TXT_X) >= Dat->cusr_x)
+	else if((LAST_LN_LEN - TXT_X) >= Dt->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
-		ANSI_CUR_RIGHT(termgetsz('X', Dat) - CUR_SZ);
+		ANSI_CUR_RIGHT(termgetsz('X', Dt) - CUR_SZ);
 	}
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		ANSI_CUR_RIGHT(Dat->ln_len[Dat->lns] - Dat->cusr_x + STRLEN_BUF_T);
+		ANSI_CUR_RIGHT(LAST_LN_LEN - Dt->cusr_x + STRLEN_BUF_T);
 	}
 
-	if(Dat->lns >= TXT_Y)
+	if(Dt->lns >= TXT_Y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
 		mv_up = 0;
 	}
-	ANSI_CUR_UP(LBAR_SZ + Dat->cusr_y + mv_up);
+	ANSI_CUR_UP(LBAR_SZ + Dt->cusr_y + mv_up);
 }
 

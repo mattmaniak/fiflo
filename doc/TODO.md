@@ -1,10 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- add #defines to shorten the code,
 - add .gitlab-ci.yml,
 - keymap,
-- improve Makefile,
-- "/usr/share/doc/fiflo/" dir after installation,
 - edited/save indicator,
 - TAB key,
 - fix too big memory usage (blocks),

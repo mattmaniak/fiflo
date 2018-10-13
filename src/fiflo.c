@@ -1,24 +1,24 @@
 #ifdef __linux__
 #include "fiflo.h" // All typedefs are here.
 
-_Noreturn void freeallexit(_Bool code, meta* Dat)
+_Noreturn void freeallexit(_Bool code, meta* Dt)
 {
-	free(Dat->fname);
-	Dat->fname = NULL;
+	free(Dt->fname);
+	Dt->fname = NULL;
 
-	for(buf_t ln = 0; ln <= Dat->lns; ln++)
+	for(buf_t ln = 0; ln <= Dt->lns; ln++)
 	{
-		free(Dat->txt[ln]);
-		Dat->txt[ln] = NULL;
+		free(Dt->txt[ln]);
+		Dt->txt[ln] = NULL;
 	}
-	free(Dat->ln_len);
-	Dat->ln_len = NULL;
+	free(Dt->ln_len);
+	Dt->ln_len = NULL;
 
-	free(Dat->txt);
-	Dat->txt = NULL;
+	free(Dt->txt);
+	Dt->txt = NULL;
 
-	free(Dat);
-	Dat = NULL;
+	free(Dt);
+	Dt = NULL;
 
 	exit(code);
 }
@@ -28,12 +28,12 @@ void handlesig(int nothing)
 	if(nothing) {}
 }
 
-void ptrcheck(void* ptr, const char* err_msg, meta* Dat)
+void ptrcheck(void* ptr, const char* err_msg, meta* Dt)
 {
 	if(!ptr)
 	{
 		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
-		freeallexit(1, Dat);
+		freeallexit(1, Dt);
 	}
 }
 
@@ -88,46 +88,46 @@ char getch(void) // TODO: COMMENT.
 	return key;
 }
 
-meta* init(meta* Dat, const char* arg)
+meta* init(meta* Dt, const char* arg)
 {
-	Dat->fname = malloc(PATH_MAX);
-	ptrcheck(Dat->fname, "alloc memory for the filename\0", Dat);
-	fnameset(Dat, arg);
+	Dt->fname = malloc(PATH_MAX);
+	ptrcheck(Dt->fname, "alloc memory for the filename\0", Dt);
+	fnameset(Dt, arg);
 
-	Dat->txt = malloc(sizeof(Dat->txt) * MEMBLK);
-	ptrcheck(Dat->txt, "alloc memory for lines\0", Dat);
+	Dt->txt = malloc(sizeof(Dt->txt) * MEMBLK);
+	ptrcheck(Dt->txt, "alloc memory for lines\0", Dt);
 
-	Dat->ln_len = malloc(MAX_CHRS + NTERM_SZ); // TODO: DYNAMIC.
-	Dat->ln_len[0] = 0;
-	Dat->chrs = 0;
-	Dat->lns = 0;
+	Dt->ln_len = malloc(MAX_CHRS + NTERM_SZ); // TODO: DYNAMIC.
+	Dt->ln_len[0] = 0;
+	Dt->chrs = 0;
+	Dt->lns = 0;
 
-	Dat->cusr_x = 0;
-	Dat->cusr_y = 0;
+	Dt->cusr_x = 0;
+	Dt->cusr_y = 0;
 
-	Dat->txt[0] = malloc(MEMBLK);
-	ptrcheck(Dat->txt, "alloc memory for the first line\0", Dat);
+	Dt->txt[0] = malloc(MEMBLK);
+	ptrcheck(Dt->txt, "alloc memory for the first line\0", Dt);
 
-	return Dat;
+	return Dt;
 }
 
 _Noreturn void run(const char* arg)
 {
-	meta* Dat = malloc(sizeof(meta));
-	ptrcheck(Dat, "alloc memory for metadata\0", Dat);
+	meta* Dt = malloc(sizeof(meta));
+	ptrcheck(Dt, "alloc memory for metadata\0", Dt);
 
 
-	Dat = init(Dat, arg);
-	Dat = readfile(Dat);
+	Dt = init(Dt, arg);
+	Dt = readfile(Dt);
 	char pressed = NTERM;
 
 	// Main program loop.
 	for(;;)
 	{
-		Dat = keymap(Dat, pressed);
-		window(Dat);
+		Dt = keymap(Dt, pressed);
+		window(Dt);
 		pressed = getch();
-		flushwin(Dat);
+		flushwin(Dt);
 	}
 }
 

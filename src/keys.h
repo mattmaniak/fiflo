@@ -1,15 +1,15 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-#define LN_ABOVE Dat->txt[Dat->lns - 1]
+extern meta* allocblk(meta* Dt, char mode);
+extern meta* freeblk(meta* Dt);
+extern meta* txtshift(meta* Dt, char direction);
 
-extern meta* freeblk(meta* Dat);
-extern meta* txtshift(meta* Dat, char direction);
-
-meta* ctrlh(meta* Dat);
-meta* ctrlg(meta* Dat);
-meta* ctrly(meta* Dat);
-meta* ctrlb(meta* Dat);
-meta* backspace(meta* Dat);
+meta* ctrlh(meta* Dt);
+meta* ctrlg(meta* Dt);
+meta* ctrly(meta* Dt);
+meta* ctrlb(meta* Dt);
+meta* backspace(meta* Dt);
+meta* linefeed(meta* Dt);
 #endif
 

@@ -15,6 +15,7 @@
 #define INDEX    1
 #define NTERM_SZ 1
 #define NTERM    0
+#define LF       10
 
 #define MAX_LNS      USHRT_MAX - 1 // - 1 is index.
 #define MAX_CHRS     MAX_LNS - 1   // Same as above but with the terminator.
@@ -30,33 +31,38 @@ typedef struct
 	FILE*  txtf;    // File handle.
 	char*  fname;   // Full filename. Eg. /home/user/basename.
 	char** txt;     // Text buffer. Eg. txt[lns][chrs].
-	buf_t* ln_len;  // Chars in the current line (index).
 	buf_t  chrs;    // All chars index.
 	buf_t  lns;     // Lines index.
+	buf_t* ln_len;  // Chars in the current line (index).
 	buf_t  cusr_x;  // User's cursor position in reversed X.
 	buf_t  cusr_y;  // Same as above but vertically. Bigger value - more up.
 }
 meta;
 #pragma pack(pop)
 
+#define LAST_LN      Dt->txt[Dt->lns]
+#define LAST_LN_LEN  Dt->ln_len[Dt->lns]
+#define PRE_LAST_LN     Dt->txt[Dt->lns - NTERM_SZ]
+#define PRE_LAST_LN_LEN Dt->ln_len[Dt->lns - 1]
+
 // API
-extern meta* keymap(meta* Dat, char key);
-extern void fnameset(meta* Dat, const char* arg);
-extern meta* readfile(meta* Dat);
+extern meta* keymap(meta* Dt, char key);
+extern void fnameset(meta* Dt, const char* arg);
+extern meta* readfile(meta* Dt);
 
 // RENDER
-extern void flushwin(meta* Dat);
-extern void window(meta* Dat);
+extern void flushwin(meta* Dt);
+extern void window(meta* Dt);
 
-_Noreturn void freeallexit(_Bool code, meta* Dat);
+_Noreturn void freeallexit(_Bool code, meta* Dt);
 void handlesig(int nothing);
 // Checks if the passed pointer is NULL. If yes - frees memory and exits.
-void ptrcheck(void* ptr, const char* err_msg, meta* Dat);
+void ptrcheck(void* ptr, const char* err_msg, meta* Dt);
 
 void options(const char* arg); // Eg. -v, --version et al infos.
 char getch(void);              // Getchar without ENTER confirmation.
 
-meta* init(meta* Dat, const char* arg);
+meta* init(meta* Dt, const char* arg);
 _Noreturn void run(const char* arg); // Contains program loop.
 int main(int argc, char** argv);
 #endif

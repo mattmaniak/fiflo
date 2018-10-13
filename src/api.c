@@ -1,13 +1,12 @@
 #include "fiflo.h"
 #include "api.h"
 
-void fnameset(meta* Dat, const char* arg)
+void fnameset(meta* Dt, const char* arg)
 {
-	// Is directory.
 	if(arg[strlen(arg) - NTERM_SZ] == '/')
 	{
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
-		freeallexit(1, Dat);
+		freeallexit(1, Dt);
 	}
 	// Is absolute path.
 	if(arg[0] == '/')
@@ -15,10 +14,9 @@ void fnameset(meta* Dat, const char* arg)
 		if(strlen(arg) + NTERM_SZ > PATH_MAX)
 		{
 			fputs("Given path is too long, exit(1).\n", stderr);
-			freeallexit(1, Dat);
+			freeallexit(1, Dt);
 		}
-		// Malloc'ed so doesn't need 'n' for size.
-		strcpy(Dat->fname, arg);
+		strcpy(Dt->fname, arg);
 	}
 	// Is relative path or basename.
 	else
@@ -26,275 +24,264 @@ void fnameset(meta* Dat, const char* arg)
 		char* abs_path = malloc(PATH_MAX);
 
 		ptrcheck((getcwd(abs_path, PATH_MAX)),
-		"get your current path. Can be too long\0", Dat);
+		"get your current path. Can be too long\0", Dt);
 
 		// Exceeded 4096 chars.
 		if((strlen(abs_path) + strlen(arg) + NTERM_SZ) > PATH_MAX)
 		{
 			fputs("Given filename is too long, exit(1).\n", stderr);
-			freeallexit(1, Dat);
+			freeallexit(1, Dt);
 		}
-
 		// Copy the path.
-		strcpy(Dat->fname, abs_path);
+		strcpy(Dt->fname, abs_path);
 
 		// Add the slash between.
-		Dat->fname[strlen(abs_path)] = '/';
+		Dt->fname[strlen(abs_path)] = '/';
 
 		// Append a basename.
 		for(uint16_t pos = 0; pos < strlen(arg); pos++)
 		{
-			strcpy(&Dat->fname[strlen(abs_path) + SLASH_SZ + pos], &arg[pos]);
+			strcpy(&Dt->fname[strlen(abs_path) + SLASH_SZ + pos], &arg[pos]);
 		}
 		free(abs_path);
 		abs_path = NULL;
 	}
 }
 
-meta* readfile(meta* Dat)
+meta* readfile(meta* Dt)
 {
 	char chr;
-	Dat->txtf = fopen(Dat->fname, "rt");
+	Dt->txtf = fopen(Dt->fname, "rt");
 
-	if(Dat->txtf)
+	if(Dt->txtf)
 	{
-		while((chr = (char) getc(Dat->txtf)) != EOF)
+		while((chr = (char) getc(Dt->txtf)) != EOF)
 		{
 			// Read all chars before end of file.
-			Dat = addchar(Dat, chr);
+			Dt = addchar(chr, Dt);
 		}
-		fclose(Dat->txtf);
+		fclose(Dt->txtf);
 	}
-	return Dat;
+	return Dt;
 }
 
-void savefile(meta* Dat)
+void savefile(meta* Dt)
 {
-	if(access(Dat->fname, F_OK) == -1)
+	if(access(Dt->fname, F_OK) == -1)
 	{
 		// There is no file so create with -rw-rw-r-- file mode.
-		int create = open(Dat->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
+		int create = open(Dt->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if(create == -1)
 		{
 			fputs("Failed to create the new file, exit(1).\n", stderr);
-			freeallexit(1, Dat);
+			freeallexit(1, Dt);
 		}
 	}
-	Dat->txtf = fopen(Dat->fname, "wt");
-	ptrcheck(Dat->txtf, "write to the file\0", Dat);
+	Dt->txtf = fopen(Dt->fname, "wt");
+	ptrcheck(Dt->txtf, "write to the file\0", Dt);
 
-	for(buf_t ln = 0; ln <= Dat->lns; ln++)
+	for(buf_t ln = 0; ln <= Dt->lns; ln++)
 	{
 		// Write each line to the file. NULL terminator is omited.
-		fputs(Dat->txt[ln], Dat->txtf);
+		fputs(Dt->txt[ln], Dt->txtf);
 	}
-	fclose(Dat->txtf);
+	fclose(Dt->txtf);
 }
 
-meta* freeblk(meta* Dat)
+meta* freeblk(meta* Dt)
 {
 	_Bool line_back = 0;
-	if(Dat->ln_len[Dat->lns] - 1 % MEMBLK == MEMBLK - 1)
+	if(LAST_LN_LEN - 1 % MEMBLK == MEMBLK - 1)
 	{
-		CURR_LN = realloc(CURR_LN, (2 * Dat->ln_len[Dat->lns]) - MEMBLK);
-		ptrcheck(CURR_LN, "free the memblock with a line\0", Dat);
-		Dat->ln_len = realloc(Dat->ln_len, Dat->lns + MEMBLK);
-		ptrcheck(CURR_LN, "free the memblock with a line\0", Dat);
+		LAST_LN = realloc(LAST_LN, (2 * LAST_LN_LEN) - MEMBLK);
+		ptrcheck(LAST_LN, "free the memblock with a line\0", Dt);
+		Dt->ln_len = realloc(Dt->ln_len, Dt->lns + MEMBLK);
+		ptrcheck(LAST_LN, "free the memblock with a line\0", Dt);
 	}
-	if(Dat->ln_len[Dat->lns] > 0 && Dat->cusr_x != (Dat->ln_len[Dat->lns] + INDEX))
+	if(LAST_LN_LEN > 0 && Dt->cusr_x != (LAST_LN_LEN + INDEX))
 	{
-		Dat->ln_len[Dat->lns]--;
-		Dat->chrs--;
+		LAST_LN_LEN--;
+		Dt->chrs--;
 	}
-	else if(Dat->ln_len[Dat->lns] == 0)
+	else if(LAST_LN_LEN == 0)
 	{
 		line_back = 1;
-		Dat->cusr_y = 0;
+		Dt->cusr_y = 0;
 	}
-	CURR_LN[Dat->ln_len[Dat->lns]] = NTERM;
+	LAST_LN[LAST_LN_LEN] = NTERM;
 
-	if(line_back == 1 && Dat->lns > 0 && LN_ABOVE[strlen(LN_ABOVE) - NTERM_SZ] == LF)
+	if(line_back == 1 && Dt->lns > 0 && PRE_LAST_LN[strlen(PRE_LAST_LN) - NTERM_SZ] == LF)
 	{
-		free(CURR_LN);
-		CURR_LN = NULL;
-		Dat->lns--;
-		Dat->ln_len[Dat->lns] = (buf_t) strlen(CURR_LN) - NTERM_SZ;
-		CURR_LN[Dat->ln_len[Dat->lns]] = NTERM;
-		if(Dat->chrs > 0) // Just for the LF removal.
+		free(LAST_LN);
+		LAST_LN = NULL;
+		Dt->lns--;
+		LAST_LN_LEN = (buf_t) strlen(LAST_LN) - NTERM_SZ;
+		LAST_LN[LAST_LN_LEN] = NTERM;
+		if(Dt->chrs > 0) // Just for the LF removal.
 		{
-			Dat->chrs--;
+			Dt->chrs--;
 		}
 	}
-	return Dat;
+	return Dt;
 }
 
-meta* allocblk(meta* Dat, char mode)
+meta* allocblk(meta* Dt, char mode)
 {
 	switch(mode)
 	{
 		case 'c':
-			Dat->chrs++;
-			Dat->ln_len[Dat->lns]++;
-			if(Dat->ln_len[Dat->lns] % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
+			Dt->chrs++;
+			LAST_LN_LEN++;
+			if(LAST_LN_LEN % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
 			{
-				CURR_LN = realloc(CURR_LN, Dat->ln_len[Dat->lns] + MEMBLK);
-				ptrcheck(CURR_LN, "alloc new memblock for chars\0", Dat);
+				LAST_LN = realloc(LAST_LN, LAST_LN_LEN + MEMBLK);
+				ptrcheck(LAST_LN, "alloc new memblock for chars\0", Dt);
 			}
 			break;
 
 		case 'l':
-			if(Dat->lns++ >= MAX_LNS)
+			Dt->lns++;
+			LAST_LN_LEN = 0;
+			if(Dt->lns >= MAX_LNS)
 			{
 				// TODO: COMMENTS.
-				Dat->lns = MAX_LNS;
+				Dt->lns = MAX_LNS;
 			}
 			else
 			{
-				if(Dat->lns % MEMBLK == 0) // Allocates with a one line reserve.
+				if(Dt->lns % MEMBLK == 0) // Allocates with a one line reserve.
 				{
-					Dat->txt =
-					realloc(Dat->txt, sizeof(Dat->txt) * (Dat->lns + MEMBLK));
-					ptrcheck(CURR_LN,
-					"alloc the memblock with lines numbers\0", Dat);
+					Dt->txt =
+					realloc(Dt->txt, sizeof(Dt->txt) * (Dt->lns + MEMBLK));
+					ptrcheck(LAST_LN,
+					"alloc the memblock with lines numbers\0", Dt);
 
-					Dat->ln_len = realloc(Dat->ln_len, Dat->lns + MEMBLK);
-					ptrcheck(Dat->ln_len,
-					"alloc the memblock for sizes of lines.\0", Dat);
+					Dt->ln_len = realloc(Dt->ln_len, Dt->lns + MEMBLK);
+					ptrcheck(Dt->ln_len,
+					"alloc the memblock for sizes of lines.\0", Dt);
 				}
-				CURR_LN = malloc(MEMBLK);
-				ptrcheck(CURR_LN, "alloc memblock in the line\0", Dat);
+				LAST_LN = malloc(MEMBLK);
+				ptrcheck(LAST_LN, "alloc memblock in the line\0", Dt);
 			}
-			CURR_LN[Dat->ln_len[Dat->lns] = 0] = NTERM;
+			LAST_LN[LAST_LN_LEN = 0] = NTERM;
 			break;
 	}
-	return Dat;
+	return Dt;
 }
 
-meta* txtshift(meta* Dat, char direction)
+meta* txtshift(meta* Dt, char direction)
 {
 	switch(direction)
 	{
 		// Move left.
 		case '<':
-			if(Dat->cusr_x > Dat->ln_len[Dat->lns] - 1
-			&& Dat->ln_len[Dat->lns] > 0)
+			if(Dt->cusr_x > LAST_LN_LEN - 1 && LAST_LN_LEN > 0)
 			{
-				Dat->cusr_x = Dat->ln_len[Dat->lns] - 1;
+				Dt->cusr_x = LAST_LN_LEN - 1;
 			}
-			if(Dat->ln_len[Dat->lns] > 0)
+			if(LAST_LN_LEN > 0)
 			{
-				for(term_t x = Dat->ln_len[Dat->lns] - Dat->cusr_x;
-				x <= Dat->ln_len[Dat->lns]; x++)
+				for(term_t x = LAST_LN_LEN - Dt->cusr_x; x <= LAST_LN_LEN; x++)
 				{
-					CURR_LN[x - 1] = CURR_LN[x];
+					LAST_LN[x - INDEX] = LAST_LN[x];
 				}
 			}
 			break;
 
 		// Move right.
 		case '>':
-			for(term_t x = Dat->ln_len[Dat->lns];
-			x >= Dat->ln_len[Dat->lns] - Dat->cusr_x; x--)
+			for(term_t x = LAST_LN_LEN; x >= LAST_LN_LEN - Dt->cusr_x; x--)
 			{
-				CURR_LN[x] = CURR_LN[x - 1];
+				LAST_LN[x] = LAST_LN[x - INDEX];
 			}
 			break;
 
 		default:
 			fputs("Check \"txtshift\" function params, exit(1).\n", stderr);
-			freeallexit(1, Dat);
+			freeallexit(1, Dt);
 	}
-	return Dat;
+	return Dt;
 }
 
-meta* addchar(meta* Dat, char key)
+meta* addchar(char key, meta* Dt)
 {
-	if(Dat->chrs <= MAX_CHRS)
+	if(Dt->chrs <= MAX_CHRS)
 	{
-		Dat = allocblk(Dat, 'c');
+		Dt = allocblk(Dt, 'c');
 
 		/* If the cursor is moved to the left and a char is inserted, rest of
 		the text will be shifted to the right side. */
-		if(Dat->cusr_x > 0)
+		if(Dt->cusr_x > 0)
 		{
-			txtshift(Dat, '>');
+			txtshift(Dt, '>');
 		}
 
-		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns]
-		 - NTERM_SZ - Dat->cusr_x] = key;
+		Dt->txt[Dt->lns - Dt->cusr_y]
+		[LAST_LN_LEN  - NTERM_SZ - Dt->cusr_x] = key;
 
-		Dat->txt[Dat->lns - Dat->cusr_y][Dat->ln_len[Dat->lns]] = NTERM;
+		Dt->txt[Dt->lns][LAST_LN_LEN] = NTERM;
 
 		// Fixes incremented value by terminator.
-		if(key == NTERM && Dat->chrs > 0)
+		if(key == NTERM && Dt->chrs > 0)
 		{
-			Dat->chrs--;
-			Dat->ln_len[Dat->lns]--;
-		}
-
-		if(key == LF)
-		{
-			Dat = allocblk(Dat, 'l');
-			if(Dat->cusr_x > 0)
-			{
-				for(term_t x = (term_t) (strlen(LN_ABOVE) - Dat->cusr_x);
-				x <= strlen(LN_ABOVE); x++)
-				{
-					CURR_LN[Dat->ln_len[Dat->lns]++] = LN_ABOVE[x];
-				}
-				LN_ABOVE[strlen(LN_ABOVE) - Dat->cusr_x] = NTERM;
-				Dat->cusr_x = Dat->ln_len[Dat->lns];
-			}
+			Dt->chrs--;
+			LAST_LN_LEN--;
 		}
 	}
-	return Dat;
+	return Dt;
 }
 
-meta* keymap(meta* Dat, char key) // TODO: KEYMAP.
+meta* keymap(meta* Dt, char key) // TODO: KEYMAP.
 {
 	// Prevent inputting ANSI escape sequences.
 	if(key != ESCAPE)
 	{
 		switch(key)
 		{
-			// Pipe and signal prevention. TODO: FULL UPPER BAR FLUSH (PIPE).
-//			case NEG:
-//				freeallexit(0, Dat);
+			// Pipe prevention.
+			case NEG:
+				puts("\rPipe isn't supported by fiflo, exit(1).");
+				freeallexit(1, Dt);
 
 			case CTRL_X:
-				freeallexit(0, Dat);
-
-			default:
-				Dat = addchar(Dat, key);
-				break;
-
-			case BACKSPACE:
-				Dat = backspace(Dat);
-				break;
+				freeallexit(0, Dt);
 
 			case CTRL_D:
-				savefile(Dat);
+				savefile(Dt);
 				break;
 
 			case CTRL_H:
-				Dat = ctrlh(Dat);
+				Dt = ctrlh(Dt);
 				break;
 
 			case CTRL_G:
-				Dat = ctrlg(Dat);
+				Dt = ctrlg(Dt);
 				break;
 
 			case CTRL_Y:
-				Dat = ctrly(Dat);
+				Dt = ctrly(Dt);
 				break;
 
 			case CTRL_B:
-				Dat = ctrlb(Dat);
+				Dt = ctrlb(Dt);
 				break;
+
+			default:
+				Dt = addchar(key, Dt);
+				break;
+
+			case BACKSPACE:
+				Dt = backspace(Dt);
+				break;
+
+			case LF:
+				Dt = addchar(key, Dt);
+				Dt = linefeed(Dt);
+				break;				
 		}
 	}
 	// DEBUG ONLY - BREAKS RENDERING AND FLUSHING.
-//	printf("\rlast: %d cusr_x: %d cusr_y: %d\n", key, Dat->cusr_x, Dat->cusr_y);
-	return Dat;
+//	printf("\rlast: %d cusr_x: %d cusr_y: %d\n", key, Dt->cusr_x, Dt->cusr_y);
+	return Dt;
 }
 
