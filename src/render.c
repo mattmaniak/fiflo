@@ -128,9 +128,8 @@ void numln(buf_t ln)
 	_Bool space_sz = 1;
 
 	ANSI_BOLD();
-	printf("%*d", STRLEN_BUF_T - space_sz, ln + INDEX);
+	printf("%*d ", STRLEN_BUF_T - space_sz, ln + INDEX);
 	ANSI_RESET();
-	putchar(' ');
 }
 
 void rendertxt(meta* Dt)

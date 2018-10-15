@@ -1,8 +1,11 @@
 #include "fiflo.h"
 #include "api.h"
 
-void fnameset(meta* Dt, const char* arg)
+void fnameset(const char* arg, meta* Dt)
 {
+	Dt->fname = malloc(PATH_MAX);
+	ptrcheck(Dt->fname, "malloc for the filename\0", Dt);
+
 	if(arg[strlen(arg) - NTERM_SZ] == '/')
 	{
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
@@ -22,12 +25,13 @@ void fnameset(meta* Dt, const char* arg)
 	else
 	{
 		char* abs_path = malloc(PATH_MAX);
+		ptrcheck(abs_path, "abs. path. Can be too long\0", Dt);
 
 		ptrcheck((getcwd(abs_path, PATH_MAX)),
 		"get your current path. Can be too long\0", Dt);
 
 		// Exceeded 4096 chars.
-		if((strlen(abs_path) + strlen(arg) + NTERM_SZ) > PATH_MAX)
+		if((strlen(abs_path) + strlen(arg)) >= PATH_MAX)
 		{
 			fputs("Given filename is too long, exit(1).\n", stderr);
 			freeallexit(1, Dt);
@@ -38,7 +42,7 @@ void fnameset(meta* Dt, const char* arg)
 		// Add the slash between.
 		Dt->fname[strlen(abs_path)] = '/';
 
-		// Append a basename.
+		// Append basename.
 		for(uint16_t pos = 0; pos < strlen(arg); pos++)
 		{
 			strcpy(&Dt->fname[strlen(abs_path) + SLASH_SZ + pos], &arg[pos]);
@@ -61,6 +65,14 @@ meta* readfile(meta* Dt)
 			Dt = addchar(chr, Dt);
 		}
 		fclose(Dt->txtf);
+	}
+	else
+	{
+		if(strcmp(Dt->fname, "noname.asdf") == 0)
+		{
+			fputs("Can't open the file, exit(1).\n", stderr);
+			freeallexit(1, Dt);
+		}
 	}
 	return Dt;
 }
@@ -88,15 +100,17 @@ void savefile(meta* Dt)
 	fclose(Dt->txtf);
 }
 
-meta* freeblk(meta* Dt)
+meta* freeblk(meta* Dt) // TODO: SIMPLIFY.
 {
-	_Bool line_back = 0;
-	if(LAST_LN_LEN - 1 % MEMBLK == MEMBLK - 1)
+//	_Bool line_back = 0;
+	if(LAST_LN_LEN % MEMBLK == 0)
 	{
-		LAST_LN = realloc(LAST_LN, (2 * LAST_LN_LEN) - MEMBLK);
-		ptrcheck(LAST_LN, "free the memblock with a line\0", Dt);
-		Dt->ln_len = realloc(Dt->ln_len, Dt->lns + MEMBLK);
-		ptrcheck(LAST_LN, "free the memblock with a line\0", Dt);
+		LAST_LN = realloc(LAST_LN, LAST_LN_LEN);
+		ptrcheck(LAST_LN, "realloc memblock in the last line\0", Dt);
+
+//		Dt->ln_len = realloc(Dt->ln_len, Dt->lns);
+//		ptrcheck(LAST_LN, "array with lines length\0", Dt);
+//		printf("%d\n", LAST_LN_LEN);
 	}
 	if(LAST_LN_LEN > 0 && Dt->cusr_x != (LAST_LN_LEN + INDEX))
 	{
@@ -105,11 +119,11 @@ meta* freeblk(meta* Dt)
 	}
 	else if(LAST_LN_LEN == 0)
 	{
-		line_back = 1;
+//		line_back = 1;
 		Dt->cusr_y = 0;
 	}
 	LAST_LN[LAST_LN_LEN] = NTERM;
-
+/*
 	if(line_back == 1 && Dt->lns > 0 && PRE_LAST_LN[strlen(PRE_LAST_LN) - NTERM_SZ] == LF)
 	{
 		free(LAST_LN);
@@ -121,63 +135,19 @@ meta* freeblk(meta* Dt)
 		{
 			Dt->chrs--;
 		}
-	}
+	}*/
 	return Dt;
 }
 
-meta* allocblk(meta* Dt, char mode)
-{
-	switch(mode)
-	{
-		case 'c':
-			Dt->chrs++;
-			LAST_LN_LEN++;
-			if(LAST_LN_LEN % MEMBLK == 0) // MEMBLK - 1 chars + NTERM -> alloc.
-			{
-				LAST_LN = realloc(LAST_LN, LAST_LN_LEN + MEMBLK);
-				ptrcheck(LAST_LN, "alloc new memblock for chars\0", Dt);
-			}
-			break;
-
-		case 'l':
-			Dt->lns++;
-			LAST_LN_LEN = 0;
-			if(Dt->lns >= MAX_LNS)
-			{
-				// TODO: COMMENTS.
-				Dt->lns = MAX_LNS;
-			}
-			else
-			{
-				if(Dt->lns % MEMBLK == 0) // Allocates with a one line reserve.
-				{
-					Dt->txt =
-					realloc(Dt->txt, sizeof(Dt->txt) * (Dt->lns + MEMBLK));
-					ptrcheck(LAST_LN,
-					"alloc the memblock with lines numbers\0", Dt);
-
-					Dt->ln_len = realloc(Dt->ln_len, Dt->lns + MEMBLK);
-					ptrcheck(Dt->ln_len,
-					"alloc the memblock for sizes of lines.\0", Dt);
-				}
-				LAST_LN = malloc(MEMBLK);
-				ptrcheck(LAST_LN, "alloc memblock in the line\0", Dt);
-			}
-			LAST_LN[LAST_LN_LEN = 0] = NTERM;
-			break;
-	}
-	return Dt;
-}
-
-meta* txtshift(meta* Dt, char direction)
+meta* txtshift(char direction, meta* Dt)
 {
 	switch(direction)
 	{
 		// Move left.
-		case '<':
-			if(Dt->cusr_x > LAST_LN_LEN - 1 && LAST_LN_LEN > 0)
+		case 'l':
+			if(Dt->cusr_x > LAST_LN_LEN - NTERM_SZ && LAST_LN_LEN > 0)
 			{
-				Dt->cusr_x = LAST_LN_LEN - 1;
+				Dt->cusr_x = LAST_LN_LEN - NTERM_SZ;
 			}
 			if(LAST_LN_LEN > 0)
 			{
@@ -189,44 +159,12 @@ meta* txtshift(meta* Dt, char direction)
 			break;
 
 		// Move right.
-		case '>':
+		case 'r':
 			for(term_t x = LAST_LN_LEN; x >= LAST_LN_LEN - Dt->cusr_x; x--)
 			{
 				LAST_LN[x] = LAST_LN[x - INDEX];
 			}
 			break;
-
-		default:
-			fputs("Check \"txtshift\" function params, exit(1).\n", stderr);
-			freeallexit(1, Dt);
-	}
-	return Dt;
-}
-
-meta* addchar(char key, meta* Dt)
-{
-	if(Dt->chrs <= MAX_CHRS)
-	{
-		Dt = allocblk(Dt, 'c');
-
-		/* If the cursor is moved to the left and a char is inserted, rest of
-		the text will be shifted to the right side. */
-		if(Dt->cusr_x > 0)
-		{
-			txtshift(Dt, '>');
-		}
-
-		Dt->txt[Dt->lns - Dt->cusr_y]
-		[LAST_LN_LEN  - NTERM_SZ - Dt->cusr_x] = key;
-
-		Dt->txt[Dt->lns][LAST_LN_LEN] = NTERM;
-
-		// Fixes incremented value by terminator.
-		if(key == NTERM && Dt->chrs > 0)
-		{
-			Dt->chrs--;
-			LAST_LN_LEN--;
-		}
 	}
 	return Dt;
 }

@@ -27,16 +27,15 @@ extern meta* ctrly(meta* Dt);
 extern meta* ctrlb(meta* Dt);
 extern meta* backspace(meta* Dt);
 extern meta* linefeed(meta* Dt);
+extern meta* addchar(char key, meta* Dt);
 
-void fnameset(meta* Dt, const char* arg); // Optionally get current dir.
+void fnameset(const char* arg, meta* Dt); // Optionally get current dir.
 meta* readfile(meta* Dt);
 void savefile(meta* Dt);
 
 meta* freeblk(meta* Dt); // Check and free memblock.
-meta* allocblk(meta* Dt, char mode); // Check and alloc block of memory.
 
-meta* txtshift(meta* Dt, char direction);
-meta* addchar(char key, meta* Dt); // If a char is not the BACKSPACE.
+meta* txtshift(char direction, meta* Dt);
 meta* keymap(meta* Dt, char key); // Recognize type of a passed char.
 #endif
 

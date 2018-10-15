@@ -9,6 +9,7 @@ files use git-show or git-log.
 ## Versions:
 ### v2.1.0 (WIP):
 - improved Makefile,
+- more efficent memory allocation.
 - main compiler switched to clang,
 - control keys changed,
 - upper bar splitted to 2 smaller ones,

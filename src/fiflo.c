@@ -23,7 +23,7 @@ _Noreturn void freeallexit(_Bool code, meta* Dt)
 	exit(code);
 }
 
-void handlesig(int nothing)
+void ignoresig(int nothing)
 {
 	if(nothing) {}
 }
@@ -88,25 +88,24 @@ char getch(void) // TODO: COMMENT.
 	return key;
 }
 
-meta* init(meta* Dt, const char* arg)
+meta* init(const char* arg, meta* Dt)
 {
-	Dt->fname = malloc(PATH_MAX);
-	ptrcheck(Dt->fname, "alloc memory for the filename\0", Dt);
-	fnameset(Dt, arg);
+	fnameset(arg, Dt);
 
 	Dt->txt = malloc(sizeof(Dt->txt) * MEMBLK);
-	ptrcheck(Dt->txt, "alloc memory for lines\0", Dt);
+	ptrcheck(Dt->txt, "malloc for the lines array\0", Dt);
 
-	Dt->ln_len = malloc(MAX_CHRS + NTERM_SZ); // TODO: DYNAMIC.
-	Dt->ln_len[0] = 0;
+	Dt->ln_len = malloc(MAX_LNS);
+	ptrcheck(Dt->ln_len, "malloc for the lines length array\0", Dt);
+
 	Dt->chrs = 0;
 	Dt->lns = 0;
+	Dt->ln_len[Dt->lns] = 0;
 
 	Dt->cusr_x = 0;
 	Dt->cusr_y = 0;
 
-	Dt->txt[0] = malloc(MEMBLK);
-	ptrcheck(Dt->txt, "alloc memory for the first line\0", Dt);
+	Dt->txt[Dt->lns] = malloc(1 + NTERM_SZ);
 
 	return Dt;
 }
@@ -116,9 +115,9 @@ _Noreturn void run(const char* arg)
 	meta* Dt = malloc(sizeof(meta));
 	ptrcheck(Dt, "alloc memory for metadata\0", Dt);
 
-
-	Dt = init(Dt, arg);
+	Dt = init(arg, Dt);
 	Dt = readfile(Dt);
+
 	char pressed = NTERM;
 
 	// Main program loop.
@@ -133,10 +132,9 @@ _Noreturn void run(const char* arg)
 
 int main(int argc, char** argv)
 {
-	// Catch CTRL+C.
-	signal(SIGINT, handlesig);
-	// Catch CTRL+Z.
-	signal(SIGTSTP, handlesig);
+	// Catch CTRL+C and CTRL+Z.
+	signal(SIGINT, ignoresig);
+	signal(SIGTSTP, ignoresig);
 
 	if(argc != 1 && argc != 2)
 	{

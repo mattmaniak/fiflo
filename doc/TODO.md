@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- alloc, free, backspace et al,
 - add .gitlab-ci.yml,
 - keymap,
 - edited/save indicator,
