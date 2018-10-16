@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "render.h"
 
-term_t termgetsz(char axis, meta* Dt)
+term_t get_term_sz(char axis, meta* Dt)
 {
 	const uint8_t y_min = BARS_SZ + CURRENT;
 	const term_t sz_max = USHRT_MAX;
@@ -15,12 +15,12 @@ term_t termgetsz(char axis, meta* Dt)
 	if(term.ws_col < TERM_X_MIN || term.ws_row < y_min)
 	{
 		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", TERM_X_MIN, y_min);
-		freeallexit(1, Dt);
+		free_all_exit(1, Dt);
 	}
 	else if(term.ws_col > sz_max || term.ws_row > sz_max)
 	{
 		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
-		freeallexit(1, Dt);
+		free_all_exit(1, Dt);
 	}
 
 	switch(axis)
@@ -30,20 +30,16 @@ term_t termgetsz(char axis, meta* Dt)
 
 		case 'Y':
 			return term.ws_row;
-
-		default:
-			ANSI_RESET();
-			fputs("Check \"termgetsz\" function params, exit(1).\n", stderr);
-			exit(1);
 	}
+	return 1;
 }
 
-void flushwin(meta* Dt)
+void flush_window(meta* Dt)
 {
 	ANSI_RESTORE_CUR_POS();
 	ANSI_CLEAN_LN();
 
-	for(term_t y = 0; y < termgetsz('Y', Dt); y++)
+	for(term_t y = 0; y < get_term_sz('Y', Dt); y++)
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LN();
@@ -51,18 +47,18 @@ void flushwin(meta* Dt)
 	fflush(stdout);
 }
 
-void ubar(meta* Dt) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
+void upper_bar(meta* Dt) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 {
 	const char* title = "fiflo: \0";
 	const char* dots = "...\0";
 	const char* indicators = " line length/chars: \0";
 
 	// Whitespace betweet a filename and indicators.
-	term_t space = termgetsz('X', Dt) - (term_t) (strlen(Dt->fname)
+	term_t space = get_term_sz('X', Dt) - (term_t) (strlen(Dt->fname)
 	+ strlen(title) + strlen(indicators) + SLASH_SZ + (2 * STRLEN_BUF_T));
 
 	// Maximum length of a filename that can be fully displayed.
-	term_t fname_max = termgetsz('X', Dt) - (term_t) (strlen(title)
+	term_t fname_max = get_term_sz('X', Dt) - (term_t) (strlen(title)
 	+ strlen(dots) + strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
 
 	ANSI_BOLD();
@@ -87,7 +83,7 @@ void ubar(meta* Dt) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 	ANSI_RESET();
 }
 
-void xscrolltxt(buf_t ln, meta* Dt)
+void scroll_chrs_in_ln(buf_t ln, meta* Dt)
 {
 	_Bool mv_right = 0;
 
@@ -111,7 +107,7 @@ void xscrolltxt(buf_t ln, meta* Dt)
 	}
 }
 
-buf_t yscrolltxt(meta* Dt)
+buf_t scroll_lns(meta* Dt)
 {
 	buf_t scrolled = 0;
 
@@ -123,7 +119,7 @@ buf_t yscrolltxt(meta* Dt)
 	return scrolled;
 }
 
-void numln(buf_t ln)
+void print_ln_num(buf_t ln)
 {
 	_Bool space_sz = 1;
 
@@ -132,12 +128,12 @@ void numln(buf_t ln)
 	ANSI_RESET();
 }
 
-void rendertxt(meta* Dt)
+void display_txt(meta* Dt)
 {
 	// Vertical rendering.
-	for(term_t ln = yscrolltxt(Dt); ln <= Dt->lns; ln++)
+	for(term_t ln = scroll_lns(Dt); ln <= Dt->lns; ln++)
 	{
-		numln(ln);
+		print_ln_num(ln);
 
 		// Horizontal rendering.
 		if((term_t) strlen(Dt->txt[ln]) < TXT_X)
@@ -151,7 +147,7 @@ void rendertxt(meta* Dt)
 			if((CURR_LN_LEN - TXT_X) >= Dt->cusr_x)
 			{
 				// Render only right part of the line.
-				xscrolltxt(ln, Dt);
+				scroll_chrs_in_ln(ln, Dt);
 			}
 			else
 			{
@@ -175,7 +171,7 @@ void fill(meta* Dt)
 	// Else the bar will by positioned by the text.
 }
 
-void lbar(void)
+void lower_bar(void)
 {
 	ANSI_BOLD();
 	printf("\n%s", LBAR_STR);
@@ -184,14 +180,14 @@ void lbar(void)
 
 void window(meta* Dt)
 {
-	ubar(Dt);
-	rendertxt(Dt);
+	upper_bar(Dt);
+	display_txt(Dt);
 	fill(Dt);
-	lbar();
-	setcurpos(Dt);
+	lower_bar();
+	set_cur_pos(Dt);
 }
 
-void setcurpos(meta* Dt)
+void set_cur_pos(meta* Dt)
 {
 	// Case when all lines fits in the window.
 	int32_t mv_up = TXT_Y - (Dt->lns + INDEX);
@@ -210,7 +206,7 @@ void setcurpos(meta* Dt)
 	else if((CURR_LN_LEN - TXT_X) >= Dt->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
-		ANSI_CUR_RIGHT(termgetsz('X', Dt) - CUR_SZ);
+		ANSI_CUR_RIGHT(get_term_sz('X', Dt) - CUR_SZ);
 	}
 	else
 	{

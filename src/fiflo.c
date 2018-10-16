@@ -1,7 +1,7 @@
 #ifdef __linux__
 #include "fiflo.h" // All typedefs are here.
 
-_Noreturn void freeallexit(_Bool code, meta* Dt)
+_Noreturn void free_all_exit(_Bool code, meta* Dt)
 {
 	free(Dt->fname);
 	Dt->fname = NULL;
@@ -23,17 +23,17 @@ _Noreturn void freeallexit(_Bool code, meta* Dt)
 	exit(code);
 }
 
-void ignoresig(int nothing)
+void ignore_sig(int nothing)
 {
 	if(nothing) {}
 }
 
-void ptrcheck(void* ptr, const char* err_msg, meta* Dt)
+void chk_ptr(void* ptr, const char* err_msg, meta* Dt)
 {
 	if(!ptr)
 	{
 		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
-		freeallexit(1, Dt);
+		free_all_exit(1, Dt);
 	}
 }
 
@@ -90,13 +90,13 @@ char getch(void) // TODO: COMMENT.
 
 meta* init(const char* arg, meta* Dt)
 {
-	fnameset(arg, Dt);
+	Dt = set_fname(arg, Dt);
 
 	Dt->txt = malloc(sizeof(Dt->txt) * MEMBLK);
-	ptrcheck(Dt->txt, "malloc for the lines array\0", Dt);
+	chk_ptr(Dt->txt, "malloc for the lines array\0", Dt);
 
 	Dt->ln_len = malloc(MAX_LNS);
-	ptrcheck(Dt->ln_len, "malloc for the lines length array\0", Dt);
+	chk_ptr(Dt->ln_len, "malloc for the lines length array\0", Dt);
 
 	Dt->chrs = 0;
 	Dt->lns = 0;
@@ -111,28 +111,28 @@ meta* init(const char* arg, meta* Dt)
 _Noreturn void run(const char* arg)
 {
 	meta* Dt = malloc(sizeof(meta));
-	ptrcheck(Dt, "alloc memory for metadata\0", Dt);
+	chk_ptr(Dt, "alloc memory for metadata\0", Dt);
 
 	Dt = init(arg, Dt);
-	Dt = readfile(Dt);
+	Dt = read_file(Dt);
 
 	char pressed = 'X'; // TODO: INITIALIZER.
 
 	// Main program loop.
 	for(;;)
 	{
-		Dt = keymap(Dt, pressed);
+		Dt = recognize_key(Dt, pressed);
 		window(Dt);
 		pressed = getch();
-		flushwin(Dt);
+		flush_window(Dt);
 	}
 }
 
 int main(int argc, char** argv)
 {
 	// Catch CTRL+C and CTRL+Z.
-	signal(SIGINT, ignoresig);
-	signal(SIGTSTP, ignoresig);
+	signal(SIGINT, ignore_sig);
+	signal(SIGTSTP, ignore_sig);
 
 	if(argc != 1 && argc != 2)
 	{
@@ -152,6 +152,6 @@ int main(int argc, char** argv)
 }
 
 #else
-#error "Only Linux-based systems are supported."
+#error "Linux-based desktop is required."
 #endif
 

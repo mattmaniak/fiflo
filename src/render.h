@@ -6,7 +6,6 @@
 
 // UI areas.
 #define AT_LEAST_CHAR 1
-#define SPACE_SZ      1
 #define CUR_SZ        1
 #define SLASH_SZ      1
 #define UPBAR_SZ      1
@@ -15,9 +14,8 @@
 #define LBAR_STR      "CTRL+: X - exit/ D - save/ YGHB - move cursor\0"
 #define TERM_X_MIN    (term_t) (strlen(LBAR_STR) + AT_LEAST_CHAR)
 
-#define TXT_X (termgetsz('X', Dt) - STRLEN_BUF_T)
-#define TXT_Y (termgetsz('Y', Dt) - BARS_SZ)
-
+#define TXT_X (get_term_sz('X', Dt) - STRLEN_BUF_T)
+#define TXT_Y (get_term_sz('Y', Dt) - BARS_SZ)
 
 #define ANSI_RESET()           printf("\033[%s", "0m")
 #define ANSI_BOLD()            printf("\033[%s", "1m")
@@ -30,19 +28,37 @@
 #define ANSI_SAVE_CUR_POS()    printf("\033[%s", "s")
 #define ANSI_RESTORE_CUR_POS() printf("\033[%s", "u")
 
-#define LF 10
+// Returns current terminal width and height and exits if is wrong.
+term_t get_term_sz(char axis, meta* Dt);
 
-term_t termgetsz(char axis, meta* Dt); // Check if a term to small or big.
-void flushwin(meta* Dt);               // Clean the old rendered window.
+// Clean the whole rendered window.
+void flush_window(meta* Dt);
 
-void ubar(meta* Dt);      // Render the upper bar.
-void xscrolltxt(buf_t ln, meta* Dt);
-buf_t yscrolltxt(meta* Dt);
-void numln(buf_t ln);
-void rendertxt(meta* Dt); // And care about Dt->txt scrolling.
-void fill(meta* Dt);      // Empty space below the text.
-void lbar(void);          // Render the lower bar that contains keyboard info.
-void window(meta* Dt);    // Fills the whole visible terminal area.
-void setcurpos(meta* Dt); // Set cursor position from the rendered bottom.
+// Renders the upper bar with a filename and indicators.
+void upper_bar(meta* Dt);
+
+// Scrolls chars. Used when the cursor is in static position.
+void scroll_chrs_in_ln(buf_t ln, meta* Dt);
+
+// Returns value of hidden lines.
+buf_t scroll_lns(meta* Dt);
+
+// Prints a line number.
+void print_ln_num(buf_t ln);
+
+// Show the text in the window.
+void display_txt(meta* Dt);
+
+// Vertical fill between the text and lower bar. If there isn't many lines.
+void fill(meta* Dt);
+
+// Renders the lower bar that contains keyboard info.
+void lower_bar(void);
+
+// Stupid wrapper for above things.
+void window(meta* Dt);
+
+// Sets the cursor position from the left bottom to a last char.
+void set_cur_pos(meta* Dt);
 #endif
 

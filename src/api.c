@@ -1,15 +1,15 @@
 #include "fiflo.h"
 #include "api.h"
 
-void fnameset(const char* arg, meta* Dt)
+meta* set_fname(const char* arg, meta* Dt)
 {
 	Dt->fname = malloc(PATH_MAX);
-	ptrcheck(Dt->fname, "malloc for the filename\0", Dt);
+	chk_ptr(Dt->fname, "malloc for the filename\0", Dt);
 
 	if(arg[strlen(arg) - NTERM_SZ] == '/')
 	{
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
-		freeallexit(1, Dt);
+		free_all_exit(1, Dt);
 	}
 	// Is absolute path.
 	if(arg[0] == '/')
@@ -17,7 +17,7 @@ void fnameset(const char* arg, meta* Dt)
 		if(strlen(arg) + NTERM_SZ > PATH_MAX)
 		{
 			fputs("Given path is too long, exit(1).\n", stderr);
-			freeallexit(1, Dt);
+			free_all_exit(1, Dt);
 		}
 		strcpy(Dt->fname, arg);
 	}
@@ -25,16 +25,16 @@ void fnameset(const char* arg, meta* Dt)
 	else
 	{
 		char* abs_path = malloc(PATH_MAX);
-		ptrcheck(abs_path, "abs. path. Can be too long\0", Dt);
+		chk_ptr(abs_path, "abs. path. Can be too long\0", Dt);
 
-		ptrcheck((getcwd(abs_path, PATH_MAX)),
+		chk_ptr((getcwd(abs_path, PATH_MAX)),
 		"get your current path. Can be too long\0", Dt);
 
 		// Exceeded 4096 chars.
 		if((strlen(abs_path) + strlen(arg)) >= PATH_MAX)
 		{
 			fputs("Given filename is too long, exit(1).\n", stderr);
-			freeallexit(1, Dt);
+			free_all_exit(1, Dt);
 		}
 		// Copy the path.
 		strcpy(Dt->fname, abs_path);
@@ -50,9 +50,10 @@ void fnameset(const char* arg, meta* Dt)
 		free(abs_path);
 		abs_path = NULL;
 	}
+	return Dt;
 }
 
-meta* readfile(meta* Dt)
+meta* read_file(meta* Dt)
 {
 	char chr;
 	Dt->txtf = fopen(Dt->fname, "rt");
@@ -62,22 +63,22 @@ meta* readfile(meta* Dt)
 		while((chr = (char) getc(Dt->txtf)) != EOF)
 		{
 			// Read all chars before end of file.
-			Dt = addchar(chr, Dt);
+			Dt = recognize_char(chr, Dt);
 		}
 		fclose(Dt->txtf);
 	}
-	else
+	else // TODO
 	{
 		if(strcmp(Dt->fname, "noname.asdf") == 0)
 		{
 			fputs("Can't open the file, exit(1).\n", stderr);
-			freeallexit(1, Dt);
+			free_all_exit(1, Dt);
 		}
 	}
 	return Dt;
 }
 
-void savefile(meta* Dt)
+void save_file(meta* Dt)
 {
 	if(access(Dt->fname, F_OK) == -1)
 	{
@@ -86,11 +87,11 @@ void savefile(meta* Dt)
 		if(create == -1)
 		{
 			fputs("Failed to create the new file, exit(1).\n", stderr);
-			freeallexit(1, Dt);
+			free_all_exit(1, Dt);
 		}
 	}
 	Dt->txtf = fopen(Dt->fname, "wt");
-	ptrcheck(Dt->txtf, "write to the file\0", Dt);
+	chk_ptr(Dt->txtf, "write to the file\0", Dt);
 
 	for(buf_t ln = 0; ln <= Dt->lns; ln++)
 	{
@@ -100,7 +101,7 @@ void savefile(meta* Dt)
 	fclose(Dt->txtf);
 }
 
-meta* chrsalloc(meta* Dt)
+meta* add_mem_for_chrs(meta* Dt)
 {
 	// Eg. allocation for memblk = 4: ++------, ++++----, ++++++++.
 	if(CURR_LN_LEN == 2)
@@ -112,12 +113,12 @@ meta* chrsalloc(meta* Dt)
 	{
 		CURR_LN = realloc(CURR_LN, CURR_LN_LEN + MEMBLK);
 	}
-	ptrcheck(CURR_LN, "extend memblock for the current line\0", Dt);
+	chk_ptr(CURR_LN, "extend memblock for the current line\0", Dt);
 
 	return Dt;
 }
 
-meta* txtshift(char direction, meta* Dt)
+meta* shift_txt_horizonally(char direction, meta* Dt)
 {
 	switch(direction)
 	{
@@ -147,49 +148,48 @@ meta* txtshift(char direction, meta* Dt)
 	return Dt;
 }
 
-meta* keymap(meta* Dt, char key) // TODO: KEYMAP.
+meta* recognize_key(char key, meta* Dt)
 {
-	// Prevent inputting ANSI escape sequences.
-	if(key != ESCAPE)
+	switch(key)
 	{
-		switch(key)
-		{
-			// Pipe prevention.
-			case NEG:
-				puts("\rPipe isn't supported by fiflo, exit(1).");
-				freeallexit(1, Dt);
+		case NEG:
+			puts("\rPipe isn't supported by fiflo, exit(1).");
+			free_all_exit(1, Dt);
 
-			case CTRL_X:
-				freeallexit(0, Dt);
+		default:
+			/* Only printable chars will be added. Combinations that aren't
+			specified above will be omited. Set "key != ESCAPE" to enable. */
+			if(key >= 32)
+			{
+				Dt = add_chr_as_txt(key, Dt);
+			}
+			break;
 
-			case CTRL_D:
-				savefile(Dt);
-				break;
+		case LF:
+			Dt = add_chr_as_txt(key, Dt);
+			Dt = linefeed(Dt);
+			break;				
 
-			case CTRL_H:
-				Dt = ctrlh(Dt);
-				break;
+		case BACKSPACE:
+			Dt = backspace(Dt);
+			break;
 
-			case CTRL_G:
-				Dt = ctrlg(Dt);
-				break;
+		case CTRL_X:
+			free_all_exit(0, Dt);
 
-			default:
-				Dt = addchar(key, Dt);
-				break;
+		case CTRL_D:
+			save_file(Dt);
+			break;
 
-			case BACKSPACE:
-				Dt = backspace(Dt);
-				break;
+		case CTRL_G:
+			Dt = ctrl_g(Dt);
+			break;
 
-			case LF:
-				Dt = addchar(key, Dt);
-				Dt = linefeed(Dt);
-				break;				
-		}
+		case CTRL_H:
+			Dt = ctrl_h(Dt);
+			break;
 	}
-	// DEBUG ONLY - BREAKS RENDERING AND FLUSHING.
-//	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x);
+//	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); DEBUG
 	return Dt;
 }
 

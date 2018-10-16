@@ -44,26 +44,36 @@ meta;
 #define PRE_CURR_LN     Dt->txt[Dt->lns - 1]
 #define PRE_CURR_LN_LEN Dt->ln_len[Dt->lns - 1]
 
-// API
-extern meta* keymap(meta* Dt, char key);
-extern void fnameset(const char* arg, meta* Dt);
-extern meta* readfile(meta* Dt);
+// From api.
+extern meta* recognize_key(meta* Dt, char key);
+extern meta* set_fname(const char* arg, meta* Dt);
+extern meta* read_file(meta* Dt);
 
-// RENDER
-extern void flushwin(meta* Dt);
+// From render.
+extern void flush_window(meta* Dt);
 extern void window(meta* Dt);
 
-_Noreturn void freeallexit(_Bool code, meta* Dt);
+// Frees everything and exits with status code.
+_Noreturn void free_all_exit(_Bool code, meta* Dt);
 
-void ignoresig(int nothing);
-// Checks if the passed pointer is NULL. If yes - frees memory and exits.
-void ptrcheck(void* ptr, const char* err_msg, meta* Dt);
+// Signal catcher that does nothing.
+void ignore_sig(int nothing);
 
-void options(const char* arg); // Eg. -v, --version et al infos.
-char getch(void);              // Getchar without ENTER confirmation.
+// Checks if passed pointer is NULL. If yes - frees memory and exits.
+void chk_ptr(void* ptr, const char* err_msg, meta* Dt);
 
+// Program parameters, eg. "--help".
+void options(const char* arg);
+
+// Reads one char wthout confirming by the ENTER key.
+char getch(void);
+
+// Initialize all Dt structure members.
 meta* init(const char* arg, meta* Dt);
-_Noreturn void run(const char* arg); // Contains program loop.
+
+// Some initializers and the main program loop.
+_Noreturn void run(const char* arg);
+
 int main(int argc, char** argv);
 #endif
 

@@ -16,23 +16,32 @@
 #define BACKSPACE 127
 
 // These keys moves the cursor...
-#define CTRL_B 2  // down.
 #define CTRL_G 7  // left.
 #define CTRL_H 8  // right.
-#define CTRL_Y 25 // up.
 
-extern meta* ctrlh(meta* Dt);
-extern meta* ctrlg(meta* Dt);
-extern meta* backspace(meta* Dt);
+// From key.
+extern meta* add_chr_as_txt(char key, meta* Dt);
 extern meta* linefeed(meta* Dt);
-extern meta* addchar(char key, meta* Dt);
+extern meta* backspace(meta* Dt);
+extern meta* ctrl_g(meta* Dt);
+extern meta* ctrl_h(meta* Dt);
 
-void fnameset(const char* arg, meta* Dt); // Optionally get current dir.
-meta* readfile(meta* Dt);
-void savefile(meta* Dt);
+// Sets the filename. If basename is passed as arg current path will be added.
+meta* set_fname(const char* arg, meta* Dt);
 
-meta* chrsalloc(meta* Dt);
-meta* txtshift(char direction, meta* Dt);
-meta* keymap(meta* Dt, char key); // Recognize type of a passed char.
+// Reads the file using "recognize_char".
+meta* read_file(meta* Dt);
+
+// Puts the whole text to the file.
+void save_file(meta* Dt);
+
+// Allocs next memory block for chars in a current line if needed.
+meta* add_mem_for_chrs(meta* Dt);
+
+// Moves the text when the cursor is moved left and char is pressed.
+meta* shift_txt_horizonally(char direction, meta* Dt);
+
+// Knows what to do next with pressed key or combination. Bases on ASCII.
+meta* recognize_key(char key, meta* Dt);
 #endif
 
