@@ -13,7 +13,7 @@ files use git-show or git-log.
 - main compiler switched to clang,
 - control keys changed,
 - upper bar splitted to 2 smaller ones,
-- moveable cursor,
+- moveable cursor in X axis,
 - transparent UI.
 
 ### v2.0.0 (2018, September 11):

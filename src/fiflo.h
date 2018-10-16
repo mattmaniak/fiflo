@@ -35,19 +35,14 @@ typedef struct
 	buf_t  lns;    // Lines index.
 	buf_t* ln_len; // Chars in the current line (index).
 	buf_t  cusr_x; // User's cursor position in reversed X.
-	buf_t  cusr_y; // Same as above but vertically. Bigger value - more up.
 }
 meta;
 #pragma pack(pop)
 
-#define LAST_LN         Dt->txt[Dt->lns]
-#define LAST_LN_LEN     Dt->ln_len[Dt->lns]
-#define PRE_LAST_LN     Dt->txt[Dt->lns - NTERM_SZ]
-#define PRE_LAST_LN_LEN Dt->ln_len[Dt->lns - 1]
-#define CURR_LN         Dt->txt[Dt->lns - Dt->cusr_y]
-#define CURR_LN_LEN     Dt->ln_len[Dt->lns - Dt->cusr_y]
-#define PRE_CURR_LN     Dt->txt[Dt->lns - Dt->cusr_y - 1]
-#define PRE_CURR_LN_LEN Dt->ln_len[Dt->lns - Dt->cusr_y - 1]
+#define CURR_LN         Dt->txt[Dt->lns]
+#define CURR_LN_LEN     Dt->ln_len[Dt->lns]
+#define PRE_CURR_LN     Dt->txt[Dt->lns - 1]
+#define PRE_CURR_LN_LEN Dt->ln_len[Dt->lns - 1]
 
 // API
 extern meta* keymap(meta* Dt, char key);

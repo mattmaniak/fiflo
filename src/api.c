@@ -100,45 +100,6 @@ void savefile(meta* Dt)
 	fclose(Dt->txtf);
 }
 
-meta* freeblk(meta* Dt) // TODO: SIMPLIFY.
-{
-//	_Bool line_back = 0;
-	if(LAST_LN_LEN % MEMBLK == 0)
-	{
-		LAST_LN = realloc(LAST_LN, LAST_LN_LEN);
-		ptrcheck(LAST_LN, "realloc memblock in the last line\0", Dt);
-
-//		Dt->ln_len = realloc(Dt->ln_len, Dt->lns);
-//		ptrcheck(LAST_LN, "array with lines length\0", Dt);
-//		printf("%d\n", LAST_LN_LEN);
-	}
-	if(LAST_LN_LEN > 0 && Dt->cusr_x != (LAST_LN_LEN + INDEX))
-	{
-		LAST_LN_LEN--;
-		Dt->chrs--;
-	}
-	else if(LAST_LN_LEN == 0)
-	{
-//		line_back = 1;
-		Dt->cusr_y = 0;
-	}
-	LAST_LN[LAST_LN_LEN] = NTERM;
-/*
-	if(line_back == 1 && Dt->lns > 0 && PRE_LAST_LN[strlen(PRE_LAST_LN) - NTERM_SZ] == LF)
-	{
-		free(LAST_LN);
-		LAST_LN = NULL;
-		Dt->lns--;
-		LAST_LN_LEN = (buf_t) strlen(LAST_LN) - NTERM_SZ;
-		LAST_LN[LAST_LN_LEN] = NTERM;
-		if(Dt->chrs > 0) // Just for the LF removal.
-		{
-			Dt->chrs--;
-		}
-	}*/
-	return Dt;
-}
-
 meta* chrsalloc(meta* Dt)
 {
 	// Eg. allocation for memblk = 4: ++------, ++++----, ++++++++.
@@ -162,24 +123,24 @@ meta* txtshift(char direction, meta* Dt)
 	{
 		// Move left.
 		case 'l':
-			if(Dt->cusr_x > LAST_LN_LEN - NTERM_SZ && LAST_LN_LEN > 0)
+			if(Dt->cusr_x > CURR_LN_LEN - NTERM_SZ && CURR_LN_LEN > 0)
 			{
-				Dt->cusr_x = LAST_LN_LEN - NTERM_SZ;
+				Dt->cusr_x = CURR_LN_LEN - NTERM_SZ;
 			}
-			if(LAST_LN_LEN > 0)
+			if(CURR_LN_LEN > 0)
 			{
-				for(term_t x = LAST_LN_LEN - Dt->cusr_x; x <= LAST_LN_LEN; x++)
+				for(term_t x = CURR_LN_LEN - Dt->cusr_x; x <= CURR_LN_LEN; x++)
 				{
-					LAST_LN[x - INDEX] = LAST_LN[x];
+					CURR_LN[x - INDEX] = CURR_LN[x];
 				}
 			}
 			break;
 
 		// Move right.
 		case 'r':
-			for(term_t x = LAST_LN_LEN; x >= LAST_LN_LEN - Dt->cusr_x; x--)
+			for(term_t x = CURR_LN_LEN; x >= CURR_LN_LEN - Dt->cusr_x; x--)
 			{
-				LAST_LN[x] = LAST_LN[x - INDEX];
+				CURR_LN[x] = CURR_LN[x - INDEX];
 			}
 			break;
 	}
@@ -213,14 +174,6 @@ meta* keymap(meta* Dt, char key) // TODO: KEYMAP.
 				Dt = ctrlg(Dt);
 				break;
 
-			case CTRL_Y:
-				Dt = ctrly(Dt);
-				break;
-
-			case CTRL_B:
-				Dt = ctrlb(Dt);
-				break;
-
 			default:
 				Dt = addchar(key, Dt);
 				break;
@@ -236,7 +189,7 @@ meta* keymap(meta* Dt, char key) // TODO: KEYMAP.
 		}
 	}
 	// DEBUG ONLY - BREAKS RENDERING AND FLUSHING.
-//	printf("\rlast: %d cusr_x: %d cusr_y: %d\n", key, Dt->cusr_x, Dt->cusr_y);
+//	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x);
 	return Dt;
 }
 

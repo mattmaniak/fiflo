@@ -15,40 +15,10 @@ meta* ctrlh(meta* Dt)
 meta* ctrlg(meta* Dt)
 {
 	// Move only when the cursor isn't at the start of the line.
-	if(Dt->cusr_x < LAST_LN_LEN)
+	if(Dt->cusr_x < CURR_LN_LEN)
 	{
 		// Move the cursor left.
 		Dt->cusr_x++;
-	}
-	return Dt;
-}
-
-meta* ctrly(meta* Dt)
-{
-	if(Dt->cusr_y < Dt->lns)
-	{
-		// Move the cursor up.
-		Dt->cusr_y++;
-
-		// Must contain at least newline.
-		if(PRE_LAST_LN_LEN == 1)
-		{
-			Dt->chrs = 1;
-		}
-		else
-		{
-			LAST_LN_LEN = (buf_t) (strlen(PRE_LAST_LN) - INDEX);
-		}
-	}
-	return Dt;
-}
-
-meta* ctrlb(meta* Dt)
-{
-	if(Dt->cusr_y > 0)
-	{
-		// Move the cursor down.
-		Dt->cusr_y--;
 	}
 	return Dt;
 }
@@ -126,7 +96,7 @@ meta* backspace(meta* Dt)
 	if(Dt->chrs > 0)
 	{
 		// Prevent first char deletion in line.
-		if(Dt->cusr_x != LAST_LN_LEN)
+		if(Dt->cusr_x != CURR_LN_LEN)
 		{
 			Dt = txtshift('l', Dt);
 		}
@@ -147,57 +117,16 @@ meta* backspace(meta* Dt)
 		}
 		ptrcheck(CURR_LN, "shrink memblock for the current line\0", Dt);
 
-
-
-		if(Dt->cusr_x != (LAST_LN_LEN + INDEX))
+		if(Dt->cusr_x != (CURR_LN_LEN + INDEX))
 		{
-			LAST_LN_LEN--;
+			CURR_LN_LEN--;
 			Dt->chrs--;
 		}
-		else if(LAST_LN_LEN == 0)
+		else if(CURR_LN_LEN == 0)
 		{
-	//		line_back = 1;
-			Dt->cusr_y = 0;
+			line_back = 1;
 		}
-		LAST_LN[LAST_LN_LEN] = NTERM;
-	/*
-		if(line_back == 1 && Dt->lns > 0 && PRE_LAST_LN[strlen(PRE_LAST_LN) - NTERM_SZ] == LF)
-		{
-			free(LAST_LN);
-			LAST_LN = NULL;
-			Dt->lns--;
-			LAST_LN_LEN = (buf_t) strlen(LAST_LN) - NTERM_SZ;
-			LAST_LN[LAST_LN_LEN] = NTERM;
-			if(Dt->chrs > 0) // Just for the LF removal.
-			{
-				Dt->chrs--;
-			}
-		}*/
-
-
-
-
-/*		else
-		{
-			printf("%d ", PRE_LAST_LN_LEN);
-
-			for(term_t x = 0; x <= LAST_LN_LEN; x++)
-			{
-				PRE_LAST_LN[PRE_LAST_LN_LEN] = LAST_LN[x];
-				PRE_LAST_LN_LEN++;
-			}
-			PRE_LAST_LN[PRE_LAST_LN_LEN] = NTERM;
-
-			printf("%d\n", PRE_LAST_LN_LEN);
-
-		//		Dt->chrs--;
-
-			free(LAST_LN);
-			LAST_LN = NULL;
-			Dt->lns--;
-		}
-	}
-*/
+		CURR_LN[CURR_LN_LEN] = NTERM;
 	}
 	return Dt;
 }

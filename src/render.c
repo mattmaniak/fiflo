@@ -82,7 +82,7 @@ void ubar(meta* Dt) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
 		// Whole filename will be displayed.
 		printf("%s%*s", Dt->fname, space, " ");
 	}
-	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, LAST_LN_LEN,
+	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, CURR_LN_LEN,
 	STRLEN_BUF_T, Dt->chrs);
 	ANSI_RESET();
 }
@@ -148,7 +148,7 @@ void rendertxt(meta* Dt)
 		else
 		{
 			// Chars won't fits in the horizontal space.
-			if((LAST_LN_LEN - TXT_X) >= Dt->cusr_x)
+			if((CURR_LN_LEN - TXT_X) >= Dt->cusr_x)
 			{
 				// Render only right part of the line.
 				xscrolltxt(ln, Dt);
@@ -202,13 +202,12 @@ void setcurpos(meta* Dt)
 	// Lower left side. Will be used to position the cursor and flush each line.
 	ANSI_SAVE_CUR_POS();
 
-	if(LAST_LN_LEN < TXT_X)
+	if(CURR_LN_LEN < TXT_X)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + LAST_LN_LEN
-		- Dt->cusr_x);
+		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + CURR_LN_LEN - Dt->cusr_x);
 	}
-	else if((LAST_LN_LEN - TXT_X) >= Dt->cusr_x)
+	else if((CURR_LN_LEN - TXT_X) >= Dt->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
 		ANSI_CUR_RIGHT(termgetsz('X', Dt) - CUR_SZ);
@@ -216,7 +215,7 @@ void setcurpos(meta* Dt)
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		ANSI_CUR_RIGHT(LAST_LN_LEN - Dt->cusr_x + STRLEN_BUF_T);
+		ANSI_CUR_RIGHT(CURR_LN_LEN - Dt->cusr_x + STRLEN_BUF_T);
 	}
 
 	if(Dt->lns >= TXT_Y)
@@ -224,6 +223,6 @@ void setcurpos(meta* Dt)
 		// Scrolled so cursor is moved only 1 line above.
 		mv_up = 0;
 	}
-	ANSI_CUR_UP(LBAR_SZ + Dt->cusr_y + mv_up);
+	ANSI_CUR_UP(LBAR_SZ + mv_up);
 }
 

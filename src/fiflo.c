@@ -103,7 +103,6 @@ meta* init(const char* arg, meta* Dt)
 	Dt->ln_len[Dt->lns] = 0;
 
 	Dt->cusr_x = 0;
-	Dt->cusr_y = 0;
 
 	Dt->txt[Dt->lns] = malloc(1 + NTERM_SZ);
 	return Dt;

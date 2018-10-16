@@ -23,8 +23,6 @@
 
 extern meta* ctrlh(meta* Dt);
 extern meta* ctrlg(meta* Dt);
-extern meta* ctrly(meta* Dt);
-extern meta* ctrlb(meta* Dt);
 extern meta* backspace(meta* Dt);
 extern meta* linefeed(meta* Dt);
 extern meta* addchar(char key, meta* Dt);
@@ -32,8 +30,6 @@ extern meta* addchar(char key, meta* Dt);
 void fnameset(const char* arg, meta* Dt); // Optionally get current dir.
 meta* readfile(meta* Dt);
 void savefile(meta* Dt);
-
-meta* freeblk(meta* Dt); // Check and free memblock.
 
 meta* chrsalloc(meta* Dt);
 meta* txtshift(char direction, meta* Dt);
