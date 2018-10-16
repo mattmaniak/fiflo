@@ -11,11 +11,11 @@ _Noreturn void freeallexit(_Bool code, meta* Dt)
 		free(Dt->txt[ln]);
 		Dt->txt[ln] = NULL;
 	}
-	free(Dt->ln_len);
-	Dt->ln_len = NULL;
-
 	free(Dt->txt);
 	Dt->txt = NULL;
+
+	free(Dt->ln_len);
+	Dt->ln_len = NULL;
 
 	free(Dt);
 	Dt = NULL;
@@ -106,7 +106,6 @@ meta* init(const char* arg, meta* Dt)
 	Dt->cusr_y = 0;
 
 	Dt->txt[Dt->lns] = malloc(1 + NTERM_SZ);
-
 	return Dt;
 }
 
@@ -118,7 +117,7 @@ _Noreturn void run(const char* arg)
 	Dt = init(arg, Dt);
 	Dt = readfile(Dt);
 
-	char pressed = NTERM;
+	char pressed = 'X'; // TODO: INITIALIZER.
 
 	// Main program loop.
 	for(;;)

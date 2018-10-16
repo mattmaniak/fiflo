@@ -46,6 +46,8 @@ meta;
 #define PRE_LAST_LN_LEN Dt->ln_len[Dt->lns - 1]
 #define CURR_LN         Dt->txt[Dt->lns - Dt->cusr_y]
 #define CURR_LN_LEN     Dt->ln_len[Dt->lns - Dt->cusr_y]
+#define PRE_CURR_LN     Dt->txt[Dt->lns - Dt->cusr_y - 1]
+#define PRE_CURR_LN_LEN Dt->ln_len[Dt->lns - Dt->cusr_y - 1]
 
 // API
 extern meta* keymap(meta* Dt, char key);

@@ -66,23 +66,12 @@ meta* addchar(char key, meta* Dt)
 			Dt->chrs--;
 			CURR_LN_LEN--;
 		}
-		// Eg. allocation for memblk = 4: ++------, ++++----, ++++++++.
-		if(CURR_LN_LEN == 2)
-		{
-			// If there are 2 chars + terminator, extend to MEMBLK.
-			CURR_LN = realloc(CURR_LN, MEMBLK);
-		}
-		else if(CURR_LN_LEN > 2 && CURR_LN_LEN % MEMBLK == 0)
-		{
-			CURR_LN = realloc(CURR_LN, CURR_LN_LEN + MEMBLK);
-		}
-		ptrcheck(CURR_LN, "extend memblock for the current line\0", Dt);
-
+		Dt = chrsalloc(Dt);
 		/* If the cursor is moved to the left and a char is inserted, rest of
 		the text will be shifted to the right side. */
 		if(Dt->cusr_x > 0)
 		{
-			txtshift('r', Dt);
+			Dt = txtshift('r', Dt);
 		}
 		CURR_LN[CURR_LN_LEN - Dt->cusr_x - NTERM_SZ] = key;
 		CURR_LN[CURR_LN_LEN] = NTERM;
@@ -92,47 +81,42 @@ meta* addchar(char key, meta* Dt)
 
 meta* linefeed(meta* Dt)
 {
-	Dt->lns++;
-	LAST_LN_LEN = 0;
-	if(Dt->lns >= MAX_LNS)
+	if(Dt->lns < MAX_LNS)
 	{
-		// TODO: COMMENTS.
-		Dt->lns = MAX_LNS;
-	}
-	else
-	{	// TODO: WERID ALLOC.
-		if(Dt->lns % MEMBLK == 0) // Allocates with a one line reserve.
+		Dt->lns++;
+
+		// Enhance pointer that contains pointers to lines.
+		Dt->txt = realloc(Dt->txt, sizeof(Dt->txt) * (Dt->lns + MEMBLK));
+		ptrcheck(Dt->txt, "realloc array with lines\0", Dt);
+
+		// Enhance pointer that contains lines length indicators.
+		Dt->ln_len = realloc(Dt->ln_len, Dt->lns + MEMBLK);
+		ptrcheck(Dt->ln_len, "realloc array with lines length\0", Dt);
+
+		// The new line is allocated with only 2 bytes.
+		CURR_LN = malloc(1 + NTERM_SZ);
+		ptrcheck(CURR_LN, "2 bytes for initial line\0", Dt);
+
+		// Naturally the new line doesn't contains any chars - only terminator.
+		CURR_LN_LEN = 0;
+		CURR_LN[CURR_LN_LEN] = NTERM;
+
+		/* If user moved the cursor before enter, txt on the right will be
+		moved to the new line. */
+		if(Dt->cusr_x > 0)
 		{
-			Dt->txt = realloc(Dt->txt, sizeof(Dt->txt) * (Dt->lns + MEMBLK));
-			ptrcheck(Dt->txt, "realloc array with lines\0", Dt);
-
-			Dt->ln_len = realloc(Dt->ln_len, Dt->lns + INDEX + MEMBLK);
-			ptrcheck(Dt->ln_len, "realloc array with lines length\0", Dt);
-
-			for(buf_t lns = 0; lns < MEMBLK; lns++)
+			for(term_t x = PRE_CURR_LN_LEN - Dt->cusr_x; x <= PRE_CURR_LN_LEN; x++)
 			{
-				Dt->txt[lns] = realloc(Dt->txt[lns], 1 + NTERM_SZ);
-				puts("MALLOC");
+				CURR_LN[CURR_LN_LEN] = PRE_CURR_LN[x];
+				CURR_LN_LEN++;
+				Dt = chrsalloc(Dt);
 			}
-			puts("ENTER ALLOC");
-		}
-		LAST_LN = malloc(1 + NTERM_SZ);
-		ptrcheck(LAST_LN, "2 bytes for initial line\0", Dt);
-	}
-	LAST_LN[LAST_LN_LEN = 0] = NTERM;
+			PRE_CURR_LN[PRE_CURR_LN_LEN - Dt->cusr_x] = NTERM;
+			CURR_LN[CURR_LN_LEN - 1] = NTERM;
 
-	if(Dt->cusr_x > 0)
-	{
-		for(term_t x = PRE_LAST_LN_LEN - Dt->cusr_x; x <= PRE_LAST_LN_LEN; x++)
-		{
-			LAST_LN[LAST_LN_LEN] = PRE_LAST_LN[x];
-			LAST_LN_LEN++;
+			// Padding to the null terminator.
+			CURR_LN_LEN--;
 		}
-		PRE_LAST_LN[PRE_LAST_LN_LEN - Dt->cusr_x] = NTERM;
-		LAST_LN[LAST_LN_LEN - 1] = NTERM;
-
-		// Padding to the null terminator.
-		LAST_LN_LEN--;
 	}
 	return Dt;
 }
@@ -152,11 +136,11 @@ meta* backspace(meta* Dt)
 			// If there are: char + terminator, shrink to 2 bytes.
 			CURR_LN = realloc(CURR_LN, 1 + NTERM_SZ);
 		}
-		else if(CURR_LN_LEN == 8)
+		else if(CURR_LN_LEN == MEMBLK)
 		{
 			CURR_LN = realloc(CURR_LN, MEMBLK);
 		}
-		else if(CURR_LN_LEN > 8 && CURR_LN_LEN % MEMBLK == 0)
+		else if(CURR_LN_LEN > MEMBLK && CURR_LN_LEN % MEMBLK == 0)
 		{
 			// There is more memory needed.
 			CURR_LN = realloc(CURR_LN, CURR_LN_LEN);

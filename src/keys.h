@@ -3,6 +3,7 @@
 
 extern meta* freeblk(meta* Dt);
 extern meta* txtshift(char direction, meta* Dt);
+extern meta* chrsalloc(meta* Dt);
 
 meta* ctrlh(meta* Dt);
 meta* ctrlg(meta* Dt);

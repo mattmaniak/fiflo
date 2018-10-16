@@ -139,6 +139,23 @@ meta* freeblk(meta* Dt) // TODO: SIMPLIFY.
 	return Dt;
 }
 
+meta* chrsalloc(meta* Dt)
+{
+	// Eg. allocation for memblk = 4: ++------, ++++----, ++++++++.
+	if(CURR_LN_LEN == 2)
+	{
+		// If there are 2 chars + terminator, extend to MEMBLK.
+		CURR_LN = realloc(CURR_LN, MEMBLK);
+	}
+	else if(CURR_LN_LEN > 2 && CURR_LN_LEN % MEMBLK == 0)
+	{
+		CURR_LN = realloc(CURR_LN, CURR_LN_LEN + MEMBLK);
+	}
+	ptrcheck(CURR_LN, "extend memblock for the current line\0", Dt);
+
+	return Dt;
+}
+
 meta* txtshift(char direction, meta* Dt)
 {
 	switch(direction)

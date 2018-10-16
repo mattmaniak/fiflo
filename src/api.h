@@ -35,6 +35,7 @@ void savefile(meta* Dt);
 
 meta* freeblk(meta* Dt); // Check and free memblock.
 
+meta* chrsalloc(meta* Dt);
 meta* txtshift(char direction, meta* Dt);
 meta* keymap(meta* Dt, char key); // Recognize type of a passed char.
 #endif
