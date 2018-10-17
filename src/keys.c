@@ -9,7 +9,7 @@ meta* add_chr_as_txt(char key, meta* Dt)
 		CURR_LN_LEN++;
 
 		// Fixes incremented value by terminator. TODO
-		if(key == NTERM && Dt->chrs == 1)
+		if(key == NTERM && CURR_LN_LEN > 0)
 		{
 			Dt->chrs--;
 			CURR_LN_LEN--;
@@ -43,27 +43,27 @@ meta* linefeed(meta* Dt)
 
 		// The new line is allocated with only 2 bytes.
 		CURR_LN = malloc(1 + NTERM_SZ);
-		chk_ptr(CURR_LN, "2 bytes for initial line\0", Dt);
+		chk_ptr(CURR_LN, "alloc 2 bytes for the initial line\0", Dt);
 
 		// Naturally the new line doesn't contains any chars - only terminator.
-		CURR_LN_LEN = 0;
-		CURR_LN[CURR_LN_LEN] = NTERM;
+		CURR_LN[CURR_LN_LEN = 0] = NTERM;
 
-		/* If user moved the cursor before enter, txt on the right will be
-		moved to the new line. */
+		/* If user moved the cursor before hitting ENTER, txt on the right will
+		be moved to the new line. */
 		if(Dt->cusr_x > 0)
 		{
-			for(term_t x = PRE_CURR_LN_LEN - Dt->cusr_x; x <= PRE_CURR_LN_LEN; x++)
+			for(term_t x = PRE_CURR_LN_LEN - Dt->cusr_x; x < PRE_CURR_LN_LEN; x++)
 			{
 				CURR_LN[CURR_LN_LEN] = PRE_CURR_LN[x];
 				CURR_LN_LEN++;
 				Dt = add_mem_for_chrs(Dt);
 			}
+//			TODO: FREEING UPPER LINE.
 			PRE_CURR_LN[PRE_CURR_LN_LEN - Dt->cusr_x] = NTERM;
-			CURR_LN[CURR_LN_LEN - 1] = NTERM;
+//			printf("%d\n", PRE_CURR_LN_LEN - Dt->cusr_x);
+			Dt = free_mem_for_chrs(Dt);
 
-			// Padding to the null terminator.
-			CURR_LN_LEN--;
+			CURR_LN[CURR_LN_LEN] = NTERM;
 		}
 	}
 	return Dt;
@@ -78,22 +78,7 @@ meta* backspace(meta* Dt)
 		{
 			Dt = shift_txt_horizonally('l', Dt);
 		}
-
-		if(CURR_LN_LEN == 2)
-		{
-			// If there are: char + terminator, shrink to 2 bytes.
-			CURR_LN = realloc(CURR_LN, 1 + NTERM_SZ);
-		}
-		else if(CURR_LN_LEN == MEMBLK)
-		{
-			CURR_LN = realloc(CURR_LN, MEMBLK);
-		}
-		else if(CURR_LN_LEN > MEMBLK && CURR_LN_LEN % MEMBLK == 0)
-		{
-			// There is more memory needed.
-			CURR_LN = realloc(CURR_LN, CURR_LN_LEN);
-		}
-		chk_ptr(CURR_LN, "shrink memblock for the current line\0", Dt);
+		Dt = free_mem_for_chrs(Dt);
 
 		if(Dt->cusr_x != (CURR_LN_LEN + INDEX))
 		{

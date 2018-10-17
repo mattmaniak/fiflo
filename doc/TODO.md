@@ -1,6 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- rendering with smaller than terminal stty size.
+- rendering with smaller than terminal stty size,
+- tabs (multiple files),
 - alloc, free, backspace et al,
 - add .gitlab-ci.yml,
 - edited/saved indicator,

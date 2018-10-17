@@ -108,12 +108,38 @@ meta* add_mem_for_chrs(meta* Dt)
 	{
 		// If there are 2 chars + terminator, extend to MEMBLK.
 		CURR_LN = realloc(CURR_LN, MEMBLK);
+		puts("ALLOC_EIGHT");
 	}
 	else if(CURR_LN_LEN > 2 && CURR_LN_LEN % MEMBLK == 0)
 	{
-		CURR_LN = realloc(CURR_LN, CURR_LN_LEN + MEMBLK);
+		CURR_LN = realloc(CURR_LN, ((CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+		printf("ALLOC: %d\n", ((CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
 	chk_ptr(CURR_LN, "extend memblock for the current line\0", Dt);
+
+	return Dt;
+}
+
+meta* free_mem_for_chrs(meta* Dt)
+{
+	if(CURR_LN_LEN == 2)
+	{
+		// If there are: char + terminator, shrink to 2 bytes.
+		CURR_LN = realloc(CURR_LN, 1 + NTERM_SZ);
+		puts("TWO");
+	}
+	else if(CURR_LN_LEN == MEMBLK)
+	{
+		CURR_LN = realloc(CURR_LN, MEMBLK);
+		puts("EIGHT");
+	}
+	else if(CURR_LN_LEN > MEMBLK && CURR_LN_LEN % MEMBLK == 0)
+	{
+		// There is more memory needed.
+		printf("%d\n", ((CURR_LN_LEN / MEMBLK) * MEMBLK));
+		CURR_LN = realloc(CURR_LN, (CURR_LN_LEN / MEMBLK) * MEMBLK);
+	}
+	chk_ptr(CURR_LN, "shrink memblock for the current line\0", Dt);
 
 	return Dt;
 }
@@ -159,7 +185,7 @@ meta* recognize_key(char key, meta* Dt)
 		default:
 			/* Only printable chars will be added. Combinations that aren't
 			specified above will be omited. Set "key != ESCAPE" to enable. */
-			if(key >= 32)
+			if(key == NTERM || key >= 32)
 			{
 				Dt = add_chr_as_txt(key, Dt);
 			}

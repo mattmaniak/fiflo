@@ -38,6 +38,9 @@ void save_file(meta* Dt);
 // Allocs next memory block for chars in a current line if needed.
 meta* add_mem_for_chrs(meta* Dt);
 
+// Works as the function above but shrinks memblocks.
+meta* free_mem_for_chrs(meta* Dt);
+
 // Moves the text when the cursor is moved left and char is pressed.
 meta* shift_txt_horizonally(char direction, meta* Dt);
 

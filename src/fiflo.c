@@ -104,7 +104,7 @@ meta* init(const char* arg, meta* Dt)
 
 	Dt->cusr_x = 0;
 
-	Dt->txt[Dt->lns] = malloc(1 + NTERM_SZ);
+	CURR_LN = malloc(1 + NTERM_SZ);
 	return Dt;
 }
 
@@ -116,7 +116,7 @@ _Noreturn void run(const char* arg)
 	Dt = init(arg, Dt);
 	Dt = read_file(Dt);
 
-	char pressed = 'X'; // TODO: INITIALIZER.
+	char pressed = NTERM; // Initializer.
 
 	// Main program loop.
 	for(;;)
