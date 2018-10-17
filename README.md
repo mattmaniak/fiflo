@@ -44,6 +44,11 @@ sudo make install
 sudo make uninstall
 ```
 
+## Memory debugging with an ASan.
+```
+make sanitize
+```
+
 ## Delete object files and the binary
 ```
 make clean

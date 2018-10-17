@@ -45,7 +45,7 @@ meta;
 #define PRE_CURR_LN_LEN Dt->ln_len[Dt->lns - 1]
 
 // From api.
-extern meta* recognize_key(meta* Dt, char key);
+extern meta* recognize_key(char key, meta* Dt);
 extern meta* set_fname(const char* arg, meta* Dt);
 extern meta* read_file(meta* Dt);
 

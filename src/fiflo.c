@@ -121,7 +121,7 @@ _Noreturn void run(const char* arg)
 	// Main program loop.
 	for(;;)
 	{
-		Dt = recognize_key(Dt, pressed);
+		Dt = recognize_key(pressed, Dt);
 		window(Dt);
 		pressed = getch();
 		flush_window(Dt);

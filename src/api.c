@@ -63,7 +63,7 @@ meta* read_file(meta* Dt)
 		while((chr = (char) getc(Dt->txtf)) != EOF)
 		{
 			// Read all chars before end of file.
-			Dt = recognize_char(chr, Dt);
+			Dt = recognize_key(chr, Dt);
 		}
 		fclose(Dt->txtf);
 	}
@@ -168,7 +168,7 @@ meta* recognize_key(char key, meta* Dt)
 		case LF:
 			Dt = add_chr_as_txt(key, Dt);
 			Dt = linefeed(Dt);
-			break;				
+			break;
 
 		case BACKSPACE:
 			Dt = backspace(Dt);

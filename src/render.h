@@ -5,21 +5,23 @@
 #include <sys/ioctl.h>
 
 // UI areas.
-#define AT_LEAST_CHAR 1
 #define CUR_SZ        1
 #define SLASH_SZ      1
 #define UPBAR_SZ      1
 #define LBAR_SZ       1
 #define BARS_SZ       (UPBAR_SZ + LBAR_SZ)
 #define LBAR_STR      "CTRL+: X - exit/ D - save/ YGHB - move cursor\0"
-#define TERM_X_MIN    (term_t) (strlen(LBAR_STR) + AT_LEAST_CHAR)
+
+// Remember to not override the upper bar.
+#define TERM_X_MIN    (term_t) strlen(LBAR_STR)
 
 #define TXT_X (get_term_sz('X', Dt) - STRLEN_BUF_T)
 #define TXT_Y (get_term_sz('Y', Dt) - BARS_SZ)
 
 #define ANSI_RESET()           printf("\033[%s", "0m")
+
+// If you want to change to inverted bars' colors, set "1m" to "7m".
 #define ANSI_BOLD()            printf("\033[%s", "1m")
-#define ANSI_INVERT()          printf("\033[%s", "7m")
 #define ANSI_CLEAN_LN()        printf("\033[%s", "2K")
 #define ANSI_CUR_UP(n)         printf("\033[%dA", n)
 #define ANSI_CUR_DOWN(n)       printf("\033[%dB", n)
