@@ -17,6 +17,7 @@
 #define NTERM    0
 #define LF       10
 
+// TODO: MAX VALUES.
 #define MAX_LNS      USHRT_MAX - 1 // - 1 is index.
 #define MAX_CHRS     MAX_LNS - 1   // Same as above but with the terminator.
 #define MEMBLK       8             // Must be > 1 and should be % 8 = 0.

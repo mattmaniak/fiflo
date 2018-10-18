@@ -96,7 +96,7 @@ void scroll_chrs_in_ln(buf_t ln, meta* Dt)
 	// Text will be scrolled. Not cursor.
 	for(buf_t x = (buf_t) (Dt->ln_len[ln] - Dt->cusr_x - TXT_X
 	+ CUR_SZ - mv_right);
-	x <= strlen(Dt->txt[ln]) - Dt->cusr_x - CUR_SZ - mv_right; x++)
+	x <= CURR_LN_LEN - Dt->cusr_x - CUR_SZ - mv_right; x++)
 	{
 		putchar(Dt->txt[ln][x]);
 	}
@@ -136,7 +136,7 @@ void display_txt(meta* Dt)
 		print_ln_num(ln);
 
 		// Horizontal rendering.
-		if((term_t) strlen(Dt->txt[ln]) < TXT_X)
+		if(CURR_LN_LEN < TXT_X)
 		{
 			// There is small amount of chars. X-scroll isn't required.
 			printf("%s", Dt->txt[ln]);

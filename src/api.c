@@ -8,7 +8,7 @@ meta* set_fname(const char* arg, meta* Dt)
 
 	if(arg[strlen(arg) - NTERM_SZ] == '/')
 	{
-		fputs("Can't open the directory as a file, exit(1).\n", stderr);
+		fputs("Can't open directory as file, exit(1).\n", stderr);
 		free_all_exit(1, Dt);
 	}
 	// Is absolute path.
@@ -16,7 +16,7 @@ meta* set_fname(const char* arg, meta* Dt)
 	{
 		if(strlen(arg) + NTERM_SZ > PATH_MAX)
 		{
-			fputs("Given path is too long, exit(1).\n", stderr);
+			fputs("Passed path is too long, exit(1).\n", stderr);
 			free_all_exit(1, Dt);
 		}
 		strcpy(Dt->fname, arg);
@@ -24,31 +24,30 @@ meta* set_fname(const char* arg, meta* Dt)
 	// Is relative path or basename.
 	else
 	{
-		char* abs_path = malloc(PATH_MAX);
-		chk_ptr(abs_path, "abs. path. Can be too long\0", Dt);
+		char* cw_dir = malloc(PATH_MAX);
+		chk_ptr(cw_dir, "alloc memory for the current path\0", Dt);
 
-		chk_ptr((getcwd(abs_path, PATH_MAX)),
-		"get your current path. Can be too long\0", Dt);
+		chk_ptr((getcwd(cw_dir, PATH_MAX)), "get current path. Too long\0", Dt);
 
 		// Exceeded 4096 chars.
-		if((strlen(abs_path) + strlen(arg)) >= PATH_MAX)
+		if((strlen(cw_dir) + strlen(arg)) >= PATH_MAX)
 		{
-			fputs("Given filename is too long, exit(1).\n", stderr);
+			fputs("Passed filename is too long, exit(1).\n", stderr);
 			free_all_exit(1, Dt);
 		}
 		// Copy the path.
-		strcpy(Dt->fname, abs_path);
+		strcpy(Dt->fname, cw_dir);
 
 		// Add the slash between.
-		Dt->fname[strlen(abs_path)] = '/';
+		Dt->fname[strlen(cw_dir)] = '/';
 
 		// Append basename.
 		for(uint16_t pos = 0; pos < strlen(arg); pos++)
 		{
-			strcpy(&Dt->fname[strlen(abs_path) + SLASH_SZ + pos], &arg[pos]);
+			strcpy(&Dt->fname[strlen(cw_dir) + SLASH_SZ + pos], &arg[pos]);
 		}
-		free(abs_path);
-		abs_path = NULL;
+		free(cw_dir);
+		cw_dir = NULL;
 	}
 	return Dt;
 }
@@ -115,7 +114,7 @@ meta* add_mem_for_chrs(meta* Dt)
 		CURR_LN = realloc(CURR_LN, ((CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 		printf("ALLOC: %d\n", ((CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(CURR_LN, "extend memblock for the current line\0", Dt);
+	chk_ptr(CURR_LN, "extend a memblock for the current line\0", Dt);
 
 	return Dt;
 }
@@ -126,20 +125,37 @@ meta* free_mem_for_chrs(meta* Dt)
 	{
 		// If there are: char + terminator, shrink to 2 bytes.
 		CURR_LN = realloc(CURR_LN, 1 + NTERM_SZ);
-		puts("TWO");
+		puts("FREE TWO");
 	}
 	else if(CURR_LN_LEN == MEMBLK)
 	{
 		CURR_LN = realloc(CURR_LN, MEMBLK);
-		puts("EIGHT");
+		puts("FREE EIGHT");
 	}
 	else if(CURR_LN_LEN > MEMBLK && CURR_LN_LEN % MEMBLK == 0)
 	{
 		// There is more memory needed.
-		printf("%d\n", ((CURR_LN_LEN / MEMBLK) * MEMBLK));
 		CURR_LN = realloc(CURR_LN, (CURR_LN_LEN / MEMBLK) * MEMBLK);
+		printf("FREE %d\n", ((CURR_LN_LEN / MEMBLK) * MEMBLK));
 	}
-	chk_ptr(CURR_LN, "shrink memblock for the current line\0", Dt);
+	chk_ptr(CURR_LN, "shrink a memblock for the current line\0", Dt);
+
+	return Dt;
+}
+
+meta* alloc_mem_for_lns(meta* Dt)
+{
+	// Enhance pointer that contains pointers to lines.
+	Dt->txt = realloc(Dt->txt, sizeof(Dt->txt) * (Dt->lns + MEMBLK));
+	chk_ptr(Dt->txt, "extend the array with lines\0", Dt);
+
+	// Enhance pointer that contains lines length indicators.
+	Dt->ln_len = realloc(Dt->ln_len, Dt->lns + MEMBLK);
+	chk_ptr(Dt->ln_len, "extend the array with lines length\0", Dt);
+
+	// The new line is allocated with only 2 bytes.
+	CURR_LN = malloc(1 + NTERM_SZ);
+	chk_ptr(CURR_LN, "alloc 2 bytes for the initial line\0", Dt);
 
 	return Dt;
 }

@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- remove Dt->chrs,
 - rendering with smaller than terminal stty size,
 - tabs (multiple files),
 - alloc, free, backspace et al,

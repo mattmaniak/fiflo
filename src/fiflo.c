@@ -93,17 +93,16 @@ meta* init(const char* arg, meta* Dt)
 	Dt = set_fname(arg, Dt);
 
 	Dt->txt = malloc(sizeof(Dt->txt) * MEMBLK);
-	chk_ptr(Dt->txt, "malloc for the lines array\0", Dt);
+	chk_ptr(Dt->txt, "alloc memory for an array that contains lines\0", Dt);
 
 	Dt->ln_len = malloc(MAX_LNS);
-	chk_ptr(Dt->ln_len, "malloc for the lines length array\0", Dt);
+	chk_ptr(Dt->ln_len, "alloc memory for an array with lines length\0", Dt);
 
 	Dt->chrs = 0;
 	Dt->lns = 0;
-	Dt->ln_len[Dt->lns] = 0;
-
 	Dt->cusr_x = 0;
 
+	CURR_LN_LEN = 0;
 	CURR_LN = malloc(1 + NTERM_SZ);
 	return Dt;
 }
@@ -111,7 +110,7 @@ meta* init(const char* arg, meta* Dt)
 _Noreturn void run(const char* arg)
 {
 	meta* Dt = malloc(sizeof(meta));
-	chk_ptr(Dt, "alloc memory for metadata\0", Dt);
+	chk_ptr(Dt, "alloc memory for a file metadata\0", Dt);
 
 	Dt = init(arg, Dt);
 	Dt = read_file(Dt);

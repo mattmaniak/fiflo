@@ -8,12 +8,6 @@ meta* add_chr_as_txt(char key, meta* Dt)
 		Dt->chrs++;
 		CURR_LN_LEN++;
 
-		// Fixes incremented value by terminator. TODO
-		if(key == NTERM && CURR_LN_LEN > 0)
-		{
-			Dt->chrs--;
-			CURR_LN_LEN--;
-		}
 		Dt = add_mem_for_chrs(Dt);
 		/* If the cursor is moved to the left and a char is inserted, rest of
 		the text will be shifted to the right side. */
@@ -23,6 +17,13 @@ meta* add_chr_as_txt(char key, meta* Dt)
 		}
 		CURR_LN[CURR_LN_LEN - Dt->cusr_x - NTERM_SZ] = key;
 		CURR_LN[CURR_LN_LEN] = NTERM;
+
+		// Fixes incremented value by the "pressed" initializer in "run".
+		if(key == NTERM && CURR_LN_LEN > 0)
+		{
+			Dt->chrs--;
+			CURR_LN_LEN--;
+		}
 	}
 	return Dt;
 }
@@ -32,18 +33,7 @@ meta* linefeed(meta* Dt)
 	if(Dt->lns < MAX_LNS)
 	{
 		Dt->lns++;
-
-		// Enhance pointer that contains pointers to lines.
-		Dt->txt = realloc(Dt->txt, sizeof(Dt->txt) * (Dt->lns + MEMBLK));
-		chk_ptr(Dt->txt, "realloc array with lines\0", Dt);
-
-		// Enhance pointer that contains lines length indicators.
-		Dt->ln_len = realloc(Dt->ln_len, Dt->lns + MEMBLK);
-		chk_ptr(Dt->ln_len, "realloc array with lines length\0", Dt);
-
-		// The new line is allocated with only 2 bytes.
-		CURR_LN = malloc(1 + NTERM_SZ);
-		chk_ptr(CURR_LN, "alloc 2 bytes for the initial line\0", Dt);
+		Dt = alloc_mem_for_lns(Dt);
 
 		// Naturally the new line doesn't contains any chars - only terminator.
 		CURR_LN[CURR_LN_LEN = 0] = NTERM;
@@ -58,10 +48,26 @@ meta* linefeed(meta* Dt)
 				CURR_LN_LEN++;
 				Dt = add_mem_for_chrs(Dt);
 			}
-//			TODO: FREEING UPPER LINE.
-			PRE_CURR_LN[PRE_CURR_LN_LEN - Dt->cusr_x] = NTERM;
-//			printf("%d\n", PRE_CURR_LN_LEN - Dt->cusr_x);
-			Dt = free_mem_for_chrs(Dt);
+			// Now the length of the upper line will be shortened after copying.
+			PRE_CURR_LN_LEN -= Dt->cusr_x;
+			PRE_CURR_LN[PRE_CURR_LN_LEN] = NTERM;
+
+			if(PRE_CURR_LN_LEN < 2)
+			{
+				PRE_CURR_LN = realloc(PRE_CURR_LN, 1 + NTERM_SZ);
+//				puts("FREE UPPER: 2");
+			}
+			else if(PRE_CURR_LN_LEN >= 2 && PRE_CURR_LN_LEN < MEMBLK)
+			{
+				PRE_CURR_LN = realloc(PRE_CURR_LN, MEMBLK);
+//				puts("FREE UPPER: 8");
+			}
+			else if(PRE_CURR_LN_LEN >= MEMBLK)
+			{
+				PRE_CURR_LN = realloc(PRE_CURR_LN, ((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK)  + MEMBLK);
+//				printf("FREE UPPER %d\n", ((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+			}
+			chk_ptr(PRE_CURR_LN, "shrink the upper line's memory space\0", Dt);
 
 			CURR_LN[CURR_LN_LEN] = NTERM;
 		}

@@ -1,10 +1,11 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-// From render.
+// From api.
 extern meta* shift_txt_horizonally(char direction, meta* Dt);
 extern meta* add_mem_for_chrs(meta* Dt);
 extern meta* free_mem_for_chrs(meta* Dt);
+extern meta* alloc_mem_for_lns(meta* Dt);
 
 // Adds char when the pressed key is a printable one.
 meta* add_chr_as_txt(char key, meta* Dt);
