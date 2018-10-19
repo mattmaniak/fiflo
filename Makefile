@@ -1,11 +1,21 @@
-CC=clang
-CFLAGS=-std=gnu99 -O3 -Weverything
-
 TARGET=fiflo
 
 SDIR=src
 ODIR=obj
 MDIR=man
+CCDIR=/usr/bin
+
+ifeq ($(CCDIR)/gcc, $(@shell ls $(CCDIR)/gcc))
+CC=gcc
+CFLAGS=-std=gnu99 -O3 -Wall -Wextra
+
+else ifeq ($(CCDIR)/clang, $(@shell ls $(CCDIR)/clang))
+CC=clang
+CFLAGS=-std=gnu99 -O3 -Weverything
+
+else
+$(error Compiler not found: gcc or clang is required.)
+endif
 
 DEPS=$(TARGET).h
 OBJ=$(ODIR)/$(TARGET).o $(ODIR)/keys.o $(ODIR)/api.o $(ODIR)/render.o
@@ -14,7 +24,7 @@ OBJ=$(ODIR)/$(TARGET).o $(ODIR)/keys.o $(ODIR)/api.o $(ODIR)/render.o
 # "$@" - alias to name at the left of ':', "$^" - right.
 # "$<" is a first item in dependencies list.
 $(ODIR)/%.o: $(SDIR)/%.c $(SDIR)/$(DEPS)
-	mkdir -p $(ODIR)
+	@mkdir -p $(ODIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(TARGET): $(OBJ)

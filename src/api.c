@@ -190,7 +190,7 @@ meta* shift_txt_horizonally(char direction, meta* Dt)
 	return Dt;
 }
 
-meta* recognize_key(char key, meta* Dt)
+meta* recognize_key(char key, meta* Dt) // TODO: BIGGER KEYMAP, EG. CR.
 {
 	switch(key)
 	{

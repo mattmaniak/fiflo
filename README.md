@@ -7,7 +7,7 @@ Simple terminal-based text editor.
 ### 1. Compilation:
 - Linux-based desktop,
 - make,
-- clang or gcc.
+- gcc or clang.
 
 ### 2. Installation:
 - gzip.
