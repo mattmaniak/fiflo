@@ -5,11 +5,11 @@ ODIR=obj
 MDIR=man
 CCDIR=/usr/bin
 
-ifeq ($(CCDIR)/gcc, $(@shell ls $(CCDIR)/gcc))
+ifeq ($(CCDIR)/gcc, $(shell ls $(CCDIR)/gcc))
 CC=gcc
 CFLAGS=-std=gnu99 -O3 -Wall -Wextra
 
-else ifeq ($(CCDIR)/clang, $(@shell ls $(CCDIR)/clang))
+else ifeq ($(CCDIR)/clang, $(shell ls $(CCDIR)/clang))
 CC=clang
 CFLAGS=-std=gnu99 -O3 -Weverything
 

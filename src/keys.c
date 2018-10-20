@@ -86,12 +86,22 @@ meta* backspace(meta* Dt)
 		}
 		Dt = free_mem_for_chrs(Dt);
 
-		if(Dt->cusr_x != (CURR_LN_LEN + INDEX))
+//		if(Dt->cusr_x != (CURR_LN_LEN + INDEX))
+//		{
+//		}
+//		CURR_LN[CURR_LN_LEN] = NTERM;
+
+		if(CURR_LN_LEN == 0)
 		{
-			CURR_LN_LEN--;
-			Dt->chrs--;
+//			PRE_CURR_LN_LEN--;
+			PRE_CURR_LN[PRE_CURR_LN_LEN - NTERM_SZ] = NTERM_SZ;
+
+			free(CURR_LN);
+			CURR_LN = NULL;
+			Dt->lns--;
 		}
-		CURR_LN[CURR_LN_LEN] = NTERM;
+		CURR_LN_LEN--;
+		Dt->chrs--;
 	}
 	return Dt;
 }

@@ -121,6 +121,8 @@ meta* add_mem_for_chrs(meta* Dt)
 
 meta* free_mem_for_chrs(meta* Dt)
 {
+	// These cases are executed only when the backspace is pressed.
+
 	if(CURR_LN_LEN == 2)
 	{
 		// If there are: char + terminator, shrink to 2 bytes.
@@ -145,12 +147,12 @@ meta* free_mem_for_chrs(meta* Dt)
 
 meta* alloc_mem_for_lns(meta* Dt)
 {
-	// Enhance pointer that contains pointers to lines.
-	Dt->txt = realloc(Dt->txt, sizeof(Dt->txt) * (Dt->lns + MEMBLK));
+	// Enhance the array that contains pointers to lines.
+	Dt->txt = realloc(Dt->txt, (Dt->lns + 1) * sizeof(Dt->txt));
 	chk_ptr(Dt->txt, "extend the array with lines\0", Dt);
 
-	// Enhance pointer that contains lines length indicators.
-	Dt->ln_len = realloc(Dt->ln_len, Dt->lns + MEMBLK);
+	// Enhance the array that contains lines length indicators.
+	Dt->ln_len = realloc(Dt->ln_len, Dt->lns + 1);
 	chk_ptr(Dt->ln_len, "extend the array with lines length\0", Dt);
 
 	// The new line is allocated with only 2 bytes.
