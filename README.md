@@ -1,7 +1,7 @@
 # fiflo
 
 ## Description
-Simple terminal-based text editor.
+ASCII terminal-based text editor.
 
 ## Requirements:
 - Linux-based desktop,
@@ -9,9 +9,6 @@ Simple terminal-based text editor.
 - make,
 - gcc or clang,
 - gzip (only for installation).
-
-### 2. Installation:
-- gzip.
 
 ## Downloading
 Current stable release:
@@ -38,12 +35,7 @@ sudo make install
 sudo make uninstall
 ```
 
-## Memory debugging with an ASan.
-```
-make sanitize
-```
-
-## Delete object files and the binary
+## Deleting object files and the binary
 ```
 make clean
 ```

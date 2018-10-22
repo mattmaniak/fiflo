@@ -10,11 +10,10 @@ files use git-show or git-log.
 ### v2.1.0 (WIP):
 - improved Makefile,
 - more efficent memory allocation.
-- main compiler switched to clang,
 - control keys changed,
 - upper bar splitted to 2 smaller ones,
 - moveable cursor in X axis,
-- transparent UI.
+- new transparent UI.
 
 ### v2.0.0 (2018, September 11):
 - vertical && horizontal scroll,

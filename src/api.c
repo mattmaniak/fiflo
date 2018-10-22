@@ -148,16 +148,16 @@ meta* free_mem_for_chrs(meta* Dt)
 meta* alloc_mem_for_lns(meta* Dt)
 {
 	// Enhance the array that contains pointers to lines.
-	Dt->txt = realloc(Dt->txt, (Dt->lns + 1) * sizeof(Dt->txt));
+	Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
 	chk_ptr(Dt->txt, "extend the array with lines\0", Dt);
 
 	// Enhance the array that contains lines length indicators.
-	Dt->ln_len = realloc(Dt->ln_len, Dt->lns + 1);
+	Dt->ln_len = realloc(Dt->ln_len, (Dt->lns + INDEX) * sizeof(buf_t));
 	chk_ptr(Dt->ln_len, "extend the array with lines length\0", Dt);
 
 	// The new line is allocated with only 2 bytes.
 	CURR_LN = malloc(1 + NTERM_SZ);
-	chk_ptr(CURR_LN, "alloc 2 bytes for the initial line\0", Dt);
+	chk_ptr(CURR_LN, "alloc 2 bytes for the newly created line\0", Dt);
 
 	return Dt;
 }

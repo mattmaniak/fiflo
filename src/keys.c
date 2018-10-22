@@ -8,6 +8,7 @@ meta* add_chr_as_txt(char key, meta* Dt)
 		Dt->chrs++;
 		CURR_LN_LEN++;
 
+		// Fixes incremented value by the "pressed" initializer in "run".
 		Dt = add_mem_for_chrs(Dt);
 		/* If the cursor is moved to the left and a char is inserted, rest of
 		the text will be shifted to the right side. */
@@ -18,7 +19,6 @@ meta* add_chr_as_txt(char key, meta* Dt)
 		CURR_LN[CURR_LN_LEN - Dt->cusr_x - NTERM_SZ] = key;
 		CURR_LN[CURR_LN_LEN] = NTERM;
 
-		// Fixes incremented value by the "pressed" initializer in "run".
 		if(key == NTERM && CURR_LN_LEN > 0)
 		{
 			Dt->chrs--;
@@ -36,7 +36,7 @@ meta* linefeed(meta* Dt)
 		Dt = alloc_mem_for_lns(Dt);
 
 		// Naturally the new line doesn't contains any chars - only terminator.
-		CURR_LN[CURR_LN_LEN = 0] = NTERM;
+		CURR_LN_LEN = 0;
 
 		/* If user moved the cursor before hitting ENTER, txt on the right will
 		be moved to the new line. */
@@ -69,39 +69,75 @@ meta* linefeed(meta* Dt)
 			}
 			chk_ptr(PRE_CURR_LN, "shrink the upper line's memory space\0", Dt);
 
-			CURR_LN[CURR_LN_LEN] = NTERM;
 		}
+		CURR_LN[CURR_LN_LEN] = NTERM;
 	}
 	return Dt;
 }
 
 meta* backspace(meta* Dt)
 {
-	if(Dt->chrs > 0)
+	// Isn't possible to delete nothing.
+	if(CURR_LN_LEN > 0)
 	{
-		// Prevent first char deletion in line.
-		if(Dt->cusr_x != CURR_LN_LEN)
+		if(Dt->cusr_x > 0 && Dt->cusr_x != CURR_LN_LEN)
 		{
 			Dt = shift_txt_horizonally('l', Dt);
 		}
+
+		// If the cursor at the maximum left position, char won't be deleted.
+		if(Dt->cusr_x != CURR_LN_LEN)
+		{
+			Dt = free_mem_for_chrs(Dt);
+			CURR_LN_LEN--;
+			Dt->chrs--;
+
+			CURR_LN[CURR_LN_LEN] = NTERM;
+		}
+		else // TODO.
+		{
+			for(term_t x = 0; x < CURR_LN_LEN - Dt->cusr_x; x++)
+			{
+				PRE_CURR_LN[PRE_CURR_LN_LEN] = CURR_LN[x];
+				PRE_CURR_LN_LEN++;
+
+				if(PRE_CURR_LN_LEN == 2)
+				{
+					// If there are 2 chars + terminator, extend to MEMBLK.
+					PRE_CURR_LN = realloc(PRE_CURR_LN, MEMBLK);
+					puts("ALLOC_EIGHT");
+				}
+				else if(PRE_CURR_LN_LEN > 2 && PRE_CURR_LN_LEN % MEMBLK == 0)
+				{
+					CURR_LN = realloc(PRE_CURR_LN, ((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+					printf("ALLOC: %d\n", ((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+				}
+				chk_ptr(CURR_LN, "extend a memblock for the current line\0", Dt);
+
+				PRE_CURR_LN[PRE_CURR_LN_LEN] = NTERM;
+			}
+		}
+	}
+	// Delete the last line.
+	else if(strlen(CURR_LN) == 0 && Dt->lns > 0)
+	{
+		free(CURR_LN);
+		CURR_LN = NULL;
+		Dt->lns--;
+
 		Dt = free_mem_for_chrs(Dt);
 
-//		if(Dt->cusr_x != (CURR_LN_LEN + INDEX))
-//		{
-//		}
-//		CURR_LN[CURR_LN_LEN] = NTERM;
-
-		if(CURR_LN_LEN == 0)
-		{
-//			PRE_CURR_LN_LEN--;
-			PRE_CURR_LN[PRE_CURR_LN_LEN - NTERM_SZ] = NTERM_SZ;
-
-			free(CURR_LN);
-			CURR_LN = NULL;
-			Dt->lns--;
-		}
 		CURR_LN_LEN--;
 		Dt->chrs--;
+
+		// Replaces the LF with the terminator.
+		CURR_LN[CURR_LN_LEN] = NTERM;
+
+		Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
+		chk_ptr(Dt->txt, "shrink the array with lines\0", Dt);
+
+		Dt->ln_len = realloc(Dt->ln_len, (Dt->lns + INDEX) * sizeof(buf_t));
+		chk_ptr(Dt->ln_len, "shrink the array with lines length\0", Dt);
 	}
 	return Dt;
 }
