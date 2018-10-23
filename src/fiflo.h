@@ -11,6 +11,7 @@
 #include <termios.h>
 #include <unistd.h>
 
+// Some semantic substitutes.
 #define CURRENT  1
 #define INDEX    1
 #define NTERM_SZ 1
@@ -40,6 +41,7 @@ typedef struct
 meta;
 #pragma pack(pop)
 
+// Needed to simplify and shorten the code.
 #define CURR_LN         Dt->txt[Dt->lns]
 #define CURR_LN_LEN     Dt->ln_len[Dt->lns]
 #define PRE_CURR_LN     Dt->txt[Dt->lns - 1]

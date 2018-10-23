@@ -36,9 +36,11 @@ term_t get_term_sz(char axis, meta* Dt)
 
 void flush_window(meta* Dt)
 {
+	// Restore to the left lower corner and clean the lowest line.
 	ANSI_RESTORE_CUR_POS();
 	ANSI_CLEAN_LN();
 
+	// Then from move up and clean the next line till the window ends.
 	for(term_t y = 0; y < get_term_sz('Y', Dt); y++)
 	{
 		ANSI_CUR_UP(1);
@@ -94,8 +96,8 @@ void scroll_chrs_in_ln(buf_t ln, meta* Dt)
 	}
 
 	// Text will be scrolled. Not cursor.
-	for(buf_t x = (buf_t) (Dt->ln_len[ln] - Dt->cusr_x - TXT_X
-	+ CUR_SZ - mv_right);
+	for
+	(buf_t x = (buf_t) (Dt->ln_len[ln] - Dt->cusr_x - TXT_X + CUR_SZ - mv_right);
 	x <= CURR_LN_LEN - Dt->cusr_x - CUR_SZ - mv_right; x++)
 	{
 		putchar(Dt->txt[ln][x]);
