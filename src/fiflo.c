@@ -50,7 +50,6 @@ void options(const char* arg)
 		"/dir/bname    Open the textfile \"bname\" from the \"/dir\" folder.",
 		"-h, --help    Show program help.",
 		"-v, --version Display information about the version.");
-		exit(0);
 	}
 	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
 	{
@@ -58,8 +57,8 @@ void options(const char* arg)
 		"fiflo v2.1.0 (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
 		"(C) 2018 mattmaniak under the MIT License.");
-		exit(0);
 	}
+	exit(0);
 }
 
 char getch(void) // TODO: COMMENT.
@@ -103,7 +102,7 @@ meta* init(const char* arg, meta* Dt)
 	Dt->cusr_x = 0;
 
 	CURR_LN_LEN = 0;
-	CURR_LN = malloc(1 + NTERM_SZ);
+	CURR_LN = malloc(INIT_MEMBLK);
 	return Dt;
 }
 
@@ -115,7 +114,8 @@ _Noreturn void run(const char* arg)
 	Dt = init(arg, Dt);
 	Dt = read_file(Dt);
 
-	char pressed = NTERM; // Initializer.
+	// Initializer. Equal to the null terminator.
+	char pressed = 0;
 
 	// Main program loop.
 	for(;;)
@@ -129,7 +129,7 @@ _Noreturn void run(const char* arg)
 
 int main(int argc, char** argv)
 {
-	// Catch CTRL+C and CTRL+Z.
+	// Catch CTRL+C and CTRL+Z interrupts.
 	signal(SIGINT, ignore_sig);
 	signal(SIGTSTP, ignore_sig);
 
@@ -139,6 +139,7 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 
+	// Sets the default basename to "noname.asdf".
 	if(argv[1] == NULL)
 	{
 		run("noname.asdf\0");

@@ -1,6 +1,17 @@
 #ifndef KEYS_H
 #define KEYS_H
 
+#define NTERM_SZ  1
+#define SLASH_SZ  1
+#define NEG      -1
+#define NTERM     0
+#define CTRL_D    4
+#define TAB       9
+#define LF        10
+#define CTRL_X    24
+#define ESCAPE    27  // '\033'
+#define BACKSPACE 127
+
 // From api.
 extern meta* shift_txt_horizonally(char direction, meta* Dt);
 extern meta* add_mem_for_chrs(meta* Dt);

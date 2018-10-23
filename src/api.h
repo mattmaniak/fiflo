@@ -5,19 +5,18 @@
 #include <linux/limits.h>
 
 #define NTERM_SZ  1
-#define SLASH_SZ  1
 #define NEG      -1
 #define NTERM     0
 #define CTRL_D    4
 #define TAB       9
 #define LF        10
 #define CTRL_X    24
-#define ESCAPE    27  // '\033'
+#define ESCAPE    27 // '\033' - ANSI escape code initial sequence.
 #define BACKSPACE 127
 
 // These keys moves the cursor...
-#define CTRL_G 7  // left.
-#define CTRL_H 8  // right.
+#define CTRL_G 7 // left.
+#define CTRL_H 8 // right.
 
 // From key.
 extern meta* add_chr_as_txt(char key, meta* Dt);
@@ -46,7 +45,7 @@ meta* alloc_mem_for_lns(meta* Dt);
 // Moves the text when the cursor is moved left and char is pressed.
 meta* shift_txt_horizonally(char direction, meta* Dt);
 
-// Knows what to do next with pressed key or combination. Bases on ASCII.
+// Knows what to do next with pressed key or combination. Based on ASCII.
 meta* recognize_key(char key, meta* Dt);
 #endif
 

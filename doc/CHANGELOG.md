@@ -12,7 +12,7 @@ files use git-show or git-log.
 - more efficent memory allocation.
 - control keys changed,
 - upper bar splitted to 2 smaller ones,
-- moveable cursor in X axis,
+- scrollable cursor in X axis with the ability to move a line to another,
 - new transparent UI.
 
 ### v2.0.0 (2018, September 11):

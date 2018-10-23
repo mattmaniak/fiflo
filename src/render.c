@@ -3,13 +3,19 @@
 
 term_t get_term_sz(char axis, meta* Dt)
 {
-	const uint8_t y_min = BARS_SZ + CURRENT;
+	const _Bool single_line_y_sz = 1;
+	const uint8_t y_min = BARS_SZ + single_line_y_sz;
 	const term_t sz_max = USHRT_MAX;
 
 	struct winsize term;
 
-	// TODO: COMMENT HOW WORKS.
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &term);
+	// TODO: COMMENT HOW WORKS. TIOCGWINSZ request to the stdout descriptor.
+	// &term is required by that specific device (stdout).
+	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &term) == -1)
+	{
+		fputs("Can't get the terminal size, exit(1).\n", stderr);
+		free_all_exit(1, Dt);
+	}
 
 	// Terminal size check.
 	if(term.ws_col < TERM_X_MIN || term.ws_row < y_min)
@@ -162,10 +168,10 @@ void display_txt(meta* Dt)
 
 void fill(meta* Dt)
 {
-	if((Dt->lns + INDEX) <= TXT_Y)
+	if(Dt->lns < TXT_Y)
 	{
 		// Fill the empty area below the text to position the lower bar.
-		for(term_t ln = Dt->lns; ln < (TXT_Y - CURRENT); ln++)
+		for(term_t ln = Dt->lns + INDEX; ln < TXT_Y; ln++)
 		{
 			putchar(LF);
 		}

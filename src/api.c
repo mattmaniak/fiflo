@@ -3,6 +3,8 @@
 
 meta* set_fname(const char* arg, meta* Dt)
 {
+	const _Bool slash_sz = 1;
+
 	Dt->fname = malloc(PATH_MAX);
 	chk_ptr(Dt->fname, "malloc for the filename\0", Dt);
 
@@ -44,7 +46,7 @@ meta* set_fname(const char* arg, meta* Dt)
 		// Append basename.
 		for(uint16_t pos = 0; pos < strlen(arg); pos++)
 		{
-			strcpy(&Dt->fname[strlen(cw_dir) + SLASH_SZ + pos], &arg[pos]);
+			strcpy(&Dt->fname[strlen(cw_dir) + slash_sz + pos], &arg[pos]);
 		}
 		free(cw_dir);
 		cw_dir = NULL;
@@ -103,13 +105,13 @@ void save_file(meta* Dt)
 meta* add_mem_for_chrs(meta* Dt)
 {
 	// Eg. allocation for memblk = 4: ++------, ++++----, ++++++++.
-	if(CURR_LN_LEN == 2)
+	if(CURR_LN_LEN == INIT_MEMBLK)
 	{
 		// If there are 2 chars + terminator, extend to MEMBLK.
 		CURR_LN = realloc(CURR_LN, MEMBLK);
-		puts("ALLOC_EIGHT");
+		puts("ALLOC 16");
 	}
-	else if(CURR_LN_LEN > 2 && CURR_LN_LEN % MEMBLK == 0)
+	else if(CURR_LN_LEN > INIT_MEMBLK && CURR_LN_LEN % MEMBLK == 0)
 	{
 		CURR_LN = realloc(CURR_LN, ((CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 		printf("ALLOC: %d\n", ((CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
@@ -122,17 +124,16 @@ meta* add_mem_for_chrs(meta* Dt)
 meta* free_mem_for_chrs(meta* Dt)
 {
 	// These cases are executed only when the backspace is pressed.
-
-	if(CURR_LN_LEN == 2)
+	if(CURR_LN_LEN == INIT_MEMBLK)
 	{
 		// If there are: char + terminator, shrink to 2 bytes.
-		CURR_LN = realloc(CURR_LN, 1 + NTERM_SZ);
-		puts("FREE TWO");
+		CURR_LN = realloc(CURR_LN, INIT_MEMBLK);
+		puts("FREE 8");
 	}
 	else if(CURR_LN_LEN == MEMBLK)
 	{
 		CURR_LN = realloc(CURR_LN, MEMBLK);
-		puts("FREE EIGHT");
+		puts("FREE 16");
 	}
 	else if(CURR_LN_LEN > MEMBLK && CURR_LN_LEN % MEMBLK == 0)
 	{
@@ -156,7 +157,7 @@ meta* alloc_mem_for_lns(meta* Dt)
 	chk_ptr(Dt->ln_len, "extend the array with lines length\0", Dt);
 
 	// The new line is allocated with only 2 bytes.
-	CURR_LN = malloc(1 + NTERM_SZ);
+	CURR_LN = malloc(INIT_MEMBLK);
 	chk_ptr(CURR_LN, "alloc 2 bytes for the newly created line\0", Dt);
 
 	return Dt;
@@ -187,7 +188,6 @@ meta* shift_txt_horizonally(char direction, meta* Dt)
 			{
 				CURR_LN[x] = CURR_LN[x - INDEX];
 			}
-			break;
 	}
 	return Dt;
 }
@@ -231,7 +231,6 @@ meta* recognize_key(char key, meta* Dt) // TODO: BIGGER KEYMAP, EG. CR.
 
 		case CTRL_H:
 			Dt = ctrl_h(Dt);
-			break;
 	}
 //	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); DEBUG
 	return Dt;

@@ -10,6 +10,7 @@ meta* add_chr_as_txt(char key, meta* Dt)
 
 		// Fixes incremented value by the "pressed" initializer in "run".
 		Dt = add_mem_for_chrs(Dt);
+
 		/* If the cursor is moved to the left and a char is inserted, rest of
 		the text will be shifted to the right side. */
 		if(Dt->cusr_x > 0)
@@ -53,15 +54,15 @@ meta* linefeed(meta* Dt)
 			PRE_CURR_LN_LEN -= Dt->cusr_x;
 			PRE_CURR_LN[PRE_CURR_LN_LEN] = NTERM;
 
-			if(PRE_CURR_LN_LEN < 2)
+			if(PRE_CURR_LN_LEN < INIT_MEMBLK)
 			{
-				PRE_CURR_LN = realloc(PRE_CURR_LN, 1 + NTERM_SZ);
-//				puts("FREE UPPER: 2");
+				PRE_CURR_LN = realloc(PRE_CURR_LN, INIT_MEMBLK);
+				puts("FREE UPPER: 8");
 			}
-			else if(PRE_CURR_LN_LEN >= 2 && PRE_CURR_LN_LEN < MEMBLK)
+			else if(PRE_CURR_LN_LEN >= INIT_MEMBLK && PRE_CURR_LN_LEN < MEMBLK)
 			{
 				PRE_CURR_LN = realloc(PRE_CURR_LN, MEMBLK);
-//				puts("FREE UPPER: 8");
+				puts("FREE UPPER: 16");
 			}
 			else if(PRE_CURR_LN_LEN >= MEMBLK)
 			{
@@ -93,9 +94,8 @@ meta* backspace(meta* Dt)
 
 			CURR_LN[CURR_LN_LEN] = NTERM;
 		}
-		else if(Dt->lns > 0) // TODO.
+		else if(Dt->lns > 0)
 		{
-			puts("HELLO");
 			PRE_CURR_LN_LEN--;
 			Dt->chrs--;
 
@@ -107,15 +107,18 @@ meta* backspace(meta* Dt)
 					PRE_CURR_LN_LEN++;
 				}
 
-				if(PRE_CURR_LN_LEN == 2)
+				if(PRE_CURR_LN_LEN == INIT_MEMBLK)
 				{
-					// If there are 2 chars + terminator, extend to MEMBLK.
+					// If there are 4/8 chars + terminator, extend to MEMBLK.
 					PRE_CURR_LN = realloc(PRE_CURR_LN, MEMBLK);
 					puts("ALLOC_EIGHT");
 				}
-				else if(PRE_CURR_LN_LEN > 2 && PRE_CURR_LN_LEN % MEMBLK == 0)
+				else if
+				(PRE_CURR_LN_LEN > INIT_MEMBLK && PRE_CURR_LN_LEN % MEMBLK == 0)
 				{
-					PRE_CURR_LN = realloc(PRE_CURR_LN, ((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+					PRE_CURR_LN = realloc(PRE_CURR_LN,
+					((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+
 					printf("ALLOC: %d\n", ((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK)
 					+ MEMBLK);
 				}

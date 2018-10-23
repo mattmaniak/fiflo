@@ -1,16 +1,16 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- graphical lines width indicator on the upper bar (similar to lines numbers),
+- fix "one-more-line" when opening the file,
 - remove Dt->chrs,
 - rendering with smaller than terminal stty size,
 - tabs (multiple files),
-- alloc, free, backspace et al,
 - add .gitlab-ci.yml,
 - edited/saved indicator,
 - TAB key,
 - fix too big memory usage (blocks),
 - bigger buffer with memory limits,
 - paging mechanism,
-- move the cursor horizontally (GH keys),
 - move the cursor vertically (YB keys),
 - fiflo.conf file && colors,
 - syntax highlighting,
