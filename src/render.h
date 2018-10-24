@@ -10,7 +10,7 @@
 #define UPBAR_SZ      1
 #define LBAR_SZ       1
 #define BARS_SZ       (UPBAR_SZ + LBAR_SZ)
-#define LBAR_STR      "CTRL+: X - exit/ D - save/ YGHB - move cursor\0"
+#define LBAR_STR      "CTRL+: X - exit; D - save; GH - cursor\0"
 
 // Remember to not override the upper bar.
 #define TERM_X_MIN    (term_t) strlen(LBAR_STR)

@@ -50,6 +50,7 @@ void options(const char* arg)
 		"/dir/bname    Open the textfile \"bname\" from the \"/dir\" folder.",
 		"-h, --help    Show program help.",
 		"-v, --version Display information about the version.");
+		exit(0);
 	}
 	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
 	{
@@ -57,8 +58,8 @@ void options(const char* arg)
 		"fiflo v2.1.0 (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
 		"(C) 2018 mattmaniak under the MIT License.");
+		exit(0);
 	}
-	exit(0);
 }
 
 char getch(void) // TODO: COMMENT.
