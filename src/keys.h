@@ -12,14 +12,15 @@
 #define ESCAPE    27  // '\033'
 #define BACKSPACE 127
 
-// From api.
+// From logic.
 extern meta* shift_txt_horizonally(char direction, meta* Dt);
 extern meta* add_mem_for_chrs(meta* Dt);
 extern meta* free_mem_for_chrs(meta* Dt);
 extern meta* alloc_mem_for_lns(meta* Dt);
+extern meta* free_mem_for_lns(meta* Dt);
 
 // Adds char when the pressed key is a printable one.
-meta* add_chr_as_txt(char key, meta* Dt);
+meta* non_control_chr(char key, meta* Dt);
 
 // Initialize the new line.
 meta* linefeed(meta* Dt);

@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "keys.h"
 
-meta* add_chr_as_txt(char key, meta* Dt)
+meta* non_control_chr(char key, meta* Dt)
 {
 	if(Dt->chrs <= MAX_CHRS)
 	{
@@ -66,10 +66,8 @@ meta* linefeed(meta* Dt)
 			}
 			else if(PRE_CURR_LN_LEN >= MEMBLK)
 			{
-				PRE_CURR_LN = realloc(PRE_CURR_LN, ((PRE_CURR_LN_LEN / MEMBLK)
-				* MEMBLK)  + MEMBLK);
-//				printf("FREE UPPER %d\n", ((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK)
-//				+ MEMBLK);
+				PRE_CURR_LN = realloc(PRE_CURR_LN,
+				((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 			}
 			chk_ptr(PRE_CURR_LN, "shrink the upper line's memory space\0", Dt);
 		}
@@ -91,8 +89,6 @@ meta* backspace(meta* Dt)
 
 			CURR_LN_LEN--;
 			Dt->chrs--;
-
-			CURR_LN[CURR_LN_LEN] = NTERM;
 		}
 		else if(Dt->lns > 0)
 		{
@@ -113,8 +109,8 @@ meta* backspace(meta* Dt)
 					PRE_CURR_LN = realloc(PRE_CURR_LN, MEMBLK);
 					puts("ALLOC_EIGHT");
 				}
-				else if
-				(PRE_CURR_LN_LEN > INIT_MEMBLK && PRE_CURR_LN_LEN % MEMBLK == 0)
+				else if(PRE_CURR_LN_LEN > INIT_MEMBLK
+				&& PRE_CURR_LN_LEN % MEMBLK == 0)
 				{
 					PRE_CURR_LN = realloc(PRE_CURR_LN,
 					((PRE_CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
@@ -129,15 +125,7 @@ meta* backspace(meta* Dt)
 			CURR_LN = NULL;
 
 			Dt->lns--;
-
-			Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
-			chk_ptr(Dt->txt, "shrink the array with lines\0", Dt);
-
-			Dt->ln_len = realloc(Dt->ln_len, (Dt->lns + INDEX) * sizeof(buf_t));
-			chk_ptr(Dt->ln_len, "shrink the array with lines length\0", Dt);
-
-			CURR_LN[CURR_LN_LEN] = NTERM;
-
+			Dt = free_mem_for_lns(Dt);
 		}
 	}
 	// Delete the last line.
@@ -152,15 +140,11 @@ meta* backspace(meta* Dt)
 		CURR_LN_LEN--;
 		Dt->chrs--;
 
-		// Replaces the LF with the terminator.
-		CURR_LN[CURR_LN_LEN] = NTERM;
-
-		Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
-		chk_ptr(Dt->txt, "shrink the array with lines\0", Dt);
-
-		Dt->ln_len = realloc(Dt->ln_len, (Dt->lns + INDEX) * sizeof(buf_t));
-		chk_ptr(Dt->ln_len, "shrink the array with lines length\0", Dt);
+		Dt = free_mem_for_lns(Dt);
 	}
+	// Replaces the LF with the terminator.
+	CURR_LN[CURR_LN_LEN] = NTERM;
+
 	return Dt;
 }
 

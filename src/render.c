@@ -73,7 +73,8 @@ void upper_bar(meta* Dt) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF
 
 	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
 	upper bar. Adding the carriage return before it fixes the problems. Just
-	handling with terminals' quirk modes. */
+	handling with terminals' quirk modes. For any other output of the program
+	CR is not necessary, eg. for errors messages. They can be shifted.*/
 	printf("\r%s", title);
 
 	if(strlen(Dt->fname) > fname_max)
@@ -119,7 +120,7 @@ buf_t scroll_lns(meta* Dt)
 {
 	buf_t scrolled = 0;
 
-	if((Dt->lns + INDEX) > TXT_Y)
+	if(Dt->lns >= TXT_Y)
 	{
 		// Amount of lines to hide in the magic upper area.
 		scrolled = Dt->lns + INDEX - TXT_Y;

@@ -1,5 +1,5 @@
 #include "fiflo.h"
-#include "api.h"
+#include "logic.h"
 
 meta* set_fname(const char* arg, meta* Dt)
 {
@@ -68,15 +68,12 @@ meta* read_file(meta* Dt)
 		}
 		fclose(Dt->txtf);
 	}
-	else // TODO
+/*	else // TODO???
 	{
-		if(strcmp(Dt->fname, "noname.asdf") == 0)
-		{
-			fputs("Can't open the file, exit(1).\n", stderr);
-			free_all_exit(1, Dt);
-		}
+		fputs("Can't open the file, exit(1).\n", stderr);
+		free_all_exit(1, Dt);
 	}
-	return Dt;
+*/	return Dt;
 }
 
 void save_file(meta* Dt)
@@ -163,6 +160,17 @@ meta* alloc_mem_for_lns(meta* Dt)
 	return Dt;
 }
 
+meta* free_mem_for_lns(meta* Dt)
+{
+	Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
+	chk_ptr(Dt->txt, "shrink the array with lines\0", Dt);
+
+	Dt->ln_len = realloc(Dt->ln_len, (Dt->lns + INDEX) * sizeof(buf_t));
+	chk_ptr(Dt->ln_len, "shrink the array with lines length\0", Dt);
+
+	return Dt;
+}
+
 meta* shift_txt_horizonally(char direction, meta* Dt)
 {
 	switch(direction)
@@ -205,12 +213,12 @@ meta* recognize_key(char key, meta* Dt) // TODO: BIGGER KEYMAP, EG. CR.
 			specified above will be omited. Set "key != ESCAPE" to enable. */
 			if(key == NTERM || key >= 32)
 			{
-				Dt = add_chr_as_txt(key, Dt);
+				Dt = non_control_chr(key, Dt);
 			}
 			break;
 
 		case LF:
-			Dt = add_chr_as_txt(key, Dt);
+			Dt = non_control_chr(key, Dt);
 			Dt = linefeed(Dt);
 			break;
 

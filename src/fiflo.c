@@ -104,6 +104,7 @@ meta* init(const char* arg, meta* Dt)
 
 	CURR_LN_LEN = 0;
 	CURR_LN = malloc(INIT_MEMBLK);
+
 	return Dt;
 }
 
@@ -131,8 +132,12 @@ _Noreturn void run(const char* arg)
 int main(int argc, char** argv)
 {
 	// Catch CTRL+C and CTRL+Z interrupts.
-	signal(SIGINT, ignore_sig);
-	signal(SIGTSTP, ignore_sig);
+	if(signal(SIGINT, ignore_sig) == SIG_ERR
+	|| signal(SIGTSTP, ignore_sig) == SIG_ERR)
+	{
+		fputs("Can't catch one of the signals, exit(1)\n", stderr);
+		exit(1);
+	}
 
 	if(argc != 1 && argc != 2)
 	{

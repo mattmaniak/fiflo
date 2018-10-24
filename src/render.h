@@ -4,20 +4,25 @@
 // Common rest is included in "fiflo.h". There are only file-specific imports.
 #include <sys/ioctl.h>
 
-// UI areas.
-#define CUR_SZ        1
-#define SLASH_SZ      1
-#define UPBAR_SZ      1
-#define LBAR_SZ       1
-#define BARS_SZ       (UPBAR_SZ + LBAR_SZ)
-#define LBAR_STR      "CTRL+: X - exit; D - save; GH - cursor\0"
+// UI areas:
+// Some semantic macros.
+#define CUR_SZ   1
+#define SLASH_SZ 1
+#define UPBAR_SZ 1
+#define LBAR_SZ  1
+#define BARS_SZ  (UPBAR_SZ + LBAR_SZ)
 
-// Remember to not override the upper bar.
-#define TERM_X_MIN    (term_t) strlen(LBAR_STR)
+// Text that is shown on the lower bar. Also defines minimal terminal width.
+#define LBAR_STR "CTRL+: X - exit; D - save; GH - cursor\0"
 
+// Remember to not override the upper bar width.
+#define TERM_X_MIN (term_t) strlen(LBAR_STR)
+
+// Sizes of the text area.
 #define TXT_X (get_term_sz('X', Dt) - STRLEN_BUF_T)
 #define TXT_Y (get_term_sz('Y', Dt) - BARS_SZ)
 
+// ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
 
 // If you want to change to inverted bars' colors, set "1m" to "7m".
@@ -48,7 +53,7 @@ buf_t scroll_lns(meta* Dt);
 // Prints a line number.
 void print_ln_num(buf_t ln);
 
-// Show the text in the window.
+// Shows a text in the window.
 void display_txt(meta* Dt);
 
 // Vertical fill between the text and lower bar. If there isn't many lines.
@@ -60,7 +65,7 @@ void lower_bar(void);
 // Stupid wrapper for above things.
 void window(meta* Dt);
 
-// Sets the cursor position from the left bottom to a last char.
+// Sets the cursor position from the left bottom.
 void set_cur_pos(meta* Dt);
 #endif
 

@@ -17,11 +17,13 @@
 #define LF       10
 
 // TODO: MAX VALUES.
-#define MAX_LNS      USHRT_MAX - 1   // - 1 is index.
-#define MAX_CHRS     MAX_LNS - 1     // Same as above but with the terminator.
-#define INIT_MEMBLK  sizeof(Dt->txt) // Aligned initial memblk for a new line.
-#define MEMBLK       16              // Must >= 16 and dividable by 8.
-#define STRLEN_BUF_T 6               // Eg. Strlen("255"). Must be > term_sz('X').
+#define MAX_LNS     USHRT_MAX - 1   // - 1 is index.
+#define MAX_CHRS    MAX_LNS - 1     // Same as above but with the terminator.
+#define INIT_MEMBLK sizeof(Dt->txt) // Aligned initial memblk for a new line.
+#define MEMBLK      16              // Must >= 16 and dividable by 8.
+
+// Eg. strlen("255") = 3. '1' is the space after the line numbers.
+#define STRLEN_BUF_T (5 + 1)
 
 typedef uint16_t buf_t;  // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
@@ -70,7 +72,7 @@ void options(const char* arg);
 // Reads one char wthout confirming by the ENTER key.
 char getch(void);
 
-// Initialize all Dt structure members.
+// Initializes all Dt structure members.
 meta* init(const char* arg, meta* Dt);
 
 // Some initializers and the main program loop.

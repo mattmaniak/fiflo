@@ -1,5 +1,5 @@
-#ifndef API_H
-#define API_H
+#ifndef LOGIC_H
+#define LOGIC_H
 
 // Common rest is included in "fiflo.h". There are only file-specific imports.
 #include <linux/limits.h>
@@ -19,7 +19,7 @@
 #define CTRL_H 8 // right.
 
 // From key.
-extern meta* add_chr_as_txt(char key, meta* Dt);
+extern meta* non_control_chr(char key, meta* Dt);
 extern meta* linefeed(meta* Dt);
 extern meta* backspace(meta* Dt);
 extern meta* ctrl_g(meta* Dt);
@@ -40,7 +40,11 @@ meta* add_mem_for_chrs(meta* Dt);
 // Works as the function above but shrinks memblocks.
 meta* free_mem_for_chrs(meta* Dt);
 
+// Allocs memory for the next line.
 meta* alloc_mem_for_lns(meta* Dt);
+
+// 
+meta* free_mem_for_lns(meta* Dt);
 
 // Moves the text when the cursor is moved left and char is pressed.
 meta* shift_txt_horizonally(char direction, meta* Dt);

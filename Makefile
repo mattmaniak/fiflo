@@ -3,13 +3,13 @@ TARGET=fiflo
 SDIR=src
 ODIR=obj
 MDIR=man
-CCDIR=/usr/bin
+BDIR=/usr/bin
 
-ifeq ($(CCDIR)/gcc, $(shell ls $(CCDIR)/gcc))
+ifeq ($(BDIR)/gcc, $(shell ls $(BDIR)/gcc))
 CC=gcc
 CFLAGS=-std=gnu99 -O3 -Wall -Wextra
 
-else ifeq ($(CCDIR)/clang, $(shell ls $(CCDIR)/clang))
+else ifeq ($(BDIR)/clang, $(shell ls $(BDIR)/clang))
 CC=clang
 CFLAGS=-std=gnu99 -O3 -Weverything
 
@@ -18,7 +18,7 @@ $(error Compiler not found: gcc or clang is required.)
 endif
 
 DEPS=$(TARGET).h
-OBJ=$(ODIR)/$(TARGET).o $(ODIR)/keys.o $(ODIR)/api.o $(ODIR)/render.o
+OBJ=$(ODIR)/$(TARGET).o $(ODIR)/keys.o $(ODIR)/logic.o $(ODIR)/render.o
 
 # Compilation of object files depends on source files wnich depends on headers.
 # "$@" - alias to name at the left of ':', "$^" - right.
@@ -34,12 +34,12 @@ sanitize: $(OBJ)
 	$(CC) -o $(TARGET) $^ $(CFLAGS) -fsanitize=address
 
 install:
-	sudo cp $(TARGET) /usr/bin/$(TARGET)
+	sudo cp $(TARGET) $(BDIR)/$(TARGET)
 	sudo cp $(MDIR)/$(TARGET).1 /usr/share/man/man1/$(TARGET).1
 	sudo gzip /usr/share/man/man1/$(TARGET).1
 
 uninstall:
-	sudo $(RM) /usr/bin/$(TARGET) /usr/share/man/man1/$(TARGET).1.gz
+	sudo $(RM) $(BDIR)/$(TARGET) /usr/share/man/man1/$(TARGET).1.gz
 
 .PHONY: clean
 
