@@ -23,7 +23,7 @@ meta* set_fname(const char* arg, meta* Dt)
 		}
 		strcpy(Dt->fname, arg);
 	}
-	// Is relative path or basename.
+	// Relative path or basename.
 	else
 	{
 		char* cw_dir = malloc(PATH_MAX);
@@ -93,13 +93,13 @@ void save_file(meta* Dt)
 
 	for(buf_t ln = 0; ln <= Dt->lns; ln++)
 	{
-		// Write each line to the file. NULL terminator is omited.
+		// Write each line to the file. NULL terminator is ignored.
 		fputs(Dt->txt[ln], Dt->txtf);
 	}
 	fclose(Dt->txtf);
 }
 
-meta* add_mem_for_chrs(meta* Dt)
+meta* extend_curr_ln_mem(meta* Dt)
 {
 	// Eg. allocation for memblk = 4: ++------, ++++----, ++++++++.
 	if(CURR_LN_LEN == INIT_MEMBLK)
@@ -118,7 +118,7 @@ meta* add_mem_for_chrs(meta* Dt)
 	return Dt;
 }
 
-meta* free_mem_for_chrs(meta* Dt)
+meta* shrink_curr_ln_mem(meta* Dt)
 {
 	// These cases are executed only when the backspace is pressed.
 	if(CURR_LN_LEN == INIT_MEMBLK)
@@ -143,7 +143,29 @@ meta* free_mem_for_chrs(meta* Dt)
 	return Dt;
 }
 
-meta* alloc_mem_for_lns(meta* Dt)
+meta* shrink_prev_ln_mem(meta* Dt)
+{
+	if(PREV_LN_LEN < INIT_MEMBLK)
+	{
+		PREV_LN = realloc(PREV_LN, INIT_MEMBLK);
+		puts("FREE UPPER: 8");
+	}
+	else if(PREV_LN_LEN >= INIT_MEMBLK && PREV_LN_LEN < MEMBLK)
+	{
+		PREV_LN = realloc(PREV_LN, MEMBLK);
+		puts("FREE UPPER: 16");
+	}
+	else if(PREV_LN_LEN >= MEMBLK)
+	{
+		PREV_LN = realloc(PREV_LN,
+		((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+	}
+	chk_ptr(PREV_LN, "shrink the upper line's memory space\0", Dt);
+
+	return Dt;
+}
+
+meta* extend_lns_array(meta* Dt)
 {
 	// Enhance the array that contains pointers to lines.
 	Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
@@ -160,7 +182,7 @@ meta* alloc_mem_for_lns(meta* Dt)
 	return Dt;
 }
 
-meta* free_mem_for_lns(meta* Dt)
+meta* shrink_lns_array(meta* Dt)
 {
 	Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
 	chk_ptr(Dt->txt, "shrink the array with lines\0", Dt);
@@ -240,7 +262,7 @@ meta* recognize_key(char key, meta* Dt) // TODO: BIGGER KEYMAP, EG. CR.
 		case CTRL_H:
 			Dt = ctrl_h(Dt);
 	}
-//	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); DEBUG
+	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); // DEBUG
 	return Dt;
 }
 

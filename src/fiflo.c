@@ -132,7 +132,7 @@ _Noreturn void run(const char* arg)
 int main(int argc, char** argv)
 {
 	// Catch CTRL+C and CTRL+Z interrupts.
-	if(signal(SIGINT, ignore_sig) == SIG_ERR
+	if(signal(SIGINT,  ignore_sig) == SIG_ERR
 	|| signal(SIGTSTP, ignore_sig) == SIG_ERR)
 	{
 		fputs("Can't catch one of the signals, exit(1)\n", stderr);

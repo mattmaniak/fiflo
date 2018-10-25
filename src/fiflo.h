@@ -20,7 +20,7 @@
 #define MAX_LNS     USHRT_MAX - 1   // - 1 is index.
 #define MAX_CHRS    MAX_LNS - 1     // Same as above but with the terminator.
 #define INIT_MEMBLK sizeof(Dt->txt) // Aligned initial memblk for a new line.
-#define MEMBLK      16              // Must >= 16 and dividable by 8.
+#define MEMBLK      16              // Must be >= 16 and dividable by 8.
 
 // Eg. strlen("255") = 3. '1' is the space after the line numbers.
 #define STRLEN_BUF_T (5 + 1)
@@ -43,10 +43,10 @@ meta;
 #pragma pack(pop)
 
 // Needed to simplify and shorten the code.
-#define CURR_LN         Dt->txt[Dt->lns]
-#define CURR_LN_LEN     Dt->ln_len[Dt->lns]
-#define PRE_CURR_LN     Dt->txt[Dt->lns - 1]
-#define PRE_CURR_LN_LEN Dt->ln_len[Dt->lns - 1]
+#define CURR_LN     Dt->txt[Dt->lns]
+#define CURR_LN_LEN Dt->ln_len[Dt->lns]
+#define PREV_LN     Dt->txt[Dt->lns - 1]
+#define PREV_LN_LEN Dt->ln_len[Dt->lns - 1]
 
 // From api.
 extern meta* recognize_key(char key, meta* Dt);

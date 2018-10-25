@@ -35,16 +35,19 @@ meta* read_file(meta* Dt);
 void save_file(meta* Dt);
 
 // Allocs next memory block for chars in a current line if needed.
-meta* add_mem_for_chrs(meta* Dt);
+meta* extend_curr_ln_mem(meta* Dt);
+
+// When the enter is hitted with shifted cursor, previous line will be shrinked.
+meta* shrink_prev_ln_mem(meta* Dt);
 
 // Works as the function above but shrinks memblocks.
-meta* free_mem_for_chrs(meta* Dt);
+meta* shrink_curr_ln_mem(meta* Dt);
 
 // Allocs memory for the next line.
-meta* alloc_mem_for_lns(meta* Dt);
+meta* extend_lns_array(meta* Dt);
 
-// 
-meta* free_mem_for_lns(meta* Dt);
+// With pointers that contains: lines and their lenghts.
+meta* shrink_lns_array(meta* Dt);
 
 // Moves the text when the cursor is moved left and char is pressed.
 meta* shift_txt_horizonally(char direction, meta* Dt);
