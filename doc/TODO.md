@@ -1,5 +1,7 @@
+
 # fiflo - TODOs and ideas
 ## delete one if done:
+- delete max_lns repair max_chrs,
 - full ASCII support (keymap);
 - graphical lines width indicator on the upper bar (similar to lines numbers),
 - fix "one-more-line" when opening the file and missing one when saving,
@@ -8,7 +10,6 @@
 - add .gitlab-ci.yml,
 - edited/saved indicator,
 - TAB key,
-- fix too big memory usage (blocks),
 - bigger buffer with memory limits,
 - paging mechanism,
 - move the cursor vertically (YB keys),

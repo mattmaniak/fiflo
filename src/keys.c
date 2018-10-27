@@ -6,7 +6,7 @@ meta* non_control_chr(char key, meta* Dt)
 	if(Dt->chrs <= MAX_CHRS)
 	{
 		Dt->chrs++;
-		CURR_LN_LEN++;
+		ACT_LN_LEN++;
 
 		Dt = extend_curr_ln_mem(Dt);
 
@@ -16,13 +16,13 @@ meta* non_control_chr(char key, meta* Dt)
 		{
 			Dt = shift_txt_horizonally('r', Dt);
 		}
-		CURR_LN[CURR_LN_LEN - Dt->cusr_x - NTERM_SZ] = key;
-		CURR_LN[CURR_LN_LEN] = NTERM;
+		ACT_LN[ACT_LN_LEN - Dt->cusr_x - NTERM_SZ] = key;
+		ACT_LN[ACT_LN_LEN] = NTERM;
 
-		if(key == NTERM && CURR_LN_LEN > 0)
+		if(key == NTERM && ACT_LN_LEN > 0)
 		{
 			Dt->chrs--;
-			CURR_LN_LEN--;
+			ACT_LN_LEN--;
 		}
 	}
 	return Dt;
@@ -36,7 +36,7 @@ meta* linefeed(meta* Dt)
 		Dt = extend_lns_array(Dt);
 
 		// Naturally the new line doesn't contains any chars - only terminator.
-		CURR_LN_LEN = 0;
+		ACT_LN_LEN = 0;
 
 		/* If user moved the cursor before hitting ENTER, txt on the right will
 		be moved to the new line. */
@@ -44,8 +44,8 @@ meta* linefeed(meta* Dt)
 		{
 			for(term_t x = PREV_LN_LEN - Dt->cusr_x; x < PREV_LN_LEN; x++)
 			{
-				CURR_LN[CURR_LN_LEN] = PREV_LN[x];
-				CURR_LN_LEN++;
+				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
+				ACT_LN_LEN++;
 				Dt = extend_curr_ln_mem(Dt);
 			}
 
@@ -55,7 +55,7 @@ meta* linefeed(meta* Dt)
 
 			Dt = shrink_prev_ln_mem(Dt);
 		}
-		CURR_LN[CURR_LN_LEN] = NTERM;
+		ACT_LN[ACT_LN_LEN] = NTERM;
 	}
 	return Dt;
 }
@@ -63,15 +63,15 @@ meta* linefeed(meta* Dt)
 meta* backspace(meta* Dt)
 {
 	// Isn't possible to delete nothing.
-	if(CURR_LN_LEN > 0)
+	if(ACT_LN_LEN > 0)
 	{
 		// If the cursor at the maximum left position, char won't be deleted.
-		if(Dt->cusr_x != CURR_LN_LEN)
+		if(Dt->cusr_x != ACT_LN_LEN)
 		{
 			Dt = shift_txt_horizonally('l', Dt);
 			Dt = shrink_curr_ln_mem(Dt);
 
-			CURR_LN_LEN--;
+			ACT_LN_LEN--;
 			Dt->chrs--;
 		}
 		else if(Dt->lns > 0)
@@ -79,10 +79,10 @@ meta* backspace(meta* Dt)
 			PREV_LN_LEN--;
 			Dt->chrs--;
 
-			for(buf_t x = 0; x <= CURR_LN_LEN; x++)
+			for(buf_t x = 0; x <= ACT_LN_LEN; x++)
 			{
-				PREV_LN[PREV_LN_LEN] = CURR_LN[x];
-				if(CURR_LN[x] != NTERM)
+				PREV_LN[PREV_LN_LEN] = ACT_LN[x];
+				if(ACT_LN[x] != NTERM)
 				{
 					PREV_LN_LEN++;
 				}
@@ -104,29 +104,29 @@ meta* backspace(meta* Dt)
 				chk_ptr(PREV_LN, "extend a memblock for the current line\0",
 				Dt);
 			}
-			free(CURR_LN);
-			CURR_LN = NULL;
+			free(ACT_LN);
+			ACT_LN = NULL;
 
 			Dt->lns--;
 			Dt = shrink_lns_array(Dt);
 		}
 	}
 	// Delete the last line.
-	else if(CURR_LN_LEN == 0 && Dt->lns > 0)
+	else if(ACT_LN_LEN == 0 && Dt->lns > 0)
 	{
-		free(CURR_LN);
-		CURR_LN = NULL;
+		free(ACT_LN);
+		ACT_LN = NULL;
 		Dt->lns--;
 
 		Dt = shrink_curr_ln_mem(Dt);
 
-		CURR_LN_LEN--;
+		ACT_LN_LEN--;
 		Dt->chrs--;
 
 		Dt = shrink_lns_array(Dt);
 	}
 	// Replaces the LF with the terminator.
-	CURR_LN[CURR_LN_LEN] = NTERM;
+	ACT_LN[ACT_LN_LEN] = NTERM;
 
 	return Dt;
 }
@@ -145,7 +145,7 @@ meta* ctrl_h(meta* Dt)
 meta* ctrl_g(meta* Dt)
 {
 	// Move only when the cursor isn't at the start of the line.
-	if(Dt->cusr_x < CURR_LN_LEN)
+	if(Dt->cusr_x < ACT_LN_LEN)
 	{
 		// Move the cursor left.
 		Dt->cusr_x++;

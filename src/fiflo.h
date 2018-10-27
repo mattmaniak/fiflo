@@ -22,8 +22,9 @@
 #define INIT_MEMBLK sizeof(Dt->txt) // Aligned initial memblk for a new line.
 #define MEMBLK      16              // Must be >= 16 and dividable by 8.
 
-// Eg. strlen("255") = 3. '1' is the space after the line numbers.
-#define STRLEN_BUF_T (5 + 1)
+/* Because strlen("65536") = 5. + 1 is the space after the line numbers. Setting
+the value like 1234 won't be good idea. */
+#define STRLEN_BUF_T 6
 
 typedef uint16_t buf_t;  // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
@@ -43,8 +44,8 @@ meta;
 #pragma pack(pop)
 
 // Needed to simplify and shorten the code.
-#define CURR_LN     Dt->txt[Dt->lns]
-#define CURR_LN_LEN Dt->ln_len[Dt->lns]
+#define ACT_LN      Dt->txt[Dt->lns]
+#define ACT_LN_LEN  Dt->ln_len[Dt->lns]
 #define PREV_LN     Dt->txt[Dt->lns - 1]
 #define PREV_LN_LEN Dt->ln_len[Dt->lns - 1]
 

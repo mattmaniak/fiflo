@@ -55,26 +55,36 @@ void flush_window(meta* Dt)
 	fflush(stdout);
 }
 
-void upper_bar(meta* Dt) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF_T.
+void upper_bar(meta* Dt)
 {
 	const char* title = "fiflo: \0";
 	const char* dots = "...\0";
 	const char* indicators = " line length/chars: \0";
 
 	// Whitespace betweet a filename and indicators.
-	term_t space = get_term_sz('X', Dt) - (term_t) (strlen(Dt->fname)
-	+ strlen(title) + strlen(indicators) + SLASH_SZ + (2 * STRLEN_BUF_T));
+	term_t space
+	= get_term_sz('X', Dt)
+	- (term_t) (strlen(Dt->fname)
+	+ strlen(title)
+	+ strlen(indicators)
+	+ SLASH_SZ
+	+ (2 * STRLEN_BUF_T));
 
 	// Maximum length of a filename that can be fully displayed.
-	term_t fname_max = get_term_sz('X', Dt) - (term_t) (strlen(title)
-	+ strlen(dots) + strlen(indicators) + (2 * STRLEN_BUF_T) + SLASH_SZ);
+	term_t fname_max
+	= get_term_sz('X', Dt)
+	- (term_t) (strlen(title)
+	+ strlen(dots)
+	+ strlen(indicators)
+	+ (2 * STRLEN_BUF_T)
+	+ SLASH_SZ);
 
 	ANSI_BOLD();
 
 	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
 	upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program
-	CR is not necessary, eg. for errors messages. They can be shifted.*/
+	CR is not necessary, eg. for errors messages. They can be shifted. */
 	printf("\r%s", title);
 
 	if(strlen(Dt->fname) > fname_max)
@@ -87,12 +97,13 @@ void upper_bar(meta* Dt) // TODO: SIMPLIFY, BIGGER VALUES SUPPORT FOR STRLEN_BUF
 		// Whole filename will be displayed.
 		printf("%s%*s", Dt->fname, space, " ");
 	}
-	printf("%s%*d/%*d\n", indicators, STRLEN_BUF_T, CURR_LN_LEN,
-	STRLEN_BUF_T, Dt->chrs);
+	printf("%s%*d/%*d\n",
+	indicators, STRLEN_BUF_T, ACT_LN_LEN, STRLEN_BUF_T, Dt->chrs);
+
 	ANSI_RESET();
 }
 
-void scroll_chrs_in_ln(buf_t ln, meta* Dt)
+void scroll_ln_x(buf_t ln, meta* Dt) // TODO: SHORTEN?
 {
 	_Bool mv_right = 0;
 
@@ -101,11 +112,10 @@ void scroll_chrs_in_ln(buf_t ln, meta* Dt)
 		// Shifts the line right because the linefeed is also rendered.
 		mv_right = 1;
 	}
+	buf_t txt_offset = Dt->ln_len[ln] - Dt->cusr_x - mv_right;
 
 	// Text will be scrolled. Not cursor.
-	for
-	(buf_t x = (buf_t) (Dt->ln_len[ln] - Dt->cusr_x - TXT_X + CUR_SZ - mv_right);
-	x <= CURR_LN_LEN - Dt->cusr_x - CUR_SZ - mv_right; x++)
+	for (buf_t x = txt_offset + CUR_SZ - TXT_X; x <= txt_offset - CUR_SZ; x++)
 	{
 		putchar(Dt->txt[ln][x]);
 	}
@@ -148,7 +158,7 @@ void display_txt(meta* Dt)
 		print_ln_num(ln);
 
 		// Horizontal rendering.
-		if(CURR_LN_LEN < TXT_X)
+		if(Dt->ln_len[ln] < TXT_X)
 		{
 			// There is small amount of chars. X-scroll isn't required.
 			printf("%s", Dt->txt[ln]);
@@ -156,15 +166,15 @@ void display_txt(meta* Dt)
 		else
 		{
 			// Chars won't fits in the horizontal space.
-			if((CURR_LN_LEN - TXT_X) >= Dt->cusr_x)
+			if((Dt->ln_len[ln] - TXT_X) >= Dt->cusr_x)
 			{
 				// Render only right part of the line.
-				scroll_chrs_in_ln(ln, Dt);
+				scroll_ln_x(ln, Dt);
 			}
 			else
 			{
 				// Render only left part of the line. Cursor can scrolled.
-				printf("%.*s", TXT_X, Dt->txt[ln]);
+				printf("%.*s", TXT_X - CUR_SZ, Dt->txt[ln]);
 			}
 		}
 	}
@@ -210,12 +220,12 @@ void set_cur_pos(meta* Dt)
 	// Lower left side. Will be used to position the cursor and flush each line.
 	ANSI_SAVE_CUR_POS();
 
-	if(CURR_LN_LEN < TXT_X)
+	if(ACT_LN_LEN < TXT_X)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + CURR_LN_LEN - Dt->cusr_x);
+		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + ACT_LN_LEN - Dt->cusr_x);
 	}
-	else if((CURR_LN_LEN - TXT_X) >= Dt->cusr_x)
+	else if((ACT_LN_LEN - TXT_X) >= Dt->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
 		ANSI_CUR_RIGHT(get_term_sz('X', Dt) - CUR_SZ);
@@ -223,7 +233,7 @@ void set_cur_pos(meta* Dt)
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		ANSI_CUR_RIGHT(CURR_LN_LEN - Dt->cusr_x + STRLEN_BUF_T);
+		ANSI_CUR_RIGHT(ACT_LN_LEN - Dt->cusr_x + STRLEN_BUF_T);
 	}
 
 	if(Dt->lns >= TXT_Y)

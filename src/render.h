@@ -45,7 +45,7 @@ void flush_window(meta* Dt);
 void upper_bar(meta* Dt);
 
 // Scrolls chars. Used when the cursor is in static position.
-void scroll_chrs_in_ln(buf_t ln, meta* Dt);
+void scroll_ln_x(buf_t ln, meta* Dt);
 
 // Returns value of hidden lines.
 buf_t scroll_lns(meta* Dt);

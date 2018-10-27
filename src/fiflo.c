@@ -102,8 +102,8 @@ meta* init(const char* arg, meta* Dt)
 	Dt->lns = 0;
 	Dt->cusr_x = 0;
 
-	CURR_LN_LEN = 0;
-	CURR_LN = malloc(INIT_MEMBLK);
+	ACT_LN_LEN = 0;
+	ACT_LN = malloc(INIT_MEMBLK);
 
 	return Dt;
 }

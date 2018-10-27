@@ -101,44 +101,41 @@ void save_file(meta* Dt)
 
 meta* extend_curr_ln_mem(meta* Dt)
 {
-	// Eg. allocation for memblk = 4: ++------, ++++----, ++++++++.
-	if(CURR_LN_LEN == INIT_MEMBLK)
+	if(ACT_LN_LEN == INIT_MEMBLK)
 	{
-		// If there are 2 chars + terminator, extend to MEMBLK.
-		CURR_LN = realloc(CURR_LN, MEMBLK);
-		puts("ALLOC 16");
+		// Chars index == INIT_MEMBLK, extend to MEMBLK.
+		ACT_LN = realloc(ACT_LN, MEMBLK);
 	}
-	else if(CURR_LN_LEN > INIT_MEMBLK && CURR_LN_LEN % MEMBLK == 0)
+	else if(ACT_LN_LEN > INIT_MEMBLK && ACT_LN_LEN % MEMBLK == 0)
 	{
-		CURR_LN = realloc(CURR_LN, ((CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
-		printf("ALLOC: %d\n", ((CURR_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+		// If simply there is even more chars, append the new memblock.
+		ACT_LN = realloc(ACT_LN, ((ACT_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(CURR_LN, "extend a memblock for the current line\0", Dt);
+	chk_ptr(ACT_LN, "extend a memblock for the current line\0", Dt);
 
 	return Dt;
 }
 
 meta* shrink_curr_ln_mem(meta* Dt)
 {
-	// These cases are executed only when the backspace is pressed.
-	if(CURR_LN_LEN == INIT_MEMBLK)
+	/* These cases are executed only when the backspace is pressed. Works in the
+ 	same way as "extend_curr_ln_mem". */
+	if(ACT_LN_LEN == INIT_MEMBLK)
 	{
-		// If there are: char + terminator, shrink to 2 bytes.
-		CURR_LN = realloc(CURR_LN, INIT_MEMBLK);
-		puts("FREE 8");
+		// Shrink to INIT_MEMBLOCK bytes.
+		ACT_LN = realloc(ACT_LN, INIT_MEMBLK);
 	}
-	else if(CURR_LN_LEN == MEMBLK)
+	else if(ACT_LN_LEN == MEMBLK)
 	{
-		CURR_LN = realloc(CURR_LN, MEMBLK);
-		puts("FREE 16");
+		// Shrink to size of the MEMBLK.
+		ACT_LN = realloc(ACT_LN, MEMBLK);
 	}
-	else if(CURR_LN_LEN > MEMBLK && CURR_LN_LEN % MEMBLK == 0)
+	else if(ACT_LN_LEN > MEMBLK && ACT_LN_LEN % MEMBLK == 0)
 	{
-		// There is more memory needed.
-		CURR_LN = realloc(CURR_LN, (CURR_LN_LEN / MEMBLK) * MEMBLK);
-		printf("FREE %d\n", ((CURR_LN_LEN / MEMBLK) * MEMBLK));
+		// Remove the newest memblock because isn't needed now.
+		ACT_LN = realloc(ACT_LN, (ACT_LN_LEN / MEMBLK) * MEMBLK);
 	}
-	chk_ptr(CURR_LN, "shrink a memblock for the current line\0", Dt);
+	chk_ptr(ACT_LN, "shrink a memblock for the current line\0", Dt);
 
 	return Dt;
 }
@@ -175,9 +172,9 @@ meta* extend_lns_array(meta* Dt)
 	Dt->ln_len = realloc(Dt->ln_len, (Dt->lns + INDEX) * sizeof(buf_t));
 	chk_ptr(Dt->ln_len, "extend the array with lines length\0", Dt);
 
-	// The new line is allocated with only 2 bytes.
-	CURR_LN = malloc(INIT_MEMBLK);
-	chk_ptr(CURR_LN, "alloc 2 bytes for the newly created line\0", Dt);
+	// The new line is allocated with only 4 or 8 bytes bytes.
+	ACT_LN = malloc(INIT_MEMBLK);
+	chk_ptr(ACT_LN, "alloc 2 bytes for the newly created line\0", Dt);
 
 	return Dt;
 }
@@ -199,30 +196,30 @@ meta* shift_txt_horizonally(char direction, meta* Dt)
 	{
 		// Move left.
 		case 'l':
-			if(Dt->cusr_x > CURR_LN_LEN - NTERM_SZ && CURR_LN_LEN > 0)
+			if(Dt->cusr_x > ACT_LN_LEN - NTERM_SZ && ACT_LN_LEN > 0)
 			{
-				Dt->cusr_x = CURR_LN_LEN - NTERM_SZ;
+				Dt->cusr_x = ACT_LN_LEN - NTERM_SZ;
 			}
-			if(CURR_LN_LEN > 0)
+			if(ACT_LN_LEN > 0)
 			{
-				for(term_t x = CURR_LN_LEN - Dt->cusr_x; x <= CURR_LN_LEN; x++)
+				for(term_t x = ACT_LN_LEN - Dt->cusr_x; x <= ACT_LN_LEN; x++)
 				{
-					CURR_LN[x - INDEX] = CURR_LN[x];
+					ACT_LN[x - INDEX] = ACT_LN[x];
 				}
 			}
 			break;
 
 		// Move right.
 		case 'r':
-			for(term_t x = CURR_LN_LEN; x >= CURR_LN_LEN - Dt->cusr_x; x--)
+			for(term_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Dt->cusr_x; x--)
 			{
-				CURR_LN[x] = CURR_LN[x - INDEX];
+				ACT_LN[x] = ACT_LN[x - INDEX];
 			}
 	}
 	return Dt;
 }
 
-meta* recognize_key(char key, meta* Dt) // TODO: BIGGER KEYMAP, EG. CR.
+meta* recognize_key(char key, meta* Dt)
 {
 	switch(key)
 	{
@@ -262,7 +259,7 @@ meta* recognize_key(char key, meta* Dt) // TODO: BIGGER KEYMAP, EG. CR.
 		case CTRL_H:
 			Dt = ctrl_h(Dt);
 	}
-	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); // DEBUG
+//	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); // DEBUG
 	return Dt;
 }
 
