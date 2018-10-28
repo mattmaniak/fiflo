@@ -46,8 +46,8 @@ void flush_window(meta* Dt)
 	ANSI_RESTORE_CUR_POS();
 	ANSI_CLEAN_LN();
 
-	// Then from move up and clean the next line till the window ends.
-	for(term_t y = 0; y < get_term_sz('Y', Dt); y++)
+	// Then from move up and clean the next lines till the window ends.
+	for(term_t y = 0; y < get_term_sz('Y', Dt) - LBAR_SZ; y++)
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LN();
@@ -143,11 +143,10 @@ void print_ln_num(buf_t ln)
 	_Bool space_sz = 1;
 
 	ANSI_BOLD();
-
 	printf("%*d", STRLEN_BUF_T - space_sz, ln + INDEX);
-	putchar(' ');
 
 	ANSI_RESET();
+	putchar(' ');
 }
 
 void display_txt(meta* Dt)

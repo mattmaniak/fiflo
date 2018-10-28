@@ -8,9 +8,9 @@
 // Some semantic macros.
 #define CUR_SZ   1
 #define SLASH_SZ 1
-#define UPBAR_SZ 1
+#define UBAR_SZ  1
 #define LBAR_SZ  1
-#define BARS_SZ  (UPBAR_SZ + LBAR_SZ)
+#define BARS_SZ  (UBAR_SZ + LBAR_SZ)
 
 // Text that is shown on the lower bar. Also defines minimal terminal width.
 #define LBAR_STR "CTRL+: X - exit; D - save; GH - cursor\0"
