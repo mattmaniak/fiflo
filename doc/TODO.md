@@ -1,7 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- delete max_lns repair max_chrs,
-- full ASCII support (keymap);
+- delete max_lns, repair max_chrs,
+- full ASCII support (keymap), rework keyboard shortcuts,
 - graphical lines width indicator on the upper bar (similar to lines numbers),
 - rendering with smaller than terminal stty size,
 - tabs (multiple files),

@@ -150,30 +150,39 @@ void print_ln_num(buf_t ln)
 	ANSI_RESET();
 }
 
-void display_txt(meta* Dt) // TODO: DON'T SCROLL TEXT IN EVERY LINE.
+void display_txt(meta* Dt)
 {
-	// Vertical rendering.
-	for(term_t ln = scroll_lns(Dt); ln <= Dt->lns; ln++)
+	// Previous lines. If scrolled. Only beginning is shown.
+	for(term_t ln = scroll_lns(Dt); ln < Dt->lns; ln++)
 	{
 		print_ln_num(ln);
+		printf("%.*s", TXT_X - CUR_SZ, Dt->txt[ln]);
 
-		// Horizontal rendering.
-		if(Dt->ln_len[ln] < TXT_X)
+		if(Dt->ln_len[ln] > TXT_X)
 		{
-			// There is small amount of chars. X-scroll isn't required.
-			printf("%s", Dt->txt[ln]);
+			// Just because there is place for the cursor and LF isn't printed.
+			puts(" ");
 		}
-		// Chars won't fits in the horizontal space.
-		else if((Dt->ln_len[ln] - TXT_X) >= Dt->cusr_x)
-		{
-			// Render only right part of the line.
-			scroll_ln_x(ln, Dt);
-		}
-		else
-		{
-			// Render only left part of the line. Cursor can scrolled.
-			printf("%.*s", TXT_X - CUR_SZ, Dt->txt[ln]);
-		}
+
+	}
+	// Current line. Can be scrolled etc.
+	print_ln_num(Dt->lns);
+
+	if(ACT_LN_LEN < TXT_X)
+	{
+		// There is small amount of chars. X-scroll isn't required.
+		printf("%s", ACT_LN);
+	}
+	// Chars won't fits in the horizontal space.
+	else if((ACT_LN_LEN - TXT_X) >= Dt->cusr_x)
+	{
+		// Render only right part of the line.
+		scroll_ln_x(Dt->lns, Dt);
+	}
+	else
+	{
+		// Render only left part of the line. Cursor can scrolled.
+		printf("%.*s", TXT_X - CUR_SZ, ACT_LN);
 	}
 }
 
