@@ -103,21 +103,21 @@ void upper_bar(meta* Dt)
 	ANSI_RESET();
 }
 
-void scroll_ln_x(buf_t ln, meta* Dt)
+void scroll_ln_x(meta* Dt)
 {
 	_Bool mv_right = 0;
 
-	if(Dt->txt[ln][Dt->ln_len[ln] - NTERM_SZ] == LF)
+	if(ACT_LN[ACT_LN_LEN - NTERM_SZ] == LF)
 	{
 		// Shifts the line right because the linefeed is also rendered.
 		mv_right = 1;
 	}
-	buf_t txt_offset = Dt->ln_len[ln] - Dt->cusr_x - mv_right;
+	buf_t txt_offset = ACT_LN_LEN - Dt->cusr_x - mv_right;
 
 	// Text will be scrolled. Not cursor.
 	for (buf_t x = txt_offset + CUR_SZ - TXT_X; x <= txt_offset - CUR_SZ; x++)
 	{
-		putchar(Dt->txt[ln][x]);
+		putchar(ACT_LN[x]);
 	}
 	if(mv_right == 1)
 	{
@@ -176,7 +176,7 @@ void display_txt(meta* Dt)
 	else if((ACT_LN_LEN - TXT_X) >= Dt->cusr_x)
 	{
 		// Render only right part of the line.
-		scroll_ln_x(Dt->lns, Dt);
+		scroll_ln_x(Dt);
 	}
 	else
 	{

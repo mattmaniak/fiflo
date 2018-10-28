@@ -92,10 +92,10 @@ meta* init(const char* arg, meta* Dt)
 {
 	Dt = set_fname(arg, Dt);
 
-	Dt->txt = malloc(sizeof(Dt->txt) * MEMBLK);
+	Dt->txt = malloc(sizeof(Dt->txt));
 	chk_ptr(Dt->txt, "alloc memory for an array that contains lines\0", Dt);
 
-	Dt->ln_len = malloc(MAX_LNS);
+	Dt->ln_len = malloc(sizeof(Dt->ln_len));
 	chk_ptr(Dt->ln_len, "alloc memory for an array with lines length\0", Dt);
 
 	Dt->chrs = 0;

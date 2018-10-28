@@ -32,6 +32,7 @@ provide updated code on the "develop" branch.
 Based on the https://semver.org.
 
 ## Testing
-Before the stable release, fiflo is tested with the native Linux tty. 
-Correct rendering of the window depends on quirk emulators implementations.
+Using LXTerminal daily. before the stable release, fiflo is tested with the
+native Linux tty. Correct rendering of the window depends on quirk emulators
+implementations.
 

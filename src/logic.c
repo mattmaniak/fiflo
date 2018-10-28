@@ -225,20 +225,15 @@ meta* recognize_key(char key, meta* Dt)
 		default:
 			/* Only printable chars will be added. Combinations that aren't
 			specified above will be omited. Set "key != ESCAPE" to enable. */
-			if(key == NTERM || key >= 32)
+			if(key == NTERM || key == LF || key >= 32)
 			{
 				Dt = non_control_chr(key, Dt);
 			}
 			break;
 
 		case TAB:
-				// Currently converts tab to one space.
-				Dt = non_control_chr(' ', Dt);
-			break;
-
-		case LF:
-			Dt = non_control_chr(key, Dt);
-			Dt = linefeed(Dt);
+			// Currently converts tab to one space.
+			Dt = non_control_chr(' ', Dt);
 			break;
 
 		case BACKSPACE:

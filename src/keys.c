@@ -3,7 +3,7 @@
 
 meta* non_control_chr(char key, meta* Dt)
 {
-	if(Dt->chrs <= MAX_CHRS)
+	if(Dt->chrs < BUF_MAX)
 	{
 		Dt->chrs++;
 		ACT_LN_LEN++;
@@ -19,10 +19,15 @@ meta* non_control_chr(char key, meta* Dt)
 		ACT_LN[ACT_LN_LEN - Dt->cusr_x - NTERM_SZ] = key;
 		ACT_LN[ACT_LN_LEN] = NTERM;
 
+		// Initializer handling.
 		if(key == NTERM && ACT_LN_LEN > 0)
 		{
 			Dt->chrs--;
 			ACT_LN_LEN--;
+		}
+		else if(key == LF)
+		{
+			Dt = linefeed(Dt);
 		}
 	}
 	return Dt;
@@ -30,7 +35,7 @@ meta* non_control_chr(char key, meta* Dt)
 
 meta* linefeed(meta* Dt)
 {
-	if(Dt->lns < MAX_LNS)
+	if(Dt->lns < BUF_MAX)
 	{
 		Dt->lns++;
 		Dt = extend_lns_array(Dt);
