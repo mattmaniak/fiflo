@@ -103,7 +103,7 @@ void upper_bar(meta* Dt)
 	ANSI_RESET();
 }
 
-void scroll_ln_x(buf_t ln, meta* Dt) // TODO: SHORTEN?
+void scroll_ln_x(buf_t ln, meta* Dt)
 {
 	_Bool mv_right = 0;
 
@@ -150,7 +150,7 @@ void print_ln_num(buf_t ln)
 	ANSI_RESET();
 }
 
-void display_txt(meta* Dt)
+void display_txt(meta* Dt) // TODO: DON'T SCROLL TEXT IN EVERY LINE.
 {
 	// Vertical rendering.
 	for(term_t ln = scroll_lns(Dt); ln <= Dt->lns; ln++)
@@ -163,19 +163,16 @@ void display_txt(meta* Dt)
 			// There is small amount of chars. X-scroll isn't required.
 			printf("%s", Dt->txt[ln]);
 		}
+		// Chars won't fits in the horizontal space.
+		else if((Dt->ln_len[ln] - TXT_X) >= Dt->cusr_x)
+		{
+			// Render only right part of the line.
+			scroll_ln_x(ln, Dt);
+		}
 		else
 		{
-			// Chars won't fits in the horizontal space.
-			if((Dt->ln_len[ln] - TXT_X) >= Dt->cusr_x)
-			{
-				// Render only right part of the line.
-				scroll_ln_x(ln, Dt);
-			}
-			else
-			{
-				// Render only left part of the line. Cursor can scrolled.
-				printf("%.*s", TXT_X - CUR_SZ, Dt->txt[ln]);
-			}
+			// Render only left part of the line. Cursor can scrolled.
+			printf("%.*s", TXT_X - CUR_SZ, Dt->txt[ln]);
 		}
 	}
 }

@@ -20,7 +20,7 @@
 #define MAX_LNS     USHRT_MAX - 1   // - 1 is index.
 #define MAX_CHRS    MAX_LNS - 1     // Same as above but with the terminator.
 #define INIT_MEMBLK sizeof(Dt->txt) // Aligned initial memblk for a new line.
-#define MEMBLK      16              // Must be >= 16 and dividable by 8.
+#define MEMBLK      512             // Must be >= 16 and dividable by 8.
 
 /* Because strlen("65536") = 5. + 1 is the space after the line numbers. Setting
 the value like 1234 won't be good idea. */

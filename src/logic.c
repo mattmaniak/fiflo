@@ -68,12 +68,9 @@ meta* read_file(meta* Dt)
 		}
 		fclose(Dt->txtf);
 	}
-/*	else // TODO???
-	{
-		fputs("Can't open the file, exit(1).\n", stderr);
-		free_all_exit(1, Dt);
-	}
-*/	return Dt;
+	// Else will be created after save.
+
+	return Dt;
 }
 
 void save_file(meta* Dt)
@@ -194,7 +191,6 @@ meta* shift_txt_horizonally(char direction, meta* Dt)
 {
 	switch(direction)
 	{
-		// Move left.
 		case 'l':
 			if(Dt->cusr_x > ACT_LN_LEN - NTERM_SZ && ACT_LN_LEN > 0)
 			{
@@ -209,7 +205,6 @@ meta* shift_txt_horizonally(char direction, meta* Dt)
 			}
 			break;
 
-		// Move right.
 		case 'r':
 			for(term_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Dt->cusr_x; x--)
 			{
@@ -224,7 +219,7 @@ meta* recognize_key(char key, meta* Dt)
 	switch(key)
 	{
 		case NEG:
-			puts("\rPipe isn't supported by fiflo, exit(1).");
+			puts("Pipe isn't supported by fiflo, exit(1).");
 			free_all_exit(1, Dt);
 
 		default:
@@ -234,6 +229,11 @@ meta* recognize_key(char key, meta* Dt)
 			{
 				Dt = non_control_chr(key, Dt);
 			}
+			break;
+
+		case TAB:
+				// Currently converts tab to one space.
+				Dt = non_control_chr(' ', Dt);
 			break;
 
 		case LF:
