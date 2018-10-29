@@ -64,7 +64,7 @@ meta* read_file(meta* Dt)
 		while((chr = (char) getc(Dt->txtf)) != EOF)
 		{
 			// Read all chars before end of file.
-			Dt = recognize_key(chr, Dt);
+			Dt = non_control_chr(chr, Dt);
 		}
 		fclose(Dt->txtf);
 	}
@@ -219,7 +219,7 @@ meta* recognize_key(char key, meta* Dt)
 	switch(key)
 	{
 		case NEG:
-			puts("Pipe isn't supported by fiflo, exit(1).");
+			fputs("Pipe isn't supported by the fiflo, exit(1).\n", stderr);
 			free_all_exit(1, Dt);
 
 		default:
