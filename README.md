@@ -17,7 +17,7 @@ make
 ./fiflo
 ```
 
-Also you can check the latest unstable snapshot
+Also you can use the latest unstable snapshot
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
