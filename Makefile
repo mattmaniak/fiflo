@@ -21,8 +21,9 @@ DEPS=$(TARGET).h
 OBJ=$(ODIR)/$(TARGET).o $(ODIR)/keys.o $(ODIR)/logic.o $(ODIR)/render.o
 
 # Compilation of object files depends on source files wnich depends on headers.
-# "$@" - alias to name at the left of ':', "$^" - right.
-# "$<" is a first item in dependencies list.
+# "$@" - alias to name on the left of ':', "$^" - on the right.
+# "$<" is a first item in the dependencies list.
+# "-c" generates the object file.
 $(ODIR)/%.o: $(SDIR)/%.c $(SDIR)/$(DEPS)
 	@mkdir -p $(ODIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -30,7 +31,7 @@ $(ODIR)/%.o: $(SDIR)/%.c $(SDIR)/$(DEPS)
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
-sanitize: $(OBJ)
+memory: $(OBJ)
 	$(CC) -o $(TARGET) $^ $(CFLAGS) -fsanitize=address
 
 install:

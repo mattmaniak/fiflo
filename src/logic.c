@@ -27,9 +27,9 @@ meta* set_fname(const char* arg, meta* Dt)
 	else
 	{
 		char* cw_dir = malloc(PATH_MAX);
-		chk_ptr(cw_dir, "alloc memory for the current path\0", Dt);
+		chk_ptr(cw_dir, "alloc memory for the actent path\0", Dt);
 
-		chk_ptr((getcwd(cw_dir, PATH_MAX)), "get current path. Too long\0", Dt);
+		chk_ptr((getcwd(cw_dir, PATH_MAX)), "get actent path. Too long\0", Dt);
 
 		// Exceeded 4096 chars.
 		if((strlen(cw_dir) + strlen(arg)) >= PATH_MAX)
@@ -57,16 +57,16 @@ meta* set_fname(const char* arg, meta* Dt)
 meta* read_file(meta* Dt)
 {
 	char chr;
-	Dt->txtf = fopen(Dt->fname, "rt");
+	Dt->textf = fopen(Dt->fname, "rt");
 
-	if(Dt->txtf)
+	if(Dt->textf)
 	{
-		while((chr = (char) getc(Dt->txtf)) != EOF)
+		while((chr = (char) getc(Dt->textf)) != EOF)
 		{
 			// Read all chars before end of file.
 			Dt = non_control_chr(chr, Dt);
 		}
-		fclose(Dt->txtf);
+		fclose(Dt->textf);
 	}
 	// Else will be created after save.
 
@@ -77,7 +77,7 @@ void save_file(meta* Dt)
 {
 	if(access(Dt->fname, F_OK) == -1)
 	{
-		// There is no file so create with -rw-rw-r-- file mode.
+		// There is no file so create with -rw------- file mode.
 		int create = open(Dt->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if(create == -1)
 		{
@@ -85,18 +85,18 @@ void save_file(meta* Dt)
 			free_all_exit(1, Dt);
 		}
 	}
-	Dt->txtf = fopen(Dt->fname, "wt");
-	chk_ptr(Dt->txtf, "write to the file\0", Dt);
+	Dt->textf = fopen(Dt->fname, "wt");
+	chk_ptr(Dt->textf, "write to the file\0", Dt);
 
-	for(buf_t ln = 0; ln <= Dt->lns; ln++)
+	for(buf_t ln = 0; ln <= Dt->lines; ln++)
 	{
 		// Write each line to the file. NULL terminator is ignored.
-		fputs(Dt->txt[ln], Dt->txtf);
+		fputs(Dt->text[ln], Dt->textf);
 	}
-	fclose(Dt->txtf);
+	fclose(Dt->textf);
 }
 
-meta* extend_curr_ln_mem(meta* Dt)
+meta* extend_act_ln_mem(meta* Dt)
 {
 	if(ACT_LN_LEN == INIT_MEMBLK)
 	{
@@ -108,15 +108,15 @@ meta* extend_curr_ln_mem(meta* Dt)
 		// If simply there is even more chars, append the new memblock.
 		ACT_LN = realloc(ACT_LN, ((ACT_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(ACT_LN, "extend a memblock for the current line\0", Dt);
+	chk_ptr(ACT_LN, "extend a memblock for the actent line\0", Dt);
 
 	return Dt;
 }
 
-meta* shrink_curr_ln_mem(meta* Dt)
+meta* shrink_act_ln_mem(meta* Dt)
 {
 	/* These cases are executed only when the backspace is pressed. Works in the
- 	same way as "extend_curr_ln_mem". */
+ 	same way as "extend_act_ln_mem". */
 	if(ACT_LN_LEN == INIT_MEMBLK)
 	{
 		// Shrink to INIT_MEMBLOCK bytes.
@@ -132,7 +132,7 @@ meta* shrink_curr_ln_mem(meta* Dt)
 		// Remove the newest memblock because isn't needed now.
 		ACT_LN = realloc(ACT_LN, (ACT_LN_LEN / MEMBLK) * MEMBLK);
 	}
-	chk_ptr(ACT_LN, "shrink a memblock for the current line\0", Dt);
+	chk_ptr(ACT_LN, "shrink a memblock for the actent line\0", Dt);
 
 	return Dt;
 }
@@ -141,33 +141,33 @@ meta* shrink_prev_ln_mem(meta* Dt)
 {
 	if(PREV_LN_LEN < INIT_MEMBLK)
 	{
+		// Set the previus' line memblock to initializing memblock.
 		PREV_LN = realloc(PREV_LN, INIT_MEMBLK);
-		puts("FREE UPPER: 8");
 	}
 	else if(PREV_LN_LEN >= INIT_MEMBLK && PREV_LN_LEN < MEMBLK)
 	{
+		// Set to the full memory block.
 		PREV_LN = realloc(PREV_LN, MEMBLK);
-		puts("FREE UPPER: 16");
 	}
 	else if(PREV_LN_LEN >= MEMBLK)
 	{
-		PREV_LN = realloc(PREV_LN,
-		((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+		// Set the size of some MEMBLKs.
+		PREV_LN = realloc(PREV_LN, ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
 	chk_ptr(PREV_LN, "shrink the upper line's memory space\0", Dt);
 
 	return Dt;
 }
 
-meta* extend_lns_array(meta* Dt)
+meta* extend_lines_array(meta* Dt)
 {
 	// Enhance the array that contains pointers to lines.
-	Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
-	chk_ptr(Dt->txt, "extend the array with lines\0", Dt);
+	Dt->text = realloc(Dt->text, (Dt->lines + INDEX) * sizeof(Dt->text));
+	chk_ptr(Dt->text, "extend the array with lines\0", Dt);
 
 	// Enhance the array that contains lines length indicators.
-	Dt->ln_len = realloc(Dt->ln_len, (Dt->lns + INDEX) * sizeof(buf_t));
-	chk_ptr(Dt->ln_len, "extend the array with lines length\0", Dt);
+	Dt->line_len = realloc(Dt->line_len, (Dt->lines + INDEX) * sizeof(buf_t));
+	chk_ptr(Dt->line_len, "extend the array with lines length\0", Dt);
 
 	// The new line is allocated with only 4 or 8 bytes bytes.
 	ACT_LN = malloc(INIT_MEMBLK);
@@ -176,18 +176,18 @@ meta* extend_lns_array(meta* Dt)
 	return Dt;
 }
 
-meta* shrink_lns_array(meta* Dt)
+meta* shrink_lines_array(meta* Dt)
 {
-	Dt->txt = realloc(Dt->txt, (Dt->lns + INDEX) * sizeof(Dt->txt));
-	chk_ptr(Dt->txt, "shrink the array with lines\0", Dt);
+	Dt->text = realloc(Dt->text, (Dt->lines + INDEX) * sizeof(Dt->text));
+	chk_ptr(Dt->text, "shrink the array with lines\0", Dt);
 
-	Dt->ln_len = realloc(Dt->ln_len, (Dt->lns + INDEX) * sizeof(buf_t));
-	chk_ptr(Dt->ln_len, "shrink the array with lines length\0", Dt);
+	Dt->line_len = realloc(Dt->line_len, (Dt->lines + INDEX) * sizeof(buf_t));
+	chk_ptr(Dt->line_len, "shrink the array with lines length\0", Dt);
 
 	return Dt;
 }
 
-meta* shift_txt_horizonally(char direction, meta* Dt)
+meta* shift_text_horizonally(char direction, meta* Dt) // TODO: MAYBE MEMCPY?
 {
 	switch(direction)
 	{
@@ -211,50 +211,6 @@ meta* shift_txt_horizonally(char direction, meta* Dt)
 				ACT_LN[x] = ACT_LN[x - INDEX];
 			}
 	}
-	return Dt;
-}
-
-meta* recognize_key(char key, meta* Dt)
-{
-	switch(key)
-	{
-		case NEG:
-			fputs("Pipe isn't supported by the fiflo, exit(1).\n", stderr);
-			free_all_exit(1, Dt);
-
-		default:
-			/* Only printable chars will be added. Combinations that aren't
-			specified above will be omited. Set "key != ESCAPE" to enable. */
-			if(key == NTERM || key == LF || key >= 32)
-			{
-				Dt = non_control_chr(key, Dt);
-			}
-			break;
-
-		case TAB:
-			// Currently converts tab to one space.
-			Dt = non_control_chr(' ', Dt);
-			break;
-
-		case BACKSPACE:
-			Dt = backspace(Dt);
-			break;
-
-		case CTRL_X:
-			free_all_exit(0, Dt);
-
-		case CTRL_D:
-			save_file(Dt);
-			break;
-
-		case CTRL_G:
-			Dt = ctrl_g(Dt);
-			break;
-
-		case CTRL_H:
-			Dt = ctrl_h(Dt);
-	}
-//	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); // DEBUG
 	return Dt;
 }
 

@@ -10,34 +10,36 @@ ASCII terminal-based text editor.
 - gcc or clang,
 - gzip (only for installation).
 
-## Downloading
-Current stable release:
+## Download, compile and run current stable release
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git
+make
+./fiflo
 ```
-Latest unstable snapshot:
+
+Also you can check the latest unstable snapshot
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
 
-## Building from source
-```
-make
-```
-
-## Installation
+## Install
 ```
 sudo make install
 ```
 
-## Uninstallation
+## Uninstall
 ```
 sudo make uninstall
 ```
 
-## Deleting object files and the binary
+## Delete object files and the binary
 ```
 make clean
+```
+
+## Test using AddressSanitizer
+```
+make memory
 ```
 
 ## FAQ

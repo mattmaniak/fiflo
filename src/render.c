@@ -98,7 +98,7 @@ void upper_bar(meta* Dt)
 		printf("%s%*s", Dt->fname, space, " ");
 	}
 	printf("%s%*d/%*d\n",
-	indicators, STRLEN_BUF_T, ACT_LN_LEN, STRLEN_BUF_T, Dt->chrs);
+	indicators, STRLEN_BUF_T, ACT_LN_LEN, STRLEN_BUF_T, Dt->chars);
 
 	ANSI_RESET();
 }
@@ -107,33 +107,33 @@ void scroll_ln_x(meta* Dt)
 {
 	_Bool mv_right = 0;
 
-	if(ACT_LN[ACT_LN_LEN - NTERM_SZ] == LF)
+	if(ACT_LN[ACT_LN_LEN - NUL_SZ] == LF)
 	{
 		// Shifts the line right because the linefeed is also rendered.
 		mv_right = 1;
 	}
-	buf_t txt_offset = ACT_LN_LEN - Dt->cusr_x - mv_right;
+	buf_t text_offset = ACT_LN_LEN - Dt->cusr_x - mv_right;
 
 	// Text will be scrolled. Not cursor.
-	for (buf_t x = txt_offset + CUR_SZ - TXT_X; x <= txt_offset - CUR_SZ; x++)
+	for (buf_t x = text_offset + CUR_SZ - TXT_X; x <= text_offset - CUR_SZ; x++)
 	{
 		putchar(ACT_LN[x]);
 	}
 	if(mv_right == 1)
 	{
-		// Text is shifted so LF in Dt->txt isn't rendered.
+		// Text is shifted so LF in Dt->text isn't rendered.
 		putchar(LF);
 	}
 }
 
-buf_t scroll_lns(meta* Dt)
+buf_t scroll_lines(meta* Dt)
 {
 	buf_t scrolled = 0;
 
-	if(Dt->lns >= TXT_Y)
+	if(Dt->lines >= TXT_Y)
 	{
 		// Amount of lines to hide in the magic upper area.
-		scrolled = Dt->lns + INDEX - TXT_Y;
+		scrolled = Dt->lines + INDEX - TXT_Y;
 	}
 	return scrolled;
 }
@@ -149,15 +149,15 @@ void print_ln_num(buf_t ln)
 	putchar(' ');
 }
 
-void display_txt(meta* Dt)
+void display_text(meta* Dt)
 {
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(term_t ln = scroll_lns(Dt); ln < Dt->lns; ln++)
+	for(term_t ln = scroll_lines(Dt); ln < Dt->lines; ln++)
 	{
 		print_ln_num(ln);
-		printf("%.*s", TXT_X - CUR_SZ, Dt->txt[ln]);
+		printf("%.*s", TXT_X - CUR_SZ, Dt->text[ln]);
 
-		if(Dt->ln_len[ln] > TXT_X)
+		if(Dt->line_len[ln] > TXT_X)
 		{
 			// Just because there is place for the cursor and LF isn't printed.
 			puts(" ");
@@ -165,7 +165,7 @@ void display_txt(meta* Dt)
 
 	}
 	// Current line. Can be scrolled etc.
-	print_ln_num(Dt->lns);
+	print_ln_num(Dt->lines);
 
 	if(ACT_LN_LEN < TXT_X)
 	{
@@ -187,10 +187,10 @@ void display_txt(meta* Dt)
 
 void fill(meta* Dt)
 {
-	if(Dt->lns < TXT_Y)
+	if(Dt->lines < TXT_Y)
 	{
 		// Fill the empty area below the text to position the lower bar.
-		for(term_t ln = Dt->lns + INDEX; ln < TXT_Y; ln++)
+		for(term_t ln = Dt->lines + INDEX; ln < TXT_Y; ln++)
 		{
 			putchar(LF);
 		}
@@ -208,8 +208,10 @@ void lower_bar(void)
 void window(meta* Dt)
 {
 	upper_bar(Dt);
-	display_txt(Dt);
+
+	display_text(Dt);
 	fill(Dt);
+
 	lower_bar();
 	set_cur_pos(Dt);
 }
@@ -217,7 +219,7 @@ void window(meta* Dt)
 void set_cur_pos(meta* Dt)
 {
 	// Case when all lines fits in the window.
-	int32_t mv_up = TXT_Y - (Dt->lns + INDEX);
+	buf_t mv_up = TXT_Y - (Dt->lines + INDEX);
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT((term_t) strlen(LBAR_STR));
@@ -241,7 +243,7 @@ void set_cur_pos(meta* Dt)
 		ANSI_CUR_RIGHT(ACT_LN_LEN - Dt->cusr_x + STRLEN_BUF_T);
 	}
 
-	if(Dt->lns >= TXT_Y)
+	if(Dt->lines >= TXT_Y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
 		mv_up = 0;

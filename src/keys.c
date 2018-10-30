@@ -1,28 +1,72 @@
 #include "fiflo.h"
 #include "keys.h"
 
+meta* recognize_key(char key, meta* Dt)
+{
+	switch(key)
+	{
+		case NEG:
+			fputs("Pipe isn't supported by the fiflo, exit(1).\n", stderr);
+			free_all_exit(1, Dt);
+
+		default:
+			/* Only printable chars will be added. Combinations that aren't
+			specified above will be omited. Set "key != ESC" to enable. */
+			if(key == NUL || key == LF || key >= 32)
+			{
+				Dt = non_control_chr(key, Dt);
+			}
+			break;
+
+		case HT:
+			// Currently converts the tab to one space.
+			Dt = non_control_chr(' ', Dt);
+			break;
+
+		case DEL:
+			Dt = backspace(Dt);
+			break;
+
+		case CTRL_X:
+			free_all_exit(0, Dt);
+
+		case CTRL_D:
+			save_file(Dt);
+			break;
+
+		case CTRL_G:
+			Dt = ctrl_g(Dt);
+			break;
+
+		case CTRL_H:
+			Dt = ctrl_h(Dt);
+	}
+	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); // DEBUG
+	return Dt;
+}
+
 meta* non_control_chr(char key, meta* Dt)
 {
-	if(Dt->chrs < BUF_MAX)
+	if(Dt->chars < BUF_MAX)
 	{
-		Dt->chrs++;
+		Dt->chars++;
 		ACT_LN_LEN++;
 
-		Dt = extend_curr_ln_mem(Dt);
+		Dt = extend_act_ln_mem(Dt);
 
 		/* If the cursor is moved to the left and a char is inserted, rest of
 		the text will be shifted to the right side. */
 		if(Dt->cusr_x > 0)
 		{
-			Dt = shift_txt_horizonally('r', Dt);
+			Dt = shift_text_horizonally('r', Dt);
 		}
-		ACT_LN[ACT_LN_LEN - Dt->cusr_x - NTERM_SZ] = key;
-		ACT_LN[ACT_LN_LEN] = NTERM;
+		ACT_LN[ACT_LN_LEN - Dt->cusr_x - NUL_SZ] = key;
+		ACT_LN[ACT_LN_LEN] = NUL;
 
 		// Initializer handling.
-		if(key == NTERM && ACT_LN_LEN > 0)
+		if(key == NUL && ACT_LN_LEN > 0)
 		{
-			Dt->chrs--;
+			Dt->chars--;
 			ACT_LN_LEN--;
 		}
 		else if(key == LF)
@@ -35,32 +79,32 @@ meta* non_control_chr(char key, meta* Dt)
 
 meta* linefeed(meta* Dt)
 {
-	if(Dt->lns < BUF_MAX)
+	if(Dt->lines < BUF_MAX)
 	{
-		Dt->lns++;
-		Dt = extend_lns_array(Dt);
+		Dt->lines++;
+		Dt = extend_lines_array(Dt);
 
 		// Naturally the new line doesn't contains any chars - only terminator.
 		ACT_LN_LEN = 0;
 
-		/* If user moved the cursor before hitting ENTER, txt on the right will
-		be moved to the new line. */
+		/* If user moved the cursor before hitting ENTER, text on the right
+		will be moved to the new line. */
 		if(Dt->cusr_x > 0)
 		{
 			for(term_t x = PREV_LN_LEN - Dt->cusr_x; x < PREV_LN_LEN; x++)
 			{
 				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
 				ACT_LN_LEN++;
-				Dt = extend_curr_ln_mem(Dt);
+				Dt = extend_act_ln_mem(Dt);
 			}
 
 			// Now the length of the upper line will be shortened after copying.
 			PREV_LN_LEN -= Dt->cusr_x;
-			PREV_LN[PREV_LN_LEN] = NTERM;
+			PREV_LN[PREV_LN_LEN] = NUL;
 
 			Dt = shrink_prev_ln_mem(Dt);
 		}
-		ACT_LN[ACT_LN_LEN] = NTERM;
+		ACT_LN[ACT_LN_LEN] = NUL;
 	}
 	return Dt;
 }
@@ -73,21 +117,21 @@ meta* backspace(meta* Dt)
 		// If the cursor at the maximum left position, char won't be deleted.
 		if(Dt->cusr_x != ACT_LN_LEN)
 		{
-			Dt = shift_txt_horizonally('l', Dt);
-			Dt = shrink_curr_ln_mem(Dt);
+			Dt = shift_text_horizonally('l', Dt);
+			Dt = shrink_act_ln_mem(Dt);
 
 			ACT_LN_LEN--;
-			Dt->chrs--;
+			Dt->chars--;
 		}
-		else if(Dt->lns > 0)
+		else if(Dt->lines > 0)
 		{
 			PREV_LN_LEN--;
-			Dt->chrs--;
+			Dt->chars--;
 
 			for(buf_t x = 0; x <= ACT_LN_LEN; x++)
 			{
 				PREV_LN[PREV_LN_LEN] = ACT_LN[x];
-				if(ACT_LN[x] != NTERM)
+				if(ACT_LN[x] != NUL)
 				{
 					PREV_LN_LEN++;
 				}
@@ -106,32 +150,32 @@ meta* backspace(meta* Dt)
 					printf("ALLOC: %d\n", ((PREV_LN_LEN / MEMBLK) * MEMBLK)
 					+ MEMBLK);
 				}
-				chk_ptr(PREV_LN, "extend a memblock for the current line\0",
+				chk_ptr(PREV_LN, "extend a memblock for the actent line\0",
 				Dt);
 			}
 			free(ACT_LN);
 			ACT_LN = NULL;
 
-			Dt->lns--;
-			Dt = shrink_lns_array(Dt);
+			Dt->lines--;
+			Dt = shrink_lines_array(Dt);
 		}
 	}
 	// Delete the last line.
-	else if(ACT_LN_LEN == 0 && Dt->lns > 0)
+	else if(ACT_LN_LEN == 0 && Dt->lines > 0)
 	{
 		free(ACT_LN);
 		ACT_LN = NULL;
-		Dt->lns--;
+		Dt->lines--;
 
-		Dt = shrink_curr_ln_mem(Dt);
+		Dt = shrink_act_ln_mem(Dt);
 
 		ACT_LN_LEN--;
-		Dt->chrs--;
+		Dt->chars--;
 
-		Dt = shrink_lns_array(Dt);
+		Dt = shrink_lines_array(Dt);
 	}
 	// Replaces the LF with the terminator.
-	ACT_LN[ACT_LN_LEN] = NTERM;
+	ACT_LN[ACT_LN_LEN] = NUL;
 
 	return Dt;
 }

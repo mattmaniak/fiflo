@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- cut/copy/paste,
 - full ASCII support (keymap),
 - graphical lines width indicator on the upper bar (similar to lines numbers),
 - tabs (multiple files),

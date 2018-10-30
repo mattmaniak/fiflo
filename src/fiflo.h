@@ -12,13 +12,13 @@
 #include <unistd.h>
 
 // Some semantic substitutes.
-#define INDEX    1
-#define NTERM_SZ 1
-#define LF       10
+#define INDEX  1
+#define NUL_SZ 1
+#define LF     10
 
-#define BUF_MAX     (USHRT_MAX - 1) // - 1 for overflows prevention and quirks.
-#define INIT_MEMBLK sizeof(Dt->txt) // Aligned initial memblk for a new line.
-#define MEMBLK      512             // Must be >= 16 and dividable by 8.
+#define BUF_MAX     (USHRT_MAX - 1 ) // - 1 for overflows prevention and quirks.
+#define INIT_MEMBLK sizeof(Dt->text) // Aligned initial memblk for a new line.
+#define MEMBLK      128              // Must be >= 16 and dividable by 8.
 
 /* Because eg. strlen("65535") = 5. + 1 is the space after the line numbers.
 Setting the value like 1234 won't be good idea. */
@@ -30,27 +30,29 @@ typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 #pragma pack(push, 1)
 typedef struct
 {
-	FILE*  txtf;   // File handle.
-	char*  fname;  // Full filename. Eg. /home/user/basename.
-	char** txt;    // Text buffer. Eg. txt[lns][chrs].
-	buf_t  chrs;   // All chars index.
-	buf_t  lns;    // Lines index.
-	buf_t* ln_len; // Chars in the current line (index).
-	buf_t  cusr_x; // User's cursor position in mirrored X.
+	FILE*  textf;    // File handle.
+	char*  fname;    // Full filename. Eg. /home/user/basename.
+	char** text;     // Text buffer. Eg. text[lines][chars].
+	buf_t  chars;    // All chars index.
+	buf_t  lines;    // Lines index.
+	buf_t* line_len; // Chars in the current line (index).
+	buf_t  cusr_x;   // User's cursor position in mirrored X.
 }
 meta;
 #pragma pack(pop)
 
 // Needed to simplify and shorten the code.
-#define ACT_LN      Dt->txt[Dt->lns]
-#define ACT_LN_LEN  Dt->ln_len[Dt->lns]
-#define PREV_LN     Dt->txt[Dt->lns - 1]
-#define PREV_LN_LEN Dt->ln_len[Dt->lns - 1]
+#define ACT_LN      Dt->text[Dt->lines]
+#define ACT_LN_LEN  Dt->line_len[Dt->lines]
+#define PREV_LN     Dt->text[Dt->lines - 1]
+#define PREV_LN_LEN Dt->line_len[Dt->lines - 1]
 
 // From api.
-extern meta* recognize_key(char key, meta* Dt);
 extern meta* set_fname(const char* arg, meta* Dt);
 extern meta* read_file(meta* Dt);
+
+// From keys.
+extern meta* recognize_key(char key, meta* Dt);
 
 // From render.
 extern void flush_window(meta* Dt);

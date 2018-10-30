@@ -6,16 +6,16 @@ _Noreturn void free_all_exit(_Bool code, meta* Dt)
 	free(Dt->fname);
 	Dt->fname = NULL;
 
-	for(buf_t ln = 0; ln <= Dt->lns; ln++)
+	for(buf_t line = 0; line <= Dt->lines; line++)
 	{
-		free(Dt->txt[ln]);
-		Dt->txt[ln] = NULL;
+		free(Dt->text[line]);
+		Dt->text[line] = NULL;
 	}
-	free(Dt->txt);
-	Dt->txt = NULL;
+	free(Dt->text);
+	Dt->text = NULL;
 
-	free(Dt->ln_len);
-	Dt->ln_len = NULL;
+	free(Dt->line_len);
+	Dt->line_len = NULL;
 
 	free(Dt);
 	Dt = NULL;
@@ -45,11 +45,11 @@ void options(const char* arg)
 		"Usage: fiflo [option].",
 
 		"Options:      Description:",
-		"<NULL>        Set the filename to \"/<current_path>/noname.asdf\".",
-		"basename      Open the textfile \"basename\" using your current path.",
-		"/dir/bname    Open the textfile \"bname\" from the \"/dir\" folder.",
+		"<no_option>   Set the filename to \"/<current_path>/noname.asdf\".",
+		"basename      Set the basename to \"basename\" using current path.",
+		"/dir/bname    Set the filename to \"/dir/bname\"",
 		"-h, --help    Show program help.",
-		"-v, --version Display information about the version.");
+		"-v, --version Display information about the used version.");
 		exit(0);
 	}
 	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
@@ -92,14 +92,14 @@ meta* init(const char* arg, meta* Dt)
 {
 	Dt = set_fname(arg, Dt);
 
-	Dt->txt = malloc(sizeof(Dt->txt));
-	chk_ptr(Dt->txt, "alloc memory for an array that contains lines\0", Dt);
+	Dt->text = malloc(sizeof(Dt->text));
+	chk_ptr(Dt->text, "alloc memory for an array that contains lines\0", Dt);
 
-	Dt->ln_len = malloc(sizeof(Dt->ln_len));
-	chk_ptr(Dt->ln_len, "alloc memory for an array with lines length\0", Dt);
+	Dt->line_len = malloc(sizeof(Dt->line_len));
+	chk_ptr(Dt->line_len, "alloc memory for an array with lines length\0", Dt);
 
-	Dt->chrs = 0;
-	Dt->lns = 0;
+	Dt->chars = 0;
+	Dt->lines = 0;
 	Dt->cusr_x = 0;
 
 	ACT_LN_LEN = 0;
