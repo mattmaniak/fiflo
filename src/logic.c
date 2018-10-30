@@ -63,6 +63,12 @@ meta* read_file(meta* Dt)
 	{
 		while((chr = (char) getc(Dt->textf)) != EOF)
 		{
+			// Temponary and ugly tab to the space conversion.
+			if(chr == '\t')
+			{
+				chr = ' ';
+			}
+
 			// Read all chars before end of file.
 			Dt = non_control_chr(chr, Dt);
 		}
