@@ -15,7 +15,7 @@
 #define BACKSPACE 127
 
 // From key.
-extern meta* non_control_chr(char key, meta* Dt);
+extern meta* text_char(char key, meta* Dt);
 extern meta* linefeed(meta* Dt);
 extern meta* backspace(meta* Dt);
 extern meta* ctrl_g(meta* Dt);
@@ -31,13 +31,16 @@ meta* read_file(meta* Dt);
 void save_file(meta* Dt);
 
 // Allocs next memory block for chars in a actent line if needed.
-meta* extend_act_ln_mem(meta* Dt);
+meta* extend_act_line_mem(meta* Dt);
+
+// Works as above function but is used with backspace pressed.
+meta* extend_prev_line_mem(meta* Dt);
 
 // When the enter is hitted with shifted cursor, previous line will be shrinked.
-meta* shrink_prev_ln_mem(meta* Dt);
+meta* shrink_prev_line_mem(meta* Dt);
 
 // Works as the function above but shrinks memblocks.
-meta* shrink_act_ln_mem(meta* Dt);
+meta* shrink_act_line_mem(meta* Dt);
 
 // Allocs memory for the next line.
 meta* extend_lines_array(meta* Dt);
@@ -47,5 +50,6 @@ meta* shrink_lines_array(meta* Dt);
 
 // Moves the text when the cursor is moved left and char is pressed.
 meta* shift_text_horizonally(char direction, meta* Dt);
+
 #endif
 

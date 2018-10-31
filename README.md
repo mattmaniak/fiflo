@@ -13,11 +13,12 @@ ASCII terminal-based text editor.
 ## Download, compile and run current stable release
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git
+cd fiflo
 make
 ./fiflo
 ```
 
-Also you can use the latest unstable snapshot
+Also You can try the latest unstable snapshot
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
@@ -25,6 +26,10 @@ git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ## Install
 ```
 sudo make install
+```
+After that there is a possibility to run it directly
+```
+fiflo
 ```
 
 ## Uninstall
@@ -41,6 +46,7 @@ make clean
 ```
 make memory
 ```
+WARNING! The program will consume much more memory.
 
 ## FAQ
 How can I contribute?

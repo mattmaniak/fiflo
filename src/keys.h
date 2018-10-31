@@ -1,19 +1,21 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-// Control characters that works with keyboard shortcuts.
+// Formatting control chars.
 #define NUL 0   // CTRL_@, terminator.
-#define STX 1   // CTRL_A, start of header
-#define SOT 2   // CTRL_B, start of text.
-#define EOT 4   // CTRL_D, end of transmission.
-#define	ENQ 5   // CTRL_E, enquiry.
-#define ACK 6   // CTRL_F, acknowledge.
 #define BEL 7   // CTRL_G, alarm beeper.
 #define BS  8   // CTRL_H, fake backspace.
 #define HT  9   // CTRL_I, horizontal tab.
 #define LF  10  // CTRL_J, linefeed/newline.
 #define VT  11  // CTRL_K, vertical tab.
 #define FF  12  // CTRL_L, form feed.
+
+// Control characters can be used as keyboard shortcuts.
+#define STX 1   // CTRL_A, start of header
+#define SOT 2   // CTRL_B, start of text.
+#define EOT 4   // CTRL_D, end of transmission.
+#define	ENQ 5   // CTRL_E, enquiry.
+#define ACK 6   // CTRL_F, acknowledge.
 #define SO  14  // CTRL_N, shift out.
 #define SI  15  // CTRL_O, shift in.
 #define DLE 16  // CTRL_P, data link escape.
@@ -36,7 +38,7 @@
 #define DC1 17  // CTRL_Q, device control 1 (xon), doesn't work.
 #define DC3 19  // CTRL_S, device control 3 (xoff), causes break.
 #define SUB 26  // CTRL_Z, substitute, overridden by the signal handler.
-#define FS  28  // CTRL_\, file separator, causes segmentation fault.
+#define FS  28  // CTRL_\, file separator, causes segmentation fault, STH GLOBAL
 
 #define NUL_SZ    1
 #define SLASH_SZ  1
@@ -51,17 +53,18 @@
 // From logic.
 extern void save_file(meta* Dt);
 extern meta* shift_text_horizonally(char direction, meta* Dt);
-extern meta* extend_act_ln_mem(meta* Dt);
-extern meta* shrink_act_ln_mem(meta* Dt);
+extern meta* extend_act_line_mem(meta* Dt);
+extern meta* extend_prev_line_mem(meta* Dt);
+extern meta* shrink_act_line_mem(meta* Dt);
 extern meta* extend_lines_array(meta* Dt);
 extern meta* shrink_lines_array(meta* Dt);
-extern meta* shrink_prev_ln_mem(meta* Dt);
+extern meta* shrink_prev_line_mem(meta* Dt);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
 meta* recognize_key(char key, meta* Dt);
 
 // Adds char when the pressed key is a printable one.
-meta* non_control_chr(char key, meta* Dt);
+meta* text_char(char key, meta* Dt);
 
 // Initialize the new line.
 meta* linefeed(meta* Dt);
@@ -74,5 +77,6 @@ meta* ctrl_g(meta* Dt);
 
 // Moves the cursor right.
 meta* ctrl_h(meta* Dt);
+
 #endif
 

@@ -5,31 +5,30 @@ meta* set_fname(const char* arg, meta* Dt)
 {
 	const _Bool slash_sz = 1;
 
-	Dt->fname = malloc(PATH_MAX);
-	chk_ptr(Dt->fname, "malloc for the filename\0", Dt);
-
 	if(arg[strlen(arg) - NTERM_SZ] == '/')
 	{
-		fputs("Can't open directory as file, exit(1).\n", stderr);
+		fputs("Can't open the directory as a file, exit(1).\n", stderr);
 		free_all_exit(1, Dt);
 	}
+
 	// Is absolute path.
 	if(arg[0] == '/')
 	{
-		if(strlen(arg) + NTERM_SZ > PATH_MAX)
+		if((strlen(arg) + NTERM_SZ) > PATH_MAX)
 		{
-			fputs("Passed path is too long, exit(1).\n", stderr);
+			fputs("The passed filename is too long, exit(1).\n", stderr);
 			free_all_exit(1, Dt);
 		}
-		strcpy(Dt->fname, arg);
+		strncpy(Dt->fname, arg, PATH_MAX);
 	}
 	// Relative path or basename.
 	else
 	{
-		char* cw_dir = malloc(PATH_MAX);
-		chk_ptr(cw_dir, "alloc memory for the actent path\0", Dt);
+		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
+		chk_ptr(cw_dir, "alloc memory for the current path\0", Dt);
 
-		chk_ptr((getcwd(cw_dir, PATH_MAX)), "get actent path. Too long\0", Dt);
+		chk_ptr((getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz)),
+		"get current path. Too long\0", Dt);
 
 		// Exceeded 4096 chars.
 		if((strlen(cw_dir) + strlen(arg)) >= PATH_MAX)
@@ -38,7 +37,7 @@ meta* set_fname(const char* arg, meta* Dt)
 			free_all_exit(1, Dt);
 		}
 		// Copy the path.
-		strcpy(Dt->fname, cw_dir);
+		strncpy(Dt->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
 
 		// Add the slash between.
 		Dt->fname[strlen(cw_dir)] = '/';
@@ -70,11 +69,15 @@ meta* read_file(meta* Dt)
 			}
 
 			// Read all chars before end of file.
-			Dt = non_control_chr(chr, Dt);
+			Dt = text_char(chr, Dt);
 		}
 		fclose(Dt->textf);
+		SET_STATUS("read the file\0");
 	}
-	// Else will be created after save.
+	else
+	{
+		SET_STATUS("the file will be created or replaced");
+	}
 
 	return Dt;
 }
@@ -92,17 +95,25 @@ void save_file(meta* Dt)
 		}
 	}
 	Dt->textf = fopen(Dt->fname, "wt");
-	chk_ptr(Dt->textf, "write to the file\0", Dt);
 
-	for(buf_t ln = 0; ln <= Dt->lines; ln++)
+	if(Dt->textf)
 	{
-		// Write each line to the file. NULL terminator is ignored.
-		fputs(Dt->text[ln], Dt->textf);
+		for(buf_t line = 0; line <= Dt->lines; line++)
+		{
+			// Write each line to the file. NULL terminator is ignored.
+			fputs(Dt->text[line], Dt->textf);
+		}
+		fclose(Dt->textf);
+
+		SET_STATUS("saved\0");
 	}
-	fclose(Dt->textf);
+	else
+	{
+		SET_STATUS("can't write to the file");
+	}
 }
 
-meta* extend_act_ln_mem(meta* Dt)
+meta* extend_act_line_mem(meta* Dt)
 {
 	if(ACT_LN_LEN == INIT_MEMBLK)
 	{
@@ -114,15 +125,31 @@ meta* extend_act_ln_mem(meta* Dt)
 		// If simply there is even more chars, append the new memblock.
 		ACT_LN = realloc(ACT_LN, ((ACT_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(ACT_LN, "extend a memblock for the actent line\0", Dt);
+	chk_ptr(ACT_LN, "extend a memblock for the current line\0", Dt);
 
 	return Dt;
 }
 
-meta* shrink_act_ln_mem(meta* Dt)
+meta* extend_prev_line_mem(meta* Dt)
+{
+	if(PREV_LN_LEN == INIT_MEMBLK)
+	{
+		// If there are 4/8 chars, extend to MEMBLK.
+		PREV_LN = realloc(PREV_LN, MEMBLK);
+	}
+	else if(PREV_LN_LEN > INIT_MEMBLK && PREV_LN_LEN % MEMBLK == 0)
+	{
+		PREV_LN = realloc(PREV_LN, ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+	}
+	chk_ptr(PREV_LN, "extend a memblock for the previous line\0", Dt);
+
+	return Dt;
+}
+
+meta* shrink_act_line_mem(meta* Dt)
 {
 	/* These cases are executed only when the backspace is pressed. Works in the
- 	same way as "extend_act_ln_mem". */
+ 	same way as "extend_act_line_mem". */
 	if(ACT_LN_LEN == INIT_MEMBLK)
 	{
 		// Shrink to INIT_MEMBLOCK bytes.
@@ -138,12 +165,12 @@ meta* shrink_act_ln_mem(meta* Dt)
 		// Remove the newest memblock because isn't needed now.
 		ACT_LN = realloc(ACT_LN, (ACT_LN_LEN / MEMBLK) * MEMBLK);
 	}
-	chk_ptr(ACT_LN, "shrink a memblock for the actent line\0", Dt);
+	chk_ptr(ACT_LN, "shrink a memblock for the current line\0", Dt);
 
 	return Dt;
 }
 
-meta* shrink_prev_ln_mem(meta* Dt)
+meta* shrink_prev_line_mem(meta* Dt)
 {
 	if(PREV_LN_LEN < INIT_MEMBLK)
 	{
@@ -160,7 +187,7 @@ meta* shrink_prev_ln_mem(meta* Dt)
 		// Set the size of some MEMBLKs.
 		PREV_LN = realloc(PREV_LN, ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(PREV_LN, "shrink the upper line's memory space\0", Dt);
+	chk_ptr(PREV_LN, "shrink the upper line's memory\0", Dt);
 
 	return Dt;
 }
@@ -177,7 +204,7 @@ meta* extend_lines_array(meta* Dt)
 
 	// The new line is allocated with only 4 or 8 bytes bytes.
 	ACT_LN = malloc(INIT_MEMBLK);
-	chk_ptr(ACT_LN, "alloc 2 bytes for the newly created line\0", Dt);
+	chk_ptr(ACT_LN, "alloc initial block for the newly created line\0", Dt);
 
 	return Dt;
 }
@@ -204,7 +231,7 @@ meta* shift_text_horizonally(char direction, meta* Dt) // TODO: MAYBE MEMCPY?
 			}
 			if(ACT_LN_LEN > 0)
 			{
-				for(term_t x = ACT_LN_LEN - Dt->cusr_x; x <= ACT_LN_LEN; x++)
+				for(buf_t x = ACT_LN_LEN - Dt->cusr_x; x <= ACT_LN_LEN; x++)
 				{
 					ACT_LN[x - INDEX] = ACT_LN[x];
 				}
@@ -212,7 +239,7 @@ meta* shift_text_horizonally(char direction, meta* Dt) // TODO: MAYBE MEMCPY?
 			break;
 
 		case 'r':
-			for(term_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Dt->cusr_x; x--)
+			for(buf_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Dt->cusr_x; x--)
 			{
 				ACT_LN[x] = ACT_LN[x - INDEX];
 			}

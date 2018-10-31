@@ -16,27 +16,32 @@
 #define NUL_SZ 1
 #define LF     10
 
-#define BUF_MAX     (USHRT_MAX - 1 ) // - 1 for overflows prevention and quirks.
+#define BUF_MAX     (UINT_MAX / 256) // Currently 16 MB - 1 buffer limit.
 #define INIT_MEMBLK sizeof(Dt->text) // Aligned initial memblk for a new line.
-#define MEMBLK      128              // Must be >= 16 and dividable by 8.
+#define MEMBLK      96               // Must be >= 16 and dividable by 8.
 
-/* Because eg. strlen("65535") = 5. + 1 is the space after the line numbers.
-Setting the value like 1234 won't be good idea. */
-#define STRLEN_BUF_T 6
+/* Because strlen("16777216") = 8. "+ 1" is the right padding. Setting a value
+like 1234 won't be good idea. */
+#define STRLEN_BUF_T    (8 + 1)
+#define STATUS_MAX      40
+#define SET_STATUS(msg) strncpy(Dt->status, msg, STATUS_MAX)
 
-typedef uint16_t buf_t;  // Only for amount indicators.
+typedef uint32_t buf_t;  // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
-#pragma pack(push, 1)
+#pragma pack(push, 4)
 typedef struct
 {
-	FILE*  textf;    // File handle.
-	char*  fname;    // Full filename. Eg. /home/user/basename.
-	char** text;     // Text buffer. Eg. text[lines][chars].
-	buf_t  chars;    // All chars index.
-	buf_t  lines;    // Lines index.
-	buf_t* line_len; // Chars in the current line (index).
-	buf_t  cusr_x;   // User's cursor position in mirrored X.
+	FILE*  textf;              // File handle.
+	char   fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
+
+	char** text;               // Text buffer. Eg. text[lines][chars].
+	buf_t  lines;              // Lines index.
+	buf_t* line_len;           // Chars in the current line (index).
+	buf_t  chars;              // All chars index.
+
+	buf_t  cusr_x;             // User's cursor position in mirrored X.
+	char   status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 meta;
 #pragma pack(pop)
@@ -62,7 +67,7 @@ extern void window(meta* Dt);
 _Noreturn void free_all_exit(_Bool code, meta* Dt);
 
 // Signal catcher that does nothing.
-void ignore_sig(int nothing);
+void ignore_sig(int sig_num);
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
 void chk_ptr(void* ptr, const char* err_msg, meta* Dt);
@@ -80,5 +85,6 @@ meta* init(const char* arg, meta* Dt);
 _Noreturn void run(const char* arg);
 
 int main(int argc, char** argv);
+
 #endif
 

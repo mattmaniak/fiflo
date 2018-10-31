@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- repair big static memory usage with a file of BUF_MAX linefeeds,
 - cut/copy/paste,
 - full ASCII support (keymap),
 - graphical lines width indicator on the upper bar (similar to lines numbers),

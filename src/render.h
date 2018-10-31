@@ -8,7 +8,7 @@
 // Some semantic macros.
 #define CUR_SZ   1
 #define SLASH_SZ 1
-#define UBAR_SZ  1
+#define UBAR_SZ  2
 #define LBAR_SZ  1
 #define BARS_SZ  (UBAR_SZ + LBAR_SZ)
 
@@ -19,8 +19,8 @@
 #define TERM_X_MIN (term_t) strlen(LBAR_STR)
 
 // Sizes of the text area.
-#define TXT_X (get_term_sz('X', Dt) - STRLEN_BUF_T)
-#define TXT_Y (get_term_sz('Y', Dt) - BARS_SZ)
+#define TXT_X (term_t) (get_term_sz('X', Dt) - STRLEN_BUF_T)
+#define TXT_Y (term_t) (get_term_sz('Y', Dt) - BARS_SZ)
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
@@ -45,16 +45,16 @@ void flush_window(meta* Dt);
 void upper_bar(meta* Dt);
 
 // Scrolls chars. Used when the cursor is in static position.
-void scroll_ln_x(meta* Dt);
+void scroll_line_x(meta* Dt);
 
 // Returns value of hidden lines.
-buf_t scroll_lns(meta* Dt);
+buf_t scroll_lines(meta* Dt);
 
 // Prints a line number.
-void print_ln_num(buf_t ln);
+void print_line_num(buf_t line);
 
 // Shows a text in the window.
-void display_txt(meta* Dt);
+void display_text(meta* Dt);
 
 // Vertical fill between the text and lower bar. If there isn't many lines.
 void fill(meta* Dt);
@@ -67,5 +67,6 @@ void window(meta* Dt);
 
 // Sets the cursor position from the left bottom.
 void set_cur_pos(meta* Dt);
+
 #endif
 

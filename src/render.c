@@ -57,12 +57,12 @@ void flush_window(meta* Dt)
 
 void upper_bar(meta* Dt)
 {
-	const char* title = "fiflo: \0";
+	const char* title = "fiflo:  \0";
 	const char* dots = "...\0";
 	const char* indicators = " line length/chars: \0";
 
 	// Whitespace betweet a filename and indicators.
-	term_t space
+	term_t whitespace
 	= get_term_sz('X', Dt)
 	- (term_t) (strlen(Dt->fname)
 	+ strlen(title)
@@ -95,15 +95,17 @@ void upper_bar(meta* Dt)
 	else
 	{
 		// Whole filename will be displayed.
-		printf("%s%*s", Dt->fname, space, " ");
+		printf("%s%*s", Dt->fname, whitespace, " ");
 	}
 	printf("%s%*d/%*d\n",
 	indicators, STRLEN_BUF_T, ACT_LN_LEN, STRLEN_BUF_T, Dt->chars);
 
+	printf("status: %s\n", Dt->status);
+
 	ANSI_RESET();
 }
 
-void scroll_ln_x(meta* Dt)
+void scroll_line_x(meta* Dt)
 {
 	_Bool mv_right = 0;
 
@@ -121,7 +123,7 @@ void scroll_ln_x(meta* Dt)
 	}
 	if(mv_right == 1)
 	{
-		// Text is shifted so LF in Dt->text isn't rendered.
+		// Text is shifted so the last printable char (LF) isn't rendered.
 		putchar(LF);
 	}
 }
@@ -138,12 +140,12 @@ buf_t scroll_lines(meta* Dt)
 	return scrolled;
 }
 
-void print_ln_num(buf_t ln)
+void print_line_num(buf_t line)
 {
 	_Bool space_sz = 1;
 
 	ANSI_BOLD();
-	printf("%*d", STRLEN_BUF_T - space_sz, ln + INDEX);
+	printf("%*d", STRLEN_BUF_T - space_sz, line + INDEX);
 
 	ANSI_RESET();
 	putchar(' ');
@@ -152,21 +154,21 @@ void print_ln_num(buf_t ln)
 void display_text(meta* Dt)
 {
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(term_t ln = scroll_lines(Dt); ln < Dt->lines; ln++)
+	for(buf_t line = scroll_lines(Dt); line < Dt->lines; line++)
 	{
-		print_ln_num(ln);
-		printf("%.*s", TXT_X - CUR_SZ, Dt->text[ln]);
+		print_line_num(line);
+		printf("%.*s", TXT_X - CUR_SZ, Dt->text[line]);
 
-		if(Dt->line_len[ln] > TXT_X)
+		if(Dt->line_len[line] > TXT_X)
 		{
 			// Just because there is place for the cursor and LF isn't printed.
 			puts(" ");
 		}
 
 	}
-	// Current line. Can be scrolled etc.
-	print_ln_num(Dt->lines);
+	print_line_num(Dt->lines);
 
+	// Current line. Can be scrolled etc.
 	if(ACT_LN_LEN < TXT_X)
 	{
 		// There is small amount of chars. X-scroll isn't required.
@@ -176,7 +178,7 @@ void display_text(meta* Dt)
 	else if((ACT_LN_LEN - TXT_X) >= Dt->cusr_x)
 	{
 		// Render only right part of the line.
-		scroll_ln_x(Dt);
+		scroll_line_x(Dt);
 	}
 	else
 	{
@@ -190,7 +192,7 @@ void fill(meta* Dt)
 	if(Dt->lines < TXT_Y)
 	{
 		// Fill the empty area below the text to position the lower bar.
-		for(term_t ln = Dt->lines + INDEX; ln < TXT_Y; ln++)
+		for(buf_t line = Dt->lines + INDEX; line < TXT_Y; line++)
 		{
 			putchar(LF);
 		}

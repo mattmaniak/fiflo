@@ -3,9 +3,6 @@
 
 _Noreturn void free_all_exit(_Bool code, meta* Dt)
 {
-	free(Dt->fname);
-	Dt->fname = NULL;
-
 	for(buf_t line = 0; line <= Dt->lines; line++)
 	{
 		free(Dt->text[line]);
@@ -23,9 +20,9 @@ _Noreturn void free_all_exit(_Bool code, meta* Dt)
 	exit(code);
 }
 
-void ignore_sig(int nothing)
+void ignore_sig(int sig_num)
 {
-	if(nothing) {}
+	if(sig_num) {}
 }
 
 void chk_ptr(void* ptr, const char* err_msg, meta* Dt)
@@ -124,7 +121,10 @@ _Noreturn void run(const char* arg)
 	{
 		Dt = recognize_key(pressed, Dt);
 		window(Dt);
+
 		pressed = getch();
+		SET_STATUS("edited\0");
+
 		flush_window(Dt);
 	}
 }
@@ -132,7 +132,7 @@ _Noreturn void run(const char* arg)
 int main(int argc, char** argv)
 {
 	// Catch CTRL+C and CTRL+Z interrupts.
-	if(signal(SIGINT,  ignore_sig) == SIG_ERR
+	if(signal(SIGINT, ignore_sig) == SIG_ERR
 	|| signal(SIGTSTP, ignore_sig) == SIG_ERR)
 	{
 		fputs("Can't catch one of the signals, exit(1)\n", stderr);
@@ -159,5 +159,6 @@ int main(int argc, char** argv)
 
 #else
 #error "Linux-based desktop is required."
+
 #endif
 
