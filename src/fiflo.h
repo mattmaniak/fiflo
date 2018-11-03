@@ -16,7 +16,7 @@
 #define NUL_SZ 1
 #define LF     10
 
-#define BUF_MAX     (UINT_MAX / 256) // Currently 16 MB - 1 buffer limit.
+#define BUF_MAX     (UINT_MAX / 256) // 16 MB - 1 buffer limit.
 #define INIT_MEMBLK sizeof(Dt->text) // Aligned initial memblk for a new line.
 #define MEMBLK      128              // Must be >= 16 and dividable by 8.
 

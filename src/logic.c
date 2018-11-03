@@ -11,7 +11,7 @@ meta* set_fname(const char* arg, meta* Dt)
 		free_all_exit(1, Dt);
 	}
 
-	// Is absolute path.
+	// Is a absolute path.
 	if(arg[0] == '/')
 	{
 		if((strlen(arg) + NTERM_SZ) > PATH_MAX)
@@ -21,7 +21,7 @@ meta* set_fname(const char* arg, meta* Dt)
 		}
 		strncpy(Dt->fname, arg, PATH_MAX);
 	}
-	// Relative path or basename.
+	// Relative path or a basename.
 	else
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
@@ -36,13 +36,13 @@ meta* set_fname(const char* arg, meta* Dt)
 			fputs("Passed filename is too long, exit(1).\n", stderr);
 			free_all_exit(1, Dt);
 		}
-		// Copy the path.
+		// Copy a path.
 		strncpy(Dt->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
 
 		// Add the slash between.
 		Dt->fname[strlen(cw_dir)] = '/';
 
-		// Append basename.
+		// Append a basename.
 		for(uint16_t pos = 0; pos < strlen(arg); pos++)
 		{
 			strcpy(&Dt->fname[strlen(cw_dir) + slash_sz + pos], &arg[pos]);

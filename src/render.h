@@ -15,7 +15,7 @@
 // Text that is shown on the lower bar. Also defines minimal terminal width.
 #define LBAR_STR "CTRL+: X - exit; D - save; GH - cursor\0"
 
-// Remember to not override the upper bar width.
+// Remember to not override the lower bar width.
 #define TERM_X_MIN (term_t) (strlen("fiflo: ") + 5 + 1 + STATUS_MAX)
 
 // Sizes of the text area.

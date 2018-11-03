@@ -9,8 +9,8 @@ term_t get_term_sz(char axis, meta* Dt)
 
 	struct winsize term;
 
-	// TODO: COMMENT HOW WORKS. TIOCGWINSZ request to the stdout descriptor.
-	// &term is required by that specific device (stdout).
+	/* TIOCGWINSZ request to the stdout descriptor. &term is required by that
+	specific device (stdout). */
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &term) == -1)
 	{
 		fputs("Can't get the terminal size, exit(1).\n", stderr);
@@ -61,7 +61,8 @@ void upper_bar(meta* Dt)
 	const char* dots      = "[...]\0";
 	const char* separator = "; \0";
 
-	term_t limiters = strlen(title) + strlen(Dt->status) + strlen(separator);
+	term_t limiters =
+	(term_t) (strlen(title) + strlen(Dt->status) + strlen(separator));
 
 	// Maximum length of a filename that can be fully displayed.
 	term_t fname_max = get_term_sz('X', Dt) - (term_t) strlen(dots) - limiters;
@@ -81,12 +82,14 @@ void upper_bar(meta* Dt)
 		- (term_t) strlen(Dt->fname) - limiters;
 
 		// Whole filename will be displayed.
-		printf("%s%s%s%*s\n", Dt->fname, separator, Dt->status, whitespace, " ");
+		printf("%s%s%s%*s\n",
+		Dt->fname, separator, Dt->status, whitespace, " ");
 	}
 	else
 	{
 		// Filename will be visually shrinked and terminated by dots.
-		printf("%.*s%s%s%s\n", fname_max, Dt->fname, dots, separator, Dt->status);
+		printf("%.*s%s%s%s\n",
+		fname_max, Dt->fname, dots, separator, Dt->status);
 	}
 	ANSI_RESET();
 }
@@ -218,7 +221,7 @@ void set_cur_pos(meta* Dt)
 	if(ACT_LN_LEN < TXT_X)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT((term_t) STRLEN_BUF_T + ACT_LN_LEN - Dt->cusr_x);
+		ANSI_CUR_RIGHT(STRLEN_BUF_T + ACT_LN_LEN - Dt->cusr_x);
 	}
 	else if((ACT_LN_LEN - TXT_X) >= Dt->cusr_x)
 	{
@@ -228,7 +231,7 @@ void set_cur_pos(meta* Dt)
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		ANSI_CUR_RIGHT(ACT_LN_LEN - Dt->cusr_x + STRLEN_BUF_T);
+		ANSI_CUR_RIGHT(STRLEN_BUF_T + ACT_LN_LEN - Dt->cusr_x);
 	}
 
 	if(Dt->lines >= TXT_Y)

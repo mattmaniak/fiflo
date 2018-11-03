@@ -42,9 +42,9 @@ void options(const char* arg)
 		"Usage: fiflo [option].",
 
 		"Options:      Description:",
-		"<no_option>   Set the filename to \"/<current_path>/noname.asdf\".",
-		"basename      Set the basename to \"basename\" using current path.",
-		"/dir/bname    Set the filename to \"/dir/bname\"",
+		"<no_option>   Set a filename to \"/<current_path>/noname.asdf\".",
+		"basename      Set a basename to \"basename\" using current path.",
+		"/dir/bname    Set a filename to \"/dir/bname\"",
 		"-h, --help    Show program help.",
 		"-v, --version Display information about the used version.");
 		exit(0);
@@ -59,7 +59,7 @@ void options(const char* arg)
 	}
 }
 
-char getch(void) // TODO: COMMENT.
+char getch(void)
 {
 	struct termios old, new;
 	char key;
@@ -73,8 +73,8 @@ char getch(void) // TODO: COMMENT.
 	// Disable buffered I/O and echo mode.
 	new.c_lflag &= (unsigned int) ~(ICANON | ECHO);
 
-	// Immediately set the state of STDIN_FILENO to *new.
-	// Use new terminal I/O settings.
+	/* Immediately set the state of STDIN_FILENO to *new. Use new terminal I/O
+	settings. */
 	tcsetattr(STDIN_FILENO, TCSANOW, &new);
 
 	key = (char) getchar();
@@ -123,8 +123,6 @@ _Noreturn void run(const char* arg)
 		window(Dt);
 
 		pressed = getch();
-		SET_STATUS("edited\0");
-
 		flush_window(Dt);
 	}
 }

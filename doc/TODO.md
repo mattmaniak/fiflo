@@ -1,12 +1,10 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- repair big static memory usage with a file of BUF_MAX linefeeds,
 - cut/copy/paste,
 - full ASCII support (keymap),
 - graphical lines width indicator on the upper bar (similar to lines numbers),
 - tabs (multiple files),
 - add .gitlab-ci.yml,
-- edited/saved indicator,
 - TAB key,
 - bigger buffer with memory limits,
 - paging mechanism,
@@ -15,5 +13,6 @@
 - syntax highlighting,
 - search option,
 - lock on a file,
-- hex mode.
+- hex mode,
+- usr/share/doc/fiflo.
 

@@ -38,7 +38,7 @@
 #define DC1 17  // CTRL_Q, device control 1 (xon), doesn't work.
 #define DC3 19  // CTRL_S, device control 3 (xoff), causes break.
 #define SUB 26  // CTRL_Z, substitute, overridden by the signal handler.
-#define FS  28  // CTRL_\, file separator, causes segmentation fault, STH GLOBAL
+#define FS  28  // CTRL_\, file separator, causes segmentation fault, STH GLOBAL.
 
 #define NUL_SZ    1
 #define SLASH_SZ  1
@@ -76,7 +76,7 @@ meta* backspace(meta* Dt);
 meta* ctrl_g(meta* Dt);
 
 // Moves the cursor right.
-meta* ctrl_h(meta* Dt);
+buf_t ctrl_h(buf_t cusr_x);
 
 #endif
 

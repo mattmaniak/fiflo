@@ -37,7 +37,7 @@ meta* recognize_key(char key, meta* Dt)
 			break;
 
 		case CTRL_H:
-			Dt = ctrl_h(Dt);
+			Dt->cusr_x = ctrl_h(Dt->cusr_x);
 	}
 	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); // DEBUG
 	return Dt;
@@ -47,7 +47,7 @@ meta* text_char(char key, meta* Dt)
 {
 	/* Only printable chars will be added. Combinations that aren't specified
 	above will be omited. Set "key != ESC" to enable. */
-	if((key == NUL || (key >= BEL && key <= FF) || key >= 32))
+	if(key == NUL || key == LF || key >= 32)
 	{
 		if(Dt->chars < BUF_MAX)
 		{
@@ -74,6 +74,10 @@ meta* text_char(char key, meta* Dt)
 			else if(key == LF)
 			{
 				Dt = linefeed(Dt);
+			}
+			if(Dt->chars > 0)
+			{
+				SET_STATUS("edited\0");
 			}
 		}
 		else
@@ -176,17 +180,6 @@ meta* backspace(meta* Dt)
 	return Dt;
 }
 
-meta* ctrl_h(meta* Dt)
-{
-	// Cursor can be moved right if is shifted left. 0 - default right position.
-	if(Dt->cusr_x > 0)
-	{
-		// Move the cursor right.
-		Dt->cusr_x--;
-	}
-	return Dt;
-}
-
 meta* ctrl_g(meta* Dt)
 {
 	// Move only when the cursor isn't at the start of the line.
@@ -196,5 +189,16 @@ meta* ctrl_g(meta* Dt)
 		Dt->cusr_x++;
 	}
 	return Dt;
+}
+
+buf_t ctrl_h(buf_t cusr_x)
+{
+	// Cursor can be moved right if is shifted left. 0 - default right position.
+	if(cusr_x > 0)
+	{
+		// Move the cursor right.
+		cusr_x--;
+	}
+	return cusr_x;
 }
 
