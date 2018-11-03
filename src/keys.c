@@ -15,7 +15,10 @@ meta* recognize_key(char key, meta* Dt)
 
 		case HT:
 			// Currently converts the tab to one space.
-			Dt = text_char(' ', Dt);
+			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
+			{
+				Dt = text_char(' ', Dt);
+			}
 			break;
 
 		case DEL:
@@ -80,7 +83,7 @@ meta* text_char(char key, meta* Dt)
 	}
 	else
 	{
-		SET_STATUS("binary file, damage after saving\0");
+		SET_STATUS("opened the binary file\0");
 	}
 	return Dt;
 }

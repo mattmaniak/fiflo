@@ -1,5 +1,5 @@
 #ifdef __linux__
-#include "fiflo.h" // All typedefs are here.
+#include "fiflo.h" // All typedefs are there.
 
 _Noreturn void free_all_exit(_Bool code, meta* Dt)
 {

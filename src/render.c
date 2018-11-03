@@ -57,27 +57,14 @@ void flush_window(meta* Dt)
 
 void upper_bar(meta* Dt)
 {
-	const char* title = "fiflo:  \0";
-	const char* dots = "...\0";
-	const char* indicators = " line length/chars: \0";
+	const char* title     = "fiflo: \0";
+	const char* dots      = "[...]\0";
+	const char* separator = "; \0";
 
-	// Whitespace betweet a filename and indicators.
-	term_t whitespace
-	= get_term_sz('X', Dt)
-	- (term_t) (strlen(Dt->fname)
-	+ strlen(title)
-	+ strlen(indicators)
-	+ SLASH_SZ
-	+ (2 * STRLEN_BUF_T));
+	term_t limiters = strlen(title) + strlen(Dt->status) + strlen(separator);
 
 	// Maximum length of a filename that can be fully displayed.
-	term_t fname_max
-	= get_term_sz('X', Dt)
-	- (term_t) (strlen(title)
-	+ strlen(dots)
-	+ strlen(indicators)
-	+ (2 * STRLEN_BUF_T)
-	+ SLASH_SZ);
+	term_t fname_max = get_term_sz('X', Dt) - (term_t) strlen(dots) - limiters;
 
 	ANSI_BOLD();
 
@@ -87,21 +74,20 @@ void upper_bar(meta* Dt)
 	CR is not necessary, eg. for errors messages. They can be shifted. */
 	printf("\r%s", title);
 
-	if(strlen(Dt->fname) > fname_max)
+	if(strlen(Dt->fname) <= fname_max)
 	{
-		// Filename will be visually shrinked and terminated by dots.
-		printf("%.*s%s", fname_max, Dt->fname, dots);
+		// Whitespace after a filename.
+		term_t whitespace = get_term_sz('X', Dt)
+		- (term_t) strlen(Dt->fname) - limiters;
+
+		// Whole filename will be displayed.
+		printf("%s%s%s%*s\n", Dt->fname, separator, Dt->status, whitespace, " ");
 	}
 	else
 	{
-		// Whole filename will be displayed.
-		printf("%s%*s", Dt->fname, whitespace, " ");
+		// Filename will be visually shrinked and terminated by dots.
+		printf("%.*s%s%s%s\n", fname_max, Dt->fname, dots, separator, Dt->status);
 	}
-	printf("%s%*d/%*d\n",
-	indicators, STRLEN_BUF_T, ACT_LN_LEN, STRLEN_BUF_T, Dt->chars);
-
-	printf("status: %s\n", Dt->status);
-
 	ANSI_RESET();
 }
 

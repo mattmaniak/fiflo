@@ -62,10 +62,11 @@ meta* read_file(meta* Dt)
 	{
 		while((chr = (char) getc(Dt->textf)) != EOF)
 		{
-			// Temponary and ugly tab to the space conversion.
+			// Temponary and ugly tab to two spaces conversion.
 			if(chr == '\t')
 			{
 				chr = ' ';
+				Dt = text_char(chr, Dt);
 			}
 
 			// Read all chars before end of file.
@@ -76,7 +77,7 @@ meta* read_file(meta* Dt)
 	}
 	else
 	{
-		SET_STATUS("the file will be created or replaced");
+		SET_STATUS("the file will be created\0");
 	}
 
 	return Dt;
@@ -220,7 +221,7 @@ meta* shrink_lines_array(meta* Dt)
 	return Dt;
 }
 
-meta* shift_text_horizonally(char direction, meta* Dt) // TODO: MAYBE MEMCPY?
+meta* shift_text_horizonally(char direction, meta* Dt)
 {
 	switch(direction)
 	{

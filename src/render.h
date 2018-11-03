@@ -8,7 +8,7 @@
 // Some semantic macros.
 #define CUR_SZ   1
 #define SLASH_SZ 1
-#define UBAR_SZ  2
+#define UBAR_SZ  1
 #define LBAR_SZ  1
 #define BARS_SZ  (UBAR_SZ + LBAR_SZ)
 
@@ -16,7 +16,7 @@
 #define LBAR_STR "CTRL+: X - exit; D - save; GH - cursor\0"
 
 // Remember to not override the upper bar width.
-#define TERM_X_MIN (term_t) strlen(LBAR_STR)
+#define TERM_X_MIN (term_t) (strlen("fiflo: ") + 5 + 1 + STATUS_MAX)
 
 // Sizes of the text area.
 #define TXT_X (term_t) (get_term_sz('X', Dt) - STRLEN_BUF_T)

@@ -18,12 +18,12 @@
 
 #define BUF_MAX     (UINT_MAX / 256) // Currently 16 MB - 1 buffer limit.
 #define INIT_MEMBLK sizeof(Dt->text) // Aligned initial memblk for a new line.
-#define MEMBLK      96               // Must be >= 16 and dividable by 8.
+#define MEMBLK      128              // Must be >= 16 and dividable by 8.
 
 /* Because strlen("16777216") = 8. "+ 1" is the right padding. Setting a value
 like 1234 won't be good idea. */
 #define STRLEN_BUF_T    (8 + 1)
-#define STATUS_MAX      40
+#define STATUS_MAX      32
 #define SET_STATUS(msg) strncpy(Dt->status, msg, STATUS_MAX)
 
 typedef uint32_t buf_t;  // Only for amount indicators.
