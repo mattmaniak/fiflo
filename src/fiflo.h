@@ -23,7 +23,7 @@
 /* Because strlen("16777216") = 8. "+ 1" is the right padding. Setting a value
 like 1234 won't be good idea. */
 #define STRLEN_BUF_T    (8 + 1)
-#define STATUS_MAX      32
+#define STATUS_MAX      40
 #define SET_STATUS(msg) strncpy(Dt->status, msg, STATUS_MAX)
 
 typedef uint32_t buf_t;  // Only for amount indicators.

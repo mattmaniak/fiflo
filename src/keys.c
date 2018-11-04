@@ -6,7 +6,7 @@ meta* recognize_key(char key, meta* Dt)
 	switch(key)
 	{
 		case NEG:
-			fputs("Pipe isn't supported by the fiflo, exit(1).\n", stderr);
+			fputs("Pipe isn't supported, exit(1).\n", stderr);
 			free_all_exit(1, Dt);
 
 		default:
@@ -14,7 +14,7 @@ meta* recognize_key(char key, meta* Dt)
 			break;
 
 		case HT:
-			// Currently converts the tab to one space.
+			// Currently converts the tab to two spaces.
 			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
 			{
 				Dt = text_char(' ', Dt);
@@ -75,10 +75,6 @@ meta* text_char(char key, meta* Dt)
 			{
 				Dt = linefeed(Dt);
 			}
-			if(Dt->chars > 0)
-			{
-				SET_STATUS("edited\0");
-			}
 		}
 		else
 		{
@@ -87,7 +83,7 @@ meta* text_char(char key, meta* Dt)
 	}
 	else
 	{
-		SET_STATUS("opened the binary file\0");
+		SET_STATUS("WARNING - opened the binary file\0");
 	}
 	return Dt;
 }

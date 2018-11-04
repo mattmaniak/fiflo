@@ -57,39 +57,48 @@ void flush_window(meta* Dt)
 
 void upper_bar(meta* Dt)
 {
-	const char* title     = "fiflo: \0";
-	const char* dots      = "[...]\0";
-	const char* separator = "; \0";
-
-	term_t limiters =
-	(term_t) (strlen(title) + strlen(Dt->status) + strlen(separator));
+	const char* title = "fiflo: \0";
+	const char* dots = "[...]\0";
 
 	// Maximum length of a filename that can be fully displayed.
-	term_t fname_max = get_term_sz('X', Dt) - (term_t) strlen(dots) - limiters;
+	term_t fname_max = get_term_sz('X', Dt)
+	- (term_t) (strlen(title) + strlen(dots));
 
 	ANSI_BOLD();
 
 	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
 	upper bar. Adding the carriage return before it fixes the problems. Just
-	handling with terminals' quirk modes. For any other output of the program
-	CR is not necessary, eg. for errors messages. They can be shifted. */
+	handling with terminals' quirk modes. For any other output of the program CR
+	is not necessary, eg. for errors messages. They can be shifted. */
 	printf("\r%s", title);
 
 	if(strlen(Dt->fname) <= fname_max)
 	{
-		// Whitespace after a filename.
-		term_t whitespace = get_term_sz('X', Dt)
-		- (term_t) strlen(Dt->fname) - limiters;
-
 		// Whole filename will be displayed.
-		printf("%s%s%s%*s\n",
-		Dt->fname, separator, Dt->status, whitespace, " ");
+		printf("%s\n", Dt->fname);
 	}
 	else
 	{
 		// Filename will be visually shrinked and terminated by dots.
-		printf("%.*s%s%s%s\n",
-		fname_max, Dt->fname, dots, separator, Dt->status);
+		printf("%.*s%s\n", fname_max, Dt->fname, dots);
+	}
+
+	printf("%*s", (buf_t) strlen(Dt->status), Dt->status);
+
+	// The lower part with the "chars in the current line" indicator.
+	if(ACT_LN_LEN < TXT_X)
+	{
+		printf("%*d^ \n", (buf_t) (get_term_sz('X', Dt) - 2 - strlen(Dt->status)),
+		get_term_sz('X', Dt) - STRLEN_BUF_T - 1);
+	}
+	else if((ACT_LN_LEN - Dt->cusr_x) >= TXT_X)
+	{
+		printf("%*d^ \n", (buf_t) (get_term_sz('X', Dt) - 2 - strlen(Dt->status)), ACT_LN_LEN - Dt->cusr_x);
+	}
+	else
+	{
+		printf("%*d^ \n", (buf_t) (get_term_sz('X', Dt) - 2 - strlen(Dt->status)),
+		get_term_sz('X', Dt) - STRLEN_BUF_T - 1);
 	}
 	ANSI_RESET();
 }
