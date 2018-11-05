@@ -59,8 +59,11 @@ void upper_bar(meta* Dt)
 {
 	const char* title = "fiflo: \0";
 	const char* dots = "[...]\0";
+	const _Bool space_sz = 1;
 
-	// Maximum length of a filename that can be fully displayed.
+	buf_t indicator_width = (buf_t) (get_term_sz('X', Dt) - (2 * space_sz)
+	- strlen(Dt->status));
+
 	term_t fname_max = get_term_sz('X', Dt)
 	- (term_t) (strlen(title) + strlen(dots));
 
@@ -82,23 +85,17 @@ void upper_bar(meta* Dt)
 		// Filename will be visually shrinked and terminated by dots.
 		printf("%.*s%s\n", fname_max, Dt->fname, dots);
 	}
-
 	printf("%*s", (buf_t) strlen(Dt->status), Dt->status);
 
 	// The lower part with the "chars in the current line" indicator.
-	if(ACT_LN_LEN < TXT_X)
+	if((ACT_LN_LEN < TXT_X) || ((ACT_LN_LEN - Dt->cusr_x) < TXT_X))
 	{
-		printf("%*d^ \n", (buf_t) (get_term_sz('X', Dt) - 2 - strlen(Dt->status)),
-		get_term_sz('X', Dt) - STRLEN_BUF_T - 1);
+		printf("%*d^ \n", indicator_width,
+		get_term_sz('X', Dt) - STRLEN_BUF_T - space_sz);
 	}
 	else if((ACT_LN_LEN - Dt->cusr_x) >= TXT_X)
 	{
-		printf("%*d^ \n", (buf_t) (get_term_sz('X', Dt) - 2 - strlen(Dt->status)), ACT_LN_LEN - Dt->cusr_x);
-	}
-	else
-	{
-		printf("%*d^ \n", (buf_t) (get_term_sz('X', Dt) - 2 - strlen(Dt->status)),
-		get_term_sz('X', Dt) - STRLEN_BUF_T - 1);
+		printf("%*d^ \n", indicator_width, ACT_LN_LEN - Dt->cusr_x);
 	}
 	ANSI_RESET();
 }
@@ -115,7 +112,7 @@ void scroll_line_x(meta* Dt)
 	buf_t text_offset = ACT_LN_LEN - Dt->cusr_x - mv_right;
 
 	// Text will be scrolled. Not cursor.
-	for (buf_t x = text_offset + CUR_SZ - TXT_X; x <= text_offset - CUR_SZ; x++)
+	for (buf_t x = text_offset + CUR_SZ - TXT_X; x < text_offset; x++)
 	{
 		putchar(ACT_LN[x]);
 	}

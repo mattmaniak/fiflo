@@ -2,53 +2,47 @@
 #define KEYS_H
 
 // Formatting control chars.
-#define NUL 0   // CTRL_@, terminator.
-#define BEL 7   // CTRL_G, alarm beeper.
-#define BS  8   // CTRL_H, fake backspace.
-#define HT  9   // CTRL_I, horizontal tab.
-#define LF  10  // CTRL_J, linefeed/newline.
-#define VT  11  // CTRL_K, vertical tab.
-#define FF  12  // CTRL_L, form feed.
+#define NUL__CTRL_SHIFT_2 0  // CTRL_@, terminator.
+#define BEL__CTRL_G       7  // CTRL_G, alarm beeper.
+#define BS__CTRL_H        8  // CTRL_H, fake backspace.
+#define HT__CTRL_I        9  // CTRL_I, horizontal tab.
+#define LF__CTRL_J        10 // CTRL_J, linefeed/newline.
+#define VT__CTRL_K        11 // CTRL_K, vertical tab.
+#define FF__CTRL_L        12 // CTRL_L, form feed.
 
 // Control characters can be used as keyboard shortcuts.
-#define STX 1   // CTRL_A, start of header
-#define SOT 2   // CTRL_B, start of text.
-#define EOT 4   // CTRL_D, end of transmission.
-#define	ENQ 5   // CTRL_E, enquiry.
-#define ACK 6   // CTRL_F, acknowledge.
-#define SO  14  // CTRL_N, shift out.
-#define SI  15  // CTRL_O, shift in.
-#define DLE 16  // CTRL_P, data link escape.
-#define DC2 18  // CTRL_R, device control 2.
-#define DC4 20  // CTRL_T, device control 4.
-#define NAK 21  // CTRL_U, negative acknowledge.
-#define SYN 22  // CTRL_V, synchronous idle.
-#define ETB 23  // CTRL_W, end of transmission block.
-#define CAN 24  // CTRL_X, cancel.
-#define EM  25  // CTRL_Y, end of medium.
-#define ESC 27  // CTRL_[, escape for ANSI codes.
-#define GS  29  // CTRL_], group separator.
-#define RS  30  // CTRL_^, record separator.
-#define US  31  // CTRL_-, unit separator.
-#define DEL 127 // BACKSPACE, delete that is really backspace.
+#define STX__CTRL_A                 1   // Start of header
+#define SOT__CTRL_B                 2   // Start of text.
+#define EOT__CTRL_D                 4   // End of transmission.
+#define	ENQ__CTRL_E                 5   // Enquiry.
+#define ACK__CTRL_F                 6   // Acknowledge.
+#define SO__CTRL_N                  14  // Shift out.
+#define SI__CTRL_O                  15  // Shift in.
+#define DLE_CTRL_P                  16  // Data link escape.
+#define DC1__CTRL_Q                 17  // Device control 1 (xon).
+#define DC2__CTRL_R                 18  // Device control 2.
+#define DC3__CTRL_S                 19  // Device control 3 (xoff).
+#define DC4__CTRL_T                 20  // Device control 4.
+#define NAK__CTRL_U                 21  // Negative acknowledge.
+#define SYN__CTRL_V                 22  // Synchronous idle.
+#define ETB__CTRL_W                 23  // End of transmission block.
+#define CAN__CTRL_X                 24  // Cancel.
+#define EM__CTRL_Y                  25  // End of medium.
+#define ESC__CTRL_RIGHT_SQR_BRACKET 27  // Escape for ANSI codes.
+#define GS__CTRL_LEFT_SQR_BRACKET   29  // Group separator.
+#define RS__CTRL_CARRET             30  // Record separator.
+#define US__CTRL_DASH               31  // Unit separator.
+#define DEL__BACKSPACE              127 // Delete that is really backspace.
 
 // Codes that doesn't work or breaks the program. TODO: IGNORE THEM.
-#define ETX 3   // CTRL_C, end of text, overridden by the signal handler.
-#define CR  13  // CTRL_M, carriage return, doesn't work.
-#define DC1 17  // CTRL_Q, device control 1 (xon), doesn't work.
-#define DC3 19  // CTRL_S, device control 3 (xoff), causes break.
-#define SUB 26  // CTRL_Z, substitute, overridden by the signal handler.
-#define FS  28  // CTRL_\, file separator, causes segmentation fault, STH GLOBAL.
+#define ETX__CTRL_C        3  // End of text, used by the signal handler.
+#define CR__CTRL_M         13 // Carriage return, doesn't work.
+#define SUB__CTRL_Z        26 // Substitute, suspends the program.
+#define FS__CTRL_BACKSLASH 28 // File separator, used by the signal handler.
 
-#define NUL_SZ    1
-#define SLASH_SZ  1
-#define NEG      -1
-#define CTRL_D    4
-#define CTRL_X    24
-
-// These keys moves the cursor...
-#define CTRL_G 7 // left.
-#define CTRL_H 8 // right.
+#define NEG     -1 // Pipe.
+#define NUL_SZ   1
+#define SLASH_SZ 1
 
 // From logic.
 extern void save_file(meta* Dt);

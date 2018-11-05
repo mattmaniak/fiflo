@@ -13,7 +13,7 @@ meta* recognize_key(char key, meta* Dt)
 			Dt = text_char(key, Dt);
 			break;
 
-		case HT:
+		case HT__CTRL_I:
 			// Currently converts the tab to two spaces.
 			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
 			{
@@ -21,22 +21,22 @@ meta* recognize_key(char key, meta* Dt)
 			}
 			break;
 
-		case DEL:
+		case DEL__BACKSPACE:
 			Dt = backspace(Dt);
 			break;
 
-		case CTRL_X:
+		case CAN__CTRL_X:
 			free_all_exit(0, Dt);
 
-		case CTRL_D:
+		case EOT__CTRL_D:
 			save_file(Dt);
 			break;
 
-		case CTRL_G:
+		case BEL__CTRL_G:
 			Dt = ctrl_g(Dt);
 			break;
 
-		case CTRL_H:
+		case BS__CTRL_H:
 			Dt->cusr_x = ctrl_h(Dt->cusr_x);
 	}
 	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); // DEBUG
@@ -46,8 +46,8 @@ meta* recognize_key(char key, meta* Dt)
 meta* text_char(char key, meta* Dt)
 {
 	/* Only printable chars will be added. Combinations that aren't specified
-	above will be omited. Set "key != ESC" to enable. */
-	if(key == NUL || key == LF || key >= 32)
+	above will be omited. Set "if(key)" to enable them. */
+	if(key == NUL__CTRL_SHIFT_2 || key == LF__CTRL_J || key >= 32)
 	{
 		if(Dt->chars < BUF_MAX)
 		{
@@ -63,17 +63,22 @@ meta* text_char(char key, meta* Dt)
 				Dt = shift_text_horizonally('r', Dt);
 			}
 			ACT_LN[ACT_LN_LEN - Dt->cusr_x - NUL_SZ] = key;
-			ACT_LN[ACT_LN_LEN] = NUL;
+			ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 
 			// Initializer handling.
-			if(key == NUL && ACT_LN_LEN > 0)
+			if(key == NUL__CTRL_SHIFT_2 && ACT_LN_LEN > 0)
 			{
 				Dt->chars--;
 				ACT_LN_LEN--;
 			}
-			else if(key == LF)
+			else if(key == LF__CTRL_J)
 			{
 				Dt = linefeed(Dt);
+			}
+
+			if(key != NUL__CTRL_SHIFT_2)
+			{
+				SET_STATUS("edited\0");
 			}
 		}
 		else
@@ -83,7 +88,7 @@ meta* text_char(char key, meta* Dt)
 	}
 	else
 	{
-		SET_STATUS("WARNING - opened the binary file\0");
+		SET_STATUS("WARNING - unsupported byte(s)\0");
 	}
 	return Dt;
 }
@@ -111,11 +116,11 @@ meta* linefeed(meta* Dt)
 
 			// Now the length of the upper line will be shortened after copying.
 			PREV_LN_LEN -= Dt->cusr_x;
-			PREV_LN[PREV_LN_LEN] = NUL;
+			PREV_LN[PREV_LN_LEN] = NUL__CTRL_SHIFT_2;
 
 			Dt = shrink_prev_line_mem(Dt);
 		}
-		ACT_LN[ACT_LN_LEN] = NUL;
+		ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 	}
 	return Dt;
 }
@@ -134,6 +139,7 @@ meta* backspace(meta* Dt)
 			ACT_LN_LEN--;
 			Dt->chars--;
 		}
+		// Delete the non-empty line and copy chars to previous..
 		else if(Dt->lines > 0)
 		{
 			PREV_LN_LEN--;
@@ -143,7 +149,7 @@ meta* backspace(meta* Dt)
 			{
 				PREV_LN[PREV_LN_LEN] = ACT_LN[x];
 
-				if(ACT_LN[x] != NUL)
+				if(ACT_LN[x] != NUL__CTRL_SHIFT_2)
 				{
 					PREV_LN_LEN++;
 				}
@@ -156,7 +162,7 @@ meta* backspace(meta* Dt)
 			Dt = shrink_lines_array(Dt);
 		}
 	}
-	// Delete the last line.
+	// Delete the last empty line.
 	else if(ACT_LN_LEN == 0 && Dt->lines > 0)
 	{
 		free(ACT_LN);
@@ -170,8 +176,9 @@ meta* backspace(meta* Dt)
 
 		Dt = shrink_lines_array(Dt);
 	}
-	// Replaces the LF with the terminator.
-	ACT_LN[ACT_LN_LEN] = NUL;
+	// Replaces the LF__CTRL_J with the terminator.
+	ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
+	SET_STATUS("edited\0");
 
 	return Dt;
 }

@@ -1,24 +1,26 @@
-TARGET=fiflo
+TARGET = fiflo
 
-SDIR=src
-ODIR=obj
-MDIR=man
-BDIR=/usr/bin
+SDIR = src
+ODIR = obj
+MDIR = man
+BDIR = /usr/bin
+
+CFLAGS = -std=gnu99 -O3
 
 ifeq ($(BDIR)/gcc, $(shell ls $(BDIR)/gcc))
-CC=gcc
-CFLAGS=-std=gnu99 -O3 -Wall -Wextra
+CC = gcc
+CFLAGS += -Wall -Wextra
 
 else ifeq ($(BDIR)/clang, $(shell ls $(BDIR)/clang))
-CC=clang
-CFLAGS=-std=gnu99 -O3 -Weverything
+CC = clang
+CFLAGS += -Weverything
 
 else
 $(error Compiler not found: gcc or clang is required.)
 endif
 
-DEPS=$(TARGET).h
-OBJ=$(ODIR)/$(TARGET).o $(ODIR)/keys.o $(ODIR)/logic.o $(ODIR)/render.o
+DEPS = $(TARGET).h
+OBJ = $(ODIR)/$(TARGET).o $(ODIR)/keys.o $(ODIR)/logic.o $(ODIR)/render.o
 
 # Compilation of object files depends on source files wnich depends on headers.
 # "$@" - alias to name on the left of ':', "$^" - on the right.

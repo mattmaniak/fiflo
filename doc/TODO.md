@@ -1,5 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- xon and xoff prevention,
+- dynamic STRLEN_BUF_T width,
 - cut/copy/paste,
 - full ASCII support (keymap),
 - tabs (multiple files),

@@ -8,6 +8,7 @@
 // Some semantic macros.
 #define CUR_SZ   1
 #define SLASH_SZ 1
+
 #define UBAR_SZ  2
 #define LBAR_SZ  1
 #define BARS_SZ  (UBAR_SZ + LBAR_SZ)
@@ -28,10 +29,10 @@
 // If you want to change to inverted bars' colors, set "1m" to "7m".
 #define ANSI_BOLD()            printf("\033[%s", "1m")
 #define ANSI_CLEAN_LN()        printf("\033[%s", "2K")
-#define ANSI_CUR_UP(n)         printf("\033[%dA", n)
-#define ANSI_CUR_DOWN(n)       printf("\033[%dB", n)
-#define ANSI_CUR_RIGHT(n)      printf("\033[%dC", n)
-#define ANSI_CUR_LEFT(n)       printf("\033[%dD", n)
+#define ANSI_CUR_UP(offset)    printf("\033[%dA", offset)
+#define ANSI_CUR_DOWN(offset)  printf("\033[%dB", offset)
+#define ANSI_CUR_RIGHT(offset) printf("\033[%dC", offset)
+#define ANSI_CUR_LEFT(offset)  printf("\033[%dD", offset)
 #define ANSI_SAVE_CUR_POS()    printf("\033[%s", "s")
 #define ANSI_RESTORE_CUR_POS() printf("\033[%s", "u")
 

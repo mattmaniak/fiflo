@@ -8,12 +8,12 @@ files use git-show or git-log.
 
 ## Versions:
 ### v2.1.0 (WIP):
-- new file limit: 16 Mb - 1,
-- messages in the upper bar,
+- new file size limit: 16 Mb - 1,
+- messages and the chars indicator in the upper bar,
 - improved Makefile,
 - more efficent memory allocation.
 - control keys changed,
-- upper bar splitted to 2 smaller ones,
+- lower bar,
 - scrollable cursor in X axis with the ability to move a line to another,
 - new transparent UI.
 

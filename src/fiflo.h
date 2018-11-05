@@ -32,14 +32,17 @@ typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 #pragma pack(push, 4)
 typedef struct
 {
-	FILE*  textf;              // File handle.
+	// File descriptors.
 	char   fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
+	FILE*  textf;              // File handle.
 
+	// File's content and some meta.
 	char** text;               // Text buffer. Eg. text[lines][chars].
 	buf_t  lines;              // Lines index.
 	buf_t* line_len;           // Chars in the current line (index).
 	buf_t  chars;              // All chars index.
 
+	// Editing feedback.
 	buf_t  cusr_x;             // User's cursor position in mirrored X.
 	char   status[STATUS_MAX]; // Displayed message in the upper bar.
 }
