@@ -204,6 +204,8 @@ void lower_bar(void)
 
 void window(meta* Dt)
 {
+	ANSI_RESET();
+
 	upper_bar(Dt);
 
 	display_text(Dt);

@@ -99,6 +99,9 @@ void save_file(meta* Dt)
 
 	if(Dt->textf)
 	{
+		// Prevents blinking a little.
+		window(Dt);
+
 		for(buf_t line = 0; line <= Dt->lines; line++)
 		{
 			// Write each line to the file. NULL terminator is ignored.
@@ -107,6 +110,8 @@ void save_file(meta* Dt)
 		fclose(Dt->textf);
 
 		SET_STATUS("saved\0");
+
+		flush_window(Dt);
 	}
 	else
 	{

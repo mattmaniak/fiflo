@@ -36,7 +36,7 @@ void chk_ptr(void* ptr, const char* err_msg, meta* Dt)
 
 void options(const char* arg)
 {
-	if(strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
+	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 	{
 		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
 		"Usage: fiflo [option].",
@@ -49,7 +49,7 @@ void options(const char* arg)
 		"-v, --version Display information about the used version.");
 		exit(0);
 	}
-	else if(strcmp(arg, "-v") == 0 || strcmp(arg, "--version") == 0)
+	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
 		printf("%s\n%s\n%s\n",
 		"fiflo v2.1.0 (WIP)",
@@ -61,20 +61,22 @@ void options(const char* arg)
 
 char getch(void)
 {
-	struct termios old, new;
+	struct termios old;
+	struct termios new;
+
 	char key;
 
-	// Put the state of STDIN_FILENO into *old.
+	// Put the state of the STDIN_FILENO into *old.
 	tcgetattr(STDIN_FILENO, &old);
 
-	// Create the copy of old terminal settings to modify it's.
+	// Create the copy of the old terminal settings to modify it's.
 	new = old;
 
 	// Disable buffered I/O and echo mode.
 	new.c_lflag &= (unsigned int) ~(ICANON | ECHO);
 
-	/* Immediately set the state of STDIN_FILENO to *new. Use new terminal I/O
-	settings. */
+	/* Immediately set the state of the STDIN_FILENO to the *new. Use new
+	terminal I/O settings. */
 	tcsetattr(STDIN_FILENO, TCSANOW, &new);
 
 	key = (char) getchar();
