@@ -13,6 +13,8 @@ files use git-show or git-log.
 - improved Makefile,
 - more efficent memory allocation.
 - control keys changed,
+- line length "graphical" indicator
+- private mode (unusual use of xon and xoff),
 - lower bar,
 - scrollable cursor in X axis with the ability to move a line to another,
 - new transparent UI.

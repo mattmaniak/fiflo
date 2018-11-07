@@ -18,7 +18,6 @@
 
 #define BUF_MAX     (UINT_MAX / 256) // 16 MB - 1 buffer limit.
 #define INIT_MEMBLK sizeof(Dt->text) // Aligned initial memblk for a new line.
-#define MEMBLK      128              // Must be >= 16 and dividable by 8.
 
 /* Because strlen("16777216") = 8. "+ 1" is the right padding. Setting a value
 like 1234 won't be good idea. */

@@ -54,7 +54,7 @@ meta* text_char(char key, meta* Dt)
 			Dt->chars++;
 			ACT_LN_LEN++;
 
-			Dt = extend_act_line_mem(Dt);
+			Dt = extend_act_line(Dt);
 
 			/* If the cursor is moved to the left and a char is inserted, rest
 			of the text will be shifted to the right side. */
@@ -111,14 +111,14 @@ meta* linefeed(meta* Dt)
 			{
 				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
 				ACT_LN_LEN++;
-				Dt = extend_act_line_mem(Dt);
+				Dt = extend_act_line(Dt);
 			}
 
 			// Now the length of the upper line will be shortened after copying.
 			PREV_LN_LEN -= Dt->cusr_x;
 			PREV_LN[PREV_LN_LEN] = NUL__CTRL_SHIFT_2;
 
-			Dt = shrink_prev_line_mem(Dt);
+			Dt = shrink_prev_line(Dt);
 		}
 		ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 	}
@@ -134,7 +134,7 @@ meta* backspace(meta* Dt)
 		if(Dt->cusr_x != ACT_LN_LEN)
 		{
 			Dt = shift_text_horizonally('l', Dt);
-			Dt = shrink_act_line_mem(Dt);
+			Dt = shrink_act_line(Dt);
 
 			ACT_LN_LEN--;
 			Dt->chars--;
@@ -153,7 +153,7 @@ meta* backspace(meta* Dt)
 				{
 					PREV_LN_LEN++;
 				}
-				Dt = extend_prev_line_mem(Dt);
+				Dt = extend_prev_line(Dt);
 			}
 			free(ACT_LN);
 			ACT_LN = NULL;
@@ -169,7 +169,7 @@ meta* backspace(meta* Dt)
 		ACT_LN = NULL;
 		Dt->lines--;
 
-		Dt = shrink_act_line_mem(Dt);
+		Dt = shrink_act_line(Dt);
 
 		ACT_LN_LEN--;
 		Dt->chars--;

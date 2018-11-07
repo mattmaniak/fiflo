@@ -44,15 +44,17 @@
 #define NUL_SZ   1
 #define SLASH_SZ 1
 
-// From logic.
+// From the "logic.h".
 extern void save_file(meta* Dt);
 extern meta* shift_text_horizonally(char direction, meta* Dt);
-extern meta* extend_act_line_mem(meta* Dt);
-extern meta* extend_prev_line_mem(meta* Dt);
-extern meta* shrink_act_line_mem(meta* Dt);
+
+// From the "memory.h".
+extern meta* extend_act_line(meta* Dt);
+extern meta* extend_prev_line(meta* Dt);
+extern meta* shrink_act_line(meta* Dt);
 extern meta* extend_lines_array(meta* Dt);
 extern meta* shrink_lines_array(meta* Dt);
-extern meta* shrink_prev_line_mem(meta* Dt);
+extern meta* shrink_prev_line(meta* Dt);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
 meta* recognize_key(char key, meta* Dt);
