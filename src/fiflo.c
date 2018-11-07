@@ -61,10 +61,10 @@ void options(const char* arg)
 
 char getch(void)
 {
+	char key;
+
 	struct termios old;
 	struct termios new;
-
-	char key;
 
 	// Put the state of the STDIN_FILENO into *old.
 	tcgetattr(STDIN_FILENO, &old);
@@ -131,8 +131,9 @@ _Noreturn void run(const char* arg)
 
 int main(int argc, char** argv)
 {
-	// Catch CTRL+C and CTRL+\.
-	if(signal(SIGINT, ignore_sig) == SIG_ERR
+	// Catch CTRL^Z, CTRL^C and CTRL^\.
+	if(signal(SIGTSTP, ignore_sig) == SIG_ERR
+	|| signal(SIGINT, ignore_sig) == SIG_ERR
 	|| signal(SIGQUIT, ignore_sig) == SIG_ERR)
 	{
 		fputs("Can't catch one of the signals, exit(1)\n", stderr);

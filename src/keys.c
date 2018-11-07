@@ -28,7 +28,7 @@ meta* recognize_key(char key, meta* Dt)
 		case CAN__CTRL_X:
 			free_all_exit(0, Dt);
 
-		case EOT__CTRL_D:
+		case ETB__CTRL_W:
 			save_file(Dt);
 			break;
 
@@ -88,7 +88,7 @@ meta* text_char(char key, meta* Dt)
 	}
 	else
 	{
-		SET_STATUS("WARNING - unsupported byte(s)\0");
+		SET_STATUS("WARNING - unsupported octet(s)\0");
 	}
 	return Dt;
 }

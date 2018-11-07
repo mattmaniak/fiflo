@@ -10,11 +10,12 @@
 #define SLASH_SZ 1
 
 #define UBAR_SZ  2
-#define LBAR_SZ  1
+#define LBAR_SZ  1 // Must be equal 1 otherwise will break rendering a little.
 #define BARS_SZ  (UBAR_SZ + LBAR_SZ)
 
-// Text that is shown on the lower bar. Also defines minimal terminal width.
-#define LBAR_STR "CTRL^: Z - suspend; X - exit; D - save; GH - cursor\0"
+// Text that is shown on the lower bar. Also defines the minimal terminal width.
+#define LBAR_STR \
+"CTRL^: X - exit; W - save; G/H - cursor; S/Q - on/off private mode\0"
 
 // Remember to not override the upper bar width.
 #define TERM_X_MIN (term_t) strlen(LBAR_STR)

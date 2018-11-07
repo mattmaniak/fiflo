@@ -60,7 +60,6 @@ meta* read_file(meta* Dt)
 
 	if(Dt->textf)
 	{
-		SET_STATUS("read the file\0");
 		while((chr = (char) getc(Dt->textf)) != EOF)
 		{
 			// Temponary and ugly tab to two spaces conversion.
@@ -74,6 +73,7 @@ meta* read_file(meta* Dt)
 			Dt = text_char(chr, Dt);
 		}
 		fclose(Dt->textf);
+		SET_STATUS("read the file\0");
 	}
 	else
 	{

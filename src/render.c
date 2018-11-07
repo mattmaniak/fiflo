@@ -218,7 +218,7 @@ void window(meta* Dt)
 void set_cur_pos(meta* Dt)
 {
 	// Case when all lines fits in the window.
-	buf_t mv_up = TXT_Y - (Dt->lines + INDEX);
+	buf_t mv_up = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT((term_t) strlen(LBAR_STR));
@@ -242,10 +242,10 @@ void set_cur_pos(meta* Dt)
 		ANSI_CUR_RIGHT(STRLEN_BUF_T + ACT_LN_LEN - Dt->cusr_x);
 	}
 
-	if(Dt->lines >= TXT_Y)
+	if(Dt->lines < TXT_Y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
-		mv_up = 0;
+		mv_up = TXT_Y - (Dt->lines + INDEX);
 	}
 	ANSI_CUR_UP(LBAR_SZ + mv_up);
 }

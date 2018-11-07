@@ -2,13 +2,13 @@
 #define KEYS_H
 
 // Formatting control chars.
-#define NUL__CTRL_SHIFT_2 0  // CTRL_@, terminator.
-#define BEL__CTRL_G       7  // CTRL_G, alarm beeper.
-#define BS__CTRL_H        8  // CTRL_H, fake backspace.
-#define HT__CTRL_I        9  // CTRL_I, horizontal tab.
-#define LF__CTRL_J        10 // CTRL_J, linefeed/newline.
-#define VT__CTRL_K        11 // CTRL_K, vertical tab.
-#define FF__CTRL_L        12 // CTRL_L, form feed.
+#define NUL__CTRL_SHIFT_2 0  // Terminator.
+#define BEL__CTRL_G       7  // Alarm beeper.
+#define BS__CTRL_H        8  // Fake backspace.
+#define HT__CTRL_I        9  // Horizontal tab.
+#define LF__CTRL_J        10 // Linefeed/newline.
+#define VT__CTRL_K        11 // Vertical tab.
+#define FF__CTRL_L        12 // Form feed.
 
 // Control characters can be used as keyboard shortcuts.
 #define STX__CTRL_A                 1   // Start of header
