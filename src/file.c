@@ -1,11 +1,11 @@
 #include "fiflo.h"
-#include "logic.h"
+#include "file.h"
 
 meta* set_fname(const char* arg, meta* Dt)
 {
 	const _Bool slash_sz = 1;
 
-	if(arg[strlen(arg) - NTERM_SZ] == '/')
+	if(arg[strlen(arg) - NUL_SZ] == '/')
 	{
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
 		free_all_exit(1, Dt);
@@ -14,7 +14,7 @@ meta* set_fname(const char* arg, meta* Dt)
 	// Is a absolute path.
 	if(arg[0] == '/')
 	{
-		if((strlen(arg) + NTERM_SZ) > PATH_MAX)
+		if((strlen(arg) + NUL_SZ) > PATH_MAX)
 		{
 			fputs("The passed filename is too long, exit(1).\n", stderr);
 			free_all_exit(1, Dt);
@@ -79,7 +79,6 @@ meta* read_file(meta* Dt)
 	{
 		SET_STATUS("the file will be created\0");
 	}
-
 	return Dt;
 }
 
@@ -117,32 +116,5 @@ void save_file(meta* Dt)
 	{
 		SET_STATUS("can't write to the file");
 	}
-}
-
-meta* shift_text_horizonally(char direction, meta* Dt)
-{
-	switch(direction)
-	{
-		case 'l':
-			if(Dt->cusr_x > ACT_LN_LEN - NTERM_SZ && ACT_LN_LEN > 0)
-			{
-				Dt->cusr_x = ACT_LN_LEN - NTERM_SZ;
-			}
-			if(ACT_LN_LEN > 0)
-			{
-				for(buf_t x = ACT_LN_LEN - Dt->cusr_x; x <= ACT_LN_LEN; x++)
-				{
-					ACT_LN[x - INDEX] = ACT_LN[x];
-				}
-			}
-			break;
-
-		case 'r':
-			for(buf_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Dt->cusr_x; x--)
-			{
-				ACT_LN[x] = ACT_LN[x - INDEX];
-			}
-	}
-	return Dt;
 }
 

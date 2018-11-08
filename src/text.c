@@ -1,5 +1,5 @@
 #include "fiflo.h"
-#include "keys.h"
+#include "text.h"
 
 meta* recognize_key(char key, meta* Dt)
 {
@@ -203,5 +203,32 @@ buf_t ctrl_h(buf_t cusr_x)
 		cusr_x--;
 	}
 	return cusr_x;
+}
+
+meta* shift_text_horizonally(char direction, meta* Dt)
+{
+	switch(direction)
+	{
+		case 'l':
+			if(Dt->cusr_x > ACT_LN_LEN - NUL_SZ && ACT_LN_LEN > 0)
+			{
+				Dt->cusr_x = ACT_LN_LEN - NUL_SZ;
+			}
+			if(ACT_LN_LEN > 0)
+			{
+				for(buf_t x = ACT_LN_LEN - Dt->cusr_x; x <= ACT_LN_LEN; x++)
+				{
+					ACT_LN[x - INDEX] = ACT_LN[x];
+				}
+			}
+			break;
+
+		case 'r':
+			for(buf_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Dt->cusr_x; x--)
+			{
+				ACT_LN[x] = ACT_LN[x - INDEX];
+			}
+	}
+	return Dt;
 }
 

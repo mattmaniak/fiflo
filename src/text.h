@@ -1,5 +1,5 @@
-#ifndef KEYS_H
-#define KEYS_H
+#ifndef TEXT_H
+#define TEXT_H
 
 // Formatting control chars.
 #define NUL__CTRL_SHIFT_2 0  // Terminator.
@@ -44,9 +44,8 @@
 #define NUL_SZ   1
 #define SLASH_SZ 1
 
-// From the "logic.h".
+// From the "file.h".
 extern void save_file(meta* Dt);
-extern meta* shift_text_horizonally(char direction, meta* Dt);
 
 // From the "memory.h".
 extern meta* extend_act_line(meta* Dt);
@@ -73,6 +72,9 @@ meta* ctrl_g(meta* Dt);
 
 // Moves the cursor right.
 buf_t ctrl_h(buf_t cusr_x);
+
+// Moves the text when the cursor is moved left and char is pressed.
+meta* shift_text_horizonally(char direction, meta* Dt);
 
 #endif
 

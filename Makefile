@@ -23,10 +23,10 @@ DEPS = $(TARGET).h
 
 OBJ = \
 $(ODIR)/$(TARGET).o \
-$(ODIR)/keys.o \
-$(ODIR)/logic.o \
+$(ODIR)/file.o \
 $(ODIR)/memory.o \
 $(ODIR)/render.o \
+$(ODIR)/text.o
 
 # Compilation of object files depends on source files wnich depends on headers.
 # "$@" - alias to name on the left of ':', "$^" - on the right.

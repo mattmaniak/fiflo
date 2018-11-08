@@ -6,7 +6,6 @@
 - tabs (multiple files),
 - add .gitlab-ci.yml,
 - TAB key,
-- bigger buffer with memory limits,
 - paging mechanism,
 - move the cursor vertically (YB keys),
 - fiflo.conf file && colors,

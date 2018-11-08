@@ -1,10 +1,9 @@
-#ifndef LOGIC_H
-#define LOGIC_H
+#ifndef FILE_H
+#define FILE_H
 
 // Common rest is included in "fiflo.h". There are only file-specific imports.
 #include <linux/limits.h>
 
-#define NTERM_SZ  1
 #define NEG      -1
 #define NTERM     0
 #define CTRL_D    4
@@ -29,9 +28,6 @@ meta* read_file(meta* Dt);
 
 // Puts the whole text to the file.
 void save_file(meta* Dt);
-
-// Moves the text when the cursor is moved left and char is pressed.
-meta* shift_text_horizonally(char direction, meta* Dt);
 
 #endif
 
