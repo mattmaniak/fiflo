@@ -22,6 +22,7 @@ provide updated code on the "develop" branch.
 ## Coding rules:
 - Allman-like brace style, indentation: hard tab (4 spaces wide),
 - only snake_case is allowed,
+- single line should not exceed 80 chars printable chars,
 - insert short TODOs near thing to fix as uppercase comments,
 - write doc comments in .c files above statements, in .h at the right side.
 - visually align values of defines && structures' members,

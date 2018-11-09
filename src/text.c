@@ -1,79 +1,79 @@
 #include "fiflo.h"
 #include "text.h"
 
-meta* recognize_key(char key, meta* Dt)
+f_mtdt* recognize_key(char key, f_mtdt* Buff)
 {
 	switch(key)
 	{
 		case NEG:
 			fputs("Pipe isn't supported, exit(1).\n", stderr);
-			free_all_exit(1, Dt);
+			free_all_exit(1, Buff);
 
 		default:
-			Dt = text_char(key, Dt);
+			Buff = text_char(key, Buff);
 			break;
 
 		case HT__CTRL_I:
 			// Currently converts the tab to two spaces.
 			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
 			{
-				Dt = text_char(' ', Dt);
+				Buff = text_char(' ', Buff);
 			}
 			break;
 
 		case DEL__BACKSPACE:
-			Dt = backspace(Dt);
+			Buff = backspace(Buff);
 			break;
 
 		case CAN__CTRL_X:
-			free_all_exit(0, Dt);
+			free_all_exit(0, Buff);
 
 		case ETB__CTRL_W:
-			save_file(Dt);
+			save_file(Buff);
 			break;
 
 		case BEL__CTRL_G:
-			Dt = ctrl_g(Dt);
+			Buff = ctrl_g(Buff);
 			break;
 
 		case BS__CTRL_H:
-			Dt->cusr_x = ctrl_h(Dt->cusr_x);
+			Buff->cusr_x = ctrl_h(Buff->cusr_x);
 	}
-	printf("\rlast: %d cusr_x: %d\n", key, Dt->cusr_x); // DEBUG
-	return Dt;
+	printf("\rlast: %d cusr_x: %d\n", key, Buff->cusr_x); // DEBUG
+	return Buff;
 }
 
-meta* text_char(char key, meta* Dt)
+f_mtdt* text_char(char key, f_mtdt* Buff)
 {
 	/* Only printable chars will be added. Combinations that aren't specified
 	above will be omited. Set "if(key)" to enable them. */
 	if(key == NUL__CTRL_SHIFT_2 || key == LF__CTRL_J || key >= 32)
 	{
-		if(Dt->chars < BUF_MAX)
+		if(Buff->chars < BUF_MAX)
 		{
-			Dt->chars++;
+			Buff->chars++;
 			ACT_LN_LEN++;
 
-			Dt = extend_act_line(Dt);
+			Buff = extend_act_line(Buff);
 
 			/* If the cursor is moved to the left and a char is inserted, rest
 			of the text will be shifted to the right side. */
-			if(Dt->cusr_x > 0)
+			if(Buff->cusr_x > 0)
 			{
-				Dt = shift_text_horizonally('r', Dt);
+				Buff = shift_text_horizonally('r', Buff);
 			}
-			ACT_LN[ACT_LN_LEN - Dt->cusr_x - NUL_SZ] = key;
+			ACT_LN[ACT_LN_LEN - Buff->cusr_x - NUL_SZ] = key;
 			ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 
 			// Initializer handling.
 			if(key == NUL__CTRL_SHIFT_2 && ACT_LN_LEN > 0)
 			{
-				Dt->chars--;
+				Buff->chars--;
 				ACT_LN_LEN--;
 			}
 			else if(key == LF__CTRL_J)
 			{
-				Dt = linefeed(Dt);
+				Buff = linefeed(Buff);
 			}
 
 			if(key != NUL__CTRL_SHIFT_2)
@@ -90,62 +90,62 @@ meta* text_char(char key, meta* Dt)
 	{
 		SET_STATUS("WARNING - unsupported octet(s)\0");
 	}
-	return Dt;
+	return Buff;
 }
 
-meta* linefeed(meta* Dt)
+f_mtdt* linefeed(f_mtdt* Buff)
 {
-	if(Dt->lines < BUF_MAX)
+	if(Buff->lines < BUF_MAX)
 	{
-		Dt->lines++;
-		Dt = extend_lines_array(Dt);
+		Buff->lines++;
+		Buff = extend_lines_array(Buff);
 
 		// Naturally the new line doesn't contains any chars - only terminator.
 		ACT_LN_LEN = 0;
 
 		/* If user moved the cursor before hitting ENTER, text on the right
 		will be moved to the new line. */
-		if(Dt->cusr_x > 0)
+		if(Buff->cusr_x > 0)
 		{
-			for(buf_t x = PREV_LN_LEN - Dt->cusr_x; x < PREV_LN_LEN; x++)
+			for(buff_t x = PREV_LN_LEN - Buff->cusr_x; x < PREV_LN_LEN; x++)
 			{
 				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
 				ACT_LN_LEN++;
-				Dt = extend_act_line(Dt);
+				Buff = extend_act_line(Buff);
 			}
 
 			// Now the length of the upper line will be shortened after copying.
-			PREV_LN_LEN -= Dt->cusr_x;
+			PREV_LN_LEN -= Buff->cusr_x;
 			PREV_LN[PREV_LN_LEN] = NUL__CTRL_SHIFT_2;
 
-			Dt = shrink_prev_line(Dt);
+			Buff = shrink_prev_line(Buff);
 		}
 		ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 	}
-	return Dt;
+	return Buff;
 }
 
-meta* backspace(meta* Dt)
+f_mtdt* backspace(f_mtdt* Buff)
 {
 	// Isn't possible to delete nothing.
 	if(ACT_LN_LEN > 0)
 	{
 		// If the cursor at the maximum left position, char won't be deleted.
-		if(Dt->cusr_x != ACT_LN_LEN)
+		if(Buff->cusr_x != ACT_LN_LEN)
 		{
-			Dt = shift_text_horizonally('l', Dt);
-			Dt = shrink_act_line(Dt);
+			Buff = shift_text_horizonally('l', Buff);
+			Buff = shrink_act_line(Buff);
 
 			ACT_LN_LEN--;
-			Dt->chars--;
+			Buff->chars--;
 		}
 		// Delete the non-empty line and copy chars to previous..
-		else if(Dt->lines > 0)
+		else if(Buff->lines > 0)
 		{
 			PREV_LN_LEN--;
-			Dt->chars--;
+			Buff->chars--;
 
-			for(buf_t x = 0; x <= ACT_LN_LEN; x++)
+			for(buff_t x = 0; x <= ACT_LN_LEN; x++)
 			{
 				PREV_LN[PREV_LN_LEN] = ACT_LN[x];
 
@@ -153,48 +153,48 @@ meta* backspace(meta* Dt)
 				{
 					PREV_LN_LEN++;
 				}
-				Dt = extend_prev_line(Dt);
+				Buff = extend_prev_line(Buff);
 			}
 			free(ACT_LN);
 			ACT_LN = NULL;
 
-			Dt->lines--;
-			Dt = shrink_lines_array(Dt);
+			Buff->lines--;
+			Buff = shrink_lines_array(Buff);
 		}
 	}
 	// Delete the last empty line.
-	else if(ACT_LN_LEN == 0 && Dt->lines > 0)
+	else if(ACT_LN_LEN == 0 && Buff->lines > 0)
 	{
 		free(ACT_LN);
 		ACT_LN = NULL;
-		Dt->lines--;
+		Buff->lines--;
 
-		Dt = shrink_act_line(Dt);
+		Buff = shrink_act_line(Buff);
 
 		ACT_LN_LEN--;
-		Dt->chars--;
+		Buff->chars--;
 
-		Dt = shrink_lines_array(Dt);
+		Buff = shrink_lines_array(Buff);
 	}
 	// Replaces the LF__CTRL_J with the terminator.
 	ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 	SET_STATUS("edited\0");
 
-	return Dt;
+	return Buff;
 }
 
-meta* ctrl_g(meta* Dt)
+f_mtdt* ctrl_g(f_mtdt* Buff)
 {
 	// Move only when the cursor isn't at the start of the line.
-	if(Dt->cusr_x < ACT_LN_LEN)
+	if(Buff->cusr_x < ACT_LN_LEN)
 	{
 		// Move the cursor left.
-		Dt->cusr_x++;
+		Buff->cusr_x++;
 	}
-	return Dt;
+	return Buff;
 }
 
-buf_t ctrl_h(buf_t cusr_x)
+buff_t ctrl_h(buff_t cusr_x)
 {
 	// Cursor can be moved right if is shifted left. 0 - default right position.
 	if(cusr_x > 0)
@@ -205,18 +205,18 @@ buf_t ctrl_h(buf_t cusr_x)
 	return cusr_x;
 }
 
-meta* shift_text_horizonally(char direction, meta* Dt)
+f_mtdt* shift_text_horizonally(char direction, f_mtdt* Buff)
 {
 	switch(direction)
 	{
 		case 'l':
-			if(Dt->cusr_x > ACT_LN_LEN - NUL_SZ && ACT_LN_LEN > 0)
+			if(Buff->cusr_x > ACT_LN_LEN - NUL_SZ && ACT_LN_LEN > 0)
 			{
-				Dt->cusr_x = ACT_LN_LEN - NUL_SZ;
+				Buff->cusr_x = ACT_LN_LEN - NUL_SZ;
 			}
 			if(ACT_LN_LEN > 0)
 			{
-				for(buf_t x = ACT_LN_LEN - Dt->cusr_x; x <= ACT_LN_LEN; x++)
+				for(buff_t x = ACT_LN_LEN - Buff->cusr_x; x <= ACT_LN_LEN; x++)
 				{
 					ACT_LN[x - INDEX] = ACT_LN[x];
 				}
@@ -224,11 +224,11 @@ meta* shift_text_horizonally(char direction, meta* Dt)
 			break;
 
 		case 'r':
-			for(buf_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Dt->cusr_x; x--)
+			for(buff_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Buff->cusr_x; x--)
 			{
 				ACT_LN[x] = ACT_LN[x - INDEX];
 			}
 	}
-	return Dt;
+	return Buff;
 }
 

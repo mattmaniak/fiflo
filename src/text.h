@@ -34,47 +34,47 @@
 #define US__CTRL_DASH               31  // Unit separator.
 #define DEL__BACKSPACE              127 // Delete that is really backspace.
 
-// Codes that doesn't work or breaks the program. TODO: IGNORE THEM.
+// Codes that doesn't work or breaks the program.
 #define ETX__CTRL_C        3  // End of text, used by the signal handler.
-#define CR__CTRL_M         13 // Carriage return, doesn't work.
-#define SUB__CTRL_Z        26 // Substitute, suspends the program.
+#define CR__CTRL_M         13 // Carriage return, probably ignored by getchar.
+#define SUB__CTRL_Z        26 // Substitute, used by the signal handler.
 #define FS__CTRL_BACKSLASH 28 // File separator, used by the signal handler.
 
 #define NEG     -1 // Pipe.
 #define NUL_SZ   1
 #define SLASH_SZ 1
 
-// From the "file.h".
-extern void save_file(meta* Dt);
+// file.h
+extern void save_file(f_mtdt* Buff);
 
-// From the "memory.h".
-extern meta* extend_act_line(meta* Dt);
-extern meta* extend_prev_line(meta* Dt);
-extern meta* shrink_act_line(meta* Dt);
-extern meta* extend_lines_array(meta* Dt);
-extern meta* shrink_lines_array(meta* Dt);
-extern meta* shrink_prev_line(meta* Dt);
+// memory.h
+extern f_mtdt* extend_act_line(f_mtdt* Buff);
+extern f_mtdt* extend_prev_line(f_mtdt* Buff);
+extern f_mtdt* shrink_act_line(f_mtdt* Buff);
+extern f_mtdt* extend_lines_array(f_mtdt* Buff);
+extern f_mtdt* shrink_lines_array(f_mtdt* Buff);
+extern f_mtdt* shrink_prev_line(f_mtdt* Buff);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
-meta* recognize_key(char key, meta* Dt);
+f_mtdt* recognize_key(char key, f_mtdt* Buff);
 
 // Adds char when the pressed key is a printable one.
-meta* text_char(char key, meta* Dt);
+f_mtdt* text_char(char key, f_mtdt* Buff);
 
 // Initialize the new line.
-meta* linefeed(meta* Dt);
+f_mtdt* linefeed(f_mtdt* Buff);
 
 // Removes a last char and optionally deletes the last line.
-meta* backspace(meta* Dt);
+f_mtdt* backspace(f_mtdt* Buff);
 
 // Moves the cursor left.
-meta* ctrl_g(meta* Dt);
+f_mtdt* ctrl_g(f_mtdt* Buff);
 
 // Moves the cursor right.
-buf_t ctrl_h(buf_t cusr_x);
+buff_t ctrl_h(buff_t cusr_x);
 
 // Moves the text when the cursor is moved left and char is pressed.
-meta* shift_text_horizonally(char direction, meta* Dt);
+f_mtdt* shift_text_horizonally(char direction, f_mtdt* Buff);
 
 #endif
 

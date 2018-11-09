@@ -1,25 +1,29 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#define MEMBLK 128 // Must be >= 16 and dividable by 8.
+// Must be >= 16 and dividable by 8.
+#define MEMBLK ((128 / sizeof(Buff->text)) * sizeof(Buff->text))
+
+// Aligned initial memblk for a new line.
+#define INIT_MEMBLK sizeof(Buff->text)
 
 // Allocs next memory block for chars in a actent line if needed.
-meta* extend_act_line(meta* Dt);
+f_mtdt* extend_act_line(f_mtdt* Buff);
 
 // Works as above function but is used with backspace pressed.
-meta* extend_prev_line(meta* Dt);
+f_mtdt* extend_prev_line(f_mtdt* Buff);
 
 // When the enter is hitted with shifted cursor, previous line will be shrinked.
-meta* shrink_prev_line(meta* Dt);
+f_mtdt* shrink_prev_line(f_mtdt* Buff);
 
 // Works as the function above but shrinks memblocks.
-meta* shrink_act_line(meta* Dt);
+f_mtdt* shrink_act_line(f_mtdt* Buff);
 
 // Allocs memory for the next line.
-meta* extend_lines_array(meta* Dt);
+f_mtdt* extend_lines_array(f_mtdt* Buff);
 
 // With pointers that contains: lines and their lenghts.
-meta* shrink_lines_array(meta* Dt);
+f_mtdt* shrink_lines_array(f_mtdt* Buff);
 
 #endif
 

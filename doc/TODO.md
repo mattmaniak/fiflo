@@ -1,6 +1,9 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
 - dynamic STRLEN_BUF_T width,
+- pre-allocation of a memory, eg. next 16 lines,
+- more user-friendly UI,
+- git branch indicator,
 - cut/copy/paste,
 - full ASCII support (keymap),
 - tabs (multiple files),
@@ -8,10 +11,9 @@
 - TAB key,
 - paging mechanism,
 - move the cursor vertically (YB keys),
-- fiflo.conf file && colors,
+- ~/.config/fiflo.conf file && colors,
 - syntax highlighting,
 - search option,
-- lock on a file,
 - hex mode,
 - usr/share/doc/fiflo.
 

@@ -1,21 +1,21 @@
 #ifdef __linux__
 #include "fiflo.h" // All typedefs are there.
 
-_Noreturn void free_all_exit(_Bool code, meta* Dt)
+_Noreturn void free_all_exit(_Bool code, f_mtdt* Buff)
 {
-	for(buf_t line = 0; line <= Dt->lines; line++)
+	for(buff_t line = 0; line <= Buff->lines; line++)
 	{
-		free(Dt->text[line]);
-		Dt->text[line] = NULL;
+		free(Buff->text[line]);
+		Buff->text[line] = NULL;
 	}
-	free(Dt->text);
-	Dt->text = NULL;
+	free(Buff->text);
+	Buff->text = NULL;
 
-	free(Dt->line_len);
-	Dt->line_len = NULL;
+	free(Buff->line_len);
+	Buff->line_len = NULL;
 
-	free(Dt);
-	Dt = NULL;
+	free(Buff);
+	Buff = NULL;
 
 	exit(code);
 }
@@ -25,12 +25,12 @@ void ignore_sig(int sig_num)
 	if(sig_num) {}
 }
 
-void chk_ptr(void* ptr, const char* err_msg, meta* Dt)
+void chk_ptr(void* ptr, const char* err_msg, f_mtdt* Buff)
 {
 	if(!ptr)
 	{
 		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
-		free_all_exit(1, Dt);
+		free_all_exit(1, Buff);
 	}
 }
 
@@ -73,7 +73,7 @@ char getch(void)
 	new = old;
 
 	// Disable buffered I/O and echo mode.
-	new.c_lflag &= (unsigned int) ~(ICANON | ECHO);
+	new.c_lflag &= ~(unsigned int) (ICANON | ECHO);
 
 	/* Immediately set the state of the STDIN_FILENO to the *new. Use new
 	terminal I/O settings. */
@@ -87,33 +87,33 @@ char getch(void)
 	return key;
 }
 
-meta* init(const char* arg, meta* Dt)
+f_mtdt* init(const char* arg, f_mtdt* Buff)
 {
-	Dt = set_fname(arg, Dt);
+	Buff = set_fname(arg, Buff);
 
-	Dt->text = malloc(sizeof(Dt->text));
-	chk_ptr(Dt->text, "alloc memory for an array that contains lines\0", Dt);
+	Buff->text = malloc(sizeof(Buff->text));
+	chk_ptr(Buff->text, "alloc memory for an array that contains lines\0", Buff);
 
-	Dt->line_len = malloc(sizeof(Dt->line_len));
-	chk_ptr(Dt->line_len, "alloc memory for an array with lines length\0", Dt);
+	Buff->line_len = malloc(sizeof(Buff->line_len));
+	chk_ptr(Buff->line_len, "alloc memory for an array with lines length\0", Buff);
 
-	Dt->chars = 0;
-	Dt->lines = 0;
-	Dt->cusr_x = 0;
+	Buff->chars = 0;
+	Buff->lines = 0;
+	Buff->cusr_x = 0;
 
 	ACT_LN_LEN = 0;
-	ACT_LN = malloc(INIT_MEMBLK);
+	ACT_LN = malloc(sizeof(Buff->text));
 
-	return Dt;
+	return Buff;
 }
 
 _Noreturn void run(const char* arg)
 {
-	meta* Dt = malloc(sizeof(meta));
-	chk_ptr(Dt, "alloc memory for a file metadata\0", Dt);
+	f_mtdt* Buff = malloc(sizeof(f_mtdt));
+	chk_ptr(Buff, "alloc memory for a file metadata\0", Buff);
 
-	Dt = init(arg, Dt);
-	Dt = read_file(Dt);
+	Buff = init(arg, Buff);
+	Buff = read_file(Buff);
 
 	// Initializer. Equal to the null terminator.
 	char pressed = 0;
@@ -121,11 +121,11 @@ _Noreturn void run(const char* arg)
 	// Main program loop.
 	for(;;)
 	{
-		Dt = recognize_key(pressed, Dt);
-		window(Dt);
+		Buff = recognize_key(pressed, Buff);
+		window(Buff);
 
 		pressed = getch();
-		flush_window(Dt);
+		flush_window(Buff);
 	}
 }
 
