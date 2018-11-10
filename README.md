@@ -7,7 +7,7 @@ ASCII terminal-based text editor.
 - Linux-based desktop,
 - git,
 - make,
-- gcc or clang,
+- clang or gcc,
 - gzip (only for installation).
 
 ## Download, compile and run current stable release
@@ -42,11 +42,16 @@ sudo make uninstall
 make clean
 ```
 
-## Test using AddressSanitizer
+## Link AddressSanitizer
+```
+make address
+```
+Warning! The program will consume much more memory.
+
+## Link MemorySanitizer (only with clang)
 ```
 make memory
 ```
-WARNING! The program will consume much more memory.
 
 ## FAQ
 How can I contribute?

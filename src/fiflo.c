@@ -42,9 +42,9 @@ void options(const char* arg)
 		"Usage: fiflo [option].",
 
 		"Options:      Description:",
-		"<no_option>   Set a filename to \"/<current_path>/noname.asdf\".",
-		"basename      Set a basename to \"basename\" using current path.",
-		"/dir/bname    Set a filename to \"/dir/bname\"",
+		"<no_option>   Set the filename to \"/<current_path>/noname.asdf\".",
+		"basename      Set the basename to \"basename\" using current path.",
+		"/dir/bname    Set the filename to \"/dir/bname\"",
 		"-h, --help    Show program help.",
 		"-v, --version Display information about the used version.");
 		exit(0);
@@ -52,7 +52,7 @@ void options(const char* arg)
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo v2.1.0 (WIP)",
+		"fiflo v2.1.0",
 		"https://gitlab.com/mattmaniak/fiflo.git",
 		"(C) 2018 mattmaniak under the MIT License.");
 		exit(0);
@@ -92,10 +92,10 @@ f_mtdt* init(const char* arg, f_mtdt* Buff)
 	Buff = set_fname(arg, Buff);
 
 	Buff->text = malloc(sizeof(Buff->text));
-	chk_ptr(Buff->text, "alloc memory for an array that contains lines\0", Buff);
+	chk_ptr(Buff->text, "malloc for an array that contains lines\0", Buff);
 
 	Buff->line_len = malloc(sizeof(Buff->line_len));
-	chk_ptr(Buff->line_len, "alloc memory for an array with lines length\0", Buff);
+	chk_ptr(Buff->line_len, "malloc for an array with lines length\0", Buff);
 
 	Buff->chars = 0;
 	Buff->lines = 0;
@@ -110,7 +110,7 @@ f_mtdt* init(const char* arg, f_mtdt* Buff)
 _Noreturn void run(const char* arg)
 {
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
-	chk_ptr(Buff, "alloc memory for a file metadata\0", Buff);
+	chk_ptr(Buff, "malloc for a file metadata\0", Buff);
 
 	Buff = init(arg, Buff);
 	Buff = read_file(Buff);
@@ -160,6 +160,5 @@ int main(int argc, char** argv)
 
 #else
 #error "Linux-based desktop is required."
-
 #endif
 

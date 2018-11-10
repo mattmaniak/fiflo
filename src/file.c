@@ -11,7 +11,7 @@ f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
 		free_all_exit(1, Buff);
 	}
 
-	// Is a absolute path.
+	// Is the absolute path.
 	if(arg[0] == '/')
 	{
 		if((strlen(arg) + NUL_SZ) > PATH_MAX)
@@ -21,11 +21,11 @@ f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
-	// Relative path or a basename.
+	// Relative path or the basename.
 	else
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
-		chk_ptr(cw_dir, "alloc memory for the current path\0", Buff);
+		chk_ptr(cw_dir, "malloc for the current path\0", Buff);
 
 		chk_ptr((getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz)),
 		"get current path. Too long\0", Buff);
@@ -36,13 +36,13 @@ f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
 			fputs("Passed filename is too long, exit(1).\n", stderr);
 			free_all_exit(1, Buff);
 		}
-		// Copy a path.
+		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
 
 		// Add the slash between.
 		Buff->fname[strlen(cw_dir)] = '/';
 
-		// Append a basename.
+		// Append the basename.
 		for(uint16_t pos = 0; pos < strlen(arg); pos++)
 		{
 			strcpy(&Buff->fname[strlen(cw_dir) + slash_sz + pos], &arg[pos]);
@@ -56,7 +56,7 @@ f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
 f_mtdt* read_file(f_mtdt* Buff)
 {
 	char ch;
-	Buff->textf = fopen(Buff->fname, "rt");
+	Buff->textf = fopen(Buff->fname, "r");
 
 	if(Buff->textf)
 	{
@@ -94,17 +94,22 @@ void save_file(f_mtdt* Buff)
 			free_all_exit(1, Buff);
 		}
 	}
-	Buff->textf = fopen(Buff->fname, "wt");
+	Buff->textf = fopen(Buff->fname, "w");
 
 	if(Buff->textf)
 	{
 		// Prevents blinking a little.
 		window(Buff);
 
+		// Write each line to the file. NULL terminator is ignored.
 		for(buff_t line = 0; line <= Buff->lines; line++)
 		{
-			// Write each line to the file. NULL terminator is ignored.
-			fputs(Buff->text[line], Buff->textf);
+			/* Using fputs or fprintf causes "use-of-uninitialized-value" using
+			MSan because of there is more memory allocated than is needed. */
+			for(buff_t ch = 0; ch < Buff->line_len[line]; ch++)
+			{
+				fputc(Buff->text[line][ch], Buff->textf);
+			}
 		}
 		fclose(Buff->textf);
 

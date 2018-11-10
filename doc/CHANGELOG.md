@@ -7,7 +7,7 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
-### v2.1.0 (WIP):
+### v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,
 - messages and the chars indicator in the upper bar,
 - improved Makefile,

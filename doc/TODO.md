@@ -9,6 +9,7 @@
 - tabs (multiple files),
 - add .gitlab-ci.yml,
 - TAB key,
+- logo,
 - paging mechanism,
 - move the cursor vertically (YB keys),
 - ~/.config/fiflo.conf file && colors,

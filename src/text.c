@@ -39,7 +39,6 @@ f_mtdt* recognize_key(char key, f_mtdt* Buff)
 		case BS__CTRL_H:
 			Buff->cusr_x = ctrl_h(Buff->cusr_x);
 	}
-	printf("\rlast: %d cusr_x: %d\n", key, Buff->cusr_x); // DEBUG
 	return Buff;
 }
 
@@ -75,7 +74,6 @@ f_mtdt* text_char(char key, f_mtdt* Buff)
 			{
 				Buff = linefeed(Buff);
 			}
-
 			if(key != NUL__CTRL_SHIFT_2)
 			{
 				SET_STATUS("edited\0");
@@ -139,7 +137,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 			ACT_LN_LEN--;
 			Buff->chars--;
 		}
-		// Delete the non-empty line and copy chars to previous..
+		// Deletes the non-empty line and copy chars to previous..
 		else if(Buff->lines > 0)
 		{
 			PREV_LN_LEN--;
@@ -162,7 +160,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 			Buff = shrink_lines_array(Buff);
 		}
 	}
-	// Delete the last empty line.
+	// Deletes the last empty line.
 	else if(ACT_LN_LEN == 0 && Buff->lines > 0)
 	{
 		free(ACT_LN);
@@ -176,10 +174,10 @@ f_mtdt* backspace(f_mtdt* Buff)
 
 		Buff = shrink_lines_array(Buff);
 	}
-	// Replaces the LF__CTRL_J with the terminator.
+	// Replaces the linefeed with the terminator.
 	ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
-	SET_STATUS("edited\0");
 
+	SET_STATUS("edited\0");
 	return Buff;
 }
 
