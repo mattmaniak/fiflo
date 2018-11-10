@@ -52,7 +52,7 @@ void options(const char* arg)
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo v2.1.0",
+		"fiflo v2.2.0 (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
 		"(C) 2018 mattmaniak under the MIT License.");
 		exit(0);
@@ -66,7 +66,7 @@ char getch(void)
 	struct termios old;
 	struct termios new;
 
-	// Put the state of the STDIN_FILENO into *old.
+	// Put the state of the STDIN_FILENO into the *old.
 	tcgetattr(STDIN_FILENO, &old);
 
 	// Create the copy of the old terminal settings to modify it's.
@@ -75,13 +75,13 @@ char getch(void)
 	// Disable buffered I/O and echo mode.
 	new.c_lflag &= ~(unsigned int) (ICANON | ECHO);
 
-	/* Immediately set the state of the STDIN_FILENO to the *new. Use new
+	/* Immediately set the state of the STDIN_FILENO to the *new. Use the new
 	terminal I/O settings. */
 	tcsetattr(STDIN_FILENO, TCSANOW, &new);
 
 	key = (char) getchar();
 
-	// Immediately restore the state of STDIN_FILENO to *new.
+	// Immediately restore the state of the STDIN_FILENO to the *new.
 	tcsetattr(STDIN_FILENO, TCSANOW, &old);
 
 	return key;
@@ -97,8 +97,8 @@ f_mtdt* init(const char* arg, f_mtdt* Buff)
 	Buff->line_len = malloc(sizeof(Buff->line_len));
 	chk_ptr(Buff->line_len, "malloc for an array with lines length\0", Buff);
 
-	Buff->chars = 0;
-	Buff->lines = 0;
+	Buff->chars  = 0;
+	Buff->lines  = 0;
 	Buff->cusr_x = 0;
 
 	ACT_LN_LEN = 0;
@@ -133,7 +133,7 @@ int main(int argc, char** argv)
 {
 	// Catch CTRL^Z, CTRL^C and CTRL^\.
 	if(signal(SIGTSTP, ignore_sig) == SIG_ERR
-	|| signal(SIGINT, ignore_sig) == SIG_ERR
+	|| signal(SIGINT,  ignore_sig) == SIG_ERR
 	|| signal(SIGQUIT, ignore_sig) == SIG_ERR)
 	{
 		fputs("Can't catch one of the signals, exit(1)\n", stderr);

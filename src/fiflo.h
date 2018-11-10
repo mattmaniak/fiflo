@@ -31,18 +31,18 @@ typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 typedef struct
 {
 	// File descriptors.
-	char   fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
-	FILE*  textf;              // File handle.
+	char    fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
+	FILE*   text_f;             // File handle.
 
 	// File's content and some indicators.
-	char** text;               // Text buffer. Eg. text[lines][chars].
-	buff_t  lines;             // Lines index.
-	buff_t* line_len;          // Chars in the current line (index).
-	buff_t  chars;             // All chars index.
+	char**  text;               // Text buffer. Eg. text[lines][chars].
+	buff_t  lines;              // Lines index.
+	buff_t* line_len;           // Chars in the current line (index).
+	buff_t  chars;              // All chars index.
 
 	// Editing feedback.
-	buff_t  cusr_x;            // User's cursor position in the reversed X-axis.
-	char   status[STATUS_MAX]; // Displayed message in the upper bar.
+	buff_t  cusr_x;             // User's cursor position in the reversed X-axis.
+	char    status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 f_mtdt;
 #pragma pack(pop)
@@ -53,16 +53,16 @@ f_mtdt;
 #define PREV_LN     Buff->text[Buff->lines - 1]
 #define PREV_LN_LEN Buff->line_len[Buff->lines - 1]
 
-// From api.
+// file.h
 extern f_mtdt* set_fname(const char* arg, f_mtdt* Buff);
 extern f_mtdt* read_file(f_mtdt* Buff);
 
-// From keys.
+// text.h
 extern f_mtdt* recognize_key(char key, f_mtdt* Buff);
 
-// From render.
+// render.h
 extern void flush_window(f_mtdt* Buff);
-extern void window(f_mtdt* Buff);
+extern void window      (f_mtdt* Buff);
 
 // Frees everything and exits with status code.
 _Noreturn void free_all_exit(_Bool code, f_mtdt* Buff);

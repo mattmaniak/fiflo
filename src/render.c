@@ -3,9 +3,9 @@
 
 term_t get_term_sz(char axis, f_mtdt* Buff)
 {
-	const _Bool single_line_y_sz = 1;
-	const uint8_t y_min = BARS_SZ + single_line_y_sz;
-	const term_t sz_max = USHRT_MAX;
+	const _Bool   line_y_sz = 1;
+	const uint8_t y_min     = BARS_SZ + line_y_sz;
+	const term_t  sz_max    = USHRT_MAX;
 
 	struct winsize term;
 
@@ -47,7 +47,7 @@ void flush_window(f_mtdt* Buff)
 	ANSI_CLEAN_LN();
 
 	// Then from move up and clean the next lines till the window ends.
-	for(term_t y = 0; y < get_term_sz('Y', Buff) - LBAR_SZ; y++)
+	for(term_t y = 0; y < (get_term_sz('Y', Buff) - LBAR_SZ); y++)
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LN();
@@ -57,8 +57,8 @@ void flush_window(f_mtdt* Buff)
 
 void upper_bar(f_mtdt* Buff)
 {
-	const char* title = "fiflo: \0";
-	const char* dots = "[...]\0";
+	const char* title    = "fiflo: \0";
+	const char* dots     = "[...]\0";
 	const _Bool space_sz = 1;
 
 	buff_t indicator_width =
@@ -218,7 +218,7 @@ void window(f_mtdt* Buff)
 void set_cur_pos(f_mtdt* Buff)
 {
 	// Case when all lines fits in the window.
-	buff_t mv_up = 0;
+	term_t mv_up = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT((term_t) strlen(LBAR_STR));

@@ -56,11 +56,11 @@ f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
 f_mtdt* read_file(f_mtdt* Buff)
 {
 	char ch;
-	Buff->textf = fopen(Buff->fname, "r");
+	Buff->text_f = fopen(Buff->fname, "r");
 
-	if(Buff->textf)
+	if(Buff->text_f)
 	{
-		while((ch = (char) getc(Buff->textf)) != EOF)
+		while((ch = (char) getc(Buff->text_f)) != EOF)
 		{
 			// Temponary and ugly tab to two spaces conversion.
 			if(ch == '\t')
@@ -72,7 +72,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 			// Read all chars before end of file.
 			Buff = text_char(ch, Buff);
 		}
-		fclose(Buff->textf);
+		fclose(Buff->text_f);
 		SET_STATUS("read the file\0");
 	}
 	else
@@ -84,19 +84,22 @@ f_mtdt* read_file(f_mtdt* Buff)
 
 void save_file(f_mtdt* Buff)
 {
-	if(access(Buff->fname, F_OK) == -1)
+	const int8_t not_created = -1;
+	int          file_status = access(Buff->fname, F_OK);
+
+	if(file_status == not_created)
 	{
 		// There is no file so create with -rw------- file mode.
 		int create = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
-		if(create == -1)
+		if(create == not_created)
 		{
 			fputs("Failed to create the new file, exit(1).\n", stderr);
 			free_all_exit(1, Buff);
 		}
 	}
-	Buff->textf = fopen(Buff->fname, "w");
+	Buff->text_f = fopen(Buff->fname, "w");
 
-	if(Buff->textf)
+	if(Buff->text_f)
 	{
 		// Prevents blinking a little.
 		window(Buff);
@@ -108,10 +111,10 @@ void save_file(f_mtdt* Buff)
 			MSan because of there is more memory allocated than is needed. */
 			for(buff_t ch = 0; ch < Buff->line_len[line]; ch++)
 			{
-				fputc(Buff->text[line][ch], Buff->textf);
+				fputc(Buff->text[line][ch], Buff->text_f);
 			}
 		}
-		fclose(Buff->textf);
+		fclose(Buff->text_f);
 
 		SET_STATUS("saved\0");
 
