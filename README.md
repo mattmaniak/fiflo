@@ -1,43 +1,62 @@
 # fiflo
 
 ## Description
-Simple terminal-based text editor.
+ASCII terminal-based text editor.
 
-## Minimal requirements:
-- Linux-based OS,
-- gcc >= 4.8,
+## Requirements:
+- Linux-based desktop,
+- git,
 - make,
-- terminal with an ANSI escape codes support.
+- clang or gcc,
+- gzip (only for installation).
 
-# Additional requirements:
-- cp for installation,
-- gzip for man-pages packing.
-
-## Compilation
+## Download, compile and run current stable release
 ```
+git clone https://gitlab.com/mattmaniak/fiflo.git
+cd fiflo
 make
+./fiflo
 ```
 
-## Installation
+Also You can try the latest unstable snapshot
+```
+git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
+```
+
+## Install
 ```
 sudo make install
 ```
+After that there is a possibility to run it directly
+```
+fiflo
+```
 
-## Uninstallation
+## Uninstall
 ```
 sudo make uninstall
 ```
 
-## Testing
+## Delete object files and the binary
 ```
-make debug
+make clean
 ```
-This will link AdressSanitizer to memory errors handling. You will be able to
-run fiflo under gdb. I prefer to compile it normally and use Valgrind.
+
+## Link AddressSanitizer
+```
+make address
+```
+Warning! The program will consume much more memory.
+
+## Link MemorySanitizer (only with clang)
+```
+make memory
+```
 
 ## FAQ
+How can I contribute?
+- Read the doc/WORKFLOW.md and send a request.
+
 Will you port it into the Windows?
 - No.
 
-How can I contribute?
-- Read the doc/WORKFLOW.md and send any request.

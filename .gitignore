@@ -1,5 +1,8 @@
 *.asdf
 fiflo
+*.o
+obj/
 *.out
 *.save
 *.swp
+

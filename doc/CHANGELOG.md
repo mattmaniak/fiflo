@@ -7,6 +7,18 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
+### v2.1.0 (2018, November 10):
+- new file size limit: 16 MB - 1,
+- messages and the chars indicator in the upper bar,
+- improved Makefile,
+- more efficent memory allocation.
+- control keys changed,
+- line length "graphical" indicator
+- private mode (unusual use of xon and xoff),
+- lower bar,
+- scrollable cursor in X axis with the ability to move a line to another,
+- new transparent UI.
+
 ### v2.0.0 (2018, September 11):
 - vertical && horizontal scroll,
 - new allocation method (lines as a separate strings),
@@ -16,8 +28,8 @@ files use git-show or git-log.
 - dynamic buffer of size 64K.
 
 ### v1.1.0 (2018, August 12):
-- dynamically allocated text (2018, in theory max. 2G - 1),
-- real stdin (2018, built-in terminal) cursor,
+- dynamically allocated text (in theory max. 2G - 1),
+- real stdin (built-in terminal) cursor,
 - version info,
 - soft horizontal scrolling,
 - file is no longer created at the program's start,
@@ -81,3 +93,4 @@ Not merged with "master" so look for it with tags.)
 
 ### v0.0.0 (2018, May 27):
 - initial release (basic window rendering).
+

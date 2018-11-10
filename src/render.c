@@ -1,133 +1,252 @@
+#include "fiflo.h"
 #include "render.h"
 
-term_t termgetsz(buf dt, char axis)
+term_t get_term_sz(char axis, f_mtdt* Buff)
 {
-	const uint8_t y_min = 4;
+	const _Bool single_line_y_sz = 1;
+	const uint8_t y_min = BARS_SZ + single_line_y_sz;
 	const term_t sz_max = USHRT_MAX;
 
-	struct winsize win; // From "sys/ioctl.h".
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+	struct winsize term;
 
-	if(win.ws_col < TERM_X_MIN || win.ws_row < y_min)
+	/* TIOCGWINSZ request to the stdout descriptor. &term is required by that
+	specific device (stdout). */
+	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &term) == -1)
 	{
-		fprintf(stderr, "Min. term size: %dx%d, exited.\n", TERM_X_MIN, y_min);
-		freeallexit(dt, 1);
+		fputs("Can't get the terminal size, exit(1).\n", stderr);
+		free_all_exit(1, Buff);
 	}
-	else if(win.ws_col > sz_max || win.ws_row > sz_max)
+
+	// Terminal size check.
+	if(term.ws_col < TERM_X_MIN || term.ws_row < y_min)
 	{
-		fprintf(stderr, "Max. term size: %dx%d, exited.\n", sz_max, sz_max);
-		freeallexit(dt, 1);
+		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", TERM_X_MIN, y_min);
+		free_all_exit(1, Buff);
 	}
+	else if(term.ws_col > sz_max || term.ws_row > sz_max)
+	{
+		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
+		free_all_exit(1, Buff);
+	}
+
 	switch(axis)
 	{
 		case 'X':
-			return win.ws_col;
+			return term.ws_col;
+
 		case 'Y':
-			return win.ws_row;
+			return term.ws_row;
 	}
-	return 0; // Required -Wreturn-type.
+	return 1;
 }
 
-void flushwin(buf dt)
+void flush_window(f_mtdt* Buff)
 {
-	RESTORECURSPOS();
-	printf("%s", CLEANLN);
+	// Restore to the left lower corner and clean the lowest line.
+	ANSI_RESTORE_CUR_POS();
+	ANSI_CLEAN_LN();
 
-	for(term_t y = 0; y <= TXT_AREA; y++)
+	// Then from move up and clean the next lines till the window ends.
+	for(term_t y = 0; y < get_term_sz('Y', Buff) - LBAR_SZ; y++)
 	{
-		printf("%s%s", LINE_UP, CLEANLN);
+		ANSI_CUR_UP(1);
+		ANSI_CLEAN_LN();
 	}
 	fflush(stdout);
 }
 
-void bar(buf dt, char key)
+void upper_bar(f_mtdt* Buff)
 {
-	const char* title = "fiflo | filename: \0";
-	term_t fnmax = termgetsz(dt, 'X') - (term_t) (strlen(title) + strlen(DOTS));
+	const char* title = "fiflo: \0";
+	const char* dots = "[...]\0";
+	const _Bool space_sz = 1;
 
-	printf("%s%s", INVERT, title);
-	if(strlen(dt.fname) > fnmax)
+	buff_t indicator_width =
+	(buff_t) (get_term_sz('X', Buff) - (2 * space_sz) - strlen(Buff->status));
+
+	term_t fname_max =
+	get_term_sz('X', Buff) - (term_t) (strlen(title) + strlen(dots));
+
+	ANSI_BOLD();
+
+	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
+	upper bar. Adding the carriage return before it fixes the problems. Just
+	handling with terminals' quirk modes. For any other output of the program CR
+	is not necessary, eg. for errors messages. They can be shifted. */
+	printf("\r%s", title);
+
+	if(strlen(Buff->fname) <= fname_max)
 	{
-		printf("%.*s%s\n", fnmax, dt.fname, DOTS);
+		// Whole filename will be displayed.
+		printf("%s\n", Buff->fname);
 	}
 	else
 	{
-		printf("%s%*s\n", dt.fname, termgetsz(dt, 'X')
-		- (term_t) (strlen(title) + strlen(dt.fname)), " ");
+		// Filename will be visually shrinked and terminated by dots.
+		printf("%.*s%s\n", fname_max, Buff->fname, dots);
 	}
-	printf(
-	"chars (all, ln, last): %*d, %*d, %*d%*s| CTRL+: D - save, X - exit%s\n",
-	STRLENBUFF, dt.chrs, STRLENBUFF, dt.chrs_ln, 3, key,
-	termgetsz(dt, 'X') - TERM_X_MIN + 1, " ", RESET);
+	printf("%*s", (buff_t) strlen(Buff->status), Buff->status);
+
+	// The lower part with the "chars in the current line" indicator.
+	if((ACT_LN_LEN < TXT_X) || ((ACT_LN_LEN - Buff->cusr_x) < TXT_X))
+	{
+		printf("%*d^ \n", indicator_width,
+		get_term_sz('X', Buff) - STRLEN_BUF_T - space_sz);
+	}
+	else if((ACT_LN_LEN - Buff->cusr_x) >= TXT_X)
+	{
+		printf("%*d^ \n", indicator_width, ACT_LN_LEN - Buff->cusr_x);
+	}
+	ANSI_RESET();
 }
 
-
-void window(buf dt, char key)
+void scroll_line_x(f_mtdt* Buff)
 {
-	buf_t hidden_lns = 0;
-	bar(dt, key);
+	_Bool mv_right = 0;
 
-	if(dt.lns >= TXT_AREA) // Horizontal scroll.
+	if(ACT_LN[ACT_LN_LEN - NUL_SZ] == LF)
 	{
-		hidden_lns = dt.lns - TXT_AREA + CURRENT + 1; // 1 - DOTS in Y.
-		printf("%s%s%s\n", INVERT, DOTS, INVERT);
+		// Shifts the line right because the linefeed is also rendered.
+		mv_right = 1;
 	}
-	for(term_t ln = hidden_lns; ln <= dt.lns; ln++)
+	buff_t text_offset = ACT_LN_LEN - Buff->cusr_x - mv_right;
+
+	// Text will be scrolled. Not cursor.
+	for (buff_t x = text_offset + CUR_SZ - TXT_X; x < text_offset; x++)
 	{
-		if(STRLENBUFF + strlen(dt.txt[ln]) >= termgetsz(dt, 'X'))
-		{
-			_Bool left;
-			if(dt.txt[ln][strlen(dt.txt[ln]) - INDEX] == LF) // Move one right.
-			{
-				left = 0;
-			}
-			else
-			{
-				left = 1;
-			}
-			printf("%s%s%s%s", INVERT, DOTS, RESET, dt.txt[ln]
-			+ strlen(dt.txt[ln]) + strlen(DOTS) - termgetsz(dt, 'X') + left);
-		}
-		else
-		{
-			printf("%s%*d%s", INVERT, STRLENBUFF, ln + INDEX, RESET);
-			if(dt.txt[ln][0] == TAB)
-			{
-				printf("%*s", STRLENBUFF, " ");
-			}
-			fputs(dt.txt[ln], stdout);
-		}
+		putchar(ACT_LN[x]);
 	}
-	lower_fill(dt);
-	setcurspos(dt);
+	if(mv_right == 1)
+	{
+		// Text is shifted so the last printable char (LF) isn't rendered.
+		putchar(LF);
+	}
 }
 
-void lower_fill(buf dt)
+buff_t scroll_lines(f_mtdt* Buff)
 {
-	if(dt.lns < TXT_AREA)
+	buff_t scrolled = 0;
+
+	if(Buff->lines >= TXT_Y)
 	{
-		for(term_t ln = dt.lns; ln < TXT_AREA - CURRENT; ln++)
+		// Amount of lines to hide in the magic upper area.
+		scrolled = Buff->lines + INDEX - TXT_Y;
+	}
+	return scrolled;
+}
+
+void print_line_num(buff_t line)
+{
+	const _Bool space_sz = 1;
+
+	ANSI_BOLD();
+	printf("%*d", STRLEN_BUF_T - space_sz, line + INDEX);
+
+	ANSI_RESET();
+	putchar(' ');
+}
+
+void display_text(f_mtdt* Buff)
+{
+	// Previous lines. If scrolled. Only beginning is shown.
+	for(buff_t line = scroll_lines(Buff); line < Buff->lines; line++)
+	{
+		print_line_num(line);
+		printf("%.*s", TXT_X - CUR_SZ, Buff->text[line]);
+
+		if(Buff->line_len[line] > TXT_X)
+		{
+			// Just because there is place for the cursor and LF isn't printed.
+			puts(" ");
+		}
+
+	}
+	print_line_num(Buff->lines);
+
+	// Current line. Can be scrolled etc.
+	if(ACT_LN_LEN < TXT_X)
+	{
+		// There is small amount of chars. X-scroll isn't required.
+		printf("%s", ACT_LN);
+	}
+	// Chars won't fits in the horizontal space.
+	else if((ACT_LN_LEN - TXT_X) >= Buff->cusr_x)
+	{
+		// Render only right part of the line.
+		scroll_line_x(Buff);
+	}
+	else
+	{
+		// Render only left part of the line. Cursor can scrolled.
+		printf("%.*s", TXT_X - CUR_SZ, ACT_LN);
+	}
+}
+
+void fill(f_mtdt* Buff)
+{
+	if(Buff->lines < TXT_Y)
+	{
+		// Fill the empty area below the text to position the lower bar.
+		for(buff_t line = Buff->lines + INDEX; line < TXT_Y; line++)
 		{
 			putchar(LF);
 		}
 	}
+	// Else the bar will by positioned by the text.
 }
 
-void setcurspos(buf dt)
+void lower_bar(void)
 {
-	SAVECURSPOS();
-	if(dt.lns < TXT_AREA - CURRENT)
+	ANSI_BOLD();
+	printf("\n%s", LBAR_STR);
+	ANSI_RESET();
+}
+
+void window(f_mtdt* Buff)
+{
+	ANSI_RESET();
+
+	upper_bar(Buff);
+
+	display_text(Buff);
+	fill(Buff);
+
+	lower_bar();
+	set_cur_pos(Buff);
+}
+
+void set_cur_pos(f_mtdt* Buff)
+{
+	// Case when all lines fits in the window.
+	buff_t mv_up = 0;
+
+	// Cursor is pushed right by the lower bar. Move it back.
+	ANSI_CUR_LEFT((term_t) strlen(LBAR_STR));
+
+	// Lower left side. Will be used to position the cursor and flush each line.
+	ANSI_SAVE_CUR_POS();
+
+	if(ACT_LN_LEN < TXT_X)
 	{
-		if(strlen(CURRLN) < termgetsz(dt, 'X') - strlen(DOTS))
-		{
-			CURSRIGHT((term_t) (strlen(CURRLN) + strlen(DOTS)));
-		}
-		else
-		{
-			CURSRIGHT((term_t) termgetsz(dt, 'X') - CURRENT);
-		}
-		CURSUP(TXT_AREA - dt.lns - CURRENT);
+		// No horizontal scrolling.
+		ANSI_CUR_RIGHT(STRLEN_BUF_T + ACT_LN_LEN - Buff->cusr_x);
 	}
-	// Else by default on the bottom && auto-positioned.
+	else if((ACT_LN_LEN - TXT_X) >= Buff->cusr_x)
+	{
+		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
+		ANSI_CUR_RIGHT(get_term_sz('X', Buff) - CUR_SZ);
+	}
+	else
+	{
+		// Text is scrolled horizontally to the start. Cursor can be moved.
+		ANSI_CUR_RIGHT(STRLEN_BUF_T + ACT_LN_LEN - Buff->cusr_x);
+	}
+
+	if(Buff->lines < TXT_Y)
+	{
+		// Scrolled so cursor is moved only 1 line above.
+		mv_up = TXT_Y - (Buff->lines + INDEX);
+	}
+	ANSI_CUR_UP(LBAR_SZ + mv_up);
 }
 
