@@ -57,15 +57,16 @@ void flush_window(f_mtdt* Buff)
 
 void upper_bar(f_mtdt* Buff)
 {
-	const char* title    = "fiflo: \0";
-	const char* dots     = "[...]\0";
-	const _Bool space_sz = 1;
+	const char* logo_half = "|`` \0"; // Lower and upper parts are the same.
+	const char* dots      = "[...]\0";
+	const _Bool space_sz  = 1;
 
 	buff_t indicator_width =
-	(buff_t) (get_term_sz(Buff, 'X') - (2 * space_sz) - strlen(Buff->status));
+	(buff_t) (get_term_sz(Buff, 'X') - (2 * space_sz)
+	- (strlen(logo_half) + strlen(Buff->status)));
 
 	term_t fname_max =
-	get_term_sz(Buff, 'X') - (term_t) (strlen(title) + strlen(dots));
+	get_term_sz(Buff, 'X') - (term_t) (strlen(logo_half) + strlen(dots));
 
 	ANSI_INVERT();
 
@@ -73,21 +74,23 @@ void upper_bar(f_mtdt* Buff)
 	upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
-	printf("\r%s", title);
+	printf("\r%s", logo_half);
 
 	if(strlen(Buff->fname) <= fname_max)
 	{
 		// Whole filename will be displayed.
-		printf("%s\n", Buff->fname);
+		printf("%s%*s\n", Buff->fname, get_term_sz(Buff, 'X')
+		- (term_t) (strlen(logo_half) + strlen(Buff->fname)), " ");
 	}
 	else
 	{
 		// Filename will be visually shrinked and terminated by dots.
 		printf("%.*s%s\n", fname_max, Buff->fname, dots);
 	}
-	printf("%*s", (buff_t) strlen(Buff->status), Buff->status);
 
 	// The lower part with the "chars in the current line" indicator.
+	printf("%s%*s", logo_half, (buff_t) strlen(Buff->status), Buff->status);
+
 	if((ACT_LN_LEN < TXT_X) || ((ACT_LN_LEN - Buff->cusr_x) < TXT_X))
 	{
 		printf("%*d^ \n", indicator_width,
@@ -97,6 +100,16 @@ void upper_bar(f_mtdt* Buff)
 	{
 		printf("%*d^ \n", indicator_width, ACT_LN_LEN - Buff->cusr_x);
 	}
+	ANSI_RESET();
+}
+
+void lower_bar(f_mtdt* Buff)
+{
+	ANSI_INVERT();
+
+	printf("\n%s%*s",
+	LBAR_STR, get_term_sz(Buff, 'X') - TERM_X_MIN + SPACE_SZ, " ");
+
 	ANSI_RESET();
 }
 
@@ -195,13 +208,6 @@ void fill(f_mtdt* Buff)
 	// Else the bar will by positioned by the text.
 }
 
-void lower_bar(void)
-{
-	ANSI_INVERT();
-	printf("\n%s", LBAR_STR);
-	ANSI_RESET();
-}
-
 void window(f_mtdt* Buff)
 {
 	ANSI_RESET();
@@ -211,7 +217,7 @@ void window(f_mtdt* Buff)
 	display_text(Buff);
 	fill(Buff);
 
-	lower_bar();
+	lower_bar(Buff);
 	set_cur_pos(Buff);
 }
 
@@ -221,7 +227,7 @@ void set_cur_pos(f_mtdt* Buff)
 	term_t mv_up = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
-	ANSI_CUR_LEFT((term_t) strlen(LBAR_STR));
+	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
 
 	// Lower left side. Will be used to position the cursor and flush each line.
 	ANSI_SAVE_CUR_POS();

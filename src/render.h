@@ -8,6 +8,7 @@
 // Some semantic macros.
 #define CUR_SZ   1
 #define SLASH_SZ 1
+#define SPACE_SZ 1
 
 #define UBAR_SZ  2
 #define LBAR_SZ  1 // Must be equal 1 otherwise will break rendering a little.
@@ -18,7 +19,7 @@
 "CTRL^: X - exit; W - save; G/H - cursor; S/Q - render/hide new chars\0"
 
 // Remember to not override the upper bar width.
-#define TERM_X_MIN (term_t) strlen(LBAR_STR)
+#define TERM_X_MIN (term_t) (strlen(LBAR_STR) + SPACE_SZ)
 
 // Sizes of the text area.
 #define TXT_X (term_t) (get_term_sz(Buff, 'X') - STRLEN_BUF_T)
@@ -26,6 +27,7 @@
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
+#define ANSI_BOLD()            printf("\033[%s", "1m")
 #define ANSI_INVERT()          printf("\033[%s", "7m")
 #define ANSI_CLEAN_LN()        printf("\033[%s", "2K")
 #define ANSI_CUR_UP(offset)    printf("\033[%dA", offset)
@@ -44,6 +46,9 @@ void flush_window(f_mtdt* Buff);
 // Renders the upper bar with a filename and indicators.
 void upper_bar(f_mtdt* Buff);
 
+// Renders the lower bar that contains keyboard info.
+void lower_bar(f_mtdt* Buff);
+
 // Scrolls chars. Used when the cursor is in static position.
 void scroll_line_x(f_mtdt* Buff);
 
@@ -58,9 +63,6 @@ void display_text(f_mtdt* Buff);
 
 // Vertical fill between the text and lower bar. If there isn't many lines.
 void fill(f_mtdt* Buff);
-
-// Renders the lower bar that contains keyboard info.
-void lower_bar(void);
 
 // Stupid wrapper for above things.
 void window(f_mtdt* Buff);

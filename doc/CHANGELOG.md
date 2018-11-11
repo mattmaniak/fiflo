@@ -8,7 +8,8 @@ files use git-show or git-log.
 
 ## Versions:
 ### v2.2.0 (WIP):
-- logo added.
+- logo added,
+- inverted color UI,
 
 ### v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,
