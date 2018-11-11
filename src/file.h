@@ -5,14 +5,14 @@
 #include <linux/limits.h>
 
 // keys.h
-extern f_mtdt* text_char(char key, f_mtdt* Buff);
+extern f_mtdt* text_char(f_mtdt* Buff, char key);
 extern f_mtdt* linefeed (f_mtdt* Buff);
 extern f_mtdt* backspace(f_mtdt* Buff);
 extern f_mtdt* ctrl_g   (f_mtdt* Buff);
 extern f_mtdt* ctrl_h   (f_mtdt* Buff);
 
 // Sets the filename. If basename is passed as arg actent path will be added.
-f_mtdt* set_fname(const char* arg, f_mtdt* Buff);
+f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
 
 // Reads the file using "recognize_char".
 f_mtdt* read_file(f_mtdt* Buff);

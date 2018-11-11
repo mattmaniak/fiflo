@@ -1,7 +1,7 @@
 #ifdef __linux__
 #include "fiflo.h" // All typedefs are there.
 
-_Noreturn void free_all_exit(_Bool code, f_mtdt* Buff)
+_Noreturn void free_all_exit(f_mtdt* Buff, _Bool code)
 {
 	for(buff_t line = 0; line <= Buff->lines; line++)
 	{
@@ -25,12 +25,12 @@ void ignore_sig(int sig_num)
 	if(sig_num) {}
 }
 
-void chk_ptr(void* ptr, const char* err_msg, f_mtdt* Buff)
+void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
 {
 	if(!ptr)
 	{
 		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
-		free_all_exit(1, Buff);
+		free_all_exit(Buff, 1);
 	}
 }
 
@@ -87,15 +87,15 @@ char getch(void)
 	return key;
 }
 
-f_mtdt* init(const char* arg, f_mtdt* Buff)
+f_mtdt* init(f_mtdt* Buff, const char* arg)
 {
-	Buff = set_fname(arg, Buff);
+	Buff = set_fname(Buff, arg);
 
 	Buff->text = malloc(sizeof(Buff->text));
-	chk_ptr(Buff->text, "malloc for an array that contains lines\0", Buff);
+	chk_ptr(Buff, Buff->text, "malloc the array with lines\0");
 
 	Buff->line_len = malloc(sizeof(Buff->line_len));
-	chk_ptr(Buff->line_len, "malloc for an array with lines length\0", Buff);
+	chk_ptr(Buff, Buff->line_len, "malloc the array with lines length\0");
 
 	Buff->chars  = 0;
 	Buff->lines  = 0;
@@ -110,9 +110,9 @@ f_mtdt* init(const char* arg, f_mtdt* Buff)
 _Noreturn void run(const char* arg)
 {
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
-	chk_ptr(Buff, "malloc for a file metadata\0", Buff);
+	chk_ptr(Buff, Buff, "malloc the file metadata\0");
 
-	Buff = init(arg, Buff);
+	Buff = init(Buff, arg);
 	Buff = read_file(Buff);
 
 	// Initializer. Equal to the null terminator.
@@ -121,7 +121,7 @@ _Noreturn void run(const char* arg)
 	// Main program loop.
 	for(;;)
 	{
-		Buff = recognize_key(pressed, Buff);
+		Buff = recognize_key(Buff, pressed);
 		window(Buff);
 
 		pressed = getch();
@@ -131,10 +131,9 @@ _Noreturn void run(const char* arg)
 
 int main(int argc, char** argv)
 {
-	// Catch CTRL^Z, CTRL^C and CTRL^\.
-	if(signal(SIGTSTP, ignore_sig) == SIG_ERR
-	|| signal(SIGINT,  ignore_sig) == SIG_ERR
-	|| signal(SIGQUIT, ignore_sig) == SIG_ERR)
+	if(signal(SIGTSTP, ignore_sig) == SIG_ERR  // CTRL^Z
+	|| signal(SIGINT,  ignore_sig) == SIG_ERR  // CTRL^C
+	|| signal(SIGQUIT, ignore_sig) == SIG_ERR) /* CTRL^\ */
 	{
 		fputs("Can't catch one of the signals, exit(1)\n", stderr);
 		exit(1);

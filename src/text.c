@@ -1,23 +1,23 @@
 #include "fiflo.h"
 #include "text.h"
 
-f_mtdt* recognize_key(char key, f_mtdt* Buff)
+f_mtdt* recognize_key(f_mtdt* Buff, char key)
 {
 	switch(key)
 	{
 		case NEG:
 			fputs("Pipe isn't supported, exit(1).\n", stderr);
-			free_all_exit(1, Buff);
+			free_all_exit(Buff, 1);
 
 		default:
-			Buff = text_char(key, Buff);
+			Buff = text_char(Buff, key);
 			break;
 
 		case HT__CTRL_I:
 			// Currently converts the tab to two spaces.
 			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
 			{
-				Buff = text_char(' ', Buff);
+				Buff = text_char(Buff, ' ');
 			}
 			break;
 
@@ -26,7 +26,7 @@ f_mtdt* recognize_key(char key, f_mtdt* Buff)
 			break;
 
 		case CAN__CTRL_X:
-			free_all_exit(0, Buff);
+			free_all_exit(Buff, 1);
 
 		case ETB__CTRL_W:
 			save_file(Buff);
@@ -42,7 +42,7 @@ f_mtdt* recognize_key(char key, f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* text_char(char key, f_mtdt* Buff)
+f_mtdt* text_char(f_mtdt* Buff, char key)
 {
 	/* Only printable chars will be added. Combinations that aren't specified
 	above will be omited. Set "if(key)" to enable them. */
@@ -59,7 +59,7 @@ f_mtdt* text_char(char key, f_mtdt* Buff)
 			of the text will be shifted to the right side. */
 			if(Buff->cusr_x > 0)
 			{
-				Buff = shift_text_horizonally('r', Buff);
+				Buff = shift_text_horizonally(Buff, 'r');
 			}
 			ACT_LN[ACT_LN_LEN - Buff->cusr_x - NUL_SZ] = key;
 			ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
@@ -131,7 +131,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 		// If the cursor at the maximum left position, char won't be deleted.
 		if(Buff->cusr_x != ACT_LN_LEN)
 		{
-			Buff = shift_text_horizonally('l', Buff);
+			Buff = shift_text_horizonally(Buff, 'l');
 			Buff = shrink_act_line(Buff);
 
 			ACT_LN_LEN--;
@@ -203,7 +203,7 @@ buff_t ctrl_h(buff_t cusr_x)
 	return cusr_x;
 }
 
-f_mtdt* shift_text_horizonally(char direction, f_mtdt* Buff)
+f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 {
 	switch(direction)
 	{

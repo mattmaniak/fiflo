@@ -13,7 +13,7 @@ f_mtdt* extend_act_line(f_mtdt* Buff)
 		// If simply there is even more chars, append the new memblock.
 		ACT_LN = realloc(ACT_LN, ((ACT_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(ACT_LN, "extend the memblock for the current line\0", Buff);
+	chk_ptr(Buff, ACT_LN, "extend the memblock for the current line\0");
 
 	return Buff;
 }
@@ -29,7 +29,7 @@ f_mtdt* extend_prev_line(f_mtdt* Buff)
 	{
 		PREV_LN = realloc(PREV_LN, ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(PREV_LN, "extend the memblock for the previous line\0", Buff);
+	chk_ptr(Buff, PREV_LN, "extend the memblock for the previous line\0");
 
 	return Buff;
 }
@@ -53,7 +53,7 @@ f_mtdt* shrink_act_line(f_mtdt* Buff)
 		// Remove the newest memblock because isn't needed now.
 		ACT_LN = realloc(ACT_LN, (ACT_LN_LEN / MEMBLK) * MEMBLK);
 	}
-	chk_ptr(ACT_LN, "shrink the memblock with the current line\0", Buff);
+	chk_ptr(Buff, ACT_LN, "shrink the memblock with the current line\0");
 
 	return Buff;
 }
@@ -75,7 +75,7 @@ f_mtdt* shrink_prev_line(f_mtdt* Buff)
 		// Set the size of some MEMBLKs.
 		PREV_LN = realloc(PREV_LN, ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(PREV_LN, "shrink the memblock with the previous line\0", Buff);
+	chk_ptr(Buff, PREV_LN, "shrink the memblock with the previous line\0");
 
 	return Buff;
 }
@@ -86,17 +86,17 @@ f_mtdt* extend_lines_array(f_mtdt* Buff)
 	Buff->text = realloc(Buff->text,
 	(Buff->lines + INDEX) * sizeof(Buff->text));
 
-	chk_ptr(Buff->text, "extend the array with lines\0", Buff);
+	chk_ptr(Buff, Buff->text, "extend the array with lines\0");
 
 	// Enhance the array that contains lines length indicators.
 	Buff->line_len = realloc(Buff->line_len,
 	(Buff->lines + INDEX) * sizeof(buff_t));
 
-	chk_ptr(Buff->line_len, "extend the array with lines length\0", Buff);
+	chk_ptr(Buff, Buff->line_len, "extend the array with lines length\0");
 
 	// The new line is allocated with only 4 or 8 bytes bytes.
 	ACT_LN = malloc(INIT_MEMBLK);
-	chk_ptr(ACT_LN, "malloc the new line\0", Buff);
+	chk_ptr(Buff, ACT_LN, "malloc the new line\0");
 
 	return Buff;
 }
@@ -106,12 +106,12 @@ f_mtdt* shrink_lines_array(f_mtdt* Buff)
 	Buff->text = realloc(Buff->text,
 	(Buff->lines + INDEX) * sizeof(Buff->text));
 
-	chk_ptr(Buff->text, "shrink the array with lines\0", Buff);
+	chk_ptr(Buff, Buff->text, "shrink the array with lines\0");
 
 	Buff->line_len = realloc(Buff->line_len,
 	(Buff->lines + INDEX) * sizeof(buff_t));
 
-	chk_ptr(Buff->line_len, "shrink the array with lines length\0", Buff);
+	chk_ptr(Buff, Buff->line_len, "shrink the array with lines length\0");
 
 	return Buff;
 }

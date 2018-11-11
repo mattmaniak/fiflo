@@ -56,10 +56,10 @@ extern f_mtdt* shrink_lines_array(f_mtdt* Buff);
 extern f_mtdt* shrink_prev_line  (f_mtdt* Buff);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
-f_mtdt* recognize_key(char key, f_mtdt* Buff);
+f_mtdt* recognize_key(f_mtdt* Buff, char key);
 
 // Adds char when the pressed key is a printable one.
-f_mtdt* text_char(char key, f_mtdt* Buff);
+f_mtdt* text_char(f_mtdt* Buff, char key);
 
 // Initialize the new line.
 f_mtdt* linefeed(f_mtdt* Buff);
@@ -74,7 +74,7 @@ f_mtdt* ctrl_g(f_mtdt* Buff);
 buff_t ctrl_h(buff_t cusr_x);
 
 // Moves the text when the cursor is moved left and char is pressed.
-f_mtdt* shift_text_horizonally(char direction, f_mtdt* Buff);
+f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction);
 
 #endif
 

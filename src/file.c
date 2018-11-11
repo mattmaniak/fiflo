@@ -1,40 +1,40 @@
 #include "fiflo.h"
 #include "file.h"
 
-f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
+f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 {
 	const _Bool slash_sz = 1;
 
-	if(arg[strlen(arg) - NUL_SZ] == '/')
+	if(passed[strlen(passed) - NUL_SZ] == '/')
 	{
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
-		free_all_exit(1, Buff);
+		free_all_exit(Buff, 1);
 	}
 
 	// Is the absolute path.
-	if(arg[0] == '/')
+	if(passed[0] == '/')
 	{
-		if((strlen(arg) + NUL_SZ) > PATH_MAX)
+		if((strlen(passed) + NUL_SZ) > PATH_MAX)
 		{
 			fputs("The passed filename is too long, exit(1).\n", stderr);
-			free_all_exit(1, Buff);
+			free_all_exit(Buff, 1);
 		}
-		strncpy(Buff->fname, arg, PATH_MAX);
+		strncpy(Buff->fname, passed, PATH_MAX);
 	}
 	// Relative path or the basename.
 	else
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
-		chk_ptr(cw_dir, "malloc for the current path\0", Buff);
+		chk_ptr(Buff, "malloc for the current path\0", cw_dir);
 
-		chk_ptr((getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz)),
-		"get current path. Too long\0", Buff);
+		chk_ptr(Buff, "get current path. Too long\0",
+		getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz));
 
 		// Exceeded 4096 chars.
-		if((strlen(cw_dir) + strlen(arg)) >= PATH_MAX)
+		if((strlen(cw_dir) + strlen(passed)) >= PATH_MAX)
 		{
 			fputs("Passed filename is too long, exit(1).\n", stderr);
-			free_all_exit(1, Buff);
+			free_all_exit(Buff, 1);
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
@@ -43,9 +43,9 @@ f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
 		Buff->fname[strlen(cw_dir)] = '/';
 
 		// Append the basename.
-		for(uint16_t pos = 0; pos < strlen(arg); pos++)
+		for(uint16_t pos = 0; pos < strlen(passed); pos++)
 		{
-			strcpy(&Buff->fname[strlen(cw_dir) + slash_sz + pos], &arg[pos]);
+			strcpy(&Buff->fname[strlen(cw_dir) + slash_sz + pos], &passed[pos]);
 		}
 		free(cw_dir);
 		cw_dir = NULL;
@@ -66,11 +66,11 @@ f_mtdt* read_file(f_mtdt* Buff)
 			if(ch == '\t')
 			{
 				ch = ' ';
-				Buff = text_char(ch, Buff);
+				Buff = text_char(Buff, ch);
 			}
 
 			// Read all chars before end of file.
-			Buff = text_char(ch, Buff);
+			Buff = text_char(Buff, ch);
 		}
 		fclose(Buff->text_f);
 		SET_STATUS("read the file\0");
@@ -94,7 +94,7 @@ void save_file(f_mtdt* Buff)
 		if(create == not_created)
 		{
 			fputs("Failed to create the new file, exit(1).\n", stderr);
-			free_all_exit(1, Buff);
+			free_all_exit(Buff, 1);
 		}
 	}
 	Buff->text_f = fopen(Buff->fname, "w");

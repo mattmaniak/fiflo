@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "render.h"
 
-term_t get_term_sz(char axis, f_mtdt* Buff)
+term_t get_term_sz(f_mtdt* Buff, char axis)
 {
 	const _Bool   line_y_sz = 1;
 	const uint8_t y_min     = BARS_SZ + line_y_sz;
@@ -14,19 +14,19 @@ term_t get_term_sz(char axis, f_mtdt* Buff)
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &term) == -1)
 	{
 		fputs("Can't get the terminal size, exit(1).\n", stderr);
-		free_all_exit(1, Buff);
+		free_all_exit(Buff, 1);
 	}
 
 	// Terminal size check.
 	if(term.ws_col < TERM_X_MIN || term.ws_row < y_min)
 	{
 		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", TERM_X_MIN, y_min);
-		free_all_exit(1, Buff);
+		free_all_exit(Buff, 1);
 	}
 	else if(term.ws_col > sz_max || term.ws_row > sz_max)
 	{
 		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
-		free_all_exit(1, Buff);
+		free_all_exit(Buff, 1);
 	}
 
 	switch(axis)
@@ -47,7 +47,7 @@ void flush_window(f_mtdt* Buff)
 	ANSI_CLEAN_LN();
 
 	// Then from move up and clean the next lines till the window ends.
-	for(term_t y = 0; y < (get_term_sz('Y', Buff) - LBAR_SZ); y++)
+	for(term_t y = 0; y < (get_term_sz(Buff, 'Y') - LBAR_SZ); y++)
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LN();
@@ -62,12 +62,12 @@ void upper_bar(f_mtdt* Buff)
 	const _Bool space_sz = 1;
 
 	buff_t indicator_width =
-	(buff_t) (get_term_sz('X', Buff) - (2 * space_sz) - strlen(Buff->status));
+	(buff_t) (get_term_sz(Buff, 'X') - (2 * space_sz) - strlen(Buff->status));
 
 	term_t fname_max =
-	get_term_sz('X', Buff) - (term_t) (strlen(title) + strlen(dots));
+	get_term_sz(Buff, 'X') - (term_t) (strlen(title) + strlen(dots));
 
-	ANSI_BOLD();
+	ANSI_INVERT();
 
 	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
 	upper bar. Adding the carriage return before it fixes the problems. Just
@@ -91,7 +91,7 @@ void upper_bar(f_mtdt* Buff)
 	if((ACT_LN_LEN < TXT_X) || ((ACT_LN_LEN - Buff->cusr_x) < TXT_X))
 	{
 		printf("%*d^ \n", indicator_width,
-		get_term_sz('X', Buff) - STRLEN_BUF_T - space_sz);
+		get_term_sz(Buff, 'X') - STRLEN_BUF_T - space_sz);
 	}
 	else if((ACT_LN_LEN - Buff->cusr_x) >= TXT_X)
 	{
@@ -139,7 +139,7 @@ void print_line_num(buff_t line)
 {
 	const _Bool space_sz = 1;
 
-	ANSI_BOLD();
+	ANSI_INVERT();
 	printf("%*d", STRLEN_BUF_T - space_sz, line + INDEX);
 
 	ANSI_RESET();
@@ -197,7 +197,7 @@ void fill(f_mtdt* Buff)
 
 void lower_bar(void)
 {
-	ANSI_BOLD();
+	ANSI_INVERT();
 	printf("\n%s", LBAR_STR);
 	ANSI_RESET();
 }
@@ -234,7 +234,7 @@ void set_cur_pos(f_mtdt* Buff)
 	else if((ACT_LN_LEN - TXT_X) >= Buff->cusr_x)
 	{
 		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
-		ANSI_CUR_RIGHT(get_term_sz('X', Buff) - CUR_SZ);
+		ANSI_CUR_RIGHT(get_term_sz(Buff, 'X') - CUR_SZ);
 	}
 	else
 	{
@@ -245,7 +245,7 @@ void set_cur_pos(f_mtdt* Buff)
 	if(Buff->lines < TXT_Y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
-		mv_up = TXT_Y - (Buff->lines + INDEX);
+		mv_up = TXT_Y - (term_t) (Buff->lines + INDEX);
 	}
 	ANSI_CUR_UP(LBAR_SZ + mv_up);
 }

@@ -54,24 +54,24 @@ f_mtdt;
 #define PREV_LN_LEN Buff->line_len[Buff->lines - 1]
 
 // file.h
-extern f_mtdt* set_fname(const char* arg, f_mtdt* Buff);
+extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
 extern f_mtdt* read_file(f_mtdt* Buff);
 
 // text.h
-extern f_mtdt* recognize_key(char key, f_mtdt* Buff);
+extern f_mtdt* recognize_key(f_mtdt* Buff, char key);
 
 // render.h
 extern void flush_window(f_mtdt* Buff);
 extern void window      (f_mtdt* Buff);
 
 // Frees everything and exits with status code.
-_Noreturn void free_all_exit(_Bool code, f_mtdt* Buff);
+_Noreturn void free_all_exit(f_mtdt* Buff, _Bool code);
 
 // Signal catcher that does nothing.
 void ignore_sig(int sig_num);
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
-void chk_ptr(void* ptr, const char* err_msg, f_mtdt* Buff);
+void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 
 // Program parameters, eg. "--help".
 void options(const char* arg);
@@ -80,7 +80,7 @@ void options(const char* arg);
 char getch(void);
 
 // Initializes all Buff structure members.
-f_mtdt* init(const char* arg, f_mtdt* Buff);
+f_mtdt* init(f_mtdt* Buff, const char* arg);
 
 // Some initializers and the main program loop.
 _Noreturn void run(const char* arg);

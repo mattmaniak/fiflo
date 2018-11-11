@@ -27,7 +27,7 @@ git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
 sudo make install
 ```
-After that there is a possibility to run it directly
+After that, there is a possibility to run it directly.
 ```
 fiflo
 ```
@@ -37,7 +37,7 @@ fiflo
 sudo make uninstall
 ```
 
-## Delete object files and the binary
+## Delete object files and the binary.
 ```
 make clean
 ```
