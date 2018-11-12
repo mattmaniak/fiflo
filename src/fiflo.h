@@ -16,7 +16,7 @@
 #define NUL_SZ 1
 #define LF     10
 
-#define BUF_MAX     (UINT_MAX / 256) // (16 MB - 1) buffer limit.
+#define BUF_MAX (UINT_MAX / 256) // (16 MB - 1) buffer limit.
 
 /* Because strlen("16777216") = 8. "+ 1" is the right padding. Setting a value
 like 1234 won't be good idea. */
@@ -30,9 +30,7 @@ typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 #pragma pack(push, 4)
 typedef struct
 {
-	// File descriptors.
 	char    fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
-	FILE*   text_f;             // File handle.
 
 	// File's content and some indicators.
 	char**  text;               // Text buffer. Eg. text[lines][chars].
@@ -41,7 +39,8 @@ typedef struct
 	buff_t  chars;              // All chars index.
 
 	// Editing feedback.
-	buff_t  cusr_x;             // User's cursor position in the reversed X-axis.
+	buff_t  cusr_x;             // User's cursor position in the reversed X.
+	buff_t  cusr_y;             // As above but Y-axis.
 	char    status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 f_mtdt;

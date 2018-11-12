@@ -56,11 +56,11 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 f_mtdt* read_file(f_mtdt* Buff)
 {
 	char ch;
-	Buff->text_f = fopen(Buff->fname, "r");
+	FILE* textfile = fopen(Buff->fname, "r");
 
-	if(Buff->text_f)
+	if(textfile)
 	{
-		while((ch = (char) getc(Buff->text_f)) != EOF)
+		while((ch = (char) getc(textfile)) != EOF)
 		{
 			// Temponary and ugly tab to two spaces conversion.
 			if(ch == '\t')
@@ -72,7 +72,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 			// Read all chars before end of file.
 			Buff = text_char(Buff, ch);
 		}
-		fclose(Buff->text_f);
+		fclose(textfile);
 		SET_STATUS("read the file\0");
 	}
 	else
@@ -97,9 +97,9 @@ void save_file(f_mtdt* Buff)
 			free_all_exit(Buff, 1);
 		}
 	}
-	Buff->text_f = fopen(Buff->fname, "w");
+	FILE* textfile = fopen(Buff->fname, "w");
 
-	if(Buff->text_f)
+	if(textfile)
 	{
 		// Prevents blinking a little.
 		window(Buff);
@@ -111,10 +111,10 @@ void save_file(f_mtdt* Buff)
 			MSan because of there is more memory allocated than is needed. */
 			for(buff_t ch = 0; ch < Buff->line_len[line]; ch++)
 			{
-				fputc(Buff->text[line][ch], Buff->text_f);
+				fputc(Buff->text[line][ch], textfile);
 			}
 		}
-		fclose(Buff->text_f);
+		fclose(textfile);
 
 		SET_STATUS("saved\0");
 

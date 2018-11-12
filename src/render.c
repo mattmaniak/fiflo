@@ -59,16 +59,15 @@ void upper_bar(f_mtdt* Buff)
 {
 	const char* logo_half = "|`` \0"; // Lower and upper parts are the same.
 	const char* dots      = "[...]\0";
-	const _Bool space_sz  = 1;
 
 	buff_t indicator_width =
-	(buff_t) (get_term_sz(Buff, 'X') - (2 * space_sz)
+	(buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
 	- (strlen(logo_half) + strlen(Buff->status)));
 
 	term_t fname_max =
 	get_term_sz(Buff, 'X') - (term_t) (strlen(logo_half) + strlen(dots));
 
-	ANSI_INVERT();
+	ANSI_BOLD();
 
 	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
 	upper bar. Adding the carriage return before it fixes the problems. Just
@@ -79,8 +78,7 @@ void upper_bar(f_mtdt* Buff)
 	if(strlen(Buff->fname) <= fname_max)
 	{
 		// Whole filename will be displayed.
-		printf("%s%*s\n", Buff->fname, get_term_sz(Buff, 'X')
-		- (term_t) (strlen(logo_half) + strlen(Buff->fname)), " ");
+		printf("%s\n", Buff->fname);
 	}
 	else
 	{
@@ -93,8 +91,8 @@ void upper_bar(f_mtdt* Buff)
 
 	if((ACT_LN_LEN < TXT_X) || ((ACT_LN_LEN - Buff->cusr_x) < TXT_X))
 	{
-		printf("%*d^ \n", indicator_width,
-		get_term_sz(Buff, 'X') - STRLEN_BUF_T - space_sz);
+		printf("%*d^\n", indicator_width,
+		get_term_sz(Buff, 'X') - STRLEN_BUF_T - SPACE_SZ);
 	}
 	else if((ACT_LN_LEN - Buff->cusr_x) >= TXT_X)
 	{
@@ -103,12 +101,11 @@ void upper_bar(f_mtdt* Buff)
 	ANSI_RESET();
 }
 
-void lower_bar(f_mtdt* Buff)
+void lower_bar(void)
 {
-	ANSI_INVERT();
+	ANSI_BOLD();
 
-	printf("\n%s%*s",
-	LBAR_STR, get_term_sz(Buff, 'X') - TERM_X_MIN + SPACE_SZ, " ");
+	printf("\n%s", LBAR_STR);
 
 	ANSI_RESET();
 }
@@ -150,10 +147,8 @@ buff_t scroll_lines(f_mtdt* Buff)
 
 void print_line_num(buff_t line)
 {
-	const _Bool space_sz = 1;
-
-	ANSI_INVERT();
-	printf("%*d", STRLEN_BUF_T - space_sz, line + INDEX);
+	ANSI_BOLD();
+	printf("%*d", STRLEN_BUF_T - SPACE_SZ, line + INDEX);
 
 	ANSI_RESET();
 	putchar(' ');
@@ -217,7 +212,7 @@ void window(f_mtdt* Buff)
 	display_text(Buff);
 	fill(Buff);
 
-	lower_bar(Buff);
+	lower_bar();
 	set_cur_pos(Buff);
 }
 
@@ -251,7 +246,7 @@ void set_cur_pos(f_mtdt* Buff)
 	if(Buff->lines < TXT_Y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
-		mv_up = TXT_Y - (term_t) (Buff->lines + INDEX);
+		mv_up = TXT_Y - (term_t) (Buff->lines + INDEX - Buff->cusr_y);
 	}
 	ANSI_CUR_UP(LBAR_SZ + mv_up);
 }

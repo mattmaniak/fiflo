@@ -38,7 +38,17 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 
 		case BS__CTRL_H:
 			Buff->cusr_x = ctrl_h(Buff->cusr_x);
+			break;
+
+		case EM__CTRL_Y:
+			Buff = ctrl_y(Buff);
+			break;
+
+		case SOT__CTRL_B:
+			Buff = ctrl_b(Buff);
 	}
+	// DEBUG
+	printf("\rlast: %d cusr_x: %d cusr_y: %d\n", key, Buff->cusr_x, Buff->cusr_y);
 	return Buff;
 }
 
@@ -201,6 +211,28 @@ buff_t ctrl_h(buff_t cusr_x)
 		cusr_x--;
 	}
 	return cusr_x;
+}
+
+f_mtdt* ctrl_y(f_mtdt* Buff)
+{
+	if(Buff->cusr_y < Buff->lines)
+	{
+		// Move the cursor up.
+		Buff->cusr_y++;
+		Buff->cusr_x = 0;
+	}
+	return Buff;
+}
+
+f_mtdt* ctrl_b(f_mtdt* Buff)
+{
+	if(Buff->cusr_y > 0)
+	{
+		// Move the cursor down.
+		Buff->cusr_y--;
+		Buff->cusr_x = 0;
+	}
+	return Buff;
 }
 
 f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)

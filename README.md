@@ -46,12 +46,13 @@ make clean
 ```
 make address
 ```
-Warning! The program will consume much more memory.
+Warning! The program will consume much more memory. Also it will be slower.
 
 ## Link MemorySanitizer (only with clang)
 ```
 make memory
 ```
+Causes 1.5-2.5x slowdown.
 
 ## FAQ
 How can I contribute?

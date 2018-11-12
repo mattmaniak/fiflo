@@ -73,6 +73,12 @@ f_mtdt* ctrl_g(f_mtdt* Buff);
 // Moves the cursor right.
 buff_t ctrl_h(buff_t cusr_x);
 
+// Moves the cursor up.
+f_mtdt* ctrl_y(f_mtdt* Buff);
+
+// Moves the cursor down.
+f_mtdt* ctrl_b(f_mtdt* Buff);
+
 // Moves the text when the cursor is moved left and char is pressed.
 f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction);
 

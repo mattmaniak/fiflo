@@ -100,6 +100,7 @@ f_mtdt* init(f_mtdt* Buff, const char* arg)
 	Buff->chars  = 0;
 	Buff->lines  = 0;
 	Buff->cusr_x = 0;
+	Buff->cusr_y = 0;
 
 	ACT_LN_LEN = 0;
 	ACT_LN = malloc(sizeof(Buff->text));

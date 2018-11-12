@@ -19,7 +19,7 @@
 "CTRL^: X - exit; W - save; G/H - cursor; S/Q - render/hide new chars\0"
 
 // Remember to not override the upper bar width.
-#define TERM_X_MIN (term_t) (strlen(LBAR_STR) + SPACE_SZ)
+#define TERM_X_MIN (term_t) strlen(LBAR_STR)
 
 // Sizes of the text area.
 #define TXT_X (term_t) (get_term_sz(Buff, 'X') - STRLEN_BUF_T)
@@ -27,8 +27,9 @@
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
+
+// If you want to change to inverted bars' colors, set "1m" to "7m".
 #define ANSI_BOLD()            printf("\033[%s", "1m")
-#define ANSI_INVERT()          printf("\033[%s", "7m")
 #define ANSI_CLEAN_LN()        printf("\033[%s", "2K")
 #define ANSI_CUR_UP(offset)    printf("\033[%dA", offset)
 #define ANSI_CUR_DOWN(offset)  printf("\033[%dB", offset)
@@ -47,7 +48,7 @@ void flush_window(f_mtdt* Buff);
 void upper_bar(f_mtdt* Buff);
 
 // Renders the lower bar that contains keyboard info.
-void lower_bar(f_mtdt* Buff);
+void lower_bar(void);
 
 // Scrolls chars. Used when the cursor is in static position.
 void scroll_line_x(f_mtdt* Buff);
