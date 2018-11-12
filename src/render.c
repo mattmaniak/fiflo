@@ -55,7 +55,7 @@ void flush_window(f_mtdt* Buff)
 	fflush(stdout);
 }
 
-void upper_bar(f_mtdt* Buff)
+void upper_bar(f_mtdt* Buff, ui_mtdt Ui)
 {
 	const char* logo_half = "|`` \0"; // Lower and upper parts are the same.
 	const char* dots      = "[...]\0";
@@ -69,7 +69,7 @@ void upper_bar(f_mtdt* Buff)
 
 	ANSI_BOLD();
 
-	/* Sometimes the empty space of width STRLEN_BUF_T will rendered before the
+	/* Sometimes the empty space of width Ui.line_num_len will rendered before the
 	upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
@@ -89,14 +89,14 @@ void upper_bar(f_mtdt* Buff)
 	// The lower part with the "chars in the current line" indicator.
 	printf("%s%*s", logo_half, (buff_t) strlen(Buff->status), Buff->status);
 
-	if((ACT_LN_LEN < TXT_X) || ((ACT_LN_LEN - Buff->cusr_x) < TXT_X))
+	if((ACT_LN_LEN < Ui.text_x) || ((ACT_LN_LEN - Buff->cusr_x) < Ui.text_x))
 	{
 		printf("%*d^\n", indicator_width,
-		get_term_sz(Buff, 'X') - STRLEN_BUF_T - SPACE_SZ);
+		get_term_sz(Buff, 'X') - Ui.line_num_len - SPACE_SZ);
 	}
-	else if((ACT_LN_LEN - Buff->cusr_x) >= TXT_X)
+	else if((ACT_LN_LEN - Buff->cusr_x) >= Ui.text_x)
 	{
-		printf("%*d^ \n", indicator_width, ACT_LN_LEN - Buff->cusr_x);
+		printf("%*d^\n", indicator_width, ACT_LN_LEN - Buff->cusr_x);
 	}
 	ANSI_RESET();
 }
@@ -110,7 +110,7 @@ void lower_bar(void)
 	ANSI_RESET();
 }
 
-void scroll_line_x(f_mtdt* Buff)
+void scroll_line_x(f_mtdt* Buff, ui_mtdt Ui)
 {
 	_Bool mv_right = 0;
 
@@ -122,7 +122,7 @@ void scroll_line_x(f_mtdt* Buff)
 	buff_t text_offset = ACT_LN_LEN - Buff->cusr_x - mv_right;
 
 	// Text will be scrolled. Not cursor.
-	for (buff_t x = text_offset + CUR_SZ - TXT_X; x < text_offset; x++)
+	for (buff_t x = text_offset + CUR_SZ - Ui.text_x; x < text_offset; x++)
 	{
 		putchar(ACT_LN[x]);
 	}
@@ -145,48 +145,48 @@ buff_t scroll_lines(f_mtdt* Buff)
 	return scrolled;
 }
 
-void print_line_num(buff_t line)
+void print_line_num(buff_t line, uint8_t line_num_len)
 {
 	ANSI_BOLD();
-	printf("%*d", STRLEN_BUF_T - SPACE_SZ, line + INDEX);
+	printf("%*d", line_num_len - SPACE_SZ, line + INDEX);
 
 	ANSI_RESET();
 	putchar(' ');
 }
 
-void display_text(f_mtdt* Buff)
+void display_text(f_mtdt* Buff, ui_mtdt Ui)
 {
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(buff_t line = scroll_lines(Buff); line < Buff->lines; line++)
 	{
-		print_line_num(line);
-		printf("%.*s", TXT_X - CUR_SZ, Buff->text[line]);
+		print_line_num(line, Ui.line_num_len);
+		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
 
-		if(Buff->line_len[line] > TXT_X)
+		if(Buff->line_len[line] > Ui.text_x)
 		{
 			// Just because there is place for the cursor and LF isn't printed.
 			puts(" ");
 		}
 
 	}
-	print_line_num(Buff->lines);
+	print_line_num(Buff->lines, Ui.line_num_len);
 
 	// Current line. Can be scrolled etc.
-	if(ACT_LN_LEN < TXT_X)
+	if(ACT_LN_LEN < Ui.text_x)
 	{
 		// There is small amount of chars. X-scroll isn't required.
 		printf("%s", ACT_LN);
 	}
 	// Chars won't fits in the horizontal space.
-	else if((ACT_LN_LEN - TXT_X) >= Buff->cusr_x)
+	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
 	{
 		// Render only right part of the line.
-		scroll_line_x(Buff);
+		scroll_line_x(Buff, Ui);
 	}
 	else
 	{
 		// Render only left part of the line. Cursor can scrolled.
-		printf("%.*s", TXT_X - CUR_SZ, ACT_LN);
+		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LN);
 	}
 }
 
@@ -205,18 +205,26 @@ void fill(f_mtdt* Buff)
 
 void window(f_mtdt* Buff)
 {
+	ui_mtdt Ui;
+
+	// Snprinf isn't needed because the format specifier gives a warning.
+	sprintf(Ui.line_num_str, "%u", Buff->lines + INDEX);
+
+	Ui.line_num_len = (uint8_t) strlen(Ui.line_num_str) + SPACE_SZ;
+	Ui.text_x       = get_term_sz(Buff, 'X') - Ui.line_num_len;
+
 	ANSI_RESET();
 
-	upper_bar(Buff);
+	upper_bar(Buff, Ui);
 
-	display_text(Buff);
+	display_text(Buff, Ui);
 	fill(Buff);
 
 	lower_bar();
-	set_cur_pos(Buff);
+	set_cur_pos(Buff, Ui);
 }
 
-void set_cur_pos(f_mtdt* Buff)
+void set_cur_pos(f_mtdt* Buff, ui_mtdt Ui)
 {
 	// Case when all lines fits in the window.
 	term_t mv_up = 0;
@@ -227,20 +235,20 @@ void set_cur_pos(f_mtdt* Buff)
 	// Lower left side. Will be used to position the cursor and flush each line.
 	ANSI_SAVE_CUR_POS();
 
-	if(ACT_LN_LEN < TXT_X)
+	if(ACT_LN_LEN < Ui.text_x)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT(STRLEN_BUF_T + ACT_LN_LEN - Buff->cusr_x);
+		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);
 	}
-	else if((ACT_LN_LEN - TXT_X) >= Buff->cusr_x)
+	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
 	{
-		// Last TXT_X chars are seen. Current line is scrolled, not cursor.
+		// Last Ui.text_x chars are seen. Current line is scrolled, not cursor.
 		ANSI_CUR_RIGHT(get_term_sz(Buff, 'X') - CUR_SZ);
 	}
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		ANSI_CUR_RIGHT(STRLEN_BUF_T + ACT_LN_LEN - Buff->cusr_x);
+		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);
 	}
 
 	if(Buff->lines < TXT_Y)

@@ -3,6 +3,10 @@
 
 f_mtdt* recognize_key(f_mtdt* Buff, char key)
 {
+#ifdef DEBUG
+	printf("key: %d cusr_x: %d cusr_y: %d\n", key, Buff->cusr_x, Buff->cusr_y);
+#endif
+
 	switch(key)
 	{
 		case NEG:
@@ -29,7 +33,7 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 			free_all_exit(Buff, 1);
 
 		case ETB__CTRL_W:
-			save_file(Buff);
+			Buff = save_file(Buff);
 			break;
 
 		case BEL__CTRL_G:
@@ -47,8 +51,6 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 		case SOT__CTRL_B:
 			Buff = ctrl_b(Buff);
 	}
-	// DEBUG
-	printf("\rlast: %d cusr_x: %d cusr_y: %d\n", key, Buff->cusr_x, Buff->cusr_y);
 	return Buff;
 }
 

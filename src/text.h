@@ -45,7 +45,7 @@
 #define SLASH_SZ 1
 
 // file.h
-extern void save_file(f_mtdt* Buff);
+extern f_mtdt* save_file(f_mtdt* Buff);
 
 // memory.h
 extern f_mtdt* extend_act_line   (f_mtdt* Buff);

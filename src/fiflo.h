@@ -11,6 +11,8 @@
 #include <termios.h>
 #include <unistd.h>
 
+#define DEBUG // Uncomment if You want to get variables values et al.
+
 // Some semantic substitutes.
 #define INDEX  1
 #define NUL_SZ 1
@@ -20,7 +22,7 @@
 
 /* Because strlen("16777216") = 8. "+ 1" is the right padding. Setting a value
 like 1234 won't be good idea. */
-#define STRLEN_BUF_T    (8 + 1)
+//#define STRLEN_BUF_T    (8 + 1)
 #define STATUS_MAX      40
 #define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX)
 

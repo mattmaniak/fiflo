@@ -1,6 +1,5 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- dynamic STRLEN_BUF_T width,
 - pre-allocation of a memory, eg. next 16 lines,
 - more user-friendly UI,
 - live filename set,

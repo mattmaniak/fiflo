@@ -82,7 +82,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 	return Buff;
 }
 
-void save_file(f_mtdt* Buff)
+f_mtdt* save_file(f_mtdt* Buff)
 {
 	const int8_t not_created = -1;
 	int          file_status = access(Buff->fname, F_OK);
@@ -124,5 +124,6 @@ void save_file(f_mtdt* Buff)
 	{
 		SET_STATUS("can't write to the file");
 	}
+	return Buff;
 }
 

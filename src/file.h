@@ -18,7 +18,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
 f_mtdt* read_file(f_mtdt* Buff);
 
 // Puts the whole text to the file.
-void save_file(f_mtdt* Buff);
+f_mtdt* save_file(f_mtdt* Buff);
 
 #endif
 
