@@ -41,7 +41,7 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 			break;
 
 		case BS__CTRL_H:
-			Buff->cusr_x = ctrl_h(Buff->cusr_x);
+			Buff = ctrl_h(Buff);
 			break;
 
 		case EM__CTRL_Y:
@@ -60,7 +60,7 @@ f_mtdt* text_char(f_mtdt* Buff, char key)
 	above will be omited. Set "if(key)" to enable them. */
 	if(key == NUL__CTRL_SHIFT_2 || key == LF__CTRL_J || key >= 32)
 	{
-		if(Buff->chars < BUF_MAX)
+		if(Buff->chars < BUFF_MAX)
 		{
 			Buff->chars++;
 			ACT_LN_LEN++;
@@ -105,7 +105,7 @@ f_mtdt* text_char(f_mtdt* Buff, char key)
 
 f_mtdt* linefeed(f_mtdt* Buff)
 {
-	if(Buff->lines < BUF_MAX)
+	if(Buff->lines < BUFF_MAX)
 	{
 		Buff->lines++;
 		Buff = extend_lines_array(Buff);
@@ -201,18 +201,27 @@ f_mtdt* ctrl_g(f_mtdt* Buff)
 		// Move the cursor left.
 		Buff->cusr_x++;
 	}
+	else if(Buff->lines > 0)
+	{
+		Buff->cusr_y++;
+		Buff->cusr_x = 0;
+	}
 	return Buff;
 }
 
-buff_t ctrl_h(buff_t cusr_x)
+f_mtdt* ctrl_h(f_mtdt* Buff)
 {
 	// Cursor can be moved right if is shifted left. 0 - default right position.
-	if(cusr_x > 0)
+	if(Buff->cusr_x > 0)
 	{
 		// Move the cursor right.
-		cusr_x--;
+		Buff->cusr_x--;
 	}
-	return cusr_x;
+	else if(Buff->cusr_y > 0)
+	{
+		Buff->cusr_y--;
+	}
+	return Buff;
 }
 
 f_mtdt* ctrl_y(f_mtdt* Buff)

@@ -35,7 +35,7 @@ $(ODIR)/text.o
 $(ODIR)/%.o: $(SDIR)/%.c $(SDIR)/$(DEPS)
 	@mkdir -p $(ODIR)
 	$(CC) -c -o $@ $< \
-	$(CFLAGS)
+	$(CFLAGS) \
 
 # Builds the binary by linking object files.
 $(TARGET): $(OBJ)

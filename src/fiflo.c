@@ -119,7 +119,7 @@ _Noreturn void run(const char* arg)
 	// Initializer. Equal to the null terminator.
 	char pressed = 0;
 
-	// Main program loop.
+	// The main program loop.
 	for(;;)
 	{
 		Buff = recognize_key(Buff, pressed);

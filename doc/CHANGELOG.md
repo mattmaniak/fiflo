@@ -9,6 +9,7 @@ files use git-show or git-log.
 ## Versions:
 ### v2.2.0 (WIP):
 - logo added,
+- inverted color UI,
 - vertically movable cursor,
 - fluid line numbers indicators.
 

@@ -71,7 +71,7 @@ f_mtdt* backspace(f_mtdt* Buff);
 f_mtdt* ctrl_g(f_mtdt* Buff);
 
 // Moves the cursor right.
-buff_t ctrl_h(buff_t cusr_x);
+f_mtdt* ctrl_h(f_mtdt* Buff);
 
 // Moves the cursor up.
 f_mtdt* ctrl_y(f_mtdt* Buff);

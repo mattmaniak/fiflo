@@ -11,14 +11,14 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define DEBUG // Uncomment if You want to get variables values et al.
+// #define DEBUG // Uncomment if You want to get variables values et al.
 
 // Some semantic substitutes.
 #define INDEX  1
 #define NUL_SZ 1
 #define LF     10
 
-#define BUF_MAX (UINT_MAX / 256) // (16 MB - 1) buffer limit.
+#define BUFF_MAX (UINT_MAX / 256) // (16 MB - 1) buffer limit.
 
 /* Because strlen("16777216") = 8. "+ 1" is the right padding. Setting a value
 like 1234 won't be good idea. */
@@ -49,10 +49,10 @@ f_mtdt;
 #pragma pack(pop)
 
 // Needed to simplify and shorten the code.
-#define ACT_LN      Buff->text[Buff->lines]
-#define ACT_LN_LEN  Buff->line_len[Buff->lines]
-#define PREV_LN     Buff->text[Buff->lines - 1]
-#define PREV_LN_LEN Buff->line_len[Buff->lines - 1]
+#define ACT_LN      Buff->text[Buff->lines - Buff->cusr_y]
+#define ACT_LN_LEN  Buff->line_len[Buff->lines - Buff->cusr_y]
+#define PREV_LN     Buff->text[Buff->lines - Buff->cusr_y - 1]
+#define PREV_LN_LEN Buff->line_len[Buff->lines - Buff->cusr_y - 1]
 
 // file.h
 extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
