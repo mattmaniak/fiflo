@@ -62,7 +62,10 @@ void lower_bar(f_mtdt* Buff);
 void scroll_line_x(f_mtdt* Buff, win_mtdt Ui);
 
 // Returns value of hidden lines.
-buff_t scroll_lines(f_mtdt* Buff);
+buff_t set_start_line(f_mtdt* Buff);
+
+// TODO: COMMENT.
+buff_t set_end_line(f_mtdt* Buff);
 
 // Prints the line number.
 void print_line_num(buff_t line, uint8_t line_num_len);

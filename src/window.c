@@ -136,14 +136,26 @@ void scroll_line_x(f_mtdt* Buff, win_mtdt Ui)
 	}
 }
 
-buff_t scroll_lines(f_mtdt* Buff)
+buff_t set_start_line(f_mtdt* Buff)
 {
 	buff_t scrolled = 0;
 
-	if(Buff->lines >= TXT_Y)
+	if((Buff->lines - Buff->cusr_y) >= TXT_Y)
 	{
 		// Amount of lines to hide in the magic upper area.
-		scrolled = Buff->lines + INDEX - TXT_Y - Buff->cusr_y; // TODO: UNDERFLOW.
+		scrolled = Buff->lines + INDEX - TXT_Y - Buff->cusr_y;
+	}
+	return scrolled;
+}
+
+buff_t set_end_line(f_mtdt* Buff) // TODO: WHEN LINE INDEX IS 0.
+{
+	buff_t scrolled = Buff->lines;
+
+	if((Buff->lines - Buff->cusr_y) >= TXT_Y)
+	{
+		// Amount of lines to hide in the magic upper area.
+		scrolled = Buff->lines - Buff->cusr_y;
 	}
 	return scrolled;
 }
@@ -160,7 +172,7 @@ void print_line_num(buff_t line, uint8_t line_num_len)
 void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 {
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(buff_t line = scroll_lines(Buff);
+	for(buff_t line = set_start_line(Buff);
 	line < Buff->lines - Buff->cusr_y; line++)
 	{
 		print_line_num(line, Ui.line_num_len);
@@ -193,7 +205,7 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 	}
 	// Next lines. If scrolled. Only beginning is shown.
 	for(buff_t line = Buff->lines - Buff->cusr_y + LF_SZ;
-	line <= Buff->lines; line++)
+	line <= set_end_line(Buff); line++)
 	{
 		print_line_num(line, Ui.line_num_len);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
