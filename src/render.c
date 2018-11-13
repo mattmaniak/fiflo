@@ -157,10 +157,10 @@ void print_line_num(buff_t line, uint8_t line_num_len)
 	putchar(' ');
 }
 
-void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y PROPER RENDERING.
+void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 {
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(buff_t line = scroll_lines(Buff); line < Buff->lines; line++)
+	for(buff_t line = scroll_lines(Buff); line < Buff->lines - Buff->cusr_y; line++)
 	{
 		print_line_num(line, Ui.line_num_len);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
@@ -170,9 +170,8 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y PROPER RENDERING.
 			// Just because there is place for the cursor and LF isn't printed.
 			puts(" ");
 		}
-
 	}
-	print_line_num(Buff->lines, Ui.line_num_len);
+	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
 
 	// Current line. Can be scrolled etc.
 	if(ACT_LN_LEN < Ui.text_x)
@@ -190,6 +189,19 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y PROPER RENDERING.
 	{
 		// Render only left part of the line. Cursor can scrolled.
 		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LN);
+	}
+
+	// Next lines. If scrolled. Only beginning is shown.
+	for(buff_t line = Buff->lines - Buff->cusr_y + 1; line <= Buff->lines; line++)
+	{
+		print_line_num(line, Ui.line_num_len);
+		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
+
+		if(Buff->line_len[line] > Ui.text_x)
+		{
+			// Just because there is place for the cursor and LF isn't printed.
+			puts(" ");
+		}
 	}
 }
 
@@ -230,7 +242,8 @@ void window(f_mtdt* Buff)
 void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 {
 	// Case when all lines fits in the window.
-	term_t mv_up = 0;
+	term_t mv_up     = 0;
+	_Bool  ignore_lf = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
@@ -240,8 +253,13 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 
 	if(ACT_LN_LEN < Ui.text_x)
 	{
+		// When You scroll verticaly the line can have length of 1 (linefeed).
+		if(Buff->cusr_y != 0)
+		{
+			ignore_lf = 1;
+		}
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);
+		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x - ignore_lf);
 	}
 	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
 	{
