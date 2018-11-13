@@ -123,7 +123,7 @@ _Noreturn void run(const char* arg)
 	for(;;)
 	{
 		Buff = recognize_key(Buff, pressed);
-		window(Buff);
+		render_window(Buff);
 
 		pressed = getch();
 		flush_window(Buff);

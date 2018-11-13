@@ -1,5 +1,5 @@
-#ifndef RENDER_H
-#define RENDER_H
+#ifndef WINDOW_H
+#define WINDOW_H
 
 // Common rest is included in "fiflo.h". There are only file-specific imports.
 #include <sys/ioctl.h>
@@ -7,6 +7,7 @@
 // UI areas:
 // Some semantic macros.
 #define CUR_SZ   1
+#define LF_SZ    1
 #define SLASH_SZ 1
 #define SPACE_SZ 1
 
@@ -73,7 +74,7 @@ void display_text(f_mtdt* Buff, win_mtdt Ui);
 void fill(f_mtdt* Buff);
 
 // Stupid wrapper for above things.
-void window(f_mtdt* Buff);
+void render_window(f_mtdt* Buff);
 
 // Sets the cursor position from the left bottom.
 void set_cur_pos(f_mtdt* Buff, win_mtdt Ui);

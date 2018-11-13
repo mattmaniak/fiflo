@@ -102,7 +102,7 @@ f_mtdt* save_file(f_mtdt* Buff)
 	if(textfile)
 	{
 		// Prevents blinking a little.
-		window(Buff);
+		render_window(Buff);
 
 		// Write each line to the file. NULL terminator is ignored.
 		for(buff_t line = 0; line <= Buff->lines; line++)

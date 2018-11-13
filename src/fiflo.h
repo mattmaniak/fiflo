@@ -11,7 +11,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-// #define DEBUG // Uncomment if You want to get variables values et al.
+#define DEBUG // Uncomment if You want to get variables values et al.
 
 // Some semantic substitutes.
 #define INDEX  1

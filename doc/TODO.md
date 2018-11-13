@@ -4,6 +4,8 @@
 - more user-friendly UI,
 - live filename set,
 - git branch indicator,
+- more DEBUG functions in #ifdefs,
+- static scroll,
 - cut/copy/paste,
 - full ASCII support (keymap),
 - tabs (multiple files),

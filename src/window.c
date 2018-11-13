@@ -1,5 +1,5 @@
 #include "fiflo.h"
-#include "render.h"
+#include "window.h"
 
 term_t get_term_sz(f_mtdt* Buff, char axis)
 {
@@ -104,7 +104,7 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 
 void lower_bar(f_mtdt* Buff)
 {
-ANSI_INVERT();
+	ANSI_INVERT();
 
 	printf("\n%s%*s",
 	LBAR_STR, get_term_sz(Buff, 'X') - TERM_X_MIN + SPACE_SZ, " ");
@@ -125,7 +125,7 @@ void scroll_line_x(f_mtdt* Buff, win_mtdt Ui)
 	buff_t text_offset = ACT_LN_LEN - Buff->cusr_x - mv_right;
 
 	// Text will be scrolled. Not cursor.
-	for (buff_t x = text_offset + CUR_SZ - Ui.text_x; x < text_offset; x++)
+	for(buff_t x = text_offset + CUR_SZ - Ui.text_x; x < text_offset; x++)
 	{
 		putchar(ACT_LN[x]);
 	}
@@ -143,7 +143,7 @@ buff_t scroll_lines(f_mtdt* Buff)
 	if(Buff->lines >= TXT_Y)
 	{
 		// Amount of lines to hide in the magic upper area.
-		scrolled = Buff->lines + INDEX - TXT_Y;
+		scrolled = Buff->lines + INDEX - TXT_Y - Buff->cusr_y; // TODO: UNDERFLOW.
 	}
 	return scrolled;
 }
@@ -160,7 +160,8 @@ void print_line_num(buff_t line, uint8_t line_num_len)
 void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 {
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(buff_t line = scroll_lines(Buff); line < Buff->lines - Buff->cusr_y; line++)
+	for(buff_t line = scroll_lines(Buff);
+	line < Buff->lines - Buff->cusr_y; line++)
 	{
 		print_line_num(line, Ui.line_num_len);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
@@ -190,9 +191,9 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 		// Render only left part of the line. Cursor can scrolled.
 		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LN);
 	}
-
 	// Next lines. If scrolled. Only beginning is shown.
-	for(buff_t line = Buff->lines - Buff->cusr_y + 1; line <= Buff->lines; line++)
+	for(buff_t line = Buff->lines - Buff->cusr_y + LF_SZ;
+	line <= Buff->lines; line++)
 	{
 		print_line_num(line, Ui.line_num_len);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
@@ -218,7 +219,7 @@ void fill(f_mtdt* Buff)
 	// Else the bar will by positioned by the text.
 }
 
-void window(f_mtdt* Buff)
+void render_window(f_mtdt* Buff)
 {
 	win_mtdt Ui;
 

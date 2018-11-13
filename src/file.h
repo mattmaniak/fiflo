@@ -11,6 +11,9 @@ extern f_mtdt* backspace(f_mtdt* Buff);
 extern f_mtdt* ctrl_g   (f_mtdt* Buff);
 extern f_mtdt* ctrl_h   (f_mtdt* Buff);
 
+// window.h
+extern void render_window(f_mtdt* Buff);
+
 // Sets the filename. If basename is passed as arg actent path will be added.
 f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
 
