@@ -70,6 +70,8 @@ buff_t set_end_line(f_mtdt* Buff);
 // Prints the line number.
 void print_line_num(buff_t line, uint8_t line_num_len);
 
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui);
+
 // Shows a text in the window.
 void display_text(f_mtdt* Buff, win_mtdt Ui);
 

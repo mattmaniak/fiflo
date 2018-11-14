@@ -113,7 +113,7 @@ void lower_bar(f_mtdt* Buff)
 
 }
 
-void scroll_line_x(f_mtdt* Buff, win_mtdt Ui)
+void scroll_line_x(f_mtdt* Buff, win_mtdt Ui) // TODO: SHIFT AND CURSOR SYNC.
 {
 	_Bool mv_right = 0;
 
@@ -129,11 +129,12 @@ void scroll_line_x(f_mtdt* Buff, win_mtdt Ui)
 	{
 		putchar(ACT_LN[x]);
 	}
-	if(mv_right == 1 && Buff->cusr_y == 0)
+	putchar(LF);
+/*	if(mv_right == 1 && Buff->cusr_y == 0)
 	{
 		// Text is shifted so the last printable char (LF) isn't rendered.
 		putchar(LF);
-	}
+	}*/
 }
 
 buff_t set_start_line(f_mtdt* Buff)
@@ -170,8 +171,94 @@ void print_line_num(buff_t line, uint8_t line_num_len)
 	putchar(' ');
 }
 
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui)
+{
+	if(ACT_LN_LEN < Ui.text_x)
+	{
+		// There is small amount of chars. X-scroll isn't required.
+		printf("%s", ACT_LN);
+	}
+	// Chars won't fits in the horizontal space.
+	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
+	{
+		// Render only right part of the line.
+		scroll_line_x(Buff, Ui);
+	}
+	else
+	{
+		// Render only left part of the line. Cursor can scrolled.
+		printf("%.*s\n", Ui.text_x - CUR_SZ, ACT_LN);
+	}
+}
+
 void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 {
+	if((Buff->lines - Buff->cusr_y) < TXT_Y)
+	{
+		// Previous lines. If scrolled. Only beginning is shown.
+		for(buff_t line = 0; line < Buff->lines - Buff->cusr_y; line++)
+		{
+			print_line_num(line, Ui.line_num_len);
+			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
+
+			if(Buff->line_len[line] > Ui.text_x)
+			{
+				// Just because there is place for the cursor and LF isn't printed.
+				putchar(LF);
+			}
+		}
+		print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
+		print_actual_line(Buff, Ui);
+
+		// Previous lines. If scrolled. Only beginning is shown.
+		for(buff_t line = Buff->lines - Buff->cusr_y + 1; line <= Buff->lines; line++)
+		{
+			print_line_num(line, Ui.line_num_len);
+			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
+
+			if(Buff->line_len[line] > Ui.text_x)
+			{
+				// Just because there is place for the cursor and LF isn't printed.
+				putchar(LF);
+			}
+		}
+	}
+/*	else
+	{
+		// Previous lines. If scrolled. Only beginning is shown.
+		for(buff_t line = set_start_line(Buff);
+		line < Buff->lines - Buff->cusr_y; line++)
+		{
+			print_line_num(line, Ui.line_num_len);
+			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
+
+			if(Buff->line_len[line] > Ui.text_x)
+			{
+				// Just because there is place for the cursor and LF isn't printed.
+				puts(" ");
+			}
+		}
+		print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
+		print_actual_line(Buff, Ui);
+
+		// Next lines. If scrolled. Only beginning is shown.
+		if((Buff->lines - Buff->cusr_y) < TXT_Y)
+		{
+			for(buff_t line = Buff->lines - Buff->cusr_y; line < TXT_Y; line++)
+			{
+				print_line_num(line, Ui.line_num_len);
+				printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
+
+				if(Buff->line_len[line] > Ui.text_x)
+				{
+					// Just because there is place for the cursor and LF isn't printed.
+					puts(" ");
+				}
+			}
+		}
+	}*/
+
+/*
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(buff_t line = set_start_line(Buff);
 	line < Buff->lines - Buff->cusr_y; line++)
@@ -186,31 +273,7 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 		}
 	}
 	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
-
-	// Current line. Can be scrolled etc.
-	if(ACT_LN_LEN < Ui.text_x)
-	{
-		if(Buff->cusr_y == 0)
-		{
-			// There is small amount of chars. X-scroll isn't required.
-			printf("%s", ACT_LN);
-		}
-		else
-		{
-			printf("%.*s", ACT_LN_LEN - 1, ACT_LN);
-		}
-	}
-	// Chars won't fits in the horizontal space.
-	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
-	{
-		// Render only right part of the line.
-		scroll_line_x(Buff, Ui);
-	}
-	else
-	{
-		// Render only left part of the line. Cursor can scrolled.
-		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LN);
-	}
+	print_actual_line(Buff, Ui);
 
 	// Next lines. If scrolled. Only beginning is shown.
 	if((Buff->lines - Buff->cusr_y) < TXT_Y)
@@ -226,7 +289,7 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 				puts(" ");
 			}
 		}
-	}
+	}*/
 }
 
 void fill(f_mtdt* Buff)
@@ -257,6 +320,7 @@ void render_window(f_mtdt* Buff)
 	upper_bar(Buff, Ui);
 
 	display_text(Buff, Ui);
+
 	fill(Buff);
 
 	lower_bar(Buff);
@@ -296,7 +360,7 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);
 	}
 
-	if(Buff->lines < TXT_Y)
+	if((Buff->lines - Buff->cusr_y) < TXT_Y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
 		mv_up = TXT_Y - (term_t) (Buff->lines + INDEX - Buff->cusr_y);

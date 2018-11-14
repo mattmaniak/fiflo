@@ -49,10 +49,12 @@ f_mtdt;
 #pragma pack(pop)
 
 // Needed to simplify and shorten the code.
-#define ACT_LN      Buff->text[Buff->lines - Buff->cusr_y]
-#define ACT_LN_LEN  Buff->line_len[Buff->lines - Buff->cusr_y]
 #define PREV_LN     Buff->text[Buff->lines - Buff->cusr_y - 1]
 #define PREV_LN_LEN Buff->line_len[Buff->lines - Buff->cusr_y - 1]
+#define ACT_LN      Buff->text[Buff->lines - Buff->cusr_y]
+#define ACT_LN_LEN  Buff->line_len[Buff->lines - Buff->cusr_y]
+#define LAST_LN     Buff->text[Buff->lines]
+#define LAST_LN_LEN Buff->line_len[Buff->lines]
 
 // file.h
 extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
