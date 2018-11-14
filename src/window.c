@@ -129,7 +129,7 @@ void scroll_line_x(f_mtdt* Buff, win_mtdt Ui)
 	{
 		putchar(ACT_LN[x]);
 	}
-	if(mv_right == 1)
+	if(mv_right == 1 && Buff->cusr_y == 0)
 	{
 		// Text is shifted so the last printable char (LF) isn't rendered.
 		putchar(LF);
@@ -152,11 +152,12 @@ buff_t set_end_line(f_mtdt* Buff) // TODO: WHEN LINE INDEX IS 0.
 {
 	buff_t scrolled = Buff->lines;
 
-	if((Buff->lines - Buff->cusr_y) >= TXT_Y)
-	{
+//	if((Buff->lines - Buff->cusr_y) >= TXT_Y)
+//	{
 		// Amount of lines to hide in the magic upper area.
 		scrolled = Buff->lines - Buff->cusr_y;
-	}
+//	}
+//	printf(" %d", scrolled);
 	return scrolled;
 }
 
@@ -189,8 +190,15 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 	// Current line. Can be scrolled etc.
 	if(ACT_LN_LEN < Ui.text_x)
 	{
-		// There is small amount of chars. X-scroll isn't required.
-		printf("%s", ACT_LN);
+		if(Buff->cusr_y == 0)
+		{
+			// There is small amount of chars. X-scroll isn't required.
+			printf("%s", ACT_LN);
+		}
+		else
+		{
+			printf("%.*s", ACT_LN_LEN - 1, ACT_LN);
+		}
 	}
 	// Chars won't fits in the horizontal space.
 	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
@@ -203,17 +211,20 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 		// Render only left part of the line. Cursor can scrolled.
 		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LN);
 	}
-	// Next lines. If scrolled. Only beginning is shown.
-	for(buff_t line = Buff->lines - Buff->cusr_y + LF_SZ;
-	line <= set_end_line(Buff); line++)
-	{
-		print_line_num(line, Ui.line_num_len);
-		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
 
-		if(Buff->line_len[line] > Ui.text_x)
+	// Next lines. If scrolled. Only beginning is shown.
+	if((Buff->lines - Buff->cusr_y) < TXT_Y)
+	{
+		for(buff_t line = Buff->lines - Buff->cusr_y; line < TXT_Y; line++)
 		{
-			// Just because there is place for the cursor and LF isn't printed.
-			puts(" ");
+			print_line_num(line, Ui.line_num_len);
+			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
+
+			if(Buff->line_len[line] > Ui.text_x)
+			{
+				// Just because there is place for the cursor and LF isn't printed.
+				puts(" ");
+			}
 		}
 	}
 }

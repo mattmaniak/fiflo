@@ -3,10 +3,6 @@
 
 f_mtdt* recognize_key(f_mtdt* Buff, char key)
 {
-#ifdef DEBUG
-	printf("key: %d cusr_x: %d cusr_y: %d\n", key, Buff->cusr_x, Buff->cusr_y);
-#endif
-
 	switch(key)
 	{
 		case NEG:
@@ -51,6 +47,10 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 		case SOT__CTRL_B:
 			Buff = ctrl_b(Buff);
 	}
+#ifdef DEBUG
+	printf("key: %d cusr_x: %d cusr_y: %d\n", key, Buff->cusr_x, Buff->cusr_y);
+#endif
+
 	return Buff;
 }
 
@@ -229,6 +229,7 @@ f_mtdt* ctrl_y(f_mtdt* Buff)
 	if(Buff->cusr_y < Buff->lines)
 	{
 		// Move the cursor up.
+		puts("ok");
 		Buff->cusr_y++;
 		Buff->cusr_x = 0;
 	}

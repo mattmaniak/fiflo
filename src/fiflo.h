@@ -62,8 +62,8 @@ extern f_mtdt* read_file(f_mtdt* Buff);
 extern f_mtdt* recognize_key(f_mtdt* Buff, char key);
 
 // render.h
-extern void flush_window(f_mtdt* Buff);
-extern void window      (f_mtdt* Buff);
+extern void flush_window (f_mtdt* Buff);
+extern void render_window(f_mtdt* Buff);
 
 // Frees everything and exits with status code.
 _Noreturn void free_all_exit(f_mtdt* Buff, _Bool code);
