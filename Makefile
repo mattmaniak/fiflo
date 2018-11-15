@@ -25,7 +25,8 @@ OBJ = \
 $(ODIR)/$(TARGET).o \
 $(ODIR)/file.o \
 $(ODIR)/memory.o \
-$(ODIR)/text.o \
+$(ODIR)/text_processing.o \
+$(ODIR)/text_rendering.o \
 $(ODIR)/window.o
 
 # Compilation of object files depends on source files wnich depends on headers.

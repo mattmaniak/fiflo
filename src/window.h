@@ -19,9 +19,6 @@
 #define LBAR_STR \
 "CTRL^: X - exit; W - save; G/H - cursor; S/Q - render/hide new chars\0"
 
-// Remember to not override the upper bar width.
-#define TERM_X_MIN (term_t) (strlen(LBAR_STR) + SPACE_SZ)
-
 // Sizes of the text area.
 #define TXT_Y (term_t) (get_term_sz(Buff, 'Y') - BARS_SZ) // TODO: IN UI STRUCT.
 
@@ -42,9 +39,16 @@ typedef struct
 	char    line_num_str[16]; // Place for string of the highest line number.
 	uint8_t line_num_len;     // Dynamic width of the lines numbers.
 	term_t  text_x;           // Horizontal space for the text (width: chars).
+	term_t  text_y;           // Vertical space for the text (lines).
 }
 win_mtdt;
 #pragma pack(pop)
+
+extern void   scroll_line_x    (f_mtdt* Buff, win_mtdt Ui);
+extern buff_t set_start_line   (f_mtdt* Buff);
+extern buff_t set_end_line     (f_mtdt* Buff);
+extern void   print_actual_line(f_mtdt* Buff, win_mtdt Ui);
+extern void   display_text     (f_mtdt* Buff, win_mtdt Ui);
 
 // Returns current terminal width and height and exits if is wrong.
 term_t get_term_sz(f_mtdt* Buff, char axis);
@@ -58,28 +62,14 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui);
 // Renders the lower bar that contains keyboard info.
 void lower_bar(f_mtdt* Buff);
 
-// Scrolls chars. Used when the cursor is in static position.
-void scroll_line_x(f_mtdt* Buff, win_mtdt Ui);
-
-// Returns value of hidden lines.
-buff_t set_start_line(f_mtdt* Buff);
-
-// TODO: COMMENT.
-buff_t set_end_line(f_mtdt* Buff);
-
-// Prints the line number.
-void print_line_num(buff_t line, uint8_t line_num_len);
-
-void print_actual_line(f_mtdt* Buff, win_mtdt Ui);
-
-// Shows a text in the window.
-void display_text(f_mtdt* Buff, win_mtdt Ui);
-
 // Vertical fill between the text and lower bar. If there isn't many lines.
-void fill(f_mtdt* Buff);
+void fill(f_mtdt* Buff, win_mtdt Ui);
 
 // Stupid wrapper for above things.
 void render_window(f_mtdt* Buff);
+
+// Prints the line number.
+void print_line_num(buff_t line, uint8_t line_num_len);
 
 // Sets the cursor position from the left bottom.
 void set_cur_pos(f_mtdt* Buff, win_mtdt Ui);

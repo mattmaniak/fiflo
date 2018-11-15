@@ -60,7 +60,7 @@ f_mtdt;
 extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
 extern f_mtdt* read_file(f_mtdt* Buff);
 
-// text.h
+// text_processing.h
 extern f_mtdt* recognize_key(f_mtdt* Buff, char key);
 
 // render.h
