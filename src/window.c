@@ -113,7 +113,7 @@ void lower_bar(f_mtdt* Buff)
 
 }
 
-void scroll_line_x(f_mtdt* Buff, win_mtdt Ui) // TODO: SHIFT AND CURSOR SYNC.
+void scroll_line_x(f_mtdt* Buff, win_mtdt Ui) // TODO: OMIT THE LF.
 {
 	_Bool mv_right = 0;
 
@@ -193,7 +193,7 @@ void print_actual_line(f_mtdt* Buff, win_mtdt Ui)
 
 void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 {
-	if((Buff->lines - Buff->cusr_y) < TXT_Y)
+	if((Buff->lines + INDEX - Buff->cusr_y) < TXT_Y)
 	{
 		// Previous lines. If scrolled. Only beginning is shown.
 		for(buff_t line = 0; line < Buff->lines - Buff->cusr_y; line++)
@@ -210,8 +210,8 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 		print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
 		print_actual_line(Buff, Ui);
 
-		// Previous lines. If scrolled. Only beginning is shown.
-		for(buff_t line = Buff->lines - Buff->cusr_y + 1; line <= Buff->lines; line++)
+		// Next lines. If scrolled. Only beginning is shown.
+		for(buff_t line = Buff->lines - Buff->cusr_y + 1; line < TXT_Y - 1; line++)
 		{
 			print_line_num(line, Ui.line_num_len);
 			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
@@ -222,8 +222,10 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 				putchar(LF);
 			}
 		}
+		print_line_num(TXT_Y - 1, Ui.line_num_len);
+		printf("%.*s", Buff->line_len[TXT_Y - 1] - LF_SZ, Buff->text[TXT_Y - 1]);
 	}
-/*	else
+	else
 	{
 		// Previous lines. If scrolled. Only beginning is shown.
 		for(buff_t line = set_start_line(Buff);
@@ -235,61 +237,15 @@ void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 			if(Buff->line_len[line] > Ui.text_x)
 			{
 				// Just because there is place for the cursor and LF isn't printed.
-				puts(" ");
+				putchar(LF);
 			}
 		}
 		print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
-		print_actual_line(Buff, Ui);
 
-		// Next lines. If scrolled. Only beginning is shown.
-		if((Buff->lines - Buff->cusr_y) < TXT_Y)
-		{
-			for(buff_t line = Buff->lines - Buff->cusr_y; line < TXT_Y; line++)
-			{
-				print_line_num(line, Ui.line_num_len);
-				printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
-
-				if(Buff->line_len[line] > Ui.text_x)
-				{
-					// Just because there is place for the cursor and LF isn't printed.
-					puts(" ");
-				}
-			}
-		}
-	}*/
-
-/*
-	// Previous lines. If scrolled. Only beginning is shown.
-	for(buff_t line = set_start_line(Buff);
-	line < Buff->lines - Buff->cusr_y; line++)
-	{
-		print_line_num(line, Ui.line_num_len);
-		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
-
-		if(Buff->line_len[line] > Ui.text_x)
-		{
-			// Just because there is place for the cursor and LF isn't printed.
-			puts(" ");
-		}
+		// TODO
+		printf("%.*s", Buff->line_len[Buff->lines - Buff->cusr_y] - LF_SZ,
+		Buff->text[Buff->lines - Buff->cusr_y]);
 	}
-	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
-	print_actual_line(Buff, Ui);
-
-	// Next lines. If scrolled. Only beginning is shown.
-	if((Buff->lines - Buff->cusr_y) < TXT_Y)
-	{
-		for(buff_t line = Buff->lines - Buff->cusr_y; line < TXT_Y; line++)
-		{
-			print_line_num(line, Ui.line_num_len);
-			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
-
-			if(Buff->line_len[line] > Ui.text_x)
-			{
-				// Just because there is place for the cursor and LF isn't printed.
-				puts(" ");
-			}
-		}
-	}*/
 }
 
 void fill(f_mtdt* Buff)
