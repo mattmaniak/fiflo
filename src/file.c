@@ -58,7 +58,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 	char ch;
 	FILE* textfile = fopen(Buff->fname, "r");
 
-	if(textfile)
+	if(textfile != NULL)
 	{
 		while((ch = (char) getc(textfile)) != EOF)
 		{
@@ -99,7 +99,7 @@ f_mtdt* save_file(f_mtdt* Buff)
 	}
 	FILE* textfile = fopen(Buff->fname, "w");
 
-	if(textfile)
+	if(textfile != NULL)
 	{
 		// Prevents blinking a little.
 		render_window(Buff);

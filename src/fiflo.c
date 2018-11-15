@@ -27,7 +27,7 @@ void ignore_sig(int sig_num)
 
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
 {
-	if(!ptr)
+	if(ptr == NULL)
 	{
 		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
 		free_all_exit(Buff, 1);

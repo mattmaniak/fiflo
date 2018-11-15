@@ -193,7 +193,37 @@ void print_actual_line(f_mtdt* Buff, win_mtdt Ui)
 
 void display_text(f_mtdt* Buff, win_mtdt Ui) // TODO: CUSR_Y WHEN SCROLL.
 {
-	if((Buff->lines + INDEX - Buff->cusr_y) < TXT_Y)
+	if(Buff->lines < TXT_Y)
+	{
+		for(buff_t line = 0; line < Buff->lines - Buff->cusr_y; line++)
+		{
+			print_line_num(line, Ui.line_num_len);
+			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
+
+			if(Buff->line_len[line] > Ui.text_x)
+			{
+				// Just because there is place for the cursor and LF isn't printed.
+				putchar(LF);
+			}
+		}
+		print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
+		print_actual_line(Buff, Ui);
+		if(Buff->cusr_y > 0)
+		{
+			for(buff_t line = Buff->lines - Buff->cusr_y + 1; line <= Buff->lines; line++)
+			{
+				print_line_num(line, Ui.line_num_len);
+				printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
+
+				if(Buff->line_len[line] > Ui.text_x)
+				{
+					// Just because there is place for the cursor and LF isn't printed.
+					putchar(LF);
+				}
+			}
+		}
+	}
+	else if((Buff->lines + INDEX - Buff->cusr_y) < TXT_Y)
 	{
 		// Previous lines. If scrolled. Only beginning is shown.
 		for(buff_t line = 0; line < Buff->lines - Buff->cusr_y; line++)
