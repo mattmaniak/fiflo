@@ -3,12 +3,11 @@
 ## Description
 ASCII terminal-based text editor.
 
-## Requirements:
-- Linux-based desktop,
+## Requirements for the GNU/Linux:
 - git,
 - make,
 - clang or gcc,
-- gzip (only for installation).
+- gzip (only for the installation).
 
 ## Download, compile and run current stable release
 ```

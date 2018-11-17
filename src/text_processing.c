@@ -204,7 +204,7 @@ f_mtdt* ctrl_g(f_mtdt* Buff)
 	else if(Buff->lines > 0)
 	{
 		Buff->cusr_y++;
-		Buff->cusr_x = 0;
+		Buff->cusr_x = 1;
 	}
 	return Buff;
 }
@@ -216,14 +216,16 @@ f_mtdt* ctrl_h(f_mtdt* Buff)
 	{
 		// Move the cursor right.
 		Buff->cusr_x--;
-		if(Buff->cusr_y > 0 && Buff->cusr_x == 0)
+		if(Buff->cusr_y > 1 && Buff->cusr_x == 0)
 		{
+			Buff->cusr_y--;
 			Buff->cusr_x++;
 		}
-	}
-	else if(Buff->cusr_y > 0)
-	{
-		Buff->cusr_y--;
+		// Last line doesn't contain linefeed so ignoring that isn't necessary.
+		else if(Buff->cusr_y == 1 && Buff->cusr_x == 0)
+		{
+			Buff->cusr_y--;
+		}
 	}
 	return Buff;
 }
@@ -233,8 +235,8 @@ f_mtdt* ctrl_y(f_mtdt* Buff)
 	if(Buff->cusr_y < Buff->lines)
 	{
 		// Move the cursor up.
-		puts("ok");
 		Buff->cusr_y++;
+		// Ignore the linefeed.
 		Buff->cusr_x = 1;
 	}
 	return Buff;

@@ -120,11 +120,15 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 		}
 	}
 	print_line_num(Ui.text_y - 1, Ui.line_num_len);
-	printf("%.*s", Buff->line_len[Ui.text_y - 1] - LF_SZ, Buff->text[Ui.text_y - 1]);
+
+	printf("%.*s", Buff->line_len[Ui.text_y - 1] - LF_SZ,
+	Buff->text[Ui.text_y - 1]);
 }
 
 void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 {
+	_Bool ignore_lf = 0;
+
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(buff_t line = set_start_line(Buff, Ui);
 	line < Buff->lines - Buff->cusr_y; line++)
@@ -140,19 +144,14 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 	}
 	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
 
-	// TODO: SHORTER.
-	if(Buff->cusr_y == 0)
+	if(Buff->cusr_y > 0)
 	{
-		// If scrolled: with linefeed.
-		printf("%.*s", Buff->line_len[Buff->lines - Buff->cusr_y],
-		Buff->text[Buff->lines - Buff->cusr_y]);		
+		/* Lines aren't scrolled so the last will be fully displayed because
+		doesn't contain linefeed at the end and won't break the rendering. */
+		ignore_lf = 1;
 	}
-	else
-	{
-		// Display the last line without the linefeed.
-		printf("%.*s", Buff->line_len[Buff->lines - Buff->cusr_y] - LF_SZ,
-		Buff->text[Buff->lines - Buff->cusr_y]);
-	}
+	// Display the last line without the linefeed when.
+	printf("%.*s", ACT_LN_LEN - ignore_lf, ACT_LN);
 }
 
 void display_text(f_mtdt* Buff, win_mtdt Ui)
