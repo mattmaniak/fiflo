@@ -87,7 +87,7 @@ char getch(void)
 	return key;
 }
 
-f_mtdt* init(f_mtdt* Buff, const char* arg)
+f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {
 	Buff = set_fname(Buff, arg);
 
@@ -113,7 +113,7 @@ _Noreturn void run(const char* arg)
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
 	chk_ptr(Buff, Buff, "malloc the file metadata\0");
 
-	Buff = init(Buff, arg);
+	Buff = init_buffer(Buff, arg);
 	Buff = read_file(Buff);
 
 	// Initializer. Equal to the null terminator.

@@ -4,7 +4,7 @@
 // Common rest is included in "fiflo.h". There are only file-specific imports.
 #include <linux/limits.h>
 
-// keys.h
+// text_processing.h
 extern f_mtdt* text_char(f_mtdt* Buff, char key);
 extern f_mtdt* linefeed (f_mtdt* Buff);
 extern f_mtdt* backspace(f_mtdt* Buff);

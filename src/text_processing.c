@@ -216,6 +216,10 @@ f_mtdt* ctrl_h(f_mtdt* Buff)
 	{
 		// Move the cursor right.
 		Buff->cusr_x--;
+		if(Buff->cusr_y > 0 && Buff->cusr_x == 0)
+		{
+			Buff->cusr_x++;
+		}
 	}
 	else if(Buff->cusr_y > 0)
 	{
@@ -231,7 +235,7 @@ f_mtdt* ctrl_y(f_mtdt* Buff)
 		// Move the cursor up.
 		puts("ok");
 		Buff->cusr_y++;
-		Buff->cusr_x = 0;
+		Buff->cusr_x = 1;
 	}
 	return Buff;
 }
@@ -242,7 +246,15 @@ f_mtdt* ctrl_b(f_mtdt* Buff)
 	{
 		// Move the cursor down.
 		Buff->cusr_y--;
-		Buff->cusr_x = 0;
+
+		if(Buff->cusr_y > 0)
+		{
+			Buff->cusr_x = 1;
+		}
+		else
+		{
+			Buff->cusr_x = 0;
+		}
 	}
 	return Buff;
 }

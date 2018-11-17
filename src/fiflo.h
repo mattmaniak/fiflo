@@ -83,7 +83,7 @@ void options(const char* arg);
 char getch(void);
 
 // Initializes all Buff structure members.
-f_mtdt* init(f_mtdt* Buff, const char* arg);
+f_mtdt* init_buffer(f_mtdt* Buff, const char* arg);
 
 // Some initializers and the main program loop.
 _Noreturn void run(const char* arg);

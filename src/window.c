@@ -165,7 +165,7 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 {
 	// Case when all lines fits in the window.
 	term_t mv_up     = 0;
-	_Bool  ignore_lf = 0;
+//	_Bool  ignore_lf = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
@@ -176,12 +176,12 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 	if(ACT_LN_LEN < Ui.text_x)
 	{
 		// When You scroll verticaly the line can have length of 1 (linefeed).
-		if(Buff->cusr_y != 0)
+/*		if(Buff->cusr_y != 0)
 		{
 			ignore_lf = 1;
 		}
-		// No horizontal scrolling.
-		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x - ignore_lf);
+*/		// No horizontal scrolling.
+		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);// - ignore_lf);
 	}
 	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
 	{
