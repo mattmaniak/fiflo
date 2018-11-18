@@ -65,7 +65,7 @@ f_mtdt* text_char(f_mtdt* Buff, char key)
 			Buff->chars++;
 			ACT_LN_LEN++;
 
-			Buff = extend_act_line(Buff);
+			ACT_LN = extend_line(Buff, ACT_LN_INDEX);
 
 			/* If the cursor is moved to the left and a char is inserted, rest
 			of the text will be shifted to the right side. */
@@ -115,20 +115,20 @@ f_mtdt* linefeed(f_mtdt* Buff)
 
 		/* If user moved the cursor before hitting ENTER, text on the right
 		will be moved to the new line. */
-		if(Buff->cusr_x > 0)
+		if((Buff->cusr_y == 0) && (Buff->cusr_x > 0))
 		{
 			for(buff_t x = PREV_LN_LEN - Buff->cusr_x; x < PREV_LN_LEN; x++)
 			{
 				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
 				ACT_LN_LEN++;
-				Buff = extend_act_line(Buff);
+				ACT_LN = extend_line(Buff, ACT_LN_INDEX);
 			}
 
 			// Now the length of the upper line will be shortened after copying.
 			PREV_LN_LEN -= Buff->cusr_x;
 			PREV_LN[PREV_LN_LEN] = NUL__CTRL_SHIFT_2;
 
-			Buff = shrink_prev_line(Buff);
+			PREV_LN = shrink_prev_line(Buff);
 		}
 		ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 	}
@@ -144,7 +144,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 		if(Buff->cusr_x != ACT_LN_LEN)
 		{
 			Buff = shift_text_horizonally(Buff, 'l');
-			Buff = shrink_act_line(Buff);
+			ACT_LN = shrink_act_line(Buff);
 
 			ACT_LN_LEN--;
 			Buff->chars--;
@@ -163,7 +163,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 				{
 					PREV_LN_LEN++;
 				}
-				Buff = extend_prev_line(Buff);
+				PREV_LN = extend_line(Buff, PREV_LN_INDEX);
 			}
 			free(ACT_LN);
 			ACT_LN = NULL;
@@ -179,7 +179,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 		ACT_LN = NULL;
 		Buff->lines--;
 
-		Buff = shrink_act_line(Buff);
+		ACT_LN = shrink_act_line(Buff);
 
 		ACT_LN_LEN--;
 		Buff->chars--;
@@ -219,7 +219,7 @@ f_mtdt* ctrl_h(f_mtdt* Buff)
 		if(Buff->cusr_y > 1 && Buff->cusr_x == 0)
 		{
 			Buff->cusr_y--;
-			Buff->cusr_x++;
+			Buff->cusr_x = ACT_LN_LEN;
 		}
 		// Last line doesn't contain linefeed so ignoring that isn't necessary.
 		else if(Buff->cusr_y == 1 && Buff->cusr_x == 0)

@@ -1,40 +1,26 @@
 #include "fiflo.h"
 #include "memory.h"
 
-f_mtdt* extend_act_line(f_mtdt* Buff)
+char* extend_line(f_mtdt* Buff, buff_t line)
 {
-	if(ACT_LN_LEN == INIT_MEMBLK)
+	if(Buff->line_len[line] == INIT_MEMBLK)
 	{
-		// Chars index == INIT_MEMBLK, extend to MEMBLK.
-		ACT_LN = realloc(ACT_LN, MEMBLK);
+		// There are 4/8 chars, extend to MEMBLK.
+		Buff->text[line] = realloc(Buff->text[line], MEMBLK);
 	}
-	else if((ACT_LN_LEN > INIT_MEMBLK) && (ACT_LN_LEN % MEMBLK == 0))
+	else if((Buff->line_len[line] > INIT_MEMBLK)
+	&& (Buff->line_len[line] % MEMBLK == 0))
 	{
-		// If simply there is even more chars, append the new memblock.
-		ACT_LN = realloc(ACT_LN, ((ACT_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+		// There are more chars so append the new memblock.
+		Buff->text[line] = realloc(Buff->text[line],
+		((Buff->line_len[line] / MEMBLK) * MEMBLK) + MEMBLK);
 	}
-	chk_ptr(Buff, ACT_LN, "extend the memblock for the current line\0");
+	chk_ptr(Buff, Buff->text[line], "extend the memblock for the line\0");
 
-	return Buff;
+	return Buff->text[line];
 }
 
-f_mtdt* extend_prev_line(f_mtdt* Buff)
-{
-	if(PREV_LN_LEN == INIT_MEMBLK)
-	{
-		// If there are 4/8 chars, extend to MEMBLK.
-		PREV_LN = realloc(PREV_LN, MEMBLK);
-	}
-	else if((PREV_LN_LEN > INIT_MEMBLK) && (PREV_LN_LEN % MEMBLK == 0))
-	{
-		PREV_LN = realloc(PREV_LN, ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
-	}
-	chk_ptr(Buff, PREV_LN, "extend the memblock for the previous line\0");
-
-	return Buff;
-}
-
-f_mtdt* shrink_act_line(f_mtdt* Buff)
+char* shrink_act_line(f_mtdt* Buff)
 {
 	/* These cases are executed only when the backspace is pressed. Works in the
  	same way as "extend_act_line". */
@@ -55,10 +41,10 @@ f_mtdt* shrink_act_line(f_mtdt* Buff)
 	}
 	chk_ptr(Buff, ACT_LN, "shrink the memblock with the current line\0");
 
-	return Buff;
+	return ACT_LN;
 }
 
-f_mtdt* shrink_prev_line(f_mtdt* Buff)
+char* shrink_prev_line(f_mtdt* Buff)
 {
 	if(PREV_LN_LEN < INIT_MEMBLK)
 	{
@@ -77,7 +63,7 @@ f_mtdt* shrink_prev_line(f_mtdt* Buff)
 	}
 	chk_ptr(Buff, PREV_LN, "shrink the memblock with the previous line\0");
 
-	return Buff;
+	return PREV_LN;
 }
 
 f_mtdt* extend_lines_array(f_mtdt* Buff)
