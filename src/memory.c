@@ -81,8 +81,8 @@ f_mtdt* extend_lines_array(f_mtdt* Buff)
 	chk_ptr(Buff, Buff->line_len, "extend the array with lines length\0");
 
 	// The new line is allocated with only 4 or 8 bytes bytes.
-	ACT_LN = malloc(INIT_MEMBLK);
-	chk_ptr(Buff, ACT_LN, "malloc the new line\0");
+	LAST_LN = malloc(INIT_MEMBLK);
+	chk_ptr(Buff, LAST_LN, "malloc the new line\0");
 
 	return Buff;
 }

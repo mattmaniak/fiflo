@@ -40,7 +40,7 @@
 #define SUB__CTRL_Z        26 // Substitute, used by the signal handler.
 #define FS__CTRL_BACKSLASH 28 // File separator, used by the signal handler.
 
-#define NEG     -1 // Pipe.
+#define NEG      -1 // Pipe.
 #define NUL_SZ   1
 #define SLASH_SZ 1
 
