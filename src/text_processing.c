@@ -202,26 +202,62 @@ f_mtdt* backspace(f_mtdt* Buff)
 				}
 				PREV_LN = extend_line(Buff, PREV_LN_INDEX);
 			}
-			free(ACT_LN);
-			ACT_LN = NULL;
+			// Shift lines vertically.
+			if(Buff->cusr_y > 0)
+			{
+				for(buff_t y = ACT_LN_INDEX; y < Buff->lines; y++)
+				{
+					Buff->text[y] = realloc(Buff->text[y],
+					((Buff->line_len[y + 1] * 128) / 128) + 128);
+
+					Buff->text[y] = strcpy(Buff->text[y], Buff->text[y + 1]);
+					Buff->line_len[y] = Buff->line_len[y + 1];
+				}
+			}
+			free(LAST_LN);
+			LAST_LN = NULL;
 
 			Buff->lines--;
 			Buff = shrink_lines_array(Buff);
 		}
 	}
 	// Deletes the last empty line.
-	else if(ACT_LN_LEN == 0 && Buff->lines > 0)
+	else if((ACT_LN_LEN == 0) && (Buff->lines > 0))
 	{
-		free(ACT_LN);
-		ACT_LN = NULL;
+		if(Buff->cusr_y == 0)
+		{
+			free(ACT_LN);
+			ACT_LN = NULL;
+			Buff->lines--;
+
+			ACT_LN = shrink_act_line(Buff);
+
+			ACT_LN_LEN--;
+			Buff->chars--;
+
+			Buff = shrink_lines_array(Buff);
+		}
+	}
+	else if((Buff->cusr_x == ACT_LN_LEN) && (Buff->cusr_y > 0))
+	{
+		puts("aaa");
+		for(buff_t x = 0; x <= ACT_LN_LEN; x++)
+		{
+			PREV_LN[PREV_LN_LEN] = PREV_LN[x];
+			PREV_LN_LEN++;
+			ACT_LN_LEN--;
+			PREV_LN = extend_line(Buff, PREV_LN_INDEX);
+		}
+
+		for(buff_t y = ACT_LN_INDEX + 1; y < Buff->lines; y++)
+		{
+			Buff->text[y] = Buff->text[y + 1];
+			Buff->line_len[y] = Buff->line_len[y + 1];
+		}
+		free(LAST_LN);
+		LAST_LN = NULL;
 		Buff->lines--;
-
-		ACT_LN = shrink_act_line(Buff);
-
-		ACT_LN_LEN--;
 		Buff->chars--;
-
-		Buff = shrink_lines_array(Buff);
 	}
 	// Replaces the linefeed with the terminator.
 	ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
