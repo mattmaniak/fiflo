@@ -9,7 +9,7 @@ ASCII terminal-based text editor.
 - clang or gcc,
 - gzip (only for the installation).
 
-## Download, compile and run current stable release
+## Download, compile and run the current stable release
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git
 cd fiflo
@@ -22,26 +22,20 @@ Also You can try the latest unstable snapshot
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
 
-## Install
+## (Un)installation
 ```
 sudo make install
 ```
-After that, there is a possibility to run it directly.
-```
-fiflo
-```
-
-## Uninstall
 ```
 sudo make uninstall
 ```
 
-## Delete object files and the binary.
+## Delete object files and the binary
 ```
 make clean
 ```
 
-## Link AddressSanitizer
+## Link the AddressSanitizer for pointers/memory debugging
 ```
 make address
 ```

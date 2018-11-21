@@ -16,7 +16,8 @@ typedef struct
 win_mtdt;
 #pragma pack(pop)
 
-extern void print_line_num(buff_t line, uint8_t line_num_len);
+// window.h
+extern void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode);
 
 // Scrolls chars. Used when the cursor is in static position.
 void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui);

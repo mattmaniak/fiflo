@@ -61,7 +61,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 {
 	for(buff_t line = 0; line < Buff->lines - Buff->cusr_y; line++)
 	{
-		print_line_num(line, Ui.line_num_len);
+		print_line_num(line, Ui.line_num_len, 0);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
 
 		if(Buff->line_len[line] > Ui.text_x)
@@ -70,14 +70,15 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 			putchar(LF);
 		}
 	}
-	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
+	print_line_num(ACT_LN_INDEX, Ui.line_num_len, 1);
 	print_actual_line(Buff, Ui);
 
 	if(Buff->cusr_y > 0)
 	{
-		for(buff_t line = Buff->lines - Buff->cusr_y + 1; line <= Buff->lines; line++)
+		for(buff_t line = Buff->lines - Buff->cusr_y + 1;
+		line <= Buff->lines; line++)
 		{
-			print_line_num(line, Ui.line_num_len);
+			print_line_num(line, Ui.line_num_len, 0);
 			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
 
 			if(Buff->line_len[line] > Ui.text_x)
@@ -94,7 +95,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(buff_t line = 0; line < Buff->lines - Buff->cusr_y; line++)
 	{
-		print_line_num(line, Ui.line_num_len);
+		print_line_num(line, Ui.line_num_len, 0);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
 
 		if(Buff->line_len[line] > Ui.text_x)
@@ -103,14 +104,13 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 			putchar(LF);
 		}
 	}
-	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
+	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len, 1);
 	print_actual_line(Buff, Ui);
 
 	// Next lines. If scrolled. Only beginning is shown.
-	for(buff_t line = Buff->lines - Buff->cusr_y + 1;
-	line < Ui.text_y - 1; line++)
+	for(buff_t line = ACT_LN_INDEX + 1; line < (buff_t) (Ui.text_y - 1); line++)
 	{
-		print_line_num(line, Ui.line_num_len);
+		print_line_num(line, Ui.line_num_len, 0);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
 
 		if(Buff->line_len[line] > Ui.text_x)
@@ -119,7 +119,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 			putchar(LF);
 		}
 	}
-	print_line_num(Ui.text_y - 1, Ui.line_num_len);
+	print_line_num(Ui.text_y - 1, Ui.line_num_len, 0);
 
 	printf("%.*s", Buff->line_len[Ui.text_y - 1] - LF_SZ,
 	Buff->text[Ui.text_y - 1]);
@@ -133,7 +133,7 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 	for(buff_t line = set_start_line(Buff, Ui);
 	line < Buff->lines - Buff->cusr_y; line++)
 	{
-		print_line_num(line, Ui.line_num_len);
+		print_line_num(line, Ui.line_num_len, 0);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line]);
 
 		if(Buff->line_len[line] > Ui.text_x)
@@ -142,7 +142,7 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 			putchar(LF);
 		}
 	}
-	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len);
+	print_line_num(Buff->lines - Buff->cusr_y, Ui.line_num_len, 1);
 
 	if(Buff->cusr_y > 0)
 	{

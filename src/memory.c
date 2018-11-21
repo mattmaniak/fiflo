@@ -84,6 +84,9 @@ f_mtdt* extend_lines_array(f_mtdt* Buff)
 	LAST_LN = malloc(INIT_MEMBLK);
 	chk_ptr(Buff, LAST_LN, "malloc the new line\0");
 
+	// Naturally the new line doesn't contains any chars - only terminator.
+	LAST_LN_LEN = 0;
+
 	return Buff;
 }
 

@@ -17,13 +17,14 @@
 
 // Text that is shown on the lower bar. Also defines the minimal terminal width.
 #define LBAR_STR \
-"CTRL^: X - exit; W - save; G/H - cursor; S/Q - render/hide new chars\0"
+"CTRL^: X - exit; W - save; Y/B/G/H - cursor; S/Q - render/hide new chars\0"
 
 // Sizes of the text area.
 #define TXT_Y (term_t) (get_term_sz(Buff, 'Y') - BARS_SZ) // TODO: IN UI STRUCT.
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
+#define ANSI_BOLD()            printf("\033[%s", "1m")
 #define ANSI_INVERT()          printf("\033[%s", "7m")
 #define ANSI_CLEAN_LN()        printf("\033[%s", "2K")
 #define ANSI_CUR_UP(offset)    printf("\033[%dA", offset)
@@ -69,7 +70,7 @@ void fill(f_mtdt* Buff, win_mtdt Ui);
 void render_window(f_mtdt* Buff);
 
 // Prints the line number.
-void print_line_num(buff_t line, uint8_t line_num_len);
+void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode);
 
 // Sets the cursor position from the left bottom.
 void set_cur_pos(f_mtdt* Buff, win_mtdt Ui);

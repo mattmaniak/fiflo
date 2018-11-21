@@ -108,18 +108,33 @@ f_mtdt* linefeed(f_mtdt* Buff)
 	if(Buff->lines < BUFF_MAX)
 	{
 		Buff->lines++;
-		if(Buff->cusr_y == 0)
-		{
-			Buff = extend_lines_array(Buff);
-		}
 
-		// Naturally the new line doesn't contains any chars - only terminator.
-		ACT_LN_LEN = 0;
+		// Also mallocs the last line.
+		Buff = extend_lines_array(Buff);
 
 		/* If user moved the cursor before hitting ENTER, text on the right
 		will be moved to the new line. */
-		if((Buff->cusr_y == 0) && (Buff->cusr_x > 0))
+		if(Buff->cusr_x > 0)
 		{
+			// Move more lines vertically.
+			if(Buff->cusr_y > 0)
+			{
+				for(buff_t y = Buff->lines; y > ACT_LN_INDEX; y--)
+				{
+					Buff->text[y] = realloc(Buff->text[y],
+					((Buff->line_len[y - 1] / 16) * 16) + 16);
+
+					chk_ptr(Buff, Buff->text[y], "move the line forward\0");
+
+					printf("pre_ln %d curr_ln %d malloc: %d in line %d\n",
+					Buff->line_len[y - 1], Buff->line_len[y],
+					((Buff->line_len[y - 1] / 16) * 16) + 16, y + 1);
+
+					Buff->text[y] = strcpy(Buff->text[y], Buff->text[y - 1]);
+					Buff->line_len[y] = Buff->line_len[y - 1];
+				}
+				ACT_LN_LEN = 0;
+			}
 			for(buff_t x = PREV_LN_LEN - Buff->cusr_x; x < PREV_LN_LEN; x++)
 			{
 				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
@@ -133,40 +148,24 @@ f_mtdt* linefeed(f_mtdt* Buff)
 
 			PREV_LN = shrink_prev_line(Buff);
 		}
-		else if((Buff->cusr_y > 0) && (Buff->cusr_x <= 1))
+		// Cursor is at the end of the line. Shifted vertically.
+		else if(Buff->cusr_y > 0)
 		{
 			for(buff_t y = Buff->lines; y > ACT_LN_INDEX; y--)
 			{
-				Buff->text[y] = realloc(Buff->text[y], 
-				((Buff->line_len[y - 1] / 128) * 128) + 128);
+				Buff->text[y] = realloc(Buff->text[y],
+				((Buff->line_len[y - 1] / 16) * 16) + 16);
 
-				chk_ptr(Buff, Buff->text[y], "move the line foreward\0");
+				chk_ptr(Buff, Buff->text[y], "move the line forward\0");
+
+				printf("pre_ln %d curr_ln %d malloc: %d in line %d\n",
+				Buff->line_len[y - 1], Buff->line_len[y],
+				((Buff->line_len[y - 1] / 16) * 16) + 16, y + 1);
 
 				Buff->text[y] = strcpy(Buff->text[y], Buff->text[y - 1]);
 				Buff->line_len[y] = Buff->line_len[y - 1];
 			}
 		}
-/*		else if((Buff->cusr_y > 0) && (Buff->cusr_x > 1))
-		{
-			for(buff_t y = Buff->lines; y > ACT_LN_INDEX; y--)
-			{
-				Buff->text[y] = Buff->text[y - 1];
-				Buff->line_len[y] = Buff->line_len[y - 1];
-			}
-
-			for(buff_t x = PREV_LN_LEN - Buff->cusr_x; x < PREV_LN_LEN; x++)
-			{
-				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
-				ACT_LN_LEN++;
-				ACT_LN = extend_line(Buff, ACT_LN_INDEX);
-			}
-
-			// Now the length of the upper line will be shortened after copying.
-			PREV_LN_LEN -= Buff->cusr_x;
-			PREV_LN[PREV_LN_LEN] = NUL__CTRL_SHIFT_2;
-
-			PREV_LN = shrink_prev_line(Buff);
-		}*/
 		ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 	}
 	return Buff;
@@ -208,7 +207,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 				for(buff_t y = ACT_LN_INDEX; y < Buff->lines; y++)
 				{
 					Buff->text[y] = realloc(Buff->text[y],
-					((Buff->line_len[y + 1] * 128) / 128) + 128);
+					((Buff->line_len[y + 1] * 16) / 16) + 16);
 
 					Buff->text[y] = strcpy(Buff->text[y], Buff->text[y + 1]);
 					Buff->line_len[y] = Buff->line_len[y + 1];
@@ -309,6 +308,7 @@ f_mtdt* ctrl_y(f_mtdt* Buff)
 	{
 		// Move the cursor up.
 		Buff->cusr_y++;
+
 		// Ignore the linefeed.
 		Buff->cusr_x = 1;
 	}

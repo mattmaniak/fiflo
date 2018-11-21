@@ -1,7 +1,9 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- event-driven programming - bool runtime instead of free_all_exit everywhere,
+- simplify the makefile,
+- keyboard actions rework,
 - pre-allocation of a memory, eg. next 16 lines,
-- more user-friendly UI,
 - live filename set,
 - git branch indicator,
 - more DEBUG functions in #ifdefs,
@@ -11,7 +13,7 @@
 - tabs (multiple files),
 - every header as a dependency in the Makefile,
 - TAB key,
-- paging mechanism,
+- paging,
 - move the cursor vertically (YB keys),
 - ~/.config/fiflo.conf file && colors,
 - syntax highlighting,

@@ -18,11 +18,7 @@
 #define NUL_SZ 1
 #define LF     10
 
-#define BUFF_MAX (UINT_MAX / 256) // (16 MB - 1) buffer limit.
-
-/* Because strlen("16777216") = 8. "+ 1" is the right padding. Setting a value
-like 1234 won't be good idea. */
-//#define STRLEN_BUF_T    (8 + 1)
+#define BUFF_MAX        (UINT_MAX / 256) // (16 MB - 1) buffer limit.
 #define STATUS_MAX      40
 #define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX)
 

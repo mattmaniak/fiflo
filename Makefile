@@ -1,71 +1,67 @@
 TARGET = fiflo
 
-SDIR = src
-ODIR = obj
-MDIR = man
-BDIR = /usr/bin
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
+MAN_DIR = man
+INSTALL_DIR = /usr/bin
 
 CFLAGS = -std=gnu99 -O3
 
-ifeq ($(BDIR)/clang, $(shell ls $(BDIR)/clang))
+ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
 CC = clang
 CFLAGS += -Weverything
 
-else ifeq ($(BDIR)/gcc, $(shell ls $(BDIR)/gcc))
+else ifeq ($(INSTALL_DIR)/gcc, $(shell ls $(INSTALL_DIR)/gcc))
 CC = gcc
 CFLAGS += -Wall -Wextra
 
 else
-$(error Compiler not found: gcc or clang is required.)
+$(error Compilation driver was not found: clang or gcc is required.)
 endif
 
 DEPS = $(TARGET).h
-
-OBJ = \
-$(ODIR)/$(TARGET).o \
-$(ODIR)/file.o \
-$(ODIR)/memory.o \
-$(ODIR)/text_processing.o \
-$(ODIR)/text_rendering.o \
-$(ODIR)/window.o
+OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*c))
 
 # Compilation of object files depends on source files wnich depends on headers.
 # "$@" - alias to name on the left of ':', "$^" - on the right.
 # "$<" is a first item in the dependencies list.
 # "-c" generates the object file.
-$(ODIR)/%.o: $(SDIR)/%.c $(SDIR)/$(DEPS)
-	@mkdir -p $(ODIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/$(DEPS)
+	@mkdir -p $(OBJ_DIR)
 	$(CC) -c -o $@ $< \
 	$(CFLAGS) \
 
 # Builds the binary by linking object files.
 $(TARGET): $(OBJ)
-	$(CC) -o $@ $^ \
+	@mkdir -p $(BIN_DIR)
+	$(CC) -o $(BIN_DIR)/$@ $^ \
 	$(CFLAGS)
 
 address: $(OBJ)
-	$(CC) -o $(TARGET) $^ \
+	@mkdir -p $(BIN_DIR)
+	$(CC) -o $(BIN_DIR)/$(TARGET) $^ \
 	$(CFLAGS) \
 	-fsanitize=address
 
 memory: $(OBJ)
-	$(CC) -o $(TARGET) $^ \
+	@mkdir -p $(BIN_DIR)
+	$(CC) -o $(BIN_DIR)/$(TARGET) $^ \
 	$(CFLAGS) \
 	-fsanitize=memory -fPIE -pie \
 	-fno-omit-frame-pointer -fsanitize-memory-track-origins
 
 install:
-	sudo cp $(TARGET) $(BDIR)/$(TARGET)
-	sudo cp $(MDIR)/$(TARGET).1 /usr/share/man/man1/$(TARGET).1
+	sudo cp $(TARGET) $(INSTALL_DIR)/$(TARGET)
+	sudo cp $(MAN_DIR)/$(TARGET).1 /usr/share/man/man1/$(TARGET).1
 	sudo gzip /usr/share/man/man1/$(TARGET).1
 
 uninstall:
 	sudo $(RM) \
-	$(BDIR)/$(TARGET) \
+	$(INSTALL_DIR)/$(TARGET) \
 	/usr/share/man/man1/$(TARGET).1.gz
 
 .PHONY: clean
 
 clean:
-	$(RM) $(TARGET) -r $(ODIR)
-
+	$(RM) $(TARGET) -r $(OBJ_DIR) $(BIN_DIR)

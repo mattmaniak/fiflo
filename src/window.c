@@ -7,9 +7,9 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	const _Bool   line_y_sz = 1;
 
 	// Remember to not override the upper bar width.
-	const term_t  x_min     = (term_t) (strlen(LBAR_STR) + SPACE_SZ);
-	const uint8_t y_min     = BARS_SZ + line_y_sz;
-	const term_t  sz_max    = USHRT_MAX;
+	const term_t  x_min  = (term_t) (strlen(LBAR_STR) + SPACE_SZ);
+	const uint8_t y_min  = BARS_SZ + line_y_sz;
+	const term_t  sz_max = USHRT_MAX;
 
 	struct winsize term;
 
@@ -110,7 +110,8 @@ void lower_bar(f_mtdt* Buff)
 {
 	ANSI_INVERT();
 
-	printf("\n%s%*s", LBAR_STR, (int) (get_term_sz(Buff, 'X') - strlen(LBAR_STR)), " ");
+	printf("\n%s%*s",
+	LBAR_STR, (int) (get_term_sz(Buff, 'X') - strlen(LBAR_STR)), " ");
 
 	ANSI_RESET();
 
@@ -152,9 +153,17 @@ void render_window(f_mtdt* Buff)
 	set_cur_pos(Buff, Ui);
 }
 
-void print_line_num(buff_t line, uint8_t line_num_len)
+void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode)
 {
+	// One with the cursor.
+	const _Bool actual_line = 1;
+
 	ANSI_INVERT();
+
+	if(mode == actual_line)
+	{
+		ANSI_BOLD();
+	}
 	printf("%*d", line_num_len - SPACE_SZ, line + INDEX);
 
 	ANSI_RESET();
@@ -164,8 +173,7 @@ void print_line_num(buff_t line, uint8_t line_num_len)
 void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 {
 	// Case when all lines fits in the window.
-	term_t mv_up     = 0;
-//	_Bool  ignore_lf = 0;
+	term_t move_up = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
@@ -175,13 +183,8 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 
 	if(ACT_LN_LEN < Ui.text_x)
 	{
-		// When You scroll verticaly the line can have length of 1 (linefeed).
-/*		if(Buff->cusr_y != 0)
-		{
-			ignore_lf = 1;
-		}
-*/		// No horizontal scrolling.
-		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);// - ignore_lf);
+		// No horizontal scrolling.
+		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);
 	}
 	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
 	{
@@ -197,8 +200,8 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 	if((Buff->lines - Buff->cusr_y) < Ui.text_y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
-		mv_up = Ui.text_y - (term_t) (Buff->lines + INDEX - Buff->cusr_y);
+		move_up = Ui.text_y - (term_t) (Buff->lines + INDEX - Buff->cusr_y);
 	}
-	ANSI_CUR_UP(LBAR_SZ + mv_up);
+	ANSI_CUR_UP(LBAR_SZ + move_up);
 }
 
