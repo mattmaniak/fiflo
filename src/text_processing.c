@@ -116,7 +116,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 		will be moved to the new line. */
 		if(Buff->cusr_x > 0)
 		{
-			// Move more lines vertically.
+			// Move more lines vertically with the part of the current line.
 			if(Buff->cusr_y > 0)
 			{
 				for(buff_t y = Buff->lines; y > ACT_LN_INDEX; y--)
@@ -239,7 +239,6 @@ f_mtdt* backspace(f_mtdt* Buff)
 	}
 	else if((Buff->cusr_x == ACT_LN_LEN) && (Buff->cusr_y > 0))
 	{
-		puts("aaa");
 		for(buff_t x = 0; x <= ACT_LN_LEN; x++)
 		{
 			PREV_LN[PREV_LN_LEN] = PREV_LN[x];
@@ -273,10 +272,11 @@ f_mtdt* ctrl_g(f_mtdt* Buff)
 		// Move the cursor left.
 		Buff->cusr_x++;
 	}
-	else if(Buff->lines > 0)
+	else if((Buff->lines > 0) && (Buff->cusr_y < Buff->lines))
 	{
-		Buff->cusr_y++;
+		// Set to the right ignoring the linefeed.
 		Buff->cusr_x = 1;
+		Buff->cusr_y++;
 	}
 	return Buff;
 }
@@ -288,13 +288,13 @@ f_mtdt* ctrl_h(f_mtdt* Buff)
 	{
 		// Move the cursor right.
 		Buff->cusr_x--;
-		if(Buff->cusr_y > 1 && Buff->cusr_x == 0)
+		if((Buff->cusr_y > 0) && (Buff->cusr_x == 0))
 		{
 			Buff->cusr_y--;
 			Buff->cusr_x = ACT_LN_LEN;
 		}
 		// Last line doesn't contain linefeed so ignoring that isn't necessary.
-		else if(Buff->cusr_y == 1 && Buff->cusr_x == 0)
+		else if((Buff->cusr_y == 1) && (Buff->cusr_x == 0))
 		{
 			Buff->cusr_y--;
 		}
@@ -339,7 +339,7 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 	switch(direction)
 	{
 		case 'l':
-			if(Buff->cusr_x > ACT_LN_LEN - NUL_SZ && ACT_LN_LEN > 0)
+			if((Buff->cusr_x > (ACT_LN_LEN - NUL_SZ)) && (ACT_LN_LEN > 0))
 			{
 				Buff->cusr_x = ACT_LN_LEN - NUL_SZ;
 			}

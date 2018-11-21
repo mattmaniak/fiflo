@@ -1,8 +1,8 @@
 *.asdf
+/bin
 fiflo
 *.o
 obj/
 *.out
 *.save
 *.swp
-

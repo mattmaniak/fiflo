@@ -14,7 +14,7 @@ ASCII terminal-based text editor.
 git clone https://gitlab.com/mattmaniak/fiflo.git
 cd fiflo
 make
-./fiflo
+bin/fiflo
 ```
 
 Also You can try the latest unstable snapshot
@@ -35,9 +35,9 @@ sudo make uninstall
 make clean
 ```
 
-## Link the AddressSanitizer for pointers/memory debugging
+## Link the AddressSanitizer and some friends
 ```
-make address
+make sanitize
 ```
 Warning! The program will consume much more memory. Also it will be slower.
 
