@@ -78,7 +78,7 @@ f_mtdt* text_char(f_mtdt* Buff, char key)
 {
 	/* Only printable chars will be added. Combinations that aren't specified
 	above will be omited. Set "if(key)" to enable them. */
-	if(key == NUL__CTRL_SHIFT_2 || key == LF__CTRL_J || key >= 32)
+	if((key == NUL__CTRL_SHIFT_2) || (key == LF__CTRL_J) || (key >= 32))
 	{
 		if(Buff->chars < BUFF_MAX)
 		{

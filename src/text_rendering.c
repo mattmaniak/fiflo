@@ -17,7 +17,7 @@ void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui) // TODO: OMIT THE LF.
 	{
 		putchar(ACT_LN[x]);
 	}
-	putchar(LF);
+//	putchar(LF);
 /*	if(mv_right == 1 && Buff->cusr_y == 0)
 	{
 		// Text is shifted so the last printable char (LF) isn't rendered.
@@ -150,8 +150,10 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 		doesn't contain linefeed at the end and won't break the rendering. */
 		ignore_lf = 1;
 	}
-	// Display the last line without the linefeed when.
-	printf("%.*s", ACT_LN_LEN - ignore_lf, ACT_LN);
+	// Display the last line without the linefeed.
+//	scroll_line_horizontally(Buff, Ui);
+//	printf("%.*s", ACT_LN_LEN - ignore_lf, ACT_LN);
+	print_actual_line(Buff, Ui);
 }
 
 void display_text(f_mtdt* Buff, win_mtdt Ui)
