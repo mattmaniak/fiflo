@@ -3,45 +3,56 @@
 
 char* extend_line(f_mtdt* Buff, buff_t line)
 {
+	buff_t memblock = INIT_MEMBLK;
+
 	if(Buff->line_len[line] == INIT_MEMBLK)
 	{
 		// There are 4/8 chars, extend to MEMBLK.
 		Buff->text[line] = realloc(Buff->text[line], MEMBLK);
+
+#ifdef DEBUG
+		printf("extend_line: %d with mem: %d B\n", line + INDEX, memblock);
+#endif
 	}
 	else if((Buff->line_len[line] > INIT_MEMBLK)
 	&& (Buff->line_len[line] % MEMBLK == 0))
 	{
 		// There are more chars so append the new memblock.
-		Buff->text[line] = realloc(Buff->text[line],
-		((Buff->line_len[line] / MEMBLK) * MEMBLK) + MEMBLK);
+		memblock = ((Buff->line_len[line] / ADDR_SZ) * ADDR_SZ) + MEMBLK;
+		Buff->text[line] = realloc(Buff->text[line], memblock);
+
+#ifdef DEBUG
+		printf("extend_line: %d with mem: %d B\n", line + INDEX, memblock);
+#endif
 	}
 	chk_ptr(Buff, Buff->text[line], "extend the memblock for the line\0");
-
-	printf("extended line: %d with mem: %d\n", line + 1,
-	((Buff->line_len[line] / MEMBLK) * MEMBLK) + MEMBLK);
 
 	return Buff->text[line];
 }
 
 char* shrink_act_line(f_mtdt* Buff)
 {
+	buff_t memblock = INIT_MEMBLK;
+
 	/* These cases are executed only when the backspace is pressed. Works in the
  	same way as "extend_act_line". */
-	if(ACT_LN_LEN == INIT_MEMBLK)
-	{
-		// Shrink to INIT_MEMBLOCK bytes.
-		ACT_LN = realloc(ACT_LN, INIT_MEMBLK);
-	}
-	else if(ACT_LN_LEN == MEMBLK)
+	if(ACT_LN_LEN == MEMBLK)
 	{
 		// Shrink to size of the MEMBLK.
-		ACT_LN = realloc(ACT_LN, MEMBLK);
+		memblock = MEMBLK;
 	}
 	else if((ACT_LN_LEN > MEMBLK) && (ACT_LN_LEN % MEMBLK == 0))
 	{
 		// Remove the newest memblock because isn't needed now.
-		ACT_LN = realloc(ACT_LN, (ACT_LN_LEN / MEMBLK) * MEMBLK);
+		memblock = (ACT_LN_LEN / ADDR_SZ) * ADDR_SZ;
 	}
+	ACT_LN = realloc(ACT_LN, memblock);
+
+#ifdef DEBUG
+	printf("shrink_act_line: %d with mem %d B\n",
+	ACT_LN_INDEX + INDEX, memblock);
+#endif
+
 	chk_ptr(Buff, ACT_LN, "shrink the memblock with the current line\0");
 
 	return ACT_LN;
@@ -49,24 +60,25 @@ char* shrink_act_line(f_mtdt* Buff)
 
 char* shrink_prev_line(f_mtdt* Buff)
 {
-	if(PREV_LN_LEN < INIT_MEMBLK)
+	buff_t memblock = INIT_MEMBLK;
+
+	if((PREV_LN_LEN >= INIT_MEMBLK) && (PREV_LN_LEN < MEMBLK))
 	{
-		// Set the previus' line memblock to initializing memblock.
-		PREV_LN = realloc(PREV_LN, INIT_MEMBLK);
+		memblock = MEMBLK;
 	}
-	else if((PREV_LN_LEN >= INIT_MEMBLK) && (PREV_LN_LEN < MEMBLK))
-	{
-		// Set to the full memory block.
-		PREV_LN = realloc(PREV_LN, MEMBLK);
-	}
-	else if(PREV_LN_LEN >= MEMBLK)
+	else if((PREV_LN_LEN >= MEMBLK))
 	{
 		// Set the size of some MEMBLKs.
-		PREV_LN = realloc(PREV_LN, ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
+		memblock = ((PREV_LN_LEN / ADDR_SZ) * ADDR_SZ) + MEMBLK;
 	}
-	chk_ptr(Buff, PREV_LN, "shrink the memblock with the previous line\0");
+	PREV_LN = realloc(PREV_LN, memblock);
 
-	printf("prev_line shrink: %d line %d\n", ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK, PREV_LN_INDEX + 1);
+#ifdef DEBUG
+	printf("shrink_prev_line: %d with mem: %d B\n",
+	PREV_LN_INDEX + INDEX, memblock);
+#endif
+
+	chk_ptr(Buff, PREV_LN, "shrink the memblock with the previous line\0");
 
 	return PREV_LN;
 }
@@ -74,8 +86,7 @@ char* shrink_prev_line(f_mtdt* Buff)
 f_mtdt* extend_lines_array(f_mtdt* Buff)
 {
 	// Enhance the array that contains pointers to lines.
-	Buff->text = realloc(Buff->text,
-	(Buff->lines + INDEX) * sizeof(Buff->text));
+	Buff->text = realloc(Buff->text, (Buff->lines + INDEX) * ADDR_SZ);
 
 	chk_ptr(Buff, Buff->text, "extend the array with lines\0");
 
@@ -97,8 +108,7 @@ f_mtdt* extend_lines_array(f_mtdt* Buff)
 
 f_mtdt* shrink_lines_array(f_mtdt* Buff)
 {
-	Buff->text = realloc(Buff->text,
-	(Buff->lines + INDEX) * sizeof(Buff->text));
+	Buff->text = realloc(Buff->text, (Buff->lines + INDEX) * ADDR_SZ);
 
 	chk_ptr(Buff, Buff->text, "shrink the array with lines\0");
 

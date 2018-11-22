@@ -36,10 +36,14 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	switch(axis)
 	{
 		case 'X':
+		{
 			return term.ws_col;
+		}
 
 		case 'Y':
+		{
 			return term.ws_row;
+		}
 	}
 	return 1;
 }

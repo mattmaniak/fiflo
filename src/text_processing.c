@@ -6,46 +6,66 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 	switch(key)
 	{
 		case NEG:
+		{
 			fputs("Pipe isn't supported, exit(1).\n", stderr);
 			free_all_exit(Buff, 1);
+		}
 
 		default:
+		{
 			Buff = text_char(Buff, key);
 			break;
+		}
 
 		case HT__CTRL_I:
+		{
 			// Currently converts the tab to two spaces.
 			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
 			{
 				Buff = text_char(Buff, ' ');
 			}
 			break;
+		}
 
 		case DEL__BACKSPACE:
+		{
 			Buff = backspace(Buff);
 			break;
+		}
 
 		case CAN__CTRL_X:
+		{
 			free_all_exit(Buff, 1);
+		}
 
 		case ETB__CTRL_W:
+		{
 			Buff = save_file(Buff);
 			break;
+		}
 
 		case BEL__CTRL_G:
+		{
 			Buff = ctrl_g(Buff);
 			break;
+		}
 
 		case BS__CTRL_H:
+		{
 			Buff = ctrl_h(Buff);
 			break;
+		}
 
 		case EM__CTRL_Y:
+		{
 			Buff = ctrl_y(Buff);
 			break;
+		}
 
 		case SOT__CTRL_B:
+		{
 			Buff = ctrl_b(Buff);
+		}
 	}
 #ifdef DEBUG
 	printf("key: %d cusr_x: %d cusr_y: %d\n", key, Buff->cusr_x, Buff->cusr_y);
@@ -187,7 +207,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 			Buff->chars--;
 		}
 		// Deletes the non-empty line and copy chars to previous..
-		else if(Buff->lines > 0)
+		else if((Buff->lines - Buff->cusr_y) > 0)
 		{
 			PREV_LN_LEN--;
 			Buff->chars--;
@@ -222,7 +242,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 		}
 	}
 	// Deletes the last empty line.
-	else if((ACT_LN_LEN == 0) && (Buff->lines > 0))
+	else if((ACT_LN_LEN == 0) && ((Buff->lines - Buff->cusr_y) > 0))
 	{
 		if(Buff->cusr_y == 0)
 		{
@@ -340,6 +360,7 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 	switch(direction)
 	{
 		case 'l':
+		{
 			if((Buff->cusr_x > (ACT_LN_LEN - NUL_SZ)) && (ACT_LN_LEN > 0))
 			{
 				Buff->cusr_x = ACT_LN_LEN - NUL_SZ;
@@ -352,12 +373,15 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 				}
 			}
 			break;
+		}
 
 		case 'r':
+		{
 			for(buff_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Buff->cusr_x; x--)
 			{
 				ACT_LN[x] = ACT_LN[x - INDEX];
 			}
+		}
 	}
 	return Buff;
 }
