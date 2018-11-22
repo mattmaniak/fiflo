@@ -208,4 +208,3 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 	}
 	ANSI_CUR_UP(LBAR_SZ + move_up);
 }
-

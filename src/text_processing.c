@@ -68,7 +68,8 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 		}
 	}
 #ifdef DEBUG
-	printf("key: %d cusr_x: %d cusr_y: %d\n", key, Buff->cusr_x, Buff->cusr_y);
+	printf("Last key: %d, cusr_x: %d, cusr_y: %d.\n",
+	key, Buff->cusr_x, Buff->cusr_y);
 #endif
 
 	return Buff;
@@ -148,10 +149,6 @@ f_mtdt* linefeed(f_mtdt* Buff)
 
 					chk_ptr(Buff, Buff->text[y], "move the line forward\0");
 
-					printf("shifted x pre_ln %d curr_ln %d malloc: %d in line %d\n",
-					Buff->line_len[y - 1], Buff->line_len[y],
-					((Buff->line_len[y - 1] / 16) * 16) + 16, y + 1);
-
 					Buff->text[y] = strcpy(Buff->text[y], Buff->text[y - 1]);
 					Buff->line_len[y] = Buff->line_len[y - 1];
 				}
@@ -179,10 +176,6 @@ f_mtdt* linefeed(f_mtdt* Buff)
 
 				chk_ptr(Buff, Buff->text[y], "move the line forward\0");
 
-				printf("pre_ln %d curr_ln %d malloc: %d in line %d\n",
-				Buff->line_len[y - 1], Buff->line_len[y],
-				((Buff->line_len[y - 1] / 16) * 16) + 16, y + 1);
-
 				Buff->text[y] = strcpy(Buff->text[y], Buff->text[y - 1]);
 				Buff->line_len[y] = Buff->line_len[y - 1];
 			}
@@ -192,6 +185,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 	return Buff;
 }
 
+// TODO
 f_mtdt* backspace(f_mtdt* Buff)
 {
 	// Isn't possible to delete nothing.
@@ -206,8 +200,8 @@ f_mtdt* backspace(f_mtdt* Buff)
 			ACT_LN_LEN--;
 			Buff->chars--;
 		}
-		// Deletes the non-empty line and copy chars to previous..
-		else if((Buff->lines - Buff->cusr_y) > 0)
+		// Deletes the non-empty line and copy chars to previous.
+		else if(ACT_LN_INDEX > 0)
 		{
 			PREV_LN_LEN--;
 			Buff->chars--;
@@ -242,7 +236,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 		}
 	}
 	// Deletes the last empty line.
-	else if((ACT_LN_LEN == 0) && ((Buff->lines - Buff->cusr_y) > 0))
+	else if((ACT_LN_LEN == 0) && (ACT_LN_INDEX > 0))
 	{
 		if(Buff->cusr_y == 0)
 		{
@@ -385,4 +379,3 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 	}
 	return Buff;
 }
-

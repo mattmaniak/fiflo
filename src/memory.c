@@ -11,7 +11,7 @@ char* extend_line(f_mtdt* Buff, buff_t line)
 		Buff->text[line] = realloc(Buff->text[line], MEMBLK);
 
 #ifdef DEBUG
-		printf("extend_line: %d with mem: %d B\n", line + INDEX, memblock);
+		printf("Extend_line: %d, with mem: %d B.\n", line + INDEX, memblock);
 #endif
 	}
 	else if((Buff->line_len[line] > INIT_MEMBLK)
@@ -22,7 +22,7 @@ char* extend_line(f_mtdt* Buff, buff_t line)
 		Buff->text[line] = realloc(Buff->text[line], memblock);
 
 #ifdef DEBUG
-		printf("extend_line: %d with mem: %d B\n", line + INDEX, memblock);
+		printf("Extend_line: %d, with mem: %d B.\n", line + INDEX, memblock);
 #endif
 	}
 	chk_ptr(Buff, Buff->text[line], "extend the memblock for the line\0");
@@ -49,7 +49,7 @@ char* shrink_act_line(f_mtdt* Buff)
 	ACT_LN = realloc(ACT_LN, memblock);
 
 #ifdef DEBUG
-	printf("shrink_act_line: %d with mem %d B\n",
+	printf("Shrink_act_line: %d, with mem %d B.\n",
 	ACT_LN_INDEX + INDEX, memblock);
 #endif
 
@@ -119,4 +119,3 @@ f_mtdt* shrink_lines_array(f_mtdt* Buff)
 
 	return Buff;
 }
-

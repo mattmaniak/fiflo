@@ -76,4 +76,3 @@ void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode);
 void set_cur_pos(f_mtdt* Buff, win_mtdt Ui);
 
 #endif
-

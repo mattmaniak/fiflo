@@ -20,4 +20,3 @@
 - search option,
 - hex mode,
 - usr/share/doc/fiflo.
-

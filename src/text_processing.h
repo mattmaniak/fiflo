@@ -82,4 +82,3 @@ f_mtdt* ctrl_b(f_mtdt* Buff);
 f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction);
 
 #endif
-

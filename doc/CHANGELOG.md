@@ -100,4 +100,3 @@ Not merged with "master" so look for it with tags.)
 
 ### v0.0.0 (2018, May 27):
 - initial release (basic window rendering).
-

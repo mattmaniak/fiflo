@@ -29,4 +29,3 @@ f_mtdt* extend_lines_array(f_mtdt* Buff);
 f_mtdt* shrink_lines_array(f_mtdt* Buff);
 
 #endif
-

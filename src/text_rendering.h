@@ -4,7 +4,10 @@
 #define CUR_SZ 1
 #define LF_SZ  1
 
-// TODO: EXTERN?
+#define BOLD_LN_NUM 1
+#define THIN_LN_NUM 0
+
+// TODO: EXTERN OR STH?
 #pragma pack(push, 1)
 typedef struct
 {
@@ -41,4 +44,3 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui);
 void display_text(f_mtdt* Buff, win_mtdt Ui);
 
 #endif
-

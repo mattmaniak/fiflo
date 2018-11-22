@@ -14,6 +14,12 @@ ASAN_FLAGS = -fsanitize=address -fsanitize=undefined \
 MSAN_FLAGS = -fsanitize=memory -fPIE -pie -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins
 
+DEPS = $(TARGET).h
+
+# All in obj folder depending on the src dir.
+OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*c))
+
+# Check and set the compiler.
 ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
 CC = clang
 CFLAGS += -Weverything
@@ -25,9 +31,6 @@ CFLAGS += -Wall -Wextra
 else
 $(error Compilation driver was not found: clang or gcc is required.)
 endif
-
-DEPS = $(TARGET).h
-OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*c))
 
 # Compilation of object files depends on source files wnich depends on headers.
 # "$@" - alias to name on the left of ':', "$^" - on the right.
@@ -70,4 +73,3 @@ uninstall:
 
 clean:
 	$(RM) -r $(OBJ_DIR) $(BIN_DIR)
-
