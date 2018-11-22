@@ -116,6 +116,8 @@ f_mtdt* linefeed(f_mtdt* Buff)
 		will be moved to the new line. */
 		if(Buff->cusr_x > 0)
 		{
+			PREV_LN_LEN -= Buff->cusr_x;
+
 			// Move more lines vertically with the part of the current line.
 			if(Buff->cusr_y > 0)
 			{
@@ -126,7 +128,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 
 					chk_ptr(Buff, Buff->text[y], "move the line forward\0");
 
-					printf("pre_ln %d curr_ln %d malloc: %d in line %d\n",
+					printf("shifted x pre_ln %d curr_ln %d malloc: %d in line %d\n",
 					Buff->line_len[y - 1], Buff->line_len[y],
 					((Buff->line_len[y - 1] / 16) * 16) + 16, y + 1);
 
@@ -135,7 +137,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 				}
 				ACT_LN_LEN = 0;
 			}
-			for(buff_t x = PREV_LN_LEN - Buff->cusr_x; x < PREV_LN_LEN; x++)
+			for(buff_t x = PREV_LN_LEN; x < PREV_LN_LEN + Buff->cusr_x; x++)
 			{
 				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
 				ACT_LN_LEN++;
@@ -143,7 +145,6 @@ f_mtdt* linefeed(f_mtdt* Buff)
 			}
 
 			// Now the length of the upper line will be shortened after copying.
-			PREV_LN_LEN -= Buff->cusr_x;
 			PREV_LN[PREV_LN_LEN] = NUL__CTRL_SHIFT_2;
 
 			PREV_LN = shrink_prev_line(Buff);

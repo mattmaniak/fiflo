@@ -17,6 +17,9 @@ char* extend_line(f_mtdt* Buff, buff_t line)
 	}
 	chk_ptr(Buff, Buff->text[line], "extend the memblock for the line\0");
 
+	printf("extended line: %d with mem: %d\n", line + 1,
+	((Buff->line_len[line] / MEMBLK) * MEMBLK) + MEMBLK);
+
 	return Buff->text[line];
 }
 
@@ -62,6 +65,8 @@ char* shrink_prev_line(f_mtdt* Buff)
 		PREV_LN = realloc(PREV_LN, ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK);
 	}
 	chk_ptr(Buff, PREV_LN, "shrink the memblock with the previous line\0");
+
+	printf("prev_line shrink: %d line %d\n", ((PREV_LN_LEN / MEMBLK) * MEMBLK) + MEMBLK, PREV_LN_INDEX + 1);
 
 	return PREV_LN;
 }

@@ -1,11 +1,17 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+// TODO: COMMENT
+#define ADDR_SZ sizeof(Buff->text)
+
 // Must be >= 16 and dividable by 8.
-#define MEMBLK ((16 / sizeof(Buff->text)) * sizeof(Buff->text))
+#define MEMBLK_SZ 16
+
+// Align the memory block to the architecture (4/8 bytes division).
+#define MEMBLK ((MEMBLK_SZ / ADDR_SZ) * ADDR_SZ)
 
 // Aligned initial memblk for a new line.
-#define INIT_MEMBLK sizeof(Buff->text)
+#define INIT_MEMBLK ADDR_SZ
 
 // Allocs next memory block for chars in a line if needed.
 char* extend_line(f_mtdt* Buff, buff_t line);
