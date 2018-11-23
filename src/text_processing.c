@@ -67,6 +67,7 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 			Buff = ctrl_b(Buff);
 		}
 	}
+
 #ifdef DEBUG
 	printf("Last key: %d, cusr_x: %d, cusr_y: %d.\n",
 	key, Buff->cusr_x, Buff->cusr_y);
@@ -201,17 +202,11 @@ f_mtdt* backspace(f_mtdt* Buff)
 				}
 				PREV_LN = extend_line(Buff, PREV_LN_INDEX);
 			}
+
 			// Shift lines vertically.
 			if(Buff->cusr_y > 0)
 			{
-				for(buff_t y = ACT_LN_INDEX; y < Buff->lines; y++)
-				{
-					Buff->text[y] = realloc(Buff->text[y],
-					((Buff->line_len[y + 1] * 16) / 16) + 16);
-
-					Buff->text[y] = strcpy(Buff->text[y], Buff->text[y + 1]);
-					Buff->line_len[y] = Buff->line_len[y + 1];
-				}
+				Buff = copy_lines_backward(Buff);
 			}
 			free(LAST_LN);
 			LAST_LN = NULL;

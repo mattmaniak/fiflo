@@ -12,7 +12,7 @@ files use git-show or git-log.
 - inverted color UI,
 - vertically movable cursor,
 - fluid line numbers indicators,
-- actual line number is bold.
+- actual line number is underscored.
 
 ### v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,

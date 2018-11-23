@@ -1,14 +1,11 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-// TODO: COMMENT
+// Bytes of the memory width. Depends on an architecture. Eg. 8 bytes.
 #define ADDR_SZ sizeof(Buff->text)
 
 // Must be >= 16 and dividable by 8.
-#define MEMBLK_SZ 16
-
-// Align the memory block to the architecture (4/8 bytes division).
-#define MEMBLK ((MEMBLK_SZ / ADDR_SZ) * ADDR_SZ)
+#define MEMBLK 16
 
 // Aligned initial memblk for a new line.
 #define INIT_MEMBLK ADDR_SZ
@@ -28,7 +25,10 @@ f_mtdt* extend_lines_array(f_mtdt* Buff);
 // With pointers that contains: lines and their lenghts.
 f_mtdt* shrink_lines_array(f_mtdt* Buff);
 
-// 
+// Shifts the lines down.
 f_mtdt* copy_lines_forward(f_mtdt* Buff);
+
+// Shifts the lines up.
+f_mtdt* copy_lines_backward(f_mtdt* Buff);
 
 #endif

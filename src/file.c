@@ -89,8 +89,9 @@ f_mtdt* save_file(f_mtdt* Buff)
 
 	if(file_status == not_created)
 	{
-		// There is no file so create with -rw------- file mode.
+		// There is no file so create with -rw------- mode.
 		int create = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
+
 		if(create == not_created)
 		{
 			fputs("Failed to create the new file, exit(1).\n", stderr);

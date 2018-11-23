@@ -13,6 +13,7 @@ char* extend_line(f_mtdt* Buff, buff_t line)
 #ifdef DEBUG
 		printf("Extend_line %d with mem of %d B.\n", line + INDEX, memblock);
 #endif
+
 	}
 	else if((Buff->line_len[line] > INIT_MEMBLK)
 	&&      (Buff->line_len[line] % MEMBLK == 0))
@@ -24,6 +25,7 @@ char* extend_line(f_mtdt* Buff, buff_t line)
 #ifdef DEBUG
 		printf("Extend_line %d with mem of %d B.\n", line + INDEX, memblock);
 #endif
+
 	}
 	chk_ptr(Buff, Buff->text[line], "extend the memblock for the line\0");
 
@@ -133,7 +135,7 @@ f_mtdt* copy_lines_forward(f_mtdt* Buff)
 
 #ifdef DEBUG
 		printf("Copied line %d forward to %d with new mem of %d B.\n",
-		line, line + INDEX, memblock);
+		line + INDEX - prev, line + INDEX, memblock);
 #endif
 
 		chk_ptr(Buff, Buff->text[line], "copy the line forward\0");
@@ -141,6 +143,31 @@ f_mtdt* copy_lines_forward(f_mtdt* Buff)
 		Buff->text[line] = strcpy(Buff->text[line], Buff->text[line - prev]);
 
 		Buff->line_len[line] = Buff->line_len[line - prev];
+	}
+	return Buff;
+}
+
+f_mtdt* copy_lines_backward(f_mtdt* Buff)
+{
+	const _Bool next = 1;
+
+	for(buff_t line = ACT_LN_INDEX; line < Buff->lines; line++)
+	{
+		buff_t memblock =
+		((Buff->line_len[line + next] / MEMBLK) * MEMBLK) + MEMBLK;
+
+		Buff->text[line] = realloc(Buff->text[line], memblock);
+
+#ifdef DEBUG
+		printf("Copied line %d backward to %d with new mem of %d B.\n",
+		line + INDEX + next, line + INDEX, memblock);
+#endif
+
+		chk_ptr(Buff, Buff->text[line], "copy the line backward\0");
+
+		Buff->text[line] = strcpy(Buff->text[line], Buff->text[line + next]);
+
+		Buff->line_len[line] = Buff->line_len[line + next];
 	}
 	return Buff;
 }

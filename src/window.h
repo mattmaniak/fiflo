@@ -11,6 +11,7 @@
 #define SLASH_SZ 1
 #define SPACE_SZ 1
 
+// TODO: IN WIN_MTDT.
 #define UBAR_SZ  2
 #define LBAR_SZ  1 // Must be equal 1 otherwise will break rendering a little.
 #define BARS_SZ  (UBAR_SZ + LBAR_SZ)
@@ -24,7 +25,7 @@
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
-#define ANSI_BOLD()            printf("\033[%s", "1m")
+#define ANSI_UNDERSCORE()      printf("\033[%s", "4m")
 #define ANSI_INVERT()          printf("\033[%s", "7m")
 #define ANSI_CLEAN_LN()        printf("\033[%s", "2K")
 #define ANSI_CUR_UP(offset)    printf("\033[%dA", offset)

@@ -48,12 +48,14 @@
 extern f_mtdt* save_file(f_mtdt* Buff);
 
 // memory.h
-extern char*   extend_line       (f_mtdt* Buff, buff_t line);
-extern char*   shrink_act_line   (f_mtdt* Buff);
-extern char*   shrink_prev_line  (f_mtdt* Buff);
-extern f_mtdt* extend_lines_array(f_mtdt* Buff);
-extern f_mtdt* shrink_lines_array(f_mtdt* Buff);
-f_mtdt*        copy_lines_forward(f_mtdt* Buff);
+extern char*   extend_line        (f_mtdt* Buff, buff_t line);
+extern char*   shrink_act_line    (f_mtdt* Buff);
+extern char*   shrink_prev_line   (f_mtdt* Buff);
+extern f_mtdt* extend_lines_array (f_mtdt* Buff);
+extern f_mtdt* shrink_lines_array (f_mtdt* Buff);
+extern f_mtdt* copy_lines_forward (f_mtdt* Buff);
+extern f_mtdt* copy_lines_backward(f_mtdt* Buff);
+
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
 f_mtdt* recognize_key(f_mtdt* Buff, char key);
