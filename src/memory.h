@@ -28,4 +28,7 @@ f_mtdt* extend_lines_array(f_mtdt* Buff);
 // With pointers that contains: lines and their lenghts.
 f_mtdt* shrink_lines_array(f_mtdt* Buff);
 
+// 
+f_mtdt* copy_lines_forward(f_mtdt* Buff);
+
 #endif

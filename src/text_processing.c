@@ -142,18 +142,12 @@ f_mtdt* linefeed(f_mtdt* Buff)
 			// Move more lines vertically with the part of the current line.
 			if(Buff->cusr_y > 0)
 			{
-				for(buff_t y = Buff->lines; y > ACT_LN_INDEX; y--)
-				{
-					Buff->text[y] = realloc(Buff->text[y],
-					((Buff->line_len[y - 1] / 16) * 16) + 16);
-
-					chk_ptr(Buff, Buff->text[y], "move the line forward\0");
-
-					Buff->text[y] = strcpy(Buff->text[y], Buff->text[y - 1]);
-					Buff->line_len[y] = Buff->line_len[y - 1];
-				}
+				Buff = copy_lines_forward(Buff);
 				ACT_LN_LEN = 0;
 			}
+
+			/* Move the right part (separated by the cursor) of the line to the
+			next. */
 			for(buff_t x = PREV_LN_LEN; x < PREV_LN_LEN + Buff->cusr_x; x++)
 			{
 				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
@@ -169,16 +163,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 		// Cursor is at the end of the line. Shifted vertically.
 		else if(Buff->cusr_y > 0)
 		{
-			for(buff_t y = Buff->lines; y > ACT_LN_INDEX; y--)
-			{
-				Buff->text[y] = realloc(Buff->text[y],
-				((Buff->line_len[y - 1] / 16) * 16) + 16);
-
-				chk_ptr(Buff, Buff->text[y], "move the line forward\0");
-
-				Buff->text[y] = strcpy(Buff->text[y], Buff->text[y - 1]);
-				Buff->line_len[y] = Buff->line_len[y - 1];
-			}
+			Buff = copy_lines_forward(Buff);
 		}
 		ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
 	}

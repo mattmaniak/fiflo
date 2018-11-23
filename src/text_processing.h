@@ -53,6 +53,7 @@ extern char*   shrink_act_line   (f_mtdt* Buff);
 extern char*   shrink_prev_line  (f_mtdt* Buff);
 extern f_mtdt* extend_lines_array(f_mtdt* Buff);
 extern f_mtdt* shrink_lines_array(f_mtdt* Buff);
+f_mtdt*        copy_lines_forward(f_mtdt* Buff);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
 f_mtdt* recognize_key(f_mtdt* Buff, char key);
