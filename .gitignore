@@ -1,7 +1,5 @@
-/bin
-fiflo
+bin/
 *.flop
-*.o
 obj/
 *.out
 *.save
