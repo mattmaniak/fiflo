@@ -335,7 +335,7 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 	{
 		case 'l':
 		{
-			if((Buff->cusr_x > (ACT_LN_LEN - NUL_SZ)) && (ACT_LN_LEN > 0))
+			if((Buff->cusr_x >= ACT_LN_LEN) && (ACT_LN_LEN > 0))
 			{
 				Buff->cusr_x = ACT_LN_LEN - NUL_SZ;
 			}

@@ -37,8 +37,8 @@
 #define US__CTRL_DASH               31  // Unit separator.
 #define DEL__BACKSPACE              127 // Delete that is really backspace.
 
-// Codes that doesn't work or breaks the program.
-#define CR__CTRL_M         13 // Carriage return, converted to 10 (linefeed).
+// Doesn't work properly.
+#define CR__CTRL_M 13 // Carriage return, converted to 10 (linefeed).
 
 #define NEG      -1 // Pipe.
 #define NUL_SZ   1
@@ -55,7 +55,6 @@ extern f_mtdt* extend_lines_array (f_mtdt* Buff);
 extern f_mtdt* shrink_lines_array (f_mtdt* Buff);
 extern f_mtdt* copy_lines_forward (f_mtdt* Buff);
 extern f_mtdt* copy_lines_backward(f_mtdt* Buff);
-
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
 f_mtdt* recognize_key(f_mtdt* Buff, char key);
