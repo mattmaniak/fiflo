@@ -112,13 +112,11 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 
 void lower_bar(f_mtdt* Buff)
 {
+	int horizontal_fill = (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
+
 	ANSI_INVERT();
-
-	printf("\n%s%*s",
-	LBAR_STR, (int) (get_term_sz(Buff, 'X') - strlen(LBAR_STR)), " ");
-
+	printf("\n%s%*s", LBAR_STR, horizontal_fill, " ");
 	ANSI_RESET();
-
 }
 
 void fill(f_mtdt* Buff, win_mtdt Ui)

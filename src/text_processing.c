@@ -33,12 +33,12 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 			break;
 		}
 
-		case CAN__CTRL_X:
+		case DC1__CTRL_Q:
 		{
 			free_all_exit(Buff, 1);
 		}
 
-		case ETB__CTRL_W:
+		case DC3__CTRL_S:
 		{
 			Buff = save_file(Buff);
 			break;

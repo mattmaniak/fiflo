@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "text_rendering.h"
 
-void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui) // TODO: OMIT THE LF.
+void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 {
 	_Bool mv_right = 0;
 
@@ -17,12 +17,13 @@ void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui) // TODO: OMIT THE LF.
 	{
 		putchar(ACT_LN[x]);
 	}
-//	putchar(LF);
-/*	if(mv_right == 1 && Buff->cusr_y == 0)
+	/* Sometimes is needed because the "fill" function renders the smallest
+	amount of linefeeds. In other cases the linefeed is provided by the char in
+	a line. */
+	if(Buff->cusr_y > 0)
 	{
-		// Text is shifted so the last printable char (LF) isn't rendered.
 		putchar(LF);
-	}*/
+	}
 }
 
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)

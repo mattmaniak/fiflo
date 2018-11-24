@@ -61,28 +61,37 @@ void options(const char* arg)
 
 char getch(void)
 {
+	int echo_input_chars  = ECHO;
+	int enable_signals    = ISIG;
+	int canonical_mode_on = ICANON;
+	int enable_xon        = IXON;
+
+	struct termios old_term_settings;
+	struct termios new_term_settings;
+
 	char key;
 
-	struct termios old;
-	struct termios new;
+	// Put the state of the STDIN_FILENO into the *old_term_settings.
+	tcgetattr(STDIN_FILENO, &old_term_settings);
 
-	// Put the state of the STDIN_FILENO into the *old.
-	tcgetattr(STDIN_FILENO, &old);
+	// Create the copy of the old_term_settings terminal settings to modify it's.
+	new_term_settings = old_term_settings;
 
-	// Create the copy of the old terminal settings to modify it's.
-	new = old;
+	// Look that the options of the below flag are negated.
+	new_term_settings.c_lflag &= (unsigned int)
+	~(canonical_mode_on | echo_input_chars | enable_signals);
 
-	// Disable buffered I/O and echo mode.
-	new.c_lflag &= ~(unsigned int) (ICANON | ECHO);
+	new_term_settings.c_iflag &= (unsigned int) ~(enable_xon);
 
-	/* Immediately set the state of the STDIN_FILENO to the *new. Use the new
-	terminal I/O settings. */
-	tcsetattr(STDIN_FILENO, TCSANOW, &new);
+	/* Immediately set the state of the STDIN_FILENO to the *new_term_settings.
+	Use the new terminal I/O settings. */
+	tcsetattr(STDIN_FILENO, TCSANOW, &new_term_settings);
 
 	key = (char) getchar();
 
-	// Immediately restore the state of the STDIN_FILENO to the *new.
-	tcsetattr(STDIN_FILENO, TCSANOW, &old);
+	/* Immediately restore the state of the STDIN_FILENO to the
+	*new_term_settings. */
+	tcsetattr(STDIN_FILENO, TCSANOW, &old_term_settings);
 
 	return key;
 }
@@ -110,14 +119,14 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 
 _Noreturn void run(const char* arg)
 {
+	// Initializer. Equal to the null terminator.
+	char pressed = 0;
+
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
 	chk_ptr(Buff, Buff, "malloc the file metadata\0");
 
 	Buff = init_buffer(Buff, arg);
 	Buff = read_file(Buff);
-
-	// Initializer. Equal to the null terminator.
-	char pressed = 0;
 
 	// The main program loop.
 	for(;;)
@@ -132,14 +141,6 @@ _Noreturn void run(const char* arg)
 
 int main(int argc, char** argv)
 {
-	if(signal(SIGTSTP, ignore_sig) == SIG_ERR  // CTRL^Z
-	|| signal(SIGINT,  ignore_sig) == SIG_ERR  // CTRL^C
-	|| signal(SIGQUIT, ignore_sig) == SIG_ERR) /* CTRL^\ */
-	{
-		fputs("Can't catch one of the signals, exit(1)\n", stderr);
-		exit(1);
-	}
-
 	if(argc != 1 && argc != 2)
 	{
 		fputs("Only one additional arg can be passed, exit(1).\n", stderr);
@@ -149,7 +150,7 @@ int main(int argc, char** argv)
 	// Sets the default basename to "noname.asdf".
 	if(argv[1] == NULL)
 	{
-		run("noname.asdf\0");
+		run("noname.flop\0");
 	}
 	else
 	{
@@ -159,5 +160,5 @@ int main(int argc, char** argv)
 }
 
 #else
-#error "Linux-based desktop is required."
+#error "GNU/Linux is required."
 #endif

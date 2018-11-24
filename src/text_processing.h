@@ -10,9 +10,10 @@
 #define VT__CTRL_K        11 // Vertical tab.
 #define FF__CTRL_L        12 // Form feed.
 
-// Control characters can be used as keyboard shortcuts.
+// Control characters that can be used as keyboard shortcuts.
 #define STX__CTRL_A                 1   // Start of header
 #define SOT__CTRL_B                 2   // Start of text.
+#define ETX__CTRL_C                 3   // End of text.
 #define EOT__CTRL_D                 4   // End of transmission.
 #define	ENQ__CTRL_E                 5   // Enquiry.
 #define ACK__CTRL_F                 6   // Acknowledge.
@@ -28,17 +29,16 @@
 #define ETB__CTRL_W                 23  // End of transmission block.
 #define CAN__CTRL_X                 24  // Cancel.
 #define EM__CTRL_Y                  25  // End of medium.
+#define SUB__CTRL_Z                 26  // Substitute.
 #define ESC__CTRL_RIGHT_SQR_BRACKET 27  // Escape for ANSI codes.
+#define FS__CTRL_BACKSLASH          28  // File separator.
 #define GS__CTRL_LEFT_SQR_BRACKET   29  // Group separator.
 #define RS__CTRL_CARRET             30  // Record separator.
 #define US__CTRL_DASH               31  // Unit separator.
 #define DEL__BACKSPACE              127 // Delete that is really backspace.
 
 // Codes that doesn't work or breaks the program.
-#define ETX__CTRL_C        3  // End of text, used by the signal handler.
-#define CR__CTRL_M         13 // Carriage return, probably ignored by getchar.
-#define SUB__CTRL_Z        26 // Substitute, used by the signal handler.
-#define FS__CTRL_BACKSLASH 28 // File separator, used by the signal handler.
+#define CR__CTRL_M         13 // Carriage return, converted to 10 (linefeed).
 
 #define NEG      -1 // Pipe.
 #define NUL_SZ   1

@@ -79,7 +79,7 @@ void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 // Program parameters, eg. "--help".
 void options(const char* arg);
 
-// Reads one char wthout confirming by the ENTER key.
+// Reads one char wthout confirming by the key.
 char getch(void);
 
 // Initializes all Buff structure members.
