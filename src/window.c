@@ -172,6 +172,7 @@ void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode)
 
 	if(mode == actual_line)
 	{
+		// Higlight the current line.
 		ANSI_UNDERSCORE();
 	}
 	printf("%*d", line_num_len - SPACE_SZ, line + INDEX);
