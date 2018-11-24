@@ -123,13 +123,19 @@ void lower_bar(f_mtdt* Buff)
 
 void fill(f_mtdt* Buff, win_mtdt Ui)
 {
-	if(Buff->lines < Ui.text_y)
+	if((Buff->lines + INDEX) < Ui.text_y)
 	{
+		putchar(LF);
+		ANSI_INVERT();
+
 		// Fill the empty area below the text to position the lower bar.
-		for(buff_t line = Buff->lines + INDEX; line < Ui.text_y; line++)
+		for(buff_t line = Buff->lines + INDEX + 1; line < Ui.text_y; line++)
 		{
-			putchar(LF);
+			// Just empty line num block but without the number.
+			printf("%*s\n", Ui.line_num_len - SPACE_SZ, " ");
 		}
+		printf("%*s", Ui.line_num_len - SPACE_SZ, " ");
+		ANSI_RESET();
 	}
 	// Else the bar will by positioned by the text.
 }
