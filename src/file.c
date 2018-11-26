@@ -55,8 +55,8 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 
 f_mtdt* read_file(f_mtdt* Buff)
 {
-	char ch;
 	FILE* textfile = fopen(Buff->fname, "r");
+	char  ch;
 
 	if(textfile != NULL)
 	{
@@ -106,11 +106,11 @@ f_mtdt* save_file(f_mtdt* Buff)
 		render_window(Buff);
 
 		// Write each line to the file. NULL terminator is ignored.
-		for(buff_t line = 0; line <= Buff->lines; line++)
+		for(buff_t line = 0; line <= Buff->lines_i; line++)
 		{
 			/* Using fputs or fprintf causes "use-of-uninitialized-value" using
 			MSan because of there is more memory allocated than is needed. */
-			for(buff_t ch = 0; ch < Buff->line_len[line]; ch++)
+			for(buff_t ch = 0; ch < Buff->line_len_i[line]; ch++)
 			{
 				fputc(Buff->text[line][ch], textfile);
 			}

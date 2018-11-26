@@ -11,7 +11,7 @@
 #define INIT_MEMBLK ADDR_SZ
 
 // Allocs next memory block for chars in a line if needed.
-char* extend_line(f_mtdt* Buff, buff_t line);
+char* extend_line(f_mtdt* Buff, buff_t line_i);
 
 // Works as the function above but shrinks memblocks.
 char* shrink_act_line(f_mtdt* Buff);

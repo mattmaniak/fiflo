@@ -39,7 +39,6 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 		{
 			return term.ws_col;
 		}
-
 		case 'Y':
 		{
 			return term.ws_row;
@@ -55,7 +54,7 @@ void flush_window(f_mtdt* Buff)
 	ANSI_CLEAN_LN();
 
 	// Then from move up and clean the next lines till the window ends.
-	for(term_t y = 0; y < (get_term_sz(Buff, 'Y') - LBAR_SZ); y++)
+	for(term_t line = 1; line <= (get_term_sz(Buff, 'Y') - LBAR_SZ); line++)
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LN();
@@ -98,21 +97,21 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	// The lower part with the "chars in the current line" indicator.
 	printf("%s%*s", logo_half, (buff_t) strlen(Buff->status), Buff->status);
 
-	if((ACT_LN_LEN < Ui.text_x) || ((ACT_LN_LEN - Buff->cusr_x) < Ui.text_x))
+	if((ACT_LINE_LEN_I < Ui.text_x) || ((ACT_LINE_LEN_I - Buff->cusr_x) < Ui.text_x))
 	{
 		printf("%*d^ \n", indicator_width,
 		get_term_sz(Buff, 'X') - Ui.line_num_len - SPACE_SZ);
 	}
-	else if((ACT_LN_LEN - Buff->cusr_x) >= Ui.text_x)
+	else if((ACT_LINE_LEN_I - Buff->cusr_x) >= Ui.text_x)
 	{
-		printf("%*d^ \n", indicator_width, ACT_LN_LEN - Buff->cusr_x);
+		printf("%*d^ \n", indicator_width, ACT_LINE_LEN_I - Buff->cusr_x);
 	}
 	ANSI_RESET();
 }
 
 void lower_bar(f_mtdt* Buff)
 {
-	int horizontal_fill = (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
+	term_t horizontal_fill = (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
 
 	ANSI_INVERT();
 	printf("\n%s%*s", LBAR_STR, horizontal_fill, " ");
@@ -121,13 +120,13 @@ void lower_bar(f_mtdt* Buff)
 
 void fill(f_mtdt* Buff, win_mtdt Ui)
 {
-	if((Buff->lines + INDEX) < Ui.text_y)
+	if((Buff->lines_i + INDEX) < Ui.text_y)
 	{
 		putchar(LF);
 		ANSI_INVERT();
 
 		// Fill the empty area below the text to position the lower bar.
-		for(buff_t line = Buff->lines + INDEX + 1; line < Ui.text_y; line++)
+		for(buff_t line = Buff->lines_i + INDEX + 1; line < Ui.text_y; line++)
 		{
 			// Just empty line num block but without the number.
 			printf("%*s\n", Ui.line_num_len - SPACE_SZ, " ");
@@ -143,7 +142,7 @@ void render_window(f_mtdt* Buff)
 	win_mtdt Ui;
 
 	// Snprinf isn't needed because the format specifier gives a warning.
-	sprintf(Ui.line_num_str, "%u", Buff->lines + INDEX);
+	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
 	Ui.line_num_len = (uint8_t) strlen(Ui.line_num_str) + SPACE_SZ;
 	Ui.text_x       = get_term_sz(Buff, 'X') - Ui.line_num_len;
@@ -161,7 +160,7 @@ void render_window(f_mtdt* Buff)
 	set_cur_pos(Buff, Ui);
 }
 
-void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode)
+void print_line_num(buff_t line_i, uint8_t line_num_len, const _Bool mode)
 {
 	// One with the cursor.
 	const _Bool actual_line = 1;
@@ -173,7 +172,7 @@ void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode)
 		// Higlight the current line.
 		ANSI_UNDERSCORE();
 	}
-	printf("%*d", line_num_len - SPACE_SZ, line + INDEX);
+	printf("%*d", line_num_len - SPACE_SZ, line_i + INDEX);
 
 	ANSI_RESET();
 	putchar(' ');
@@ -190,12 +189,12 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 	// Lower left side. Will be used to position the cursor and flush each line.
 	ANSI_SAVE_CUR_POS();
 
-	if(ACT_LN_LEN < Ui.text_x)
+	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);
+		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LINE_LEN_I - Buff->cusr_x);
 	}
-	else if((ACT_LN_LEN - Ui.text_x) >= Buff->cusr_x)
+	else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
 	{
 		// Last Ui.text_x chars are seen. Current line is scrolled, not cursor.
 		ANSI_CUR_RIGHT(get_term_sz(Buff, 'X') - CUR_SZ);
@@ -203,13 +202,13 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LN_LEN - Buff->cusr_x);
+		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LINE_LEN_I - Buff->cusr_x);
 	}
 
-	if((Buff->lines - Buff->cusr_y) < Ui.text_y)
+	if((Buff->lines_i - Buff->cusr_y) < Ui.text_y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
-		move_up = Ui.text_y - (term_t) (Buff->lines + INDEX - Buff->cusr_y);
+		move_up = Ui.text_y - (term_t) (Buff->lines_i + INDEX - Buff->cusr_y);
 	}
 	ANSI_CUR_UP(LBAR_SZ + move_up);
 }

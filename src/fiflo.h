@@ -32,9 +32,9 @@ typedef struct
 
 	// File's content and some indicators.
 	char**  text;               // Text buffer. Eg. text[lines][chars].
-	buff_t  lines;              // Lines index.
-	buff_t* line_len;           // Chars in the current line (index).
-	buff_t  chars;              // All chars index.
+	buff_t  lines_i;            // Lines index.
+	buff_t* line_len_i;         // Chars in the current line (index).
+	buff_t  chars_i;            // All chars index.
 
 	// Editing feedback.
 	buff_t  cusr_x;             // User's cursor position in the reversed X.
@@ -45,16 +45,16 @@ f_mtdt;
 #pragma pack(pop)
 
 // Needed to simplify and shorten the code.
-#define ACT_LN_INDEX  (Buff->lines - Buff->cusr_y)
-#define ACT_LN        Buff->text[ACT_LN_INDEX]
-#define ACT_LN_LEN    Buff->line_len[ACT_LN_INDEX]
+#define ACT_LINE_I      (Buff->lines_i - Buff->cusr_y)
+#define ACT_LINE        Buff->text[ACT_LINE_I]
+#define ACT_LINE_LEN_I  Buff->line_len_i[ACT_LINE_I]
 
-#define PREV_LN_INDEX (ACT_LN_INDEX - 1)
-#define PREV_LN       Buff->text[PREV_LN_INDEX]
-#define PREV_LN_LEN   Buff->line_len[PREV_LN_INDEX]
+#define PREV_LINE_I     (ACT_LINE_I - 1)
+#define PREV_LINE       Buff->text[PREV_LINE_I]
+#define PREV_LINE_LEN_I Buff->line_len_i[PREV_LINE_I]
 
-#define LAST_LN       Buff->text[Buff->lines]
-#define LAST_LN_LEN   Buff->line_len[Buff->lines]
+#define LAST_LINE       Buff->text[Buff->lines_i]
+#define LAST_LINE_LEN_I Buff->line_len_i[Buff->lines_i]
 
 // file.h
 extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
@@ -68,7 +68,7 @@ extern void flush_window (f_mtdt* Buff);
 extern void render_window(f_mtdt* Buff);
 
 // Frees everything and exits with status code.
-_Noreturn void free_all_exit(f_mtdt* Buff, _Bool code);
+_Noreturn void free_all_exit(f_mtdt* Buff, const _Bool code);
 
 // Signal catcher that does nothing.
 void ignore_sig(int sig_num);
@@ -79,8 +79,8 @@ void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 // Program parameters, eg. "--help".
 void options(const char* arg);
 
-// Reads one char wthout confirming by the key.
-char getch(void);
+// Reads one char wthout confirming by the key. Based on the termios.
+char getch(f_mtdt* Buff);
 
 // Initializes all Buff structure members.
 f_mtdt* init_buffer(f_mtdt* Buff, const char* arg);

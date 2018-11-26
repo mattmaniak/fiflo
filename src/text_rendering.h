@@ -4,8 +4,8 @@
 #define CUR_SZ 1
 #define LF_SZ  1
 
-#define BOLD_LN_NUM 1
-#define THIN_LN_NUM 0
+#define BOLD_LINE_NUM 1
+#define THIN_LINE_NUM 0
 
 // TODO: EXTERN OR STH?
 #pragma pack(push, 1)
@@ -31,13 +31,13 @@ buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui);
 // Decides how to show it. Can scroll it or the cursor.
 void print_actual_line(f_mtdt* Buff, win_mtdt Ui);
 
-// TODO: COMMENTS.
+// Renders a text when there is smaller amount of lines than the window height.
 void fit_lines(f_mtdt* Buff, win_mtdt Ui);
 
-//
+// If there is more lines but they are scrolled to a start.
 void shrink_lines(f_mtdt* Buff, win_mtdt Ui);
 
-// 
+// Lines rendering starts at specified by user offset.s
 void scroll_lines(f_mtdt* Buff, win_mtdt Ui);
 
 // Shows a text in the window.

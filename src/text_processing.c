@@ -10,13 +10,11 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 			fputs("Pipe isn't supported, exit(1).\n", stderr);
 			free_all_exit(Buff, 1);
 		}
-
 		default:
 		{
 			Buff = text_char(Buff, key);
 			break;
 		}
-
 		case HT__CTRL_I:
 		{
 			// Currently converts the tab to two spaces.
@@ -26,48 +24,40 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 			}
 			break;
 		}
-
 		case DEL__BACKSPACE:
 		{
 			Buff = backspace(Buff);
 			break;
 		}
-
 		case DC1__CTRL_Q:
 		{
 			free_all_exit(Buff, 1);
 		}
-
 		case DC3__CTRL_S:
 		{
 			Buff = save_file(Buff);
 			break;
 		}
-
 		case BEL__CTRL_G:
 		{
-			Buff = ctrl_g(Buff);
+			Buff = cursor_left(Buff);
 			break;
 		}
-
 		case BS__CTRL_H:
 		{
-			Buff = ctrl_h(Buff);
+			Buff = cursor_right(Buff);
 			break;
 		}
-
 		case EM__CTRL_Y:
 		{
-			Buff = ctrl_y(Buff);
+			Buff = cursor_up(Buff);
 			break;
 		}
-
 		case SOT__CTRL_B:
 		{
-			Buff = ctrl_b(Buff);
+			Buff = cursor_down(Buff);
 			break;
 		}
-
 		case EOT__CTRL_D:
 		{
 			Buff = delete_line(Buff);
@@ -88,12 +78,12 @@ f_mtdt* text_char(f_mtdt* Buff, char key)
 	above will be omited. Set "if(key)" to enable them. */
 	if((key == NUL__CTRL_SHIFT_2) || (key == LF__CTRL_J) || (key >= 32))
 	{
-		if(Buff->chars < BUFF_MAX)
+		if(Buff->chars_i < BUFF_MAX)
 		{
-			Buff->chars++;
-			ACT_LN_LEN++;
+			Buff->chars_i++;
+			ACT_LINE_LEN_I++;
 
-			ACT_LN = extend_line(Buff, ACT_LN_INDEX);
+			ACT_LINE = extend_line(Buff, ACT_LINE_I);
 
 			/* If the cursor is moved to the left and a char is inserted, rest
 			of the text will be shifted to the right side. */
@@ -101,14 +91,14 @@ f_mtdt* text_char(f_mtdt* Buff, char key)
 			{
 				Buff = shift_text_horizonally(Buff, 'r');
 			}
-			ACT_LN[ACT_LN_LEN - Buff->cusr_x - NUL_SZ] = key;
-			ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
+			ACT_LINE[ACT_LINE_LEN_I - Buff->cusr_x - NUL_SZ] = key;
+			ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
 			// Initializer handling.
-			if(key == NUL__CTRL_SHIFT_2 && ACT_LN_LEN > 0)
+			if(key == NUL__CTRL_SHIFT_2 && ACT_LINE_LEN_I > 0)
 			{
-				Buff->chars--;
-				ACT_LN_LEN--;
+				Buff->chars_i--;
+				ACT_LINE_LEN_I--;
 			}
 			else if(key == LF__CTRL_J)
 			{
@@ -133,9 +123,9 @@ f_mtdt* text_char(f_mtdt* Buff, char key)
 
 f_mtdt* linefeed(f_mtdt* Buff)
 {
-	if(Buff->lines < BUFF_MAX)
+	if(Buff->lines_i < BUFF_MAX)
 	{
-		Buff->lines++;
+		Buff->lines_i++;
 
 		// Also mallocs the last line.
 		Buff = extend_lines_array(Buff);
@@ -144,35 +134,35 @@ f_mtdt* linefeed(f_mtdt* Buff)
 		will be moved to the new line. */
 		if(Buff->cusr_x > 0)
 		{
-			PREV_LN_LEN -= Buff->cusr_x;
+			PREV_LINE_LEN_I -= Buff->cusr_x;
 
 			// Move more lines vertically with the part of the current line.
 			if(Buff->cusr_y > 0)
 			{
 				Buff = copy_lines_forward(Buff);
-				ACT_LN_LEN = 0;
+				ACT_LINE_LEN_I = 0;
 			}
 
 			/* Move the right part (separated by the cursor) of the line to the
 			next. */
-			for(buff_t x = PREV_LN_LEN; x < PREV_LN_LEN + Buff->cusr_x; x++)
+			for(buff_t x = PREV_LINE_LEN_I; x < PREV_LINE_LEN_I + Buff->cusr_x; x++)
 			{
-				ACT_LN[ACT_LN_LEN] = PREV_LN[x];
-				ACT_LN_LEN++;
-				ACT_LN = extend_line(Buff, ACT_LN_INDEX);
+				ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[x];
+				ACT_LINE_LEN_I++;
+				ACT_LINE = extend_line(Buff, ACT_LINE_I);
 			}
 
 			// Now the length of the upper line will be shortened after copying.
-			PREV_LN[PREV_LN_LEN] = NUL__CTRL_SHIFT_2;
+			PREV_LINE[PREV_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
-			PREV_LN = shrink_prev_line(Buff);
+			PREV_LINE = shrink_prev_line(Buff);
 		}
 		// Cursor is at the end of the line. Shifted vertically.
 		else if(Buff->cusr_y > 0)
 		{
 			Buff = copy_lines_forward(Buff);
 		}
-		ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
+		ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 	}
 	return Buff;
 }
@@ -181,32 +171,32 @@ f_mtdt* linefeed(f_mtdt* Buff)
 f_mtdt* backspace(f_mtdt* Buff)
 {
 	// Isn't possible to delete nothing.
-	if(ACT_LN_LEN > 0)
+	if(ACT_LINE_LEN_I > 0)
 	{
 		// If the cursor at the maximum left position, char won't be deleted.
-		if(Buff->cusr_x != ACT_LN_LEN)
+		if(Buff->cusr_x != ACT_LINE_LEN_I)
 		{
 			Buff = shift_text_horizonally(Buff, 'l');
-			ACT_LN = shrink_act_line(Buff);
+			ACT_LINE = shrink_act_line(Buff);
 
-			ACT_LN_LEN--;
-			Buff->chars--;
+			ACT_LINE_LEN_I--;
+			Buff->chars_i--;
 		}
 		// Deletes the non-empty line and copy chars to previous.
-		else if(ACT_LN_INDEX > 0)
+		else if(ACT_LINE_I > 0)
 		{
-			PREV_LN_LEN--;
-			Buff->chars--;
+			PREV_LINE_LEN_I--;
+			Buff->chars_i--;
 
-			for(buff_t x = 0; x <= ACT_LN_LEN; x++)
+			for(buff_t x = 0; x <= ACT_LINE_LEN_I; x++)
 			{
-				PREV_LN[PREV_LN_LEN] = ACT_LN[x];
+				PREV_LINE[PREV_LINE_LEN_I] = ACT_LINE[x];
 
-				if(ACT_LN[x] != NUL__CTRL_SHIFT_2)
+				if(ACT_LINE[x] != NUL__CTRL_SHIFT_2)
 				{
-					PREV_LN_LEN++;
+					PREV_LINE_LEN_I++;
 				}
-				PREV_LN = extend_line(Buff, PREV_LN_INDEX);
+				PREV_LINE = extend_line(Buff, PREV_LINE_I);
 			}
 
 			// Shift lines vertically.
@@ -214,66 +204,66 @@ f_mtdt* backspace(f_mtdt* Buff)
 			{
 				Buff = copy_lines_backward(Buff);
 			}
-			free(LAST_LN);
-			LAST_LN = NULL;
+			free(LAST_LINE);
+			LAST_LINE = NULL;
 
-			Buff->lines--;
+			Buff->lines_i--;
 			Buff = shrink_lines_array(Buff);
 		}
 	}
 	// Deletes the last empty line.
-	else if((ACT_LN_LEN == 0) && (ACT_LN_INDEX > 0))
+	else if((ACT_LINE_LEN_I == 0) && (ACT_LINE_I > 0))
 	{
 		if(Buff->cusr_y == 0)
 		{
-			free(ACT_LN);
-			ACT_LN = NULL;
-			Buff->lines--;
+			free(ACT_LINE);
+			ACT_LINE = NULL;
+			Buff->lines_i--;
 
-			ACT_LN = shrink_act_line(Buff);
+			ACT_LINE = shrink_act_line(Buff);
 
-			ACT_LN_LEN--;
-			Buff->chars--;
+			ACT_LINE_LEN_I--;
+			Buff->chars_i--;
 
 			Buff = shrink_lines_array(Buff);
 		}
 	}
-	else if((Buff->cusr_x == ACT_LN_LEN) && (Buff->cusr_y > 0))
+	else if((Buff->cusr_x == ACT_LINE_LEN_I) && (Buff->cusr_y > 0))
 	{
-		for(buff_t x = 0; x <= ACT_LN_LEN; x++)
+		for(buff_t x = 0; x <= ACT_LINE_LEN_I; x++)
 		{
-			PREV_LN[PREV_LN_LEN] = PREV_LN[x];
-			PREV_LN_LEN++;
-			ACT_LN_LEN--;
-			PREV_LN = extend_line(Buff, PREV_LN_INDEX);
+			PREV_LINE[PREV_LINE_LEN_I] = PREV_LINE[x];
+			PREV_LINE_LEN_I++;
+			ACT_LINE_LEN_I--;
+			PREV_LINE = extend_line(Buff, PREV_LINE_I);
 		}
 
-		for(buff_t y = ACT_LN_INDEX + 1; y < Buff->lines; y++)
+		for(buff_t y = ACT_LINE_I + 1; y < Buff->lines_i; y++)
 		{
 			Buff->text[y] = Buff->text[y + 1];
-			Buff->line_len[y] = Buff->line_len[y + 1];
+			Buff->line_len_i[y] = Buff->line_len_i[y + 1];
 		}
-		free(LAST_LN);
-		LAST_LN = NULL;
-		Buff->lines--;
-		Buff->chars--;
+		free(LAST_LINE);
+		LAST_LINE = NULL;
+		Buff->lines_i--;
+		Buff->chars_i--;
 	}
 	// Replaces the linefeed with the terminator.
-	ACT_LN[ACT_LN_LEN] = NUL__CTRL_SHIFT_2;
+	ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
 	SET_STATUS("edited\0");
 	return Buff;
 }
 
-f_mtdt* ctrl_g(f_mtdt* Buff)
+f_mtdt* cursor_left(f_mtdt* Buff)
 {
 	// Move only when the cursor isn't at the start of the line.
-	if(Buff->cusr_x < ACT_LN_LEN)
+	if(Buff->cusr_x < ACT_LINE_LEN_I)
 	{
 		// Move the cursor left.
 		Buff->cusr_x++;
 	}
-	else if((Buff->lines > 0) && (Buff->cusr_y < Buff->lines))
+	else if((Buff->lines_i > 0) && (Buff->cusr_y < Buff->lines_i))
 	{
 		// Set to the right ignoring the linefeed.
 		Buff->cusr_x = 1;
@@ -282,7 +272,7 @@ f_mtdt* ctrl_g(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* ctrl_h(f_mtdt* Buff)
+f_mtdt* cursor_right(f_mtdt* Buff)
 {
 	// Cursor can be moved right if is shifted left. 0 - default right position.
 	if(Buff->cusr_x > 0)
@@ -292,7 +282,7 @@ f_mtdt* ctrl_h(f_mtdt* Buff)
 		if((Buff->cusr_y > 0) && (Buff->cusr_x == 0))
 		{
 			Buff->cusr_y--;
-			Buff->cusr_x = ACT_LN_LEN;
+			Buff->cusr_x = ACT_LINE_LEN_I;
 		}
 		// Last line doesn't contain linefeed so ignoring that isn't necessary.
 		else if((Buff->cusr_y == 1) && (Buff->cusr_x == 0))
@@ -303,9 +293,9 @@ f_mtdt* ctrl_h(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* ctrl_y(f_mtdt* Buff)
+f_mtdt* cursor_up(f_mtdt* Buff)
 {
-	if(Buff->cusr_y < Buff->lines)
+	if(Buff->cusr_y < Buff->lines_i)
 	{
 		// Move the cursor up.
 		Buff->cusr_y++;
@@ -316,7 +306,7 @@ f_mtdt* ctrl_y(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* ctrl_b(f_mtdt* Buff)
+f_mtdt* cursor_down(f_mtdt* Buff)
 {
 	if(Buff->cusr_y > 0)
 	{
@@ -337,39 +327,42 @@ f_mtdt* ctrl_b(f_mtdt* Buff)
 
 f_mtdt* delete_line(f_mtdt* Buff)
 {
-	Buff->cusr_x = 1;
+	if(Buff->cusr_x > 0) // TODO: CURSOR POSITIONS.
+	{
+		Buff->cusr_x = 1;
+	}
 
-	if((Buff->lines > 0) && (Buff->cusr_y > 0))
+	if((Buff->lines_i > 0) && (Buff->cusr_y > 0))
 	{
 		Buff = copy_lines_backward(Buff);
 
-		free(LAST_LN);
-		LAST_LN = NULL;
+		free(LAST_LINE);
+		LAST_LINE = NULL;
 
-		Buff->lines--;
+		Buff->lines_i--;
 		Buff = shrink_lines_array(Buff);
 
 		Buff->cusr_y--;
 	}
-	else if((Buff->lines > 0) && (Buff->cusr_y == 0))
+	else if((Buff->lines_i > 0) && (Buff->cusr_y == 0))
 	{
-		free(LAST_LN);
-		LAST_LN = NULL;
+		free(LAST_LINE);
+		LAST_LINE = NULL;
 
-		Buff->lines--;
+		Buff->lines_i--;
 		Buff = shrink_lines_array(Buff);
 
-		LAST_LN_LEN--;
-		LAST_LN[LAST_LN_LEN] = NUL__CTRL_SHIFT_2;
+		LAST_LINE_LEN_I--;
+		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 	}
-	else if(Buff->lines == 0)
+	else if(Buff->lines_i == 0)
 	{
-		LAST_LN_LEN = 0;
-		LAST_LN[LAST_LN_LEN] = NUL__CTRL_SHIFT_2;
+		LAST_LINE_LEN_I = 0;
+		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
-		LAST_LN = realloc(LAST_LN, sizeof(Buff->text));
+		LAST_LINE = realloc(LAST_LINE, sizeof(Buff->text));
 
-		chk_ptr(Buff, LAST_LN, "malloc after the first line removal");
+		chk_ptr(Buff, LAST_LINE, "malloc after the first line removal");
 	}
 	return Buff;
 }
@@ -380,15 +373,16 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 	{
 		case 'l':
 		{
-			if((Buff->cusr_x >= ACT_LN_LEN) && (ACT_LN_LEN > 0))
+			if((Buff->cusr_x >= ACT_LINE_LEN_I) && (ACT_LINE_LEN_I > 0))
 			{
-				Buff->cusr_x = ACT_LN_LEN - NUL_SZ;
+				Buff->cusr_x = ACT_LINE_LEN_I - NUL_SZ;
 			}
-			if(ACT_LN_LEN > 0)
+			if(ACT_LINE_LEN_I > 0)
 			{
-				for(buff_t x = ACT_LN_LEN - Buff->cusr_x; x <= ACT_LN_LEN; x++)
+				for(buff_t x = ACT_LINE_LEN_I - Buff->cusr_x; x <= ACT_LINE_LEN_I; x++)
 				{
-					ACT_LN[x - INDEX] = ACT_LN[x];
+					// Previous one = next.
+					ACT_LINE[x - INDEX] = ACT_LINE[x];
 				}
 			}
 			break;
@@ -396,9 +390,10 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 
 		case 'r':
 		{
-			for(buff_t x = ACT_LN_LEN; x >= ACT_LN_LEN - Buff->cusr_x; x--)
+			for(buff_t x = ACT_LINE_LEN_I; x >= ACT_LINE_LEN_I - Buff->cusr_x; x--)
 			{
-				ACT_LN[x] = ACT_LN[x - INDEX];
+				// Next one = previous.
+				ACT_LINE[x] = ACT_LINE[x - INDEX];
 			}
 		}
 	}

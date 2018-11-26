@@ -1,18 +1,18 @@
 #ifdef __linux__
 #include "fiflo.h"
 
-_Noreturn void free_all_exit(f_mtdt* Buff, _Bool code)
+_Noreturn void free_all_exit(f_mtdt* Buff, const _Bool code)
 {
-	for(buff_t line = 0; line <= Buff->lines; line++)
+	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
-		free(Buff->text[line]);
-		Buff->text[line] = NULL;
+		free(Buff->text[line_i]);
+		Buff->text[line_i] = NULL;
 	}
 	free(Buff->text);
 	Buff->text = NULL;
 
-	free(Buff->line_len);
-	Buff->line_len = NULL;
+	free(Buff->line_len_i);
+	Buff->line_len_i = NULL;
 
 	free(Buff);
 	Buff = NULL;
@@ -59,8 +59,10 @@ void options(const char* arg)
 	}
 }
 
-char getch(void)
+char getch(f_mtdt* Buff)
 {
+	const int8_t error = -1;
+
 	int echo_input_chars  = ECHO;
 	int enable_signals    = ISIG;
 	int canonical_mode_on = ICANON;
@@ -72,7 +74,11 @@ char getch(void)
 	char key;
 
 	// Put the state of the STDIN_FILENO into the *old_term_settings.
-	tcgetattr(STDIN_FILENO, &old_term_settings);
+	if(tcgetattr(STDIN_FILENO, &old_term_settings) == error)
+	{
+		fputs("Can't get the terminal termios attribiutes.", stderr);
+		free_all_exit(Buff, 1);
+	}
 
 	// Create the copy of the old terminal settings to modify it's.
 	new_term_settings = old_term_settings;
@@ -85,14 +91,21 @@ char getch(void)
 
 	/* Immediately set the state of the STDIN_FILENO to the *new_term_settings.
 	Use the new terminal I/O settings. */
-	tcsetattr(STDIN_FILENO, TCSANOW, &new_term_settings);
+	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_settings) == error)
+	{
+		fputs("Can't set the terminal to the raw mode.", stderr);
+		free_all_exit(Buff, 1);
+	}
 
 	key = (char) getchar();
 
 	/* Immediately restore the state of the STDIN_FILENO to the
 	*new_term_settings. */
-	tcsetattr(STDIN_FILENO, TCSANOW, &old_term_settings);
-
+	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_settings) == error)
+	{
+		fputs("Can't restore the terminal to the normal mode.", stderr);
+		free_all_exit(Buff, 1);
+	}
 	return key;
 }
 
@@ -103,16 +116,16 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	Buff->text = malloc(sizeof(Buff->text));
 	chk_ptr(Buff, Buff->text, "malloc the array with lines\0");
 
-	Buff->line_len = malloc(sizeof(Buff->line_len));
-	chk_ptr(Buff, Buff->line_len, "malloc the array with lines length\0");
+	Buff->line_len_i = malloc(sizeof(Buff->line_len_i));
+	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length\0");
 
-	Buff->chars  = 0;
-	Buff->lines  = 0;
-	Buff->cusr_x = 0;
-	Buff->cusr_y = 0;
+	Buff->chars_i = 0;
+	Buff->lines_i = 0;
+	Buff->cusr_x  = 0;
+	Buff->cusr_y  = 0;
 
-	ACT_LN_LEN = 0;
-	ACT_LN = malloc(sizeof(Buff->text));
+	ACT_LINE_LEN_I = 0;
+	ACT_LINE = malloc(sizeof(Buff->text));
 
 	return Buff;
 }
@@ -123,7 +136,7 @@ _Noreturn void run(const char* arg)
 	char pressed = 0;
 
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
-	chk_ptr(Buff, Buff, "malloc the file metadata\0");
+	chk_ptr(Buff, Buff, "malloc the metadata buffer\0");
 
 	Buff = init_buffer(Buff, arg);
 	Buff = read_file(Buff);
@@ -134,7 +147,7 @@ _Noreturn void run(const char* arg)
 		Buff = recognize_key(Buff, pressed);
 		render_window(Buff);
 
-		pressed = getch();
+		pressed = getch(Buff);
 		flush_window(Buff);
 	}
 }
@@ -147,7 +160,7 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 
-	// Sets the default basename to "noname.asdf".
+	// Sets the default basename and starts..
 	if(argv[1] == NULL)
 	{
 		run("noname.flop\0");

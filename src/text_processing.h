@@ -42,13 +42,12 @@
 
 #define NEG      -1 // Pipe.
 #define NUL_SZ   1
-#define SLASH_SZ 1
 
 // file.h
 extern f_mtdt* save_file(f_mtdt* Buff);
 
 // memory.h
-extern char*   extend_line        (f_mtdt* Buff, buff_t line);
+extern char*   extend_line        (f_mtdt* Buff, buff_t line_i);
 extern char*   shrink_act_line    (f_mtdt* Buff);
 extern char*   shrink_prev_line   (f_mtdt* Buff);
 extern f_mtdt* extend_lines_array (f_mtdt* Buff);
@@ -69,17 +68,18 @@ f_mtdt* linefeed(f_mtdt* Buff);
 f_mtdt* backspace(f_mtdt* Buff);
 
 // Moves the cursor left.
-f_mtdt* ctrl_g(f_mtdt* Buff);
+f_mtdt* cursor_left(f_mtdt* Buff);
 
 // Moves the cursor right.
-f_mtdt* ctrl_h(f_mtdt* Buff);
+f_mtdt* cursor_right(f_mtdt* Buff);
 
 // Moves the cursor up.
-f_mtdt* ctrl_y(f_mtdt* Buff);
+f_mtdt* cursor_up(f_mtdt* Buff);
 
 // Moves the cursor down.
-f_mtdt* ctrl_b(f_mtdt* Buff);
+f_mtdt* cursor_down(f_mtdt* Buff);
 
+// Deletes the current line and decrements the lines index.
 f_mtdt* delete_line(f_mtdt* Buff);
 
 // Moves the text when the cursor is moved left and char is pressed.
