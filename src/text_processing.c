@@ -65,6 +65,12 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 		case SOT__CTRL_B:
 		{
 			Buff = ctrl_b(Buff);
+			break;
+		}
+
+		case EOT__CTRL_D:
+		{
+			Buff = delete_line(Buff);
 		}
 	}
 
@@ -325,6 +331,43 @@ f_mtdt* ctrl_b(f_mtdt* Buff)
 		{
 			Buff->cusr_x = 0;
 		}
+	}
+	return Buff;
+}
+
+f_mtdt* delete_line(f_mtdt* Buff)
+{
+	if((Buff->lines > 0) && (Buff->cusr_y > 0))
+	{
+		Buff = copy_lines_backward(Buff);
+
+		free(LAST_LN);
+		LAST_LN = NULL;
+
+		Buff->lines--;
+		Buff = shrink_lines_array(Buff);
+
+		Buff->cusr_y--;
+	}
+	else if((Buff->lines > 0) && (Buff->cusr_y == 0))
+	{
+		free(LAST_LN);
+		LAST_LN = NULL;
+
+		Buff->lines--;
+		Buff = shrink_lines_array(Buff);
+
+		LAST_LN_LEN--;
+		LAST_LN[LAST_LN_LEN] = NUL__CTRL_SHIFT_2;
+	}
+	else if(Buff->lines == 0)
+	{
+		LAST_LN_LEN = 0;
+		LAST_LN[LAST_LN_LEN] = NUL__CTRL_SHIFT_2;
+
+		LAST_LN = realloc(LAST_LN, sizeof(Buff->text));
+
+		chk_ptr(Buff, LAST_LN, "malloc after the first line delete");
 	}
 	return Buff;
 }

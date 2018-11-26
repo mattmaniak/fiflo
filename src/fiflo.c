@@ -74,10 +74,10 @@ char getch(void)
 	// Put the state of the STDIN_FILENO into the *old_term_settings.
 	tcgetattr(STDIN_FILENO, &old_term_settings);
 
-	// Create the copy of the old_term_settings terminal settings to modify it's.
+	// Create the copy of the old terminal settings to modify it's.
 	new_term_settings = old_term_settings;
 
-	// Look that the options of the below flag are negated.
+	// Look that the options of below flags are negated.
 	new_term_settings.c_lflag &= (unsigned int)
 	~(canonical_mode_on | echo_input_chars | enable_signals);
 

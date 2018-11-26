@@ -17,7 +17,8 @@
 #define BARS_SZ  (UBAR_SZ + LBAR_SZ)
 
 // Text that is shown on the lower bar. Also defines the minimal terminal width.
-#define LBAR_STR "CTRL^: Q - exit; S - save; Y/B/G/H - cursor\0"
+#define LBAR_STR \
+"CTRL^: D - delete a line; Q - exit; S - save; Y/B/G/H - cursor\0"
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
