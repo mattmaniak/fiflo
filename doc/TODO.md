@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- optimize text-processing functions,
 - traditional arrows keys to move the cursor,
 - simplify the makefile,
 - pre-allocation of a memory, eg. next 16 lines,

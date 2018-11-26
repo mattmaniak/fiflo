@@ -167,7 +167,6 @@ f_mtdt* linefeed(f_mtdt* Buff)
 	return Buff;
 }
 
-// TODO
 f_mtdt* backspace(f_mtdt* Buff)
 {
 	// Isn't possible to delete nothing.
@@ -234,17 +233,19 @@ f_mtdt* backspace(f_mtdt* Buff)
 		{
 			PREV_LINE[PREV_LINE_LEN_I] = PREV_LINE[x];
 			PREV_LINE_LEN_I++;
-			ACT_LINE_LEN_I--;
 			PREV_LINE = extend_line(Buff, PREV_LINE_I);
+
+			ACT_LINE_LEN_I--;
 		}
 
-		for(buff_t y = ACT_LINE_I + 1; y < Buff->lines_i; y++)
+		for(buff_t line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
 		{
-			Buff->text[y] = Buff->text[y + 1];
-			Buff->line_len_i[y] = Buff->line_len_i[y + 1];
+			Buff->text[line_i] = Buff->text[line_i + 1];
+			Buff->line_len_i[line_i] = Buff->line_len_i[line_i + 1];
 		}
 		free(LAST_LINE);
 		LAST_LINE = NULL;
+
 		Buff->lines_i--;
 		Buff->chars_i--;
 	}
@@ -257,10 +258,8 @@ f_mtdt* backspace(f_mtdt* Buff)
 
 f_mtdt* cursor_left(f_mtdt* Buff)
 {
-	// Move only when the cursor isn't at the start of the line.
 	if(Buff->cusr_x < ACT_LINE_LEN_I)
 	{
-		// Move the cursor left.
 		Buff->cusr_x++;
 	}
 	else if((Buff->lines_i > 0) && (Buff->cusr_y < Buff->lines_i))
@@ -274,10 +273,8 @@ f_mtdt* cursor_left(f_mtdt* Buff)
 
 f_mtdt* cursor_right(f_mtdt* Buff)
 {
-	// Cursor can be moved right if is shifted left. 0 - default right position.
 	if(Buff->cusr_x > 0)
 	{
-		// Move the cursor right.
 		Buff->cusr_x--;
 		if((Buff->cusr_y > 0) && (Buff->cusr_x == 0))
 		{
@@ -297,7 +294,6 @@ f_mtdt* cursor_up(f_mtdt* Buff)
 {
 	if(Buff->cusr_y < Buff->lines_i)
 	{
-		// Move the cursor up.
 		Buff->cusr_y++;
 
 		// Ignore the linefeed.
@@ -310,7 +306,6 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 {
 	if(Buff->cusr_y > 0)
 	{
-		// Move the cursor down.
 		Buff->cusr_y--;
 
 		if(Buff->cusr_y > 0)
@@ -388,7 +383,6 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 			}
 			break;
 		}
-
 		case 'r':
 		{
 			for(buff_t x = ACT_LINE_LEN_I; x >= ACT_LINE_LEN_I - Buff->cusr_x; x--)
