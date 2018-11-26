@@ -327,11 +327,6 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 
 f_mtdt* delete_line(f_mtdt* Buff)
 {
-	if(Buff->cusr_x > 0) // TODO: CURSOR POSITIONS.
-	{
-		Buff->cusr_x = 1;
-	}
-
 	if((Buff->lines_i > 0) && (Buff->cusr_y > 0))
 	{
 		Buff = copy_lines_backward(Buff);
@@ -343,6 +338,8 @@ f_mtdt* delete_line(f_mtdt* Buff)
 		Buff = shrink_lines_array(Buff);
 
 		Buff->cusr_y--;
+
+		Buff->cusr_x = 1;
 	}
 	else if((Buff->lines_i > 0) && (Buff->cusr_y == 0))
 	{
@@ -354,11 +351,15 @@ f_mtdt* delete_line(f_mtdt* Buff)
 
 		LAST_LINE_LEN_I--;
 		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
+
+		Buff->cusr_x = 0;
 	}
 	else if(Buff->lines_i == 0)
 	{
 		LAST_LINE_LEN_I = 0;
 		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
+
+		Buff->cusr_x = 0;
 
 		LAST_LINE = realloc(LAST_LINE, sizeof(Buff->text));
 
