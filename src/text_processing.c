@@ -337,6 +337,8 @@ f_mtdt* ctrl_b(f_mtdt* Buff)
 
 f_mtdt* delete_line(f_mtdt* Buff)
 {
+	Buff->cusr_x = 1;
+
 	if((Buff->lines > 0) && (Buff->cusr_y > 0))
 	{
 		Buff = copy_lines_backward(Buff);
@@ -367,7 +369,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 
 		LAST_LN = realloc(LAST_LN, sizeof(Buff->text));
 
-		chk_ptr(Buff, LAST_LN, "malloc after the first line delete");
+		chk_ptr(Buff, LAST_LN, "malloc after the first line removal");
 	}
 	return Buff;
 }
