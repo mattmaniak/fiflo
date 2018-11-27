@@ -1,7 +1,7 @@
 # fiflo
 
 ## Description
-ASCII terminal-based text editor.
+User-friendly ASCII terminal-based text editor.
 
 ## Requirements for the GNU/Linux:
 - git,

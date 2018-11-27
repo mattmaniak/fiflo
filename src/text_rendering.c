@@ -22,17 +22,17 @@ void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)
 {
-	buff_t scrolled = 0;
+	buff_t scrolled_lines = 0;
 
 	if(ACT_LINE_I >= Ui.text_y)
 	{
 		// Amount of lines to hide in the magic upper area.
-		scrolled = Buff->lines_i + INDEX - Ui.text_y - Buff->cusr_y;
+		scrolled_lines = Buff->lines_i + INDEX - Ui.text_y - Buff->cusr_y;
 	}
-	return scrolled;
+	return scrolled_lines;
 }
 
-void print_actual_line(f_mtdt* Buff, win_mtdt Ui)
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const _Bool mode)
 {
 	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
@@ -48,7 +48,13 @@ void print_actual_line(f_mtdt* Buff, win_mtdt Ui)
 	else
 	{
 		// Render only left part of the line. Cursor can scrolled.
-		printf("%.*s\n", Ui.text_x - CUR_SZ, ACT_LINE);
+		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LINE);
+
+		// For proper rendering.
+		if(mode == LAST_RENDERED_LINE)
+		{
+			putchar(LF);
+		}
 	}
 }
 
@@ -70,7 +76,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
 
-	print_actual_line(Buff, Ui);
+	print_actual_line(Buff, Ui, ANOTHER_RENDERED_LINE);
 
 	if(Buff->cusr_y > 0)
 	{
@@ -108,7 +114,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
 
-	print_actual_line(Buff, Ui);
+	print_actual_line(Buff, Ui, LAST_RENDERED_LINE);
 
 	// Next lines. If scrolled. Only beginning is shown.
 	line_i = ACT_LINE_I + INDEX;

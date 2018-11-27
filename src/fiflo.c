@@ -42,7 +42,7 @@ void options(const char* arg)
 		"Usage: fiflo [option].",
 
 		"Options:      Description:",
-		"<no_option>   Set the filename to \"/<current_path>/noname.asdf\".",
+		"<no_option>   Set the filename to \"/<current_path>/noname.flop\".",
 		"basename      Set the basename to \"basename\" using current path.",
 		"/dir/bname    Set the filename to \"/dir/bname\"",
 		"-h, --help    Show program help.",

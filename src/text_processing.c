@@ -322,33 +322,38 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 
 f_mtdt* delete_line(f_mtdt* Buff)
 {
-	if((Buff->lines_i > 0) && (Buff->cusr_y > 0))
+	if(Buff->lines_i > 0)
 	{
-		Buff = copy_lines_backward(Buff);
+		if(Buff->cusr_y == 0)
+		{
+			free(LAST_LINE);
+			LAST_LINE = NULL;
 
-		free(LAST_LINE);
-		LAST_LINE = NULL;
+			Buff->lines_i--;
+			Buff = shrink_lines_array(Buff);
 
-		Buff->lines_i--;
-		Buff = shrink_lines_array(Buff);
+			/* With the last line deletion there is a need to remove the
+			linefeed in the previous line. */
+			LAST_LINE_LEN_I--;
+			LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
-		Buff->cusr_x = 1;
-		Buff->cusr_y--;
+			Buff->cusr_x = 0;
+		}
+		else
+		{
+			Buff = copy_lines_backward(Buff);
+
+			free(LAST_LINE);
+			LAST_LINE = NULL;
+
+			Buff->lines_i--;
+			Buff = shrink_lines_array(Buff);
+
+			Buff->cusr_x = 1;
+			Buff->cusr_y--;
+		}
 	}
-	else if((Buff->lines_i > 0) && (Buff->cusr_y == 0))
-	{
-		free(LAST_LINE);
-		LAST_LINE = NULL;
-
-		Buff->lines_i--;
-		Buff = shrink_lines_array(Buff);
-
-		LAST_LINE_LEN_I--;
-		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
-
-		Buff->cusr_x = 0;
-	}
-	else if(Buff->lines_i == 0)
+	else
 	{
 		LAST_LINE_LEN_I = 0;
 		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;

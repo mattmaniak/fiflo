@@ -4,11 +4,11 @@
 // Bytes of the memory width. Depends on an architecture. Eg. 8 bytes.
 #define ADDR_SZ sizeof(Buff->text)
 
-// Must be >= 16 and dividable by 8.
-#define MEMBLK 128
-
 // Aligned initial memblk for a new line.
 #define INIT_MEMBLK ADDR_SZ
+
+// Must be >= 16 and dividable by 8.
+#define MEMBLK 128
 
 // Allocs next memory block for chars in a line if needed.
 char* extend_line(f_mtdt* Buff, buff_t line_i);
