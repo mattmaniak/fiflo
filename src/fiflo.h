@@ -2,7 +2,6 @@
 #define FIFLO_H
 
 #include <limits.h>
-#include <signal.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -11,7 +10,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define DEBUG // Uncomment if You want to get variables values et al.
+#define DEBUG // Uncomment if You want to get some variables values, et al.
 
 // Some semantic substitutes.
 #define INDEX  1
@@ -24,6 +23,8 @@
 
 typedef uint32_t buff_t; // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
+
+// Everything that ends with the "_i" is index.
 
 #pragma pack(push, 4)
 typedef struct
@@ -42,6 +43,17 @@ typedef struct
 	char    status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 f_mtdt;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct
+{
+	char    line_num_str[16]; // Place for string of the highest line number.
+	uint8_t line_num_len;     // Dynamic width of the lines numbers.
+	term_t  text_x;           // Horizontal space for the text (width: chars).
+	term_t  text_y;           // Vertical space for the text (lines).
+}
+win_mtdt;
 #pragma pack(pop)
 
 // Needed to simplify and shorten the code.

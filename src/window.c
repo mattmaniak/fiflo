@@ -3,12 +3,12 @@
 
 term_t get_term_sz(f_mtdt* Buff, char axis)
 {
-	const int8_t  error     = -1;
-	const _Bool   line_y_sz = 1;
+	const int8_t  error       = -1;
+	const _Bool   line_height = 1;
 
 	// Remember to not override the upper bar width.
 	const term_t  x_min  = (term_t) (strlen(LBAR_STR) + SPACE_SZ);
-	const uint8_t y_min  = BARS_SZ + line_y_sz;
+	const uint8_t y_min  = BARS_SZ + line_height;
 	const term_t  sz_max = USHRT_MAX;
 
 	struct winsize term;
@@ -97,12 +97,13 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	// The lower part with the "chars in the current line" indicator.
 	printf("%s%*s", logo_half, (buff_t) strlen(Buff->status), Buff->status);
 
-	if((ACT_LINE_LEN_I < Ui.text_x) || ((ACT_LINE_LEN_I - Buff->cusr_x) < Ui.text_x))
+	if((ACT_LINE_LEN_I < Ui.text_x)
+	|| ((ACT_LINE_LEN_I - Buff->cusr_x) < Ui.text_x))
 	{
 		printf("%*d^ \n", indicator_width,
 		get_term_sz(Buff, 'X') - Ui.line_num_len - SPACE_SZ);
 	}
-	else if((ACT_LINE_LEN_I - Buff->cusr_x) >= Ui.text_x)
+	else
 	{
 		printf("%*d^ \n", indicator_width, ACT_LINE_LEN_I - Buff->cusr_x);
 	}
@@ -157,7 +158,7 @@ void render_window(f_mtdt* Buff)
 	fill(Buff, Ui);
 
 	lower_bar(Buff);
-	set_cur_pos(Buff, Ui);
+	set_cursor_pos(Buff, Ui);
 }
 
 void print_line_num(buff_t line_i, uint8_t line_num_len, const _Bool mode)
@@ -178,7 +179,7 @@ void print_line_num(buff_t line_i, uint8_t line_num_len, const _Bool mode)
 	putchar(' ');
 }
 
-void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
+void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 {
 	// Case when all lines fits in the window.
 	term_t move_up = 0;
@@ -205,7 +206,7 @@ void set_cur_pos(f_mtdt* Buff, win_mtdt Ui)
 		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LINE_LEN_I - Buff->cusr_x);
 	}
 
-	if((Buff->lines_i - Buff->cusr_y) < Ui.text_y)
+	if(ACT_LINE_I < Ui.text_y)
 	{
 		// Scrolled so cursor is moved only 1 line above.
 		move_up = Ui.text_y - (term_t) (Buff->lines_i + INDEX - Buff->cusr_y);

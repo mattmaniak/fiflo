@@ -5,7 +5,7 @@
 #define ADDR_SZ sizeof(Buff->text)
 
 // Must be >= 16 and dividable by 8.
-#define MEMBLK 16
+#define MEMBLK 128
 
 // Aligned initial memblk for a new line.
 #define INIT_MEMBLK ADDR_SZ

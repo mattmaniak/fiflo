@@ -332,9 +332,8 @@ f_mtdt* delete_line(f_mtdt* Buff)
 		Buff->lines_i--;
 		Buff = shrink_lines_array(Buff);
 
-		Buff->cusr_y--;
-
 		Buff->cusr_x = 1;
+		Buff->cusr_y--;
 	}
 	else if((Buff->lines_i > 0) && (Buff->cusr_y == 0))
 	{
@@ -354,41 +353,35 @@ f_mtdt* delete_line(f_mtdt* Buff)
 		LAST_LINE_LEN_I = 0;
 		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
-		Buff->cusr_x = 0;
-
 		LAST_LINE = realloc(LAST_LINE, sizeof(Buff->text));
-
 		chk_ptr(Buff, LAST_LINE, "malloc after the first line removal");
+
+		Buff->cusr_x = 0;
 	}
 	return Buff;
 }
 
 f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 {
+	const _Bool prev = 1;
+
 	switch(direction)
 	{
 		case 'l':
 		{
-			if((Buff->cusr_x >= ACT_LINE_LEN_I) && (ACT_LINE_LEN_I > 0))
+			for(buff_t char_i = ACT_LINE_LEN_I - Buff->cusr_x;
+			char_i <= ACT_LINE_LEN_I; char_i++)
 			{
-				Buff->cusr_x = ACT_LINE_LEN_I - NUL_SZ;
-			}
-			if(ACT_LINE_LEN_I > 0)
-			{
-				for(buff_t x = ACT_LINE_LEN_I - Buff->cusr_x; x <= ACT_LINE_LEN_I; x++)
-				{
-					// Previous one = next.
-					ACT_LINE[x - INDEX] = ACT_LINE[x];
-				}
+				ACT_LINE[char_i - prev] = ACT_LINE[char_i];
 			}
 			break;
 		}
 		case 'r':
 		{
-			for(buff_t x = ACT_LINE_LEN_I; x >= ACT_LINE_LEN_I - Buff->cusr_x; x--)
+			for(buff_t char_i = ACT_LINE_LEN_I;
+			char_i >= ACT_LINE_LEN_I - Buff->cusr_x; char_i--)
 			{
-				// Next one = previous.
-				ACT_LINE[x] = ACT_LINE[x - INDEX];
+				ACT_LINE[char_i] = ACT_LINE[char_i - prev];
 			}
 		}
 	}

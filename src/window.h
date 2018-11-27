@@ -32,17 +32,6 @@
 #define ANSI_SAVE_CUR_POS()    printf("\033[%s", "s")
 #define ANSI_RESTORE_CUR_POS() printf("\033[%s", "u")
 
-#pragma pack(push, 1)
-typedef struct
-{
-	char    line_num_str[16]; // Place for string of the highest line number.
-	uint8_t line_num_len;     // Dynamic width of the lines numbers.
-	term_t  text_x;           // Horizontal space for the text (width: chars).
-	term_t  text_y;           // Vertical space for the text (lines).
-}
-win_mtdt;
-#pragma pack(pop)
-
 extern void   scroll_line_x    (f_mtdt* Buff, win_mtdt Ui);
 extern buff_t set_start_line   (f_mtdt* Buff);
 extern buff_t set_end_line     (f_mtdt* Buff);
@@ -71,6 +60,6 @@ void render_window(f_mtdt* Buff);
 void print_line_num(buff_t line_i, uint8_t line_num_len, const _Bool mode);
 
 // Sets the cursor position from the left bottom.
-void set_cur_pos(f_mtdt* Buff, win_mtdt Ui);
+void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui);
 
 #endif

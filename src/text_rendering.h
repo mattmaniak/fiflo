@@ -7,18 +7,6 @@
 #define BOLD_LINE_NUM 1
 #define THIN_LINE_NUM 0
 
-// TODO: EXTERN OR STH?
-#pragma pack(push, 1)
-typedef struct
-{
-	char    line_num_str[16]; // Place for string of the highest line number.
-	uint8_t line_num_len;     // Dynamic width of the lines numbers.
-	term_t  text_x;           // Horizontal space for the text (width: chars).
-	term_t  text_y;           // Vertical space for the text (lines).
-}
-win_mtdt;
-#pragma pack(pop)
-
 // window.h
 extern void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode);
 

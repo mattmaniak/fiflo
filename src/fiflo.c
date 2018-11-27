@@ -93,7 +93,7 @@ char getch(f_mtdt* Buff)
 	Use the new terminal I/O settings. */
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_settings) == error)
 	{
-		fputs("Can't set the terminal to the raw mode.", stderr);
+		fputs("Can't set the terminal state to the raw mode.", stderr);
 		free_all_exit(Buff, 1);
 	}
 
@@ -103,7 +103,7 @@ char getch(f_mtdt* Buff)
 	*new_term_settings. */
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_settings) == error)
 	{
-		fputs("Can't restore the terminal to the normal mode.", stderr);
+		fputs("Can't restore the terminal state to the normal mode.", stderr);
 		free_all_exit(Buff, 1);
 	}
 	return key;
@@ -160,7 +160,7 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 
-	// Sets the default basename and starts..
+	// Sets the default basename and starts.
 	if(argv[1] == NULL)
 	{
 		run("noname.flop\0");
