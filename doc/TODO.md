@@ -1,7 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- event-driven exit: returns instead of exits,
 - optimize text-processing functions,
-- traditional arrows keys to move the cursor,
 - simplify the makefile,
 - pre-allocation of a memory, eg. next 16 lines,
 - live filename set,
@@ -10,7 +10,6 @@
 - cut/copy/paste,
 - full ASCII support (keymap),
 - tabs (multiple files),
-- every header as a dependency in the Makefile,
 - TAB key,
 - paging,
 - ~/.config/fiflo.conf file && colors,

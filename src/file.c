@@ -3,7 +3,7 @@
 
 f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 {
-	const _Bool slash_sz = 1;
+	const bool slash_sz = 1;
 
 	if(passed[strlen(passed) - NUL_SZ] == '/')
 	{

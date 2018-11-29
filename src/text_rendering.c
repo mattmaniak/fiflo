@@ -32,7 +32,7 @@ void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 	}
 }
 
-void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const _Bool mode)
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool mode)
 {
 	if(ACT_LINE_LEN_I < Ui.text_x)
 	{

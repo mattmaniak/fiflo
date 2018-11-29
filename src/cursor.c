@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "cursor.h"
 
-f_mtdt* cursor_left(f_mtdt* Buff)
+f_mtdt* move_cursor_left(f_mtdt* Buff)
 {
 	if(Buff->cusr_x < ACT_LINE_LEN_I)
 	{
@@ -16,7 +16,7 @@ f_mtdt* cursor_left(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* cursor_right(f_mtdt* Buff)
+f_mtdt* move_cursor_right(f_mtdt* Buff)
 {
 	if(Buff->cusr_x > 0)
 	{
@@ -35,7 +35,7 @@ f_mtdt* cursor_right(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* cursor_up(f_mtdt* Buff)
+f_mtdt* move_cursor_up(f_mtdt* Buff)
 {
 	if(Buff->cusr_y < Buff->lines_i)
 	{
@@ -46,7 +46,7 @@ f_mtdt* cursor_up(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* cursor_down(f_mtdt* Buff)
+f_mtdt* move_cursor_down(f_mtdt* Buff)
 {
 	if(Buff->cusr_y > 0)
 	{
@@ -60,17 +60,6 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 		{
 			Buff->cusr_x = 0;
 		}
-	}
-	return Buff;
-}
-
-f_mtdt* ansi_escape_code_from_keyboard(f_mtdt* Buff, char key)
-{
-	const _Bool prev = 1;
-
-	if(ACT_LINE[ACT_LINE_LEN_I - NUL_SZ - prev] == '[')
-	{
-		puts("ANSI");
 	}
 	return Buff;
 }

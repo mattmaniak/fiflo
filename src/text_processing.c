@@ -1,7 +1,71 @@
 #include "fiflo.h"
 #include "text_processing.h"
 
-f_mtdt* recognize_key(f_mtdt* Buff, char key)
+f_mtdt* parse_key(f_mtdt* Buff, char key)
+{
+	// Notice: these globals are used only in that function.
+	static char    ansi_seq[8]; // TODO: GCC WARNING.
+	static bool    ansi_esc;
+	static uint8_t char_i;
+
+	/* If You want to see the values of sequences just comment everything
+	excluding "Buff = keymap(Buff, key);". */
+	if(key == ESC__CTRL_LEFT_SQR_BRACKET)
+	{
+		ansi_esc = true;
+		char_i   = 0;
+	}
+	if(ansi_esc == true)
+	{
+		ansi_seq[char_i] = key;
+
+		if(char_i < 8)
+		{
+			char_i++;
+		}
+		if((key == 'A') || (key == 'B') || (key == 'C') || (key == 'D'))
+		{
+			ansi_esc = false;
+			char_i = 0;
+			Buff = arrows(Buff, key);
+		}
+	}
+	else
+	{
+		Buff = keymap(Buff, key);
+	}
+	return Buff;
+}
+
+f_mtdt* arrows(f_mtdt* Buff, char key)
+{
+	switch(key)
+	{
+		case 'A':
+		{
+			Buff = move_cursor_up(Buff);
+			break;
+		}
+		case 'B':
+		{
+			Buff = move_cursor_down(Buff);
+			break;
+		}
+		case 'C':
+		{
+			Buff = move_cursor_right(Buff);
+			break;
+		}
+		case 'D':
+		{
+			Buff = move_cursor_left(Buff);
+			break;
+		}
+	}
+	return Buff;
+}
+
+f_mtdt* keymap(f_mtdt* Buff, char key)
 {
 	switch(key)
 	{
@@ -13,11 +77,6 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 		default:
 		{
 			Buff = text_char(Buff, key);
-			break;
-		}
-		case ESC__CTRL_LEFT_SQR_BRACKET:
-		{
-			Buff = ansi_escape_code_from_keyboard(Buff, key);
 			break;
 		}
 		case HT__CTRL_I:
@@ -41,26 +100,6 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 		case DC3__CTRL_S:
 		{
 			Buff = save_file(Buff);
-			break;
-		}
-		case BEL__CTRL_G:
-		{
-			Buff = cursor_left(Buff);
-			break;
-		}
-		case BS__CTRL_H:
-		{
-			Buff = cursor_right(Buff);
-			break;
-		}
-		case EM__CTRL_Y:
-		{
-			Buff = cursor_up(Buff);
-			break;
-		}
-		case SOT__CTRL_B:
-		{
-			Buff = cursor_down(Buff);
 			break;
 		}
 		case EOT__CTRL_D:
@@ -304,7 +343,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 
 f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 {
-	const _Bool prev = 1;
+	const bool prev = 1;
 
 	switch(direction)
 	{

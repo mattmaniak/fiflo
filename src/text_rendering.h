@@ -11,7 +11,7 @@
 #define ANOTHER_RENDERED_LINE 0
 
 // window.h
-extern void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode);
+extern void print_line_num(buff_t line, uint8_t line_num_len, const bool mode);
 
 // Returns value of hidden lines.
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui);
@@ -20,7 +20,7 @@ buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui);
 void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui);
 
 // Decides how to show it. Can scroll it or the cursor.
-void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const _Bool mode);
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool mode);
 
 // Renders a text when there is smaller amount of lines than the window height.
 void fit_lines(f_mtdt* Buff, win_mtdt Ui);

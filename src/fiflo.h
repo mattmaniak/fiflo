@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/file.h>
@@ -73,14 +74,14 @@ extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
 extern f_mtdt* read_file(f_mtdt* Buff);
 
 // text_processing.h
-extern f_mtdt* recognize_key(f_mtdt* Buff, char key);
+extern f_mtdt* parse_key(f_mtdt* Buff, char key);
 
 // render.h
 extern void flush_window (f_mtdt* Buff);
 extern void render_window(f_mtdt* Buff);
 
 // Frees everything and exits with status code.
-_Noreturn void free_all_exit(f_mtdt* Buff, const _Bool code);
+_Noreturn void free_all_exit(f_mtdt* Buff, const bool code);
 
 // Signal catcher that does nothing.
 void ignore_sig(int sig_num);

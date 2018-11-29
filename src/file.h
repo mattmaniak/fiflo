@@ -8,8 +8,6 @@
 extern f_mtdt* text_char(f_mtdt* Buff, char key);
 extern f_mtdt* linefeed (f_mtdt* Buff);
 extern f_mtdt* backspace(f_mtdt* Buff);
-extern f_mtdt* ctrl_g   (f_mtdt* Buff);
-extern f_mtdt* ctrl_h   (f_mtdt* Buff);
 
 // window.h
 extern void render_window(f_mtdt* Buff);

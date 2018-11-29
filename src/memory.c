@@ -124,7 +124,7 @@ f_mtdt* shrink_lines_array(f_mtdt* Buff)
 
 f_mtdt* copy_lines_forward(f_mtdt* Buff)
 {
-	const _Bool prev = 1;
+	const bool prev = 1;
 
 	for(buff_t line_i = Buff->lines_i; line_i > ACT_LINE_I; line_i--)
 	{
@@ -149,7 +149,7 @@ f_mtdt* copy_lines_forward(f_mtdt* Buff)
 
 f_mtdt* copy_lines_backward(f_mtdt* Buff)
 {
-	const _Bool next = 1;
+	const bool next = 1;
 
 	for(buff_t line_i = ACT_LINE_I; line_i < Buff->lines_i; line_i++)
 	{

@@ -44,12 +44,10 @@
 #define NUL_SZ 1
 
 // cursor.h
-extern f_mtdt* cursor_left (f_mtdt* Buff);
-extern f_mtdt* cursor_right(f_mtdt* Buff);
-extern f_mtdt* cursor_up   (f_mtdt* Buff);
-extern f_mtdt* cursor_down (f_mtdt* Buff);
-extern f_mtdt* ansi_escape_code_from_keyboard(f_mtdt* Buff, char key);
-
+extern f_mtdt* move_cursor_left (f_mtdt* Buff);
+extern f_mtdt* move_cursor_right(f_mtdt* Buff);
+extern f_mtdt* move_cursor_up   (f_mtdt* Buff);
+extern f_mtdt* move_cursor_down (f_mtdt* Buff);
 
 // file.h
 extern f_mtdt* save_file(f_mtdt* Buff);
@@ -63,8 +61,14 @@ extern f_mtdt* shrink_lines_array (f_mtdt* Buff);
 extern f_mtdt* copy_lines_forward (f_mtdt* Buff);
 extern f_mtdt* copy_lines_backward(f_mtdt* Buff);
 
+// TODO: COMMENT.
+f_mtdt* parse_key(f_mtdt* Buff, char key);
+
+// TODO: COMMENT.
+f_mtdt* arrows(f_mtdt* Buff, char key);
+
 // Knows what to do next with pressed key or combination. Based on ASCII.
-f_mtdt* recognize_key(f_mtdt* Buff, char key);
+f_mtdt* keymap(f_mtdt* Buff, char key);
 
 // Adds char when the pressed key is a printable one.
 f_mtdt* text_char(f_mtdt* Buff, char key);

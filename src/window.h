@@ -18,7 +18,7 @@
 
 // Text that is shown on the lower bar. Also defines the minimal terminal width.
 #define LBAR_STR \
-"CTRL^: D - delete a line; Q - exit; S - save; Y/B/G/H - cursor\0"
+"CTRL^D - delete line; CTRL^Q - exit; CTRL^S - save; arrows - cursor\0"
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
@@ -34,7 +34,6 @@
 
 extern void   scroll_line_x    (f_mtdt* Buff, win_mtdt Ui);
 extern buff_t set_start_line   (f_mtdt* Buff);
-extern buff_t set_end_line     (f_mtdt* Buff);
 extern void   print_actual_line(f_mtdt* Buff, win_mtdt Ui);
 extern void   display_text     (f_mtdt* Buff, win_mtdt Ui);
 
@@ -57,7 +56,7 @@ void fill(f_mtdt* Buff, win_mtdt Ui);
 void render_window(f_mtdt* Buff);
 
 // Prints the line number.
-void print_line_num(buff_t line_i, uint8_t line_num_len, const _Bool mode);
+void print_line_num(buff_t line_i, uint8_t line_num_len, const bool mode);
 
 // Sets the cursor position from the left bottom.
 void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui);

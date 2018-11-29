@@ -3,8 +3,8 @@
 
 term_t get_term_sz(f_mtdt* Buff, char axis)
 {
-	const int8_t  error       = -1;
-	const _Bool   line_height = 1;
+	const int8_t error       = -1;
+	const bool   line_height = 1;
 
 	// Remember to not override the upper bar width.
 	const term_t  x_min  = (term_t) (strlen(LBAR_STR) + SPACE_SZ);
@@ -161,10 +161,10 @@ void render_window(f_mtdt* Buff)
 	set_cursor_pos(Buff, Ui);
 }
 
-void print_line_num(buff_t line_i, uint8_t line_num_len, const _Bool mode)
+void print_line_num(buff_t line_i, uint8_t line_num_len, const bool mode)
 {
 	// One with the cursor.
-	const _Bool actual_line = 1;
+	const bool actual_line = true;
 
 	ANSI_INVERT();
 

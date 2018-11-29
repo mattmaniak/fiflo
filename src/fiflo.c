@@ -1,7 +1,7 @@
 #ifdef __linux__
 #include "fiflo.h"
 
-_Noreturn void free_all_exit(f_mtdt* Buff, const _Bool code)
+_Noreturn void free_all_exit(f_mtdt* Buff, const bool code)
 {
 	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
@@ -144,7 +144,7 @@ _Noreturn void run(const char* arg)
 	// The main program loop.
 	for(;;)
 	{
-		Buff = recognize_key(Buff, pressed);
+		Buff = parse_key(Buff, pressed);
 		render_window(Buff);
 
 		pressed = getch(Buff);
