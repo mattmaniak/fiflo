@@ -15,6 +15,11 @@ f_mtdt* recognize_key(f_mtdt* Buff, char key)
 			Buff = text_char(Buff, key);
 			break;
 		}
+		case ESC__CTRL_LEFT_SQR_BRACKET:
+		{
+			Buff = ansi_escape_code_from_keyboard(Buff, key);
+			break;
+		}
 		case HT__CTRL_I:
 		{
 			// Currently converts the tab to two spaces.
@@ -126,8 +131,6 @@ f_mtdt* linefeed(f_mtdt* Buff)
 	if(Buff->lines_i < BUFF_MAX)
 	{
 		Buff->lines_i++;
-
-		// Also mallocs the last line.
 		Buff = extend_lines_array(Buff);
 
 		/* If user moved the cursor before hitting ENTER, text on the right
@@ -145,16 +148,16 @@ f_mtdt* linefeed(f_mtdt* Buff)
 
 			/* Move the right part (separated by the cursor) of the line to the
 			next. */
-			for(buff_t x = PREV_LINE_LEN_I; x < PREV_LINE_LEN_I + Buff->cusr_x; x++)
+			for(buff_t char_i = PREV_LINE_LEN_I;
+			char_i < PREV_LINE_LEN_I + Buff->cusr_x; char_i++)
 			{
-				ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[x];
+				ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
 				ACT_LINE_LEN_I++;
 				ACT_LINE = extend_line(Buff, ACT_LINE_I);
 			}
 
 			// Now the length of the upper line will be shortened after copying.
 			PREV_LINE[PREV_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
-
 			PREV_LINE = shrink_prev_line(Buff);
 		}
 		// Cursor is at the end of the line. Shifted vertically.
@@ -169,7 +172,6 @@ f_mtdt* linefeed(f_mtdt* Buff)
 
 f_mtdt* backspace(f_mtdt* Buff)
 {
-	// Isn't possible to delete nothing.
 	if(ACT_LINE_LEN_I > 0)
 	{
 		// If the cursor at the maximum left position, char won't be deleted.
@@ -203,11 +205,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 			{
 				Buff = copy_lines_backward(Buff);
 			}
-			free(LAST_LINE);
-			LAST_LINE = NULL;
-
-			Buff->lines_i--;
-			Buff = shrink_lines_array(Buff);
+			Buff = delete_last_line(Buff);
 		}
 	}
 	// Deletes the last empty line.
@@ -217,8 +215,8 @@ f_mtdt* backspace(f_mtdt* Buff)
 		{
 			free(ACT_LINE);
 			ACT_LINE = NULL;
-			Buff->lines_i--;
 
+			Buff->lines_i--;
 			ACT_LINE = shrink_act_line(Buff);
 
 			ACT_LINE_LEN_I--;
@@ -229,9 +227,9 @@ f_mtdt* backspace(f_mtdt* Buff)
 	}
 	else if((Buff->cusr_x == ACT_LINE_LEN_I) && (Buff->cusr_y > 0))
 	{
-		for(buff_t x = 0; x <= ACT_LINE_LEN_I; x++)
+		for(buff_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
 		{
-			PREV_LINE[PREV_LINE_LEN_I] = PREV_LINE[x];
+			PREV_LINE[PREV_LINE_LEN_I] = PREV_LINE[char_i];
 			PREV_LINE_LEN_I++;
 			PREV_LINE = extend_line(Buff, PREV_LINE_I);
 
@@ -251,72 +249,19 @@ f_mtdt* backspace(f_mtdt* Buff)
 	}
 	// Replaces the linefeed with the terminator.
 	ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
-
 	SET_STATUS("edited\0");
+
 	return Buff;
 }
 
-f_mtdt* cursor_left(f_mtdt* Buff)
+f_mtdt* delete_last_line(f_mtdt* Buff)
 {
-	if(Buff->cusr_x < ACT_LINE_LEN_I)
-	{
-		Buff->cusr_x++;
-	}
-	else if((Buff->lines_i > 0) && (Buff->cusr_y < Buff->lines_i))
-	{
-		// Set to the right ignoring the linefeed.
-		Buff->cusr_x = 1;
-		Buff->cusr_y++;
-	}
-	return Buff;
-}
+	free(LAST_LINE);
+	LAST_LINE = NULL;
 
-f_mtdt* cursor_right(f_mtdt* Buff)
-{
-	if(Buff->cusr_x > 0)
-	{
-		Buff->cusr_x--;
-		if((Buff->cusr_y > 0) && (Buff->cusr_x == 0))
-		{
-			Buff->cusr_y--;
-			Buff->cusr_x = ACT_LINE_LEN_I;
-		}
-		// Last line doesn't contain linefeed so ignoring that isn't necessary.
-		else if((Buff->cusr_y == 1) && (Buff->cusr_x == 0))
-		{
-			Buff->cusr_y--;
-		}
-	}
-	return Buff;
-}
+	Buff->lines_i--;
+	Buff = shrink_lines_array(Buff);
 
-f_mtdt* cursor_up(f_mtdt* Buff)
-{
-	if(Buff->cusr_y < Buff->lines_i)
-	{
-		Buff->cusr_y++;
-
-		// Ignore the linefeed.
-		Buff->cusr_x = 1;
-	}
-	return Buff;
-}
-
-f_mtdt* cursor_down(f_mtdt* Buff)
-{
-	if(Buff->cusr_y > 0)
-	{
-		Buff->cusr_y--;
-
-		if(Buff->cusr_y > 0)
-		{
-			Buff->cusr_x = 1;
-		}
-		else
-		{
-			Buff->cusr_x = 0;
-		}
-	}
 	return Buff;
 }
 
@@ -326,11 +271,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 	{
 		if(Buff->cusr_y == 0)
 		{
-			free(LAST_LINE);
-			LAST_LINE = NULL;
-
-			Buff->lines_i--;
-			Buff = shrink_lines_array(Buff);
+			Buff = delete_last_line(Buff);
 
 			/* With the last line deletion there is a need to remove the
 			linefeed in the previous line. */
@@ -342,12 +283,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 		else
 		{
 			Buff = copy_lines_backward(Buff);
-
-			free(LAST_LINE);
-			LAST_LINE = NULL;
-
-			Buff->lines_i--;
-			Buff = shrink_lines_array(Buff);
+			Buff = delete_last_line(Buff);
 
 			Buff->cusr_x = 1;
 			Buff->cusr_y--;

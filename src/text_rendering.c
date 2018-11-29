@@ -1,6 +1,18 @@
 #include "fiflo.h"
 #include "text_rendering.h"
 
+buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)
+{
+	buff_t scrolled_lines = 0;
+
+	if(ACT_LINE_I >= Ui.text_y)
+	{
+		// Amount of lines to hide in the magic upper area.
+		scrolled_lines = Buff->lines_i + INDEX - Ui.text_y - Buff->cusr_y;
+	}
+	return scrolled_lines;
+}
+
 void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 {
 	buff_t text_offset = ACT_LINE_LEN_I - Buff->cusr_x;
@@ -18,18 +30,6 @@ void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 	{
 		putchar(LF);
 	}
-}
-
-buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)
-{
-	buff_t scrolled_lines = 0;
-
-	if(ACT_LINE_I >= Ui.text_y)
-	{
-		// Amount of lines to hide in the magic upper area.
-		scrolled_lines = Buff->lines_i + INDEX - Ui.text_y - Buff->cusr_y;
-	}
-	return scrolled_lines;
 }
 
 void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const _Bool mode)

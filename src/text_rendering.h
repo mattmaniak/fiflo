@@ -13,11 +13,11 @@
 // window.h
 extern void print_line_num(buff_t line, uint8_t line_num_len, const _Bool mode);
 
-// Scrolls chars. Used when the cursor is in static position.
-void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui);
-
 // Returns value of hidden lines.
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui);
+
+// Scrolls chars. Used when the cursor is in static position.
+void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui);
 
 // Decides how to show it. Can scroll it or the cursor.
 void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const _Bool mode);

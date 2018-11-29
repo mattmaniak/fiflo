@@ -30,9 +30,9 @@
 #define CAN__CTRL_X                 24  // Cancel.
 #define EM__CTRL_Y                  25  // End of medium.
 #define SUB__CTRL_Z                 26  // Substitute.
-#define ESC__CTRL_RIGHT_SQR_BRACKET 27  // Escape for ANSI codes.
+#define ESC__CTRL_LEFT_SQR_BRACKET  27  // Escape for ANSI codes.
 #define FS__CTRL_BACKSLASH          28  // File separator.
-#define GS__CTRL_LEFT_SQR_BRACKET   29  // Group separator.
+#define GS__CTRL_RIGHT_SQR_BRACKET  29  // Group separator.
 #define RS__CTRL_CARRET             30  // Record separator.
 #define US__CTRL_DASH               31  // Unit separator.
 #define DEL__BACKSPACE              127 // Delete that is really backspace.
@@ -40,8 +40,16 @@
 // Doesn't work properly.
 #define CR__CTRL_M 13 // Carriage return, converted to 10 (linefeed).
 
-#define NEG      -1 // Pipe.
-#define NUL_SZ   1
+#define NEG    -1 // Pipe.
+#define NUL_SZ 1
+
+// cursor.h
+extern f_mtdt* cursor_left (f_mtdt* Buff);
+extern f_mtdt* cursor_right(f_mtdt* Buff);
+extern f_mtdt* cursor_up   (f_mtdt* Buff);
+extern f_mtdt* cursor_down (f_mtdt* Buff);
+extern f_mtdt* ansi_escape_code_from_keyboard(f_mtdt* Buff, char key);
+
 
 // file.h
 extern f_mtdt* save_file(f_mtdt* Buff);
@@ -67,17 +75,8 @@ f_mtdt* linefeed(f_mtdt* Buff);
 // Removes a last char and optionally deletes the last line.
 f_mtdt* backspace(f_mtdt* Buff);
 
-// Moves the cursor left.
-f_mtdt* cursor_left(f_mtdt* Buff);
-
-// Moves the cursor right.
-f_mtdt* cursor_right(f_mtdt* Buff);
-
-// Moves the cursor up.
-f_mtdt* cursor_up(f_mtdt* Buff);
-
-// Moves the cursor down.
-f_mtdt* cursor_down(f_mtdt* Buff);
+// As in the name.
+f_mtdt* delete_last_line(f_mtdt* Buff);
 
 // Deletes the current line and decrements the lines index.
 f_mtdt* delete_line(f_mtdt* Buff);
