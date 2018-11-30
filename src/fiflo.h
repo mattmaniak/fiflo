@@ -58,9 +58,11 @@ win_mtdt;
 #pragma pack(pop)
 
 // Needed to simplify and shorten the code.
-#define ACT_LINE_I      (Buff->lines_i - Buff->cusr_y)
-#define ACT_LINE        Buff->text[ACT_LINE_I]
-#define ACT_LINE_LEN_I  Buff->line_len_i[ACT_LINE_I]
+#define ACT_LINE_I        (Buff->lines_i - Buff->cusr_y)
+#define ACT_LINE          Buff->text[ACT_LINE_I]
+#define ACT_LINE_LEN_I    Buff->line_len_i[ACT_LINE_I]
+
+#define CURSOR_VERTICAL_I (ACT_LINE_LEN_I - Buff->cusr_x)
 
 #define PREV_LINE_I     (ACT_LINE_I - 1)
 #define PREV_LINE       Buff->text[PREV_LINE_I]

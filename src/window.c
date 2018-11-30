@@ -98,14 +98,14 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	printf("%s%*s", logo_half, (buff_t) strlen(Buff->status), Buff->status);
 
 	if((ACT_LINE_LEN_I < Ui.text_x)
-	|| ((ACT_LINE_LEN_I - Buff->cusr_x) < Ui.text_x))
+	|| ((CURSOR_VERTICAL_I) < Ui.text_x))
 	{
 		printf("%*d^ \n", indicator_width,
 		get_term_sz(Buff, 'X') - Ui.line_num_len - SPACE_SZ);
 	}
 	else
 	{
-		printf("%*d^ \n", indicator_width, ACT_LINE_LEN_I - Buff->cusr_x);
+		printf("%*d^ \n", indicator_width, CURSOR_VERTICAL_I);
 	}
 	ANSI_RESET();
 }
@@ -191,7 +191,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
 		// No horizontal scrolling.
-		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LINE_LEN_I - Buff->cusr_x);
+		ANSI_CUR_RIGHT(Ui.line_num_len + CURSOR_VERTICAL_I);
 	}
 	else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
 	{
@@ -201,7 +201,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 	else
 	{
 		// Text is scrolled horizontally to the start. Cursor can be moved.
-		ANSI_CUR_RIGHT(Ui.line_num_len + ACT_LINE_LEN_I - Buff->cusr_x);
+		ANSI_CUR_RIGHT(Ui.line_num_len + CURSOR_VERTICAL_I);
 	}
 
 	if(ACT_LINE_I < Ui.text_y)

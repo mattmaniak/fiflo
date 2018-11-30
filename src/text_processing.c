@@ -62,6 +62,11 @@ f_mtdt* recognize_arrow_direction(f_mtdt* Buff, char key)
 			Buff = move_cursor_left(Buff);
 		}
 	}
+
+#ifdef DEBUG
+	printf("CURSOR_VERTICAL_I %d\n", CURSOR_VERTICAL_I);
+#endif
+
 	return Buff;
 }
 
@@ -137,7 +142,7 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 			{
 				Buff = shift_text_horizonally(Buff, 'r');
 			}
-			ACT_LINE[ACT_LINE_LEN_I - Buff->cusr_x - NUL_SZ] = key;
+			ACT_LINE[CURSOR_VERTICAL_I - NUL_SZ] = key;
 			ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
 			// Initializer handling.
@@ -348,7 +353,7 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 	{
 		case 'l':
 		{
-			for(buff_t char_i = ACT_LINE_LEN_I - Buff->cusr_x;
+			for(buff_t char_i = CURSOR_VERTICAL_I;
 			char_i <= ACT_LINE_LEN_I; char_i++)
 			{
 				ACT_LINE[char_i - prev] = ACT_LINE[char_i];
@@ -358,7 +363,7 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 		case 'r':
 		{
 			for(buff_t char_i = ACT_LINE_LEN_I;
-			char_i >= ACT_LINE_LEN_I - Buff->cusr_x; char_i--)
+			char_i >= CURSOR_VERTICAL_I; char_i--)
 			{
 				ACT_LINE[char_i] = ACT_LINE[char_i - prev];
 			}
