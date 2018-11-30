@@ -53,25 +53,25 @@ extern f_mtdt* move_cursor_down (f_mtdt* Buff);
 extern f_mtdt* save_file(f_mtdt* Buff);
 
 // memory.h
-extern char*   extend_line        (f_mtdt* Buff, buff_t line_i);
-extern char*   shrink_act_line    (f_mtdt* Buff);
-extern char*   shrink_prev_line   (f_mtdt* Buff);
-extern f_mtdt* extend_lines_array (f_mtdt* Buff);
-extern f_mtdt* shrink_lines_array (f_mtdt* Buff);
-extern f_mtdt* copy_lines_forward (f_mtdt* Buff);
-extern f_mtdt* copy_lines_backward(f_mtdt* Buff);
+extern char*   extend_line_mem       (f_mtdt* Buff, buff_t line_i);
+extern char*   shrink_act_line_mem   (f_mtdt* Buff);
+extern char*   shrink_prev_line_mem  (f_mtdt* Buff);
+extern f_mtdt* extend_lines_array_mem(f_mtdt* Buff);
+extern f_mtdt* shrink_lines_array_mem(f_mtdt* Buff);
+extern f_mtdt* copy_lines_forward    (f_mtdt* Buff);
+extern f_mtdt* copy_lines_backward   (f_mtdt* Buff);
 
-// TODO: COMMENT.
+// Saves the last pressed key to the temponary buffer and analyzes it.
 f_mtdt* parse_key(f_mtdt* Buff, char key);
 
-// TODO: COMMENT.
-f_mtdt* arrows(f_mtdt* Buff, char key);
+// Converts the given letter by the parse_key and chooses the cursror direction.
+f_mtdt* recognize_arrow_direction(f_mtdt* Buff, char key);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
 f_mtdt* keymap(f_mtdt* Buff, char key);
 
 // Adds char when the pressed key is a printable one.
-f_mtdt* text_char(f_mtdt* Buff, char key);
+f_mtdt* printable_char(f_mtdt* Buff, char key);
 
 // Initialize the new line.
 f_mtdt* linefeed(f_mtdt* Buff);

@@ -38,7 +38,7 @@ typedef struct
 	buff_t* line_len_i;         // Chars in the current line (index).
 	buff_t  chars_i;            // All chars index.
 
-	// Editing feedback.
+	// Visual shit.
 	buff_t  cusr_x;             // User's cursor position in the reversed X.
 	buff_t  cusr_y;             // As above but Y-axis.
 	char    status[STATUS_MAX]; // Displayed message in the upper bar.
@@ -85,6 +85,9 @@ _Noreturn void free_all_exit(f_mtdt* Buff, const bool code);
 
 // Signal catcher that does nothing.
 void ignore_sig(int sig_num);
+
+// Frees and sets the pointer to NULL.
+void safer_free(void* ptr);
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);

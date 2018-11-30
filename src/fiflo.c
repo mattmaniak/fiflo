@@ -5,17 +5,11 @@ _Noreturn void free_all_exit(f_mtdt* Buff, const bool code)
 {
 	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
-		free(Buff->text[line_i]);
-		Buff->text[line_i] = NULL;
+		safer_free(Buff->text[line_i]);
 	}
-	free(Buff->text);
-	Buff->text = NULL;
-
-	free(Buff->line_len_i);
-	Buff->line_len_i = NULL;
-
-	free(Buff);
-	Buff = NULL;
+	safer_free(Buff->text);
+	safer_free(Buff->line_len_i);
+	safer_free(Buff);
 
 	exit(code);
 }
@@ -23,6 +17,12 @@ _Noreturn void free_all_exit(f_mtdt* Buff, const bool code)
 void ignore_sig(int sig_num)
 {
 	if(sig_num) {}
+}
+
+void safer_free(void* ptr)
+{
+	free(ptr);
+	ptr = NULL;
 }
 
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
@@ -54,7 +54,7 @@ void options(const char* arg)
 		printf("%s\n%s\n%s\n",
 		"fiflo v2.2.0 (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
-		"(C) 2018 mattmaniak under the MIT License.");
+		"(c) 2018 mattmaniak, MIT License.");
 		exit(0);
 	}
 }

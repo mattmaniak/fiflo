@@ -1,7 +1,7 @@
 #include "fiflo.h"
 #include "memory.h"
 
-char* extend_line(f_mtdt* Buff, buff_t line_i)
+char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
 {
 	buff_t memblock = MEMBLK;
 
@@ -11,7 +11,8 @@ char* extend_line(f_mtdt* Buff, buff_t line_i)
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
 
 #ifdef DEBUG
-		printf("Extend_line %d with mem of %d B.\n", line_i + INDEX, memblock);
+		printf("Extend_line_mem %d with mem of %d B.\n",
+		line_i + INDEX, memblock);
 #endif
 
 	}
@@ -23,7 +24,8 @@ char* extend_line(f_mtdt* Buff, buff_t line_i)
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
 
 #ifdef DEBUG
-		printf("Extend_line %d with mem of %d B.\n", line_i + INDEX, memblock);
+		printf("Extend_line_mem %d with mem of %d B.\n",
+		line_i + INDEX, memblock);
 #endif
 
 	}
@@ -32,12 +34,12 @@ char* extend_line(f_mtdt* Buff, buff_t line_i)
 	return Buff->text[line_i];
 }
 
-char* shrink_act_line(f_mtdt* Buff)
+char* shrink_act_line_mem(f_mtdt* Buff)
 {
 	buff_t memblock = INIT_MEMBLK;
 
 	/* These cases are executed only when the backspace is pressed. Works in the
- 	same way as "extend_act_line". */
+ 	same way as "extend_act_line_mem". */
 	if((ACT_LINE_LEN_I >= INIT_MEMBLK) && (ACT_LINE_LEN_I < MEMBLK))
 	{
 		// Shrink to size of the MEMBLK.
@@ -51,7 +53,7 @@ char* shrink_act_line(f_mtdt* Buff)
 	ACT_LINE = realloc(ACT_LINE, memblock);
 
 #ifdef DEBUG
-	printf("Shrink_act_line %d with mem of %d B.\n",
+	printf("Shrink_act_line_mem %d with mem of %d B.\n",
 	ACT_LINE_I + INDEX, memblock);
 #endif
 
@@ -60,7 +62,7 @@ char* shrink_act_line(f_mtdt* Buff)
 	return ACT_LINE;
 }
 
-char* shrink_prev_line(f_mtdt* Buff)
+char* shrink_prev_line_mem(f_mtdt* Buff)
 {
 	buff_t memblock = INIT_MEMBLK;
 
@@ -76,7 +78,7 @@ char* shrink_prev_line(f_mtdt* Buff)
 	PREV_LINE = realloc(PREV_LINE, memblock);
 
 #ifdef DEBUG
-	printf("Shrink_prev_line %d with mem of %d B\n",
+	printf("Shrink_prev_line_mem %d with mem of %d B\n",
 	PREV_LINE_I + INDEX, memblock);
 #endif
 
@@ -85,7 +87,7 @@ char* shrink_prev_line(f_mtdt* Buff)
 	return PREV_LINE;
 }
 
-f_mtdt* extend_lines_array(f_mtdt* Buff)
+f_mtdt* extend_lines_array_mem(f_mtdt* Buff)
 {
 	// Enhance the array that contains pointers to lines.
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
@@ -108,7 +110,7 @@ f_mtdt* extend_lines_array(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* shrink_lines_array(f_mtdt* Buff)
+f_mtdt* shrink_lines_array_mem(f_mtdt* Buff)
 {
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 
@@ -140,7 +142,8 @@ f_mtdt* copy_lines_forward(f_mtdt* Buff)
 
 		chk_ptr(Buff, Buff->text[line_i], "copy the line forward\0");
 
-		Buff->text[line_i] = strcpy(Buff->text[line_i], Buff->text[line_i - prev]);
+		Buff->text[line_i] =
+		strcpy(Buff->text[line_i], Buff->text[line_i - prev]);
 
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i - prev];
 	}
@@ -165,7 +168,8 @@ f_mtdt* copy_lines_backward(f_mtdt* Buff)
 
 		chk_ptr(Buff, Buff->text[line_i], "copy the line backward\0");
 
-		Buff->text[line_i] = strcpy(Buff->text[line_i], Buff->text[line_i + next]);
+		Buff->text[line_i] =
+		strcpy(Buff->text[line_i], Buff->text[line_i + next]);
 
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];
 	}

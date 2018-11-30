@@ -1,5 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- rework man-pages and --help option to become more understable,
+- if a line is too long to render: render inverted dots,
 - event-driven exit: returns instead of exits,
 - optimize text-processing functions,
 - simplify the makefile,

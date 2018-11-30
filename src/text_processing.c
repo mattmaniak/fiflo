@@ -4,30 +4,31 @@
 f_mtdt* parse_key(f_mtdt* Buff, char key)
 {
 	// Notice: these globals are used only in that function.
-	static char    ansi_seq[8]; // TODO: GCC WARNING.
-	static bool    ansi_esc;
+	static char    key_sequence[8]; // TODO: GCC WARNING.
+	static bool    ansi_esc_enabled;
 	static uint8_t char_i;
 
 	/* If You want to see the values of sequences just comment everything
 	excluding "Buff = keymap(Buff, key);". */
 	if(key == ESC__CTRL_LEFT_SQR_BRACKET)
 	{
-		ansi_esc = true;
-		char_i   = 0;
+		ansi_esc_enabled = true;
+		char_i           = 0;
 	}
-	if(ansi_esc == true)
+	if(ansi_esc_enabled == true)
 	{
-		ansi_seq[char_i] = key;
+		key_sequence[char_i] = key;
+		key_sequence[char_i + NUL_SZ] = key;
 
-		if(char_i < 8)
+		if(char_i < (8 - NUL_SZ)) // TODO: MAX SEQUENCE LENGTH.
 		{
 			char_i++;
 		}
 		if((key == 'A') || (key == 'B') || (key == 'C') || (key == 'D'))
 		{
-			ansi_esc = false;
-			char_i = 0;
-			Buff = arrows(Buff, key);
+			ansi_esc_enabled = false;
+			char_i           = 0;
+			Buff = recognize_arrow_direction(Buff, key);
 		}
 	}
 	else
@@ -37,7 +38,7 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	return Buff;
 }
 
-f_mtdt* arrows(f_mtdt* Buff, char key)
+f_mtdt* recognize_arrow_direction(f_mtdt* Buff, char key)
 {
 	switch(key)
 	{
@@ -59,7 +60,6 @@ f_mtdt* arrows(f_mtdt* Buff, char key)
 		case 'D':
 		{
 			Buff = move_cursor_left(Buff);
-			break;
 		}
 	}
 	return Buff;
@@ -74,17 +74,12 @@ f_mtdt* keymap(f_mtdt* Buff, char key)
 			fputs("Pipe isn't supported, exit(1).\n", stderr);
 			free_all_exit(Buff, 1);
 		}
-		default:
-		{
-			Buff = text_char(Buff, key);
-			break;
-		}
 		case HT__CTRL_I:
 		{
 			// Currently converts the tab to two spaces.
 			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
 			{
-				Buff = text_char(Buff, ' ');
+				Buff = printable_char(Buff, ' ');
 			}
 			break;
 		}
@@ -105,6 +100,11 @@ f_mtdt* keymap(f_mtdt* Buff, char key)
 		case EOT__CTRL_D:
 		{
 			Buff = delete_line(Buff);
+			break;
+		}
+		default:
+		{
+			Buff = printable_char(Buff, key);
 		}
 	}
 
@@ -116,18 +116,20 @@ f_mtdt* keymap(f_mtdt* Buff, char key)
 	return Buff;
 }
 
-f_mtdt* text_char(f_mtdt* Buff, char key)
+f_mtdt* printable_char(f_mtdt* Buff, char key)
 {
 	/* Only printable chars will be added. Combinations that aren't specified
 	above will be omited. Set "if(key)" to enable them. */
-	if((key == NUL__CTRL_SHIFT_2) || (key == LF__CTRL_J) || (key >= 32))
+	if((key == NUL__CTRL_SHIFT_2)
+	|| (key == LF__CTRL_J)
+	|| (key >= 32))
 	{
 		if(Buff->chars_i < BUFF_MAX)
 		{
 			Buff->chars_i++;
 			ACT_LINE_LEN_I++;
 
-			ACT_LINE = extend_line(Buff, ACT_LINE_I);
+			ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
 
 			/* If the cursor is moved to the left and a char is inserted, rest
 			of the text will be shifted to the right side. */
@@ -170,7 +172,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 	if(Buff->lines_i < BUFF_MAX)
 	{
 		Buff->lines_i++;
-		Buff = extend_lines_array(Buff);
+		Buff = extend_lines_array_mem(Buff);
 
 		/* If user moved the cursor before hitting ENTER, text on the right
 		will be moved to the new line. */
@@ -192,12 +194,12 @@ f_mtdt* linefeed(f_mtdt* Buff)
 			{
 				ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
 				ACT_LINE_LEN_I++;
-				ACT_LINE = extend_line(Buff, ACT_LINE_I);
+				ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
 			}
 
 			// Now the length of the upper line will be shortened after copying.
 			PREV_LINE[PREV_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
-			PREV_LINE = shrink_prev_line(Buff);
+			PREV_LINE = shrink_prev_line_mem(Buff);
 		}
 		// Cursor is at the end of the line. Shifted vertically.
 		else if(Buff->cusr_y > 0)
@@ -211,13 +213,15 @@ f_mtdt* linefeed(f_mtdt* Buff)
 
 f_mtdt* backspace(f_mtdt* Buff)
 {
+	const bool next = 1;
+
 	if(ACT_LINE_LEN_I > 0)
 	{
 		// If the cursor at the maximum left position, char won't be deleted.
 		if(Buff->cusr_x != ACT_LINE_LEN_I)
 		{
 			Buff = shift_text_horizonally(Buff, 'l');
-			ACT_LINE = shrink_act_line(Buff);
+			ACT_LINE = shrink_act_line_mem(Buff);
 
 			ACT_LINE_LEN_I--;
 			Buff->chars_i--;
@@ -228,15 +232,15 @@ f_mtdt* backspace(f_mtdt* Buff)
 			PREV_LINE_LEN_I--;
 			Buff->chars_i--;
 
-			for(buff_t x = 0; x <= ACT_LINE_LEN_I; x++)
+			for(buff_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
 			{
-				PREV_LINE[PREV_LINE_LEN_I] = ACT_LINE[x];
+				PREV_LINE[PREV_LINE_LEN_I] = ACT_LINE[char_i];
 
-				if(ACT_LINE[x] != NUL__CTRL_SHIFT_2)
+				if(ACT_LINE[char_i] != NUL__CTRL_SHIFT_2)
 				{
 					PREV_LINE_LEN_I++;
 				}
-				PREV_LINE = extend_line(Buff, PREV_LINE_I);
+				PREV_LINE = extend_line_mem(Buff, PREV_LINE_I);
 			}
 
 			// Shift lines vertically.
@@ -248,21 +252,17 @@ f_mtdt* backspace(f_mtdt* Buff)
 		}
 	}
 	// Deletes the last empty line.
-	else if((ACT_LINE_LEN_I == 0) && (ACT_LINE_I > 0))
+	else if((ACT_LINE_LEN_I == 0) && (ACT_LINE_I > 0) && (Buff->cusr_y == 0))
 	{
-		if(Buff->cusr_y == 0)
-		{
-			free(ACT_LINE);
-			ACT_LINE = NULL;
+		safer_free(ACT_LINE);
 
-			Buff->lines_i--;
-			ACT_LINE = shrink_act_line(Buff);
+		Buff->lines_i--;
+		ACT_LINE = shrink_act_line_mem(Buff);
 
-			ACT_LINE_LEN_I--;
-			Buff->chars_i--;
+		ACT_LINE_LEN_I--;
+		Buff->chars_i--;
 
-			Buff = shrink_lines_array(Buff);
-		}
+		Buff = shrink_lines_array_mem(Buff);
 	}
 	else if((Buff->cusr_x == ACT_LINE_LEN_I) && (Buff->cusr_y > 0))
 	{
@@ -270,18 +270,18 @@ f_mtdt* backspace(f_mtdt* Buff)
 		{
 			PREV_LINE[PREV_LINE_LEN_I] = PREV_LINE[char_i];
 			PREV_LINE_LEN_I++;
-			PREV_LINE = extend_line(Buff, PREV_LINE_I);
+			PREV_LINE = extend_line_mem(Buff, PREV_LINE_I);
 
 			ACT_LINE_LEN_I--;
 		}
 
-		for(buff_t line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
+		for(buff_t line_i = ACT_LINE_I + INDEX;
+		line_i < Buff->lines_i; line_i++)
 		{
-			Buff->text[line_i] = Buff->text[line_i + 1];
-			Buff->line_len_i[line_i] = Buff->line_len_i[line_i + 1];
+			Buff->text[line_i] = Buff->text[line_i + next];
+			Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];
 		}
-		free(LAST_LINE);
-		LAST_LINE = NULL;
+		safer_free(LAST_LINE);
 
 		Buff->lines_i--;
 		Buff->chars_i--;
@@ -295,11 +295,10 @@ f_mtdt* backspace(f_mtdt* Buff)
 
 f_mtdt* delete_last_line(f_mtdt* Buff)
 {
-	free(LAST_LINE);
-	LAST_LINE = NULL;
+	safer_free(LAST_LINE);
 
 	Buff->lines_i--;
-	Buff = shrink_lines_array(Buff);
+	Buff = shrink_lines_array_mem(Buff);
 
 	return Buff;
 }

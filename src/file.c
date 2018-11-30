@@ -66,11 +66,11 @@ f_mtdt* read_file(f_mtdt* Buff)
 			if(ch == '\t')
 			{
 				ch = ' ';
-				Buff = text_char(Buff, ch);
+				Buff = printable_char(Buff, ch);
 			}
 
 			// Read all chars before end of file.
-			Buff = text_char(Buff, ch);
+			Buff = printable_char(Buff, ch);
 		}
 		fclose(textfile);
 		SET_STATUS("read the file\0");

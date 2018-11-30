@@ -15,7 +15,7 @@ files use git-show or git-log.
 - actual line number is underscored,
 - permament line numbers blocks,
 - first step into the Common User Access bindings,
-- private mode deleted, keyboard shortcuts doesn't generete signals now.
+- private mode deleted, keyboard shortcuts also doesn't generete signals now.
 
 ### v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,

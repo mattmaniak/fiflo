@@ -150,11 +150,9 @@ void render_window(f_mtdt* Buff)
 	Ui.text_y       = get_term_sz(Buff, 'Y') - BARS_SZ;
 
 	ANSI_RESET();
-
 	upper_bar(Buff, Ui);
 
 	display_text(Buff, Ui);
-
 	fill(Buff, Ui);
 
 	lower_bar(Buff);

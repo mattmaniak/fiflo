@@ -22,7 +22,7 @@ Also You can try the latest unstable snapshot
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
 
-## (Un)installation
+## (Un)install
 ```
 sudo make install
 ```
