@@ -54,7 +54,7 @@ void flush_window(f_mtdt* Buff)
 	ANSI_CLEAN_LN();
 
 	// Then from move up and clean the next lines till the window ends.
-	for(term_t line = 1; line <= (get_term_sz(Buff, 'Y') - LBAR_SZ); line++)
+	for(term_t line = 0; line < (get_term_sz(Buff, 'Y') - LBAR_SZ); line++)
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LN();
@@ -97,8 +97,7 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	// The lower part with the "chars in the current line" indicator.
 	printf("%s%*s", logo_half, (buff_t) strlen(Buff->status), Buff->status);
 
-	if((ACT_LINE_LEN_I < Ui.text_x)
-	|| ((CURSOR_VERTICAL_I) < Ui.text_x))
+	if((ACT_LINE_LEN_I < Ui.text_x) || (CURSOR_VERTICAL_I < Ui.text_x))
 	{
 		printf("%*d^ \n", indicator_width,
 		get_term_sz(Buff, 'X') - Ui.line_num_len - SPACE_SZ);
@@ -135,7 +134,7 @@ void fill(f_mtdt* Buff, win_mtdt Ui)
 		printf("%*s", Ui.line_num_len - SPACE_SZ, " ");
 		ANSI_RESET();
 	}
-	// Else the bar will by positioned by the text.
+	// Else the lower bar will by positioned by the text.
 }
 
 void render_window(f_mtdt* Buff)

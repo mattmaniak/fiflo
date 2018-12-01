@@ -50,7 +50,8 @@ extern f_mtdt* move_cursor_up   (f_mtdt* Buff);
 extern f_mtdt* move_cursor_down (f_mtdt* Buff);
 
 // file.h
-extern f_mtdt* save_file(f_mtdt* Buff);
+extern f_mtdt* save_file (f_mtdt* Buff);
+extern f_mtdt* edit_fname(f_mtdt* Buff, char key);
 
 // memory.h
 extern char*   extend_line_mem       (f_mtdt* Buff, buff_t line_i);

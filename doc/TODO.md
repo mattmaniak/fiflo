@@ -2,11 +2,9 @@
 ## delete one if done:
 - rework man-pages and --help option to become more understable,
 - if a line is too long to render: render inverted dots,
-- event-driven exit: returns instead of exits,
 - optimize text-processing functions,
 - simplify the makefile,
 - pre-allocation of a memory, eg. next 16 lines,
-- live filename set,
 - git branch indicator,
 - scroll with eg. 10 lines ahead,
 - cut/copy/paste,

@@ -1,7 +1,6 @@
 #ifndef FILE_H
 #define FILE_H
 
-// Common rest is included in "fiflo.h". There are only file-specific imports.
 #include <linux/limits.h>
 
 // text_processing.h
@@ -20,5 +19,8 @@ f_mtdt* read_file(f_mtdt* Buff);
 
 // Puts the whole text to the file.
 f_mtdt* save_file(f_mtdt* Buff);
+
+// 
+f_mtdt* edit_fname(f_mtdt* Buff, char key);
 
 #endif

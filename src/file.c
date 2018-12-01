@@ -11,8 +11,15 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 		free_all_exit(Buff, 1);
 	}
 
+	if(passed[0] == 0)
+	{
+		Buff->fname[0]  = 0;
+		Buff->fname_len = 0;
+
+		return Buff;
+	}
 	// Is the absolute path.
-	if(passed[0] == '/')
+	else if(passed[0] == '/')
 	{
 		if((strlen(passed) + NUL_SZ) > PATH_MAX)
 		{
@@ -49,6 +56,8 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 		}
 		free(cw_dir);
 		cw_dir = NULL;
+
+		Buff->fname_len = (uint16_t) strlen(Buff->fname);
 	}
 	return Buff;
 }
@@ -77,7 +86,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 	}
 	else
 	{
-		SET_STATUS("the file will be created\0");
+		SET_STATUS("the filename is empty\0");
 	}
 	return Buff;
 }
@@ -94,8 +103,7 @@ f_mtdt* save_file(f_mtdt* Buff)
 
 		if(create == not_created)
 		{
-			fputs("Failed to create the new file, exit(1).\n", stderr);
-			free_all_exit(Buff, 1);
+			SET_STATUS("failed to create the new file");
 		}
 	}
 	FILE* textfile = fopen(Buff->fname, "w");
@@ -106,13 +114,13 @@ f_mtdt* save_file(f_mtdt* Buff)
 		render_window(Buff);
 
 		// Write each line to the file. NULL terminator is ignored.
-		for(buff_t line = 0; line <= Buff->lines_i; line++)
+		for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 		{
-			/* Using fputs or fprintf causes "use-of-uninitialized-value" using
+			/* Using fputs or fprintf causes use-of-uninitialized-value using
 			MSan because of there is more memory allocated than is needed. */
-			for(buff_t ch = 0; ch < Buff->line_len_i[line]; ch++)
+			for(buff_t char_i = 0; char_i < Buff->line_len_i[line_i]; char_i++)
 			{
-				fputc(Buff->text[line][ch], textfile);
+				fputc(Buff->text[line_i][char_i], textfile);
 			}
 		}
 		fclose(textfile);
@@ -124,6 +132,31 @@ f_mtdt* save_file(f_mtdt* Buff)
 	else
 	{
 		SET_STATUS("can't write to the file");
+	}
+	return Buff;
+}
+
+f_mtdt* edit_fname(f_mtdt* Buff, char key) // TODO: 2 * MOVEABLE CURSOR.
+{
+	if((key >= 32) && (key != 127) && (Buff->fname_len < PATH_MAX))
+	{
+		Buff->fname_len++;
+		Buff->fname[Buff->fname_len - NUL_SZ] = key;
+		Buff->fname[Buff->fname_len] = 0;
+	}
+	else if((key == 127) && (Buff->fname_len > 0))
+	{
+		Buff->fname_len--;
+		Buff->fname[Buff->fname_len] = 0;
+
+		if(Buff->fname_len == 0)
+		{
+			SET_STATUS("WARNING - the filename is empty");
+		}
+	}
+	else if(key == 10)
+	{
+		Buff->live_fname_edit = false;
 	}
 	return Buff;
 }

@@ -1,7 +1,6 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-// Common rest is included in "fiflo.h". There are only file-specific imports.
 #include <sys/ioctl.h>
 
 // UI areas:
@@ -11,14 +10,13 @@
 #define SLASH_SZ 1
 #define SPACE_SZ 1
 
-// TODO: IN WIN_MTDT.
-#define UBAR_SZ  2
-#define LBAR_SZ  1 // Must be equal 1 otherwise will break rendering a little.
-#define BARS_SZ  (UBAR_SZ + LBAR_SZ)
+#define UBAR_SZ 2
+#define LBAR_SZ 1 // Must be equal 1 otherwise will break rendering a little.
+#define BARS_SZ (UBAR_SZ + LBAR_SZ)
 
 // Text that is shown on the lower bar. Also defines the minimal terminal width.
 #define LBAR_STR \
-"CTRL^D - delete line; CTRL^Q - exit; CTRL^S - save; arrows - cursor\0"
+"CTRL^: D - delete line; O - save as; Q - exit; S - save\0"
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
@@ -32,8 +30,8 @@
 #define ANSI_SAVE_CUR_POS()    printf("\033[%s", "s")
 #define ANSI_RESTORE_CUR_POS() printf("\033[%s", "u")
 
-extern void   scroll_line_x    (f_mtdt* Buff, win_mtdt Ui);
 extern buff_t set_start_line   (f_mtdt* Buff);
+extern void   scroll_line_x    (f_mtdt* Buff, win_mtdt Ui);
 extern void   print_actual_line(f_mtdt* Buff, win_mtdt Ui);
 extern void   display_text     (f_mtdt* Buff, win_mtdt Ui);
 

@@ -38,15 +38,14 @@ void options(const char* arg)
 {
 	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 	{
-		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
+		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n",
 		"Usage: fiflo [option].",
 
 		"Options:      Description:",
-		"<no_option>   Set the filename to \"/<current_path>/noname.flop\".",
-		"basename      Set the basename to \"basename\" using current path.",
-		"/dir/bname    Set the filename to \"/dir/bname\"",
+		"<no_option>   Don't set the filename.",
+		"<name>        Specify the base/filename.",
 		"-h, --help    Show program help.",
-		"-v, --version Display information about the used version.");
+		"-v, --version Display information about a version You use.");
 		exit(0);
 	}
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
@@ -127,6 +126,8 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	ACT_LINE_LEN_I = 0;
 	ACT_LINE = malloc(sizeof(Buff->text));
 
+	Buff->live_fname_edit = false;
+
 	return Buff;
 }
 
@@ -163,7 +164,7 @@ int main(int argc, char** argv)
 	// Sets the default basename and starts.
 	if(argv[1] == NULL)
 	{
-		run("noname.flop\0");
+		run("\0");
 	}
 	else
 	{

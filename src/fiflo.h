@@ -25,25 +25,29 @@
 typedef uint32_t buff_t; // Only for amount indicators.
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
-// Everything that ends with the "_i" is index.
+// Everything that ends with the "_i" is an index.
 
-#pragma pack(push, 4)
+#pragma pack(push, 2)
+#pragma pack(push, 1)
 typedef struct
 {
-	char    fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
+	uint16_t fname_len;
+	bool     live_fname_edit;
+	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
 
 	// File's content and some indicators.
-	char**  text;               // Text buffer. Eg. text[lines][chars].
-	buff_t  lines_i;            // Lines index.
-	buff_t* line_len_i;         // Chars in the current line (index).
-	buff_t  chars_i;            // All chars index.
+	char**   text;               // Text buffer. Eg. text[lines_i][chars_i].
+	buff_t   lines_i;            // Lines index.
+	buff_t*  line_len_i;         // Chars in the current line (index).
+	buff_t   chars_i;            // All chars index.
 
 	// Visual shit.
-	buff_t  cusr_x;             // User's cursor position in the reversed X.
-	buff_t  cusr_y;             // As above but Y-axis.
-	char    status[STATUS_MAX]; // Displayed message in the upper bar.
+	buff_t   cusr_x;             // User's cursor position in the reversed X.
+	buff_t   cusr_y;             // As above but Y-axis.
+	char     status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 f_mtdt;
+#pragma pack(pop)
 #pragma pack(pop)
 
 #pragma pack(push, 1)

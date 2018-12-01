@@ -31,7 +31,11 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 			Buff = recognize_arrow_direction(Buff, key);
 		}
 	}
-	else
+	else if(Buff->live_fname_edit)
+	{
+		Buff = edit_fname(Buff, key);
+	}
+	else if(!Buff->live_fname_edit)
 	{
 		Buff = keymap(Buff, key);
 	}
@@ -102,6 +106,11 @@ f_mtdt* keymap(f_mtdt* Buff, char key)
 			Buff = save_file(Buff);
 			break;
 		}
+		case SI__CTRL_O:
+		{
+			Buff->live_fname_edit = true;
+			break;
+		}
 		case EOT__CTRL_D:
 		{
 			Buff = delete_line(Buff);
@@ -114,7 +123,7 @@ f_mtdt* keymap(f_mtdt* Buff, char key)
 	}
 
 #ifdef DEBUG
-	printf("Last key: %d, cusr_x: %d, cusr_y: %d.\n",
+	printf("pressed_key %d, cusr_x %d, cusr_y %d.\n",
 	key, Buff->cusr_x, Buff->cusr_y);
 #endif
 
