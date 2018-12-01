@@ -41,7 +41,7 @@ make sanitize
 ```
 Warning! The program will consume much more memory. Also it will be slower.
 
-## Link MemorySanitizer (only with clang)
+## Link the MemorySanitizer (only with clang)
 ```
 make memory
 ```

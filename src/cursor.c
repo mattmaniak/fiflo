@@ -23,8 +23,8 @@ f_mtdt* move_cursor_right(f_mtdt* Buff)
 		Buff->cusr_x--;
 		if((Buff->cusr_y > 0) && (Buff->cusr_x == 0))
 		{
-			Buff->cusr_x = ACT_LINE_LEN_I;
 			Buff->cusr_y--;
+			Buff->cusr_x = ACT_LINE_LEN_I;
 		}
 		// Last line doesn't contain linefeed so ignoring that isn't necessary.
 		else if((Buff->cusr_y == 1) && (Buff->cusr_x == 0))
