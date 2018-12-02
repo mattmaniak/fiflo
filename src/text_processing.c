@@ -4,31 +4,38 @@
 f_mtdt* parse_key(f_mtdt* Buff, char key)
 {
 	// Notice: these globals are used only in that function.
-	static char    key_sequence[8]; // TODO: GCC WARNING.
+	enum           {seq_len = 8};
+	static char    key_sequence[seq_len];
 	static bool    ansi_esc_enabled;
 	static uint8_t char_i;
 
+	key_sequence[0] = 0;
+
 	/* If You want to see the values of sequences just comment everything
 	excluding "Buff = keymap(Buff, key);". */
-	if(key == ESC__CTRL_LEFT_SQR_BRACKET)
+	if((key == ESC__CTRL_LEFT_SQR_BRACKET) && !Buff->live_fname_edit)
 	{
 		ansi_esc_enabled = true;
 		char_i           = 0;
 	}
 	if(ansi_esc_enabled == true)
 	{
-		key_sequence[char_i] = key;
-		key_sequence[char_i + NUL_SZ] = key;
+		key_sequence[char_i]          = key;
+		key_sequence[char_i + NUL_SZ] = NUL__CTRL_SHIFT_2;
 
-		if(char_i < (8 - NUL_SZ)) // TODO: MAX SEQUENCE LENGTH.
+		if(char_i < (seq_len - NUL_SZ))
 		{
 			char_i++;
 		}
-		if((key == 'A') || (key == 'B') || (key == 'C') || (key == 'D'))
+		if((key_sequence[char_i - NUL_SZ] == 'A')
+		|| (key_sequence[char_i - NUL_SZ] == 'B')
+		|| (key_sequence[char_i - NUL_SZ] == 'C')
+		|| (key_sequence[char_i - NUL_SZ] == 'D'))
 		{
 			ansi_esc_enabled = false;
-			char_i           = 0;
-			Buff = recognize_arrow_direction(Buff, key);
+			Buff = // TODO: PASS FULL ARRAY.
+			recognize_arrow_direction(Buff, key_sequence[char_i - NUL_SZ]);
+			char_i = 0;
 		}
 	}
 	else if(Buff->live_fname_edit)

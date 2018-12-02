@@ -11,13 +11,6 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 		free_all_exit(Buff, 1);
 	}
 
-	if(passed[0] == 0)
-	{
-		Buff->fname[0]  = 0;
-		Buff->fname_len = 0;
-
-		return Buff;
-	}
 	// Is the absolute path.
 	else if(passed[0] == '/')
 	{
@@ -69,6 +62,11 @@ f_mtdt* read_file(f_mtdt* Buff)
 
 	if(textfile != NULL)
 	{
+		if(Buff->fname[Buff->fname_len - NUL_SZ] == '/')
+		{
+			SET_STATUS("current directory set\0");
+			return Buff;
+		}
 		while((ch = (char) getc(textfile)) != EOF)
 		{
 			// Temponary and ugly tab to two spaces conversion.
@@ -86,7 +84,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 	}
 	else
 	{
-		SET_STATUS("the filename is empty\0");
+		SET_STATUS("the file will be created\0");
 	}
 	return Buff;
 }
@@ -103,7 +101,7 @@ f_mtdt* save_file(f_mtdt* Buff)
 
 		if(create == not_created)
 		{
-			SET_STATUS("failed to create the new file");
+			SET_STATUS("failed to create the new file\0");
 		}
 	}
 	FILE* textfile = fopen(Buff->fname, "w");
@@ -131,32 +129,28 @@ f_mtdt* save_file(f_mtdt* Buff)
 	}
 	else
 	{
-		SET_STATUS("can't write to the file");
+		SET_STATUS("can't write to the file\0");
 	}
 	return Buff;
 }
 
-f_mtdt* edit_fname(f_mtdt* Buff, char key) // TODO: 2 * MOVEABLE CURSOR.
+f_mtdt* edit_fname(f_mtdt* Buff, char key)
 {
 	if((key >= 32) && (key != 127) && (Buff->fname_len < PATH_MAX))
 	{
 		Buff->fname_len++;
 		Buff->fname[Buff->fname_len - NUL_SZ] = key;
-		Buff->fname[Buff->fname_len] = 0;
+		Buff->fname[Buff->fname_len]          = 0;
 	}
 	else if((key == 127) && (Buff->fname_len > 0))
 	{
 		Buff->fname_len--;
 		Buff->fname[Buff->fname_len] = 0;
-
-		if(Buff->fname_len == 0)
-		{
-			SET_STATUS("WARNING - the filename is empty");
-		}
 	}
 	else if(key == 10)
 	{
 		Buff->live_fname_edit = false;
+		SET_STATUS("filename edited\0");
 	}
 	return Buff;
 }

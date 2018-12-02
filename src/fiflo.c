@@ -62,20 +62,20 @@ char getch(f_mtdt* Buff)
 {
 	const int8_t error = -1;
 
-	int echo_input_chars  = ECHO;
-	int enable_signals    = ISIG;
-	int canonical_mode_on = ICANON;
-	int enable_xon        = IXON;
+	const int echo_input_chars  = ECHO;
+	const int enable_signals    = ISIG;
+	const int canonical_mode_on = ICANON;
+	const int enable_xon        = IXON;
 
-	struct termios old_term_settings;
-	struct termios new_term_settings;
+	static struct termios old_term_settings;
+	static struct termios new_term_settings;
 
 	char key;
 
 	// Put the state of the STDIN_FILENO into the *old_term_settings.
 	if(tcgetattr(STDIN_FILENO, &old_term_settings) == error)
 	{
-		fputs("Can't get the terminal termios attribiutes.", stderr);
+		fputs("Can't get the terminal's termios attribiutes.", stderr);
 		free_all_exit(Buff, 1);
 	}
 
@@ -92,7 +92,7 @@ char getch(f_mtdt* Buff)
 	Use the new terminal I/O settings. */
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_settings) == error)
 	{
-		fputs("Can't set the terminal state to the raw mode.", stderr);
+		fputs("Can't set the terminal state to it's raw mode.", stderr);
 		free_all_exit(Buff, 1);
 	}
 
@@ -102,7 +102,7 @@ char getch(f_mtdt* Buff)
 	*new_term_settings. */
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_settings) == error)
 	{
-		fputs("Can't restore the terminal state to the normal mode.", stderr);
+		fputs("Can't restore the terminal state to it's normal mode.", stderr);
 		free_all_exit(Buff, 1);
 	}
 	return key;

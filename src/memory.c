@@ -140,10 +140,12 @@ f_mtdt* copy_lines_forward(f_mtdt* Buff)
 		line_i + INDEX - prev, line_i + INDEX, memblock);
 #endif
 
-		chk_ptr(Buff, Buff->text[line_i], "copy the line forward\0");
+		chk_ptr(Buff, Buff->text[line_i], "resize the line forward\0");
 
 		Buff->text[line_i] =
 		strcpy(Buff->text[line_i], Buff->text[line_i - prev]);
+
+		chk_ptr(Buff, Buff->text[line_i], "copy the line forward\0");
 
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i - prev];
 	}
@@ -166,10 +168,12 @@ f_mtdt* copy_lines_backward(f_mtdt* Buff)
 		line_i + INDEX + next, line_i + INDEX, memblock);
 #endif
 
-		chk_ptr(Buff, Buff->text[line_i], "copy the line backward\0");
+		chk_ptr(Buff, Buff->text[line_i], "resize the line backward\0");
 
 		Buff->text[line_i] =
 		strcpy(Buff->text[line_i], Buff->text[line_i + next]);
+
+		chk_ptr(Buff, Buff->text[line_i], "copy the line backward\0");
 
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];
 	}

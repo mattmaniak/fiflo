@@ -15,11 +15,10 @@ buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)
 
 void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 {
-	buff_t text_offset = CURSOR_VERTICAL_I;
-	buff_t char_i      = text_offset + CUR_SZ - Ui.text_x;
+	buff_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui.text_x;
 
 	// Text will be scrolled. Not cursor.
-	for(; char_i < text_offset; char_i++)
+	for(; char_i < CURSOR_VERTICAL_I; char_i++)
 	{
 		putchar(ACT_LINE[char_i]);
 	}
