@@ -1,5 +1,41 @@
-#include "fiflo.h"
+#include "buffer.h"
 #include "memory.h"
+
+void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
+{
+	if(ptr == NULL)
+	{
+		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
+		free_buff_exit(Buff, 1);
+	}
+}
+
+void* safer_malloc(f_mtdt* Buff, size_t sz, uint32_t line)
+{
+	void* ptr;
+
+	if(sz > SIZE_MAX)
+	{
+		fputs("Develop warning: size in safer_malloc shrinked.", stderr);
+		sz = SIZE_MAX;
+	}
+	ptr = malloc(sz);
+
+	if(ptr == NULL)
+	{
+		fprintf(stderr, "Can't malloc in %s: %u with size of %zul\n",
+		__FILE__, line, (unsigned long) sz);
+
+		free_buff_exit(Buff, 1);
+	}
+	return ptr;
+}
+
+void safer_free(void* ptr)
+{
+	free(ptr);
+	ptr = NULL;
+}
 
 char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
 {

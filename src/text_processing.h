@@ -1,6 +1,9 @@
 #ifndef TEXT_PROCESSING_H
 #define TEXT_PROCESSING_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
 // Formatting control chars.
 #define NUL__CTRL_SHIFT_2 0  // Terminator.
 #define BEL__CTRL_G       7  // Alarm beeper.
@@ -42,6 +45,9 @@
 
 #define NEG    -1 // Pipe.
 #define NUL_SZ 1
+
+// buffer.h
+extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
 // cursor.h
 extern f_mtdt* move_cursor_left (f_mtdt* Buff);

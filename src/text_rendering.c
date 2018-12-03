@@ -1,4 +1,5 @@
-#include "fiflo.h"
+#include "buffer.h"
+#include "ui.h"
 #include "text_rendering.h"
 
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)

@@ -1,4 +1,5 @@
-#include "fiflo.h"
+#include "buffer.h"
+#include "ui.h"
 #include "window.h"
 
 term_t get_term_sz(f_mtdt* Buff, char axis)
@@ -7,8 +8,8 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	const bool   line_height = 1;
 
 	// Remember to not override the upper bar width.
-	const term_t  x_min  = (term_t) (strlen(LBAR_STR) + SPACE_SZ);
-	const uint8_t y_min  = BARS_SZ + line_height;
+	const term_t  w_min  = (term_t) (strlen(LBAR_STR) + SPACE_SZ);
+	const uint8_t h_min  = BARS_SZ + line_height;
 	const term_t  sz_max = USHRT_MAX;
 
 	struct winsize term;
@@ -18,19 +19,19 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &term) == error)
 	{
 		fputs("Can't get the terminal size, exit(1).\n", stderr);
-		free_all_exit(Buff, 1);
+		free_buff_exit(Buff, 1);
 	}
 
 	// Terminal size check.
-	if(term.ws_col < x_min || term.ws_row < y_min)
+	if(term.ws_col < w_min || term.ws_row < h_min)
 	{
-		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", x_min, y_min);
-		free_all_exit(Buff, 1);
+		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", w_min, h_min);
+		free_buff_exit(Buff, 1);
 	}
 	else if(term.ws_col > sz_max || term.ws_row > sz_max)
 	{
 		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
-		free_all_exit(Buff, 1);
+		free_buff_exit(Buff, 1);
 	}
 
 	switch(axis)
@@ -59,6 +60,7 @@ void flush_window(f_mtdt* Buff)
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LN();
 	}
+	fflush(stderr);
 	fflush(stdout);
 }
 
@@ -124,7 +126,7 @@ void fill(f_mtdt* Buff, win_mtdt Ui)
 {
 	if((Buff->lines_i + INDEX) < Ui.text_y)
 	{
-		putchar(LF);
+		WRAP_LINE();
 		ANSI_INVERT();
 
 		// Fill the empty area below the text to position the lower bar.

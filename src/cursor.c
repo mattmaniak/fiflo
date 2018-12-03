@@ -1,4 +1,4 @@
-#include "fiflo.h"
+#include "buffer.h"
 #include "cursor.h"
 
 f_mtdt* move_cursor_left(f_mtdt* Buff)

@@ -1,22 +1,15 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <limits.h>
+#include <stdio.h>
+#include <string.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
-// UI areas:
-// Some semantic macros.
-#define CUR_SZ   1
-#define LF_SZ    1
-#define SLASH_SZ 1
-#define SPACE_SZ 1
+#define INDEX 1
 
-#define UBAR_SZ 2
-#define LBAR_SZ 1 // Must be equal 1 otherwise will break rendering a little.
-#define BARS_SZ (UBAR_SZ + LBAR_SZ)
-
-// Text that is shown on the lower bar. Also defines the minimal terminal width.
-#define LBAR_STR \
-"CTRL^: D - delete line; O - save as; Q - exit; S - save\0"
+#define WRAP_LINE() putchar('\n')
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\033[%s", "0m")
@@ -30,6 +23,10 @@
 #define ANSI_SAVE_CUR_POS()    printf("\033[%s", "s")
 #define ANSI_RESTORE_CUR_POS() printf("\033[%s", "u")
 
+// buffer.h
+extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
+
+// text_processing.h
 extern buff_t set_start_line   (f_mtdt* Buff);
 extern void   scroll_line_x    (f_mtdt* Buff, win_mtdt Ui);
 extern void   print_actual_line(f_mtdt* Buff, win_mtdt Ui);

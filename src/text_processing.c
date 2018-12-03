@@ -1,4 +1,5 @@
-#include "fiflo.h"
+#include "buffer.h"
+#include "memory.h"
 #include "text_processing.h"
 
 f_mtdt* parse_key(f_mtdt* Buff, char key)
@@ -8,8 +9,6 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	static char    key_sequence[seq_len];
 	static bool    ansi_esc_enabled;
 	static uint8_t char_i;
-
-	key_sequence[0] = 0;
 
 	/* If You want to see the values of sequences just comment everything
 	excluding "Buff = keymap(Buff, key);". */
@@ -88,7 +87,7 @@ f_mtdt* keymap(f_mtdt* Buff, char key)
 		case NEG:
 		{
 			fputs("Pipe isn't supported, exit(1).\n", stderr);
-			free_all_exit(Buff, 1);
+			free_buff_exit(Buff, 1);
 		}
 		case HT__CTRL_I:
 		{
@@ -106,7 +105,7 @@ f_mtdt* keymap(f_mtdt* Buff, char key)
 		}
 		case DC1__CTRL_Q:
 		{
-			free_all_exit(Buff, 1);
+			free_buff_exit(Buff, 1);
 		}
 		case DC3__CTRL_S:
 		{
@@ -296,8 +295,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 			ACT_LINE_LEN_I--;
 		}
 
-		for(buff_t line_i = ACT_LINE_I + INDEX;
-		line_i < Buff->lines_i; line_i++)
+		for(buff_t line_i = ACT_LINE_I + next; line_i < Buff->lines_i; line_i++)
 		{
 			Buff->text[line_i] = Buff->text[line_i + next];
 			Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];

@@ -1,38 +1,7 @@
 #ifdef __linux__
+#include "buffer.h"
+#include "memory.h"
 #include "fiflo.h"
-
-_Noreturn void free_all_exit(f_mtdt* Buff, const bool code)
-{
-	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
-	{
-		safer_free(Buff->text[line_i]);
-	}
-	safer_free(Buff->text);
-	safer_free(Buff->line_len_i);
-	safer_free(Buff);
-
-	exit(code);
-}
-
-void ignore_sig(int sig_num)
-{
-	if(sig_num) {}
-}
-
-void safer_free(void* ptr)
-{
-	free(ptr);
-	ptr = NULL;
-}
-
-void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
-{
-	if(ptr == NULL)
-	{
-		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
-		free_all_exit(Buff, 1);
-	}
-}
 
 void options(const char* arg)
 {
@@ -76,7 +45,7 @@ char getch(f_mtdt* Buff)
 	if(tcgetattr(STDIN_FILENO, &old_term_settings) == error)
 	{
 		fputs("Can't get the terminal's termios attribiutes.", stderr);
-		free_all_exit(Buff, 1);
+		free_buff_exit(Buff, 1);
 	}
 
 	// Create the copy of the old terminal settings to modify it's.
@@ -93,7 +62,7 @@ char getch(f_mtdt* Buff)
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_settings) == error)
 	{
 		fputs("Can't set the terminal state to it's raw mode.", stderr);
-		free_all_exit(Buff, 1);
+		free_buff_exit(Buff, 1);
 	}
 
 	key = (char) getchar();
@@ -103,32 +72,9 @@ char getch(f_mtdt* Buff)
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_settings) == error)
 	{
 		fputs("Can't restore the terminal state to it's normal mode.", stderr);
-		free_all_exit(Buff, 1);
+		free_buff_exit(Buff, 1);
 	}
 	return key;
-}
-
-f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
-{
-	Buff = set_fname(Buff, arg);
-
-	Buff->text = malloc(sizeof(Buff->text));
-	chk_ptr(Buff, Buff->text, "malloc the array with lines\0");
-
-	Buff->line_len_i = malloc(sizeof(Buff->line_len_i));
-	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length\0");
-
-	Buff->chars_i = 0;
-	Buff->lines_i = 0;
-	Buff->cusr_x  = 0;
-	Buff->cusr_y  = 0;
-
-	ACT_LINE_LEN_I = 0;
-	ACT_LINE = malloc(sizeof(Buff->text));
-
-	Buff->live_fname_edit = false;
-
-	return Buff;
 }
 
 _Noreturn void run(const char* arg)

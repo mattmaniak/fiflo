@@ -1,6 +1,11 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INDEX 1
+
 // Bytes of the memory width. Depends on an architecture. Eg. 8 bytes.
 #define ADDR_SZ sizeof(Buff->text)
 
@@ -9,6 +14,20 @@
 
 // Must be >= 16 and dividable by 8.
 #define MEMBLK 128
+
+#define SAFER MALLOC(Buff, sz) safer_malloc(Buff, sz, __LINE__)
+
+// buffer.h
+extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
+
+// Checks if passed pointer is NULL. If yes - frees memory and exits.
+void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
+
+//
+void* safer_malloc(f_mtdt* Buff, size_t sz, uint32_t line);
+
+// Frees and sets the pointer to NULL.
+void safer_free(void* ptr);
 
 // Allocs next memory block for chars in a line if needed.
 char* extend_line_mem(f_mtdt* Buff, buff_t line_i);

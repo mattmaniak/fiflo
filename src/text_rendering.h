@@ -1,14 +1,21 @@
 #ifndef TEXT_RENDERING_H
 #define TEXT_RENDERING_H
 
+#include <stdio.h>
+
 #define CUR_SZ 1
 #define LF_SZ  1
+#define LF     10
+#define INDEX  1
 
 #define BOLD_LINE_NUM true
 #define THIN_LINE_NUM false
 
 #define LAST_RENDERED_LINE    true
 #define ANOTHER_RENDERED_LINE false
+
+// buffer.h
+extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
 // window.h
 extern void print_line_num(buff_t line, uint8_t line_num_len, const bool mode);

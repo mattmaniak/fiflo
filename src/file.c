@@ -1,4 +1,5 @@
-#include "fiflo.h"
+#include "buffer.h"
+#include "memory.h"
 #include "file.h"
 
 f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
@@ -8,7 +9,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 	if(passed[strlen(passed) - NUL_SZ] == '/')
 	{
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
-		free_all_exit(Buff, 1);
+		free_buff_exit(Buff, 1);
 	}
 
 	// Is the absolute path.
@@ -17,7 +18,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 		if((strlen(passed) + NUL_SZ) > PATH_MAX)
 		{
 			fputs("The passed filename is too long, exit(1).\n", stderr);
-			free_all_exit(Buff, 1);
+			free_buff_exit(Buff, 1);
 		}
 		strncpy(Buff->fname, passed, PATH_MAX);
 	}
@@ -34,7 +35,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 		if((strlen(cw_dir) + strlen(passed)) >= PATH_MAX)
 		{
 			fputs("Passed filename is too long, exit(1).\n", stderr);
-			free_all_exit(Buff, 1);
+			free_buff_exit(Buff, 1);
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
@@ -91,6 +92,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 
 f_mtdt* save_file(f_mtdt* Buff)
 {
+	FILE*        textfile;
 	const int8_t not_created = -1;
 	int          file_status = access(Buff->fname, F_OK);
 
@@ -104,13 +106,10 @@ f_mtdt* save_file(f_mtdt* Buff)
 			SET_STATUS("failed to create the new file\0");
 		}
 	}
-	FILE* textfile = fopen(Buff->fname, "w");
+	textfile = fopen(Buff->fname, "w");
 
 	if(textfile != NULL)
 	{
-		// Prevents blinking a little.
-		render_window(Buff);
-
 		// Write each line to the file. NULL terminator is ignored.
 		for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 		{
@@ -118,14 +117,11 @@ f_mtdt* save_file(f_mtdt* Buff)
 			MSan because of there is more memory allocated than is needed. */
 			for(buff_t char_i = 0; char_i < Buff->line_len_i[line_i]; char_i++)
 			{
-				fputc(Buff->text[line_i][char_i], textfile);
+				putc(Buff->text[line_i][char_i], textfile);
 			}
 		}
 		fclose(textfile);
-
 		SET_STATUS("saved\0");
-
-		flush_window(Buff);
 	}
 	else
 	{
