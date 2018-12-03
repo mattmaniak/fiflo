@@ -37,7 +37,7 @@ f_mtdt;
 #pragma pack(pop)
 #pragma pack(pop)
 
-// Needed to simplify and shorten the code.
+// Placeholders.
 #define ACT_LINE_I        (Buff->lines_i - Buff->cusr_y)
 #define ACT_LINE          Buff->text[ACT_LINE_I]
 #define ACT_LINE_LEN_I    Buff->line_len_i[ACT_LINE_I]
@@ -50,6 +50,9 @@ f_mtdt;
 
 #define LAST_LINE         Buff->text[Buff->lines_i]
 #define LAST_LINE_LEN_I   Buff->line_len_i[Buff->lines_i]
+
+// memory.h
+extern void* safer_malloc(f_mtdt* Buff, size_t sz, uint32_t line);
 
 // file.h
 extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);

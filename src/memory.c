@@ -10,27 +10,6 @@ void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
 	}
 }
 
-void* safer_malloc(f_mtdt* Buff, size_t sz, uint32_t line)
-{
-	void* ptr;
-
-	if(sz > SIZE_MAX)
-	{
-		fputs("Develop warning: size in safer_malloc shrinked.", stderr);
-		sz = SIZE_MAX;
-	}
-	ptr = malloc(sz);
-
-	if(ptr == NULL)
-	{
-		fprintf(stderr, "Can't malloc in %s: %u with size of %zul\n",
-		__FILE__, line, (unsigned long) sz);
-
-		free_buff_exit(Buff, 1);
-	}
-	return ptr;
-}
-
 void safer_free(void* ptr)
 {
 	free(ptr);
