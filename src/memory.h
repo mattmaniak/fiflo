@@ -15,8 +15,8 @@
 // Must be >= 16 and dividable by 8.
 #define MEMBLK 128
 
-// buffer.h
-extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
+// Frees everything and exits with status code.
+_Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);

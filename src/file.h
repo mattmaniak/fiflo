@@ -10,10 +10,8 @@
 
 #define NUL_SZ 1
 
-// buffer.h
-extern _Noreturn void free_all_exit(f_mtdt* Buff, const bool code);
-
 // memory.h
+extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 
 // text_processing.h

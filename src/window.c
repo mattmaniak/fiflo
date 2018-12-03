@@ -23,12 +23,12 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	}
 
 	// Terminal size check.
-	if(term.ws_col < w_min || term.ws_row < h_min)
+	if((term.ws_col < w_min) || (term.ws_row < h_min))
 	{
 		fprintf(stderr, "Min. term size: %dx%d, exit(1).\n", w_min, h_min);
 		free_buff_exit(Buff, 1);
 	}
-	else if(term.ws_col > sz_max || term.ws_row > sz_max)
+	else if((term.ws_col > sz_max) || (term.ws_row > sz_max))
 	{
 		fprintf(stderr, "Max. term size: %dx%d, exit(1).\n", sz_max, sz_max);
 		free_buff_exit(Buff, 1);
@@ -70,8 +70,7 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 
 	term_t fname_max = get_term_sz(Buff, 'X') - (term_t) strlen(half_logo);
 
-	buff_t indicator_width =
-	(buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
+	buff_t indicator_width = (buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
 	- (strlen(half_logo) + strlen(Buff->status)));
 
 	ANSI_INVERT();
@@ -86,7 +85,7 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s\n", Buff->fname, get_term_sz(Buff, 'X')
-		- (term_t) (strlen(half_logo) + strlen(Buff->fname)), " ");
+		- (term_t) (strlen(half_logo) + Buff->fname_len), " ");
 	}
 	else
 	{

@@ -1,7 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
 - rework man-pages and --help option to become more understable,
-- if a line is too long to render: render inverted dots,
+- full text horizontal scroll,
 - optimize text-processing functions,
 - simplify the makefile,
 - pre-allocation of a memory, eg. next 16 lines,
@@ -9,7 +9,7 @@
 - scroll with eg. 10 lines ahead,
 - cut/copy/paste,
 - full ASCII support (keymap),
-- tabs (multiple files),
+- side pane (multiple files),
 - TAB key,
 - paging,
 - ~/.config/fiflo.conf file && colors,

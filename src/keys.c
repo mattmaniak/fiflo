@@ -1,86 +1,7 @@
 #include "buffer.h"
-#include "memory.h"
-#include "text_processing.h"
+#include "keys.h"
 
-f_mtdt* parse_key(f_mtdt* Buff, char key)
-{
-	// Notice: these globals are used only in that function.
-	enum           {seq_len = 8};
-	static char    key_sequence[seq_len];
-	static bool    ansi_esc_enabled;
-	static uint8_t char_i;
-
-	/* If You want to see the values of sequences just comment everything
-	excluding "Buff = keymap(Buff, key);". */
-	if((key == ESC__CTRL_LEFT_SQR_BRACKET) && !Buff->live_fname_edit)
-	{
-		ansi_esc_enabled = true;
-		char_i           = 0;
-	}
-	if(ansi_esc_enabled == true)
-	{
-		key_sequence[char_i]          = key;
-		key_sequence[char_i + NUL_SZ] = NUL__CTRL_SHIFT_2;
-
-		if(char_i < (seq_len - NUL_SZ))
-		{
-			char_i++;
-		}
-		if((key_sequence[char_i - NUL_SZ] == 'A')
-		|| (key_sequence[char_i - NUL_SZ] == 'B')
-		|| (key_sequence[char_i - NUL_SZ] == 'C')
-		|| (key_sequence[char_i - NUL_SZ] == 'D'))
-		{
-			ansi_esc_enabled = false;
-			Buff = // TODO: PASS FULL ARRAY.
-			recognize_arrow_direction(Buff, key_sequence[char_i - NUL_SZ]);
-			char_i = 0;
-		}
-	}
-	else if(Buff->live_fname_edit)
-	{
-		Buff = edit_fname(Buff, key);
-	}
-	else if(!Buff->live_fname_edit)
-	{
-		Buff = keymap(Buff, key);
-	}
-	return Buff;
-}
-
-f_mtdt* recognize_arrow_direction(f_mtdt* Buff, char key)
-{
-	switch(key)
-	{
-		case 'A':
-		{
-			Buff = move_cursor_up(Buff);
-			break;
-		}
-		case 'B':
-		{
-			Buff = move_cursor_down(Buff);
-			break;
-		}
-		case 'C':
-		{
-			Buff = move_cursor_right(Buff);
-			break;
-		}
-		case 'D':
-		{
-			Buff = move_cursor_left(Buff);
-		}
-	}
-
-#ifdef DEBUG
-	printf("CURSOR_VERTICAL_I %d\n", CURSOR_VERTICAL_I);
-#endif
-
-	return Buff;
-}
-
-f_mtdt* keymap(f_mtdt* Buff, char key)
+f_mtdt* key_action(f_mtdt* Buff, char key)
 {
 	switch(key)
 	{
@@ -138,11 +59,11 @@ f_mtdt* keymap(f_mtdt* Buff, char key)
 
 f_mtdt* printable_char(f_mtdt* Buff, char key)
 {
+	const bool nul_sz = 1;
+
 	/* Only printable chars will be added. Combinations that aren't specified
 	above will be omited. Set "if(key)" to enable them. */
-	if((key == NUL__CTRL_SHIFT_2)
-	|| (key == LF__CTRL_J)
-	|| (key >= 32))
+	if((key == NUL__CTRL_SHIFT_2) || (key == LF__CTRL_J) || (key >= 32))
 	{
 		if(Buff->chars_i < BUFF_MAX)
 		{
@@ -151,13 +72,11 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 
 			ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
 
-			/* If the cursor is moved to the left and a char is inserted, rest
-			of the text will be shifted to the right side. */
 			if(Buff->cusr_x > 0)
 			{
 				Buff = shift_text_horizonally(Buff, 'r');
 			}
-			ACT_LINE[CURSOR_VERTICAL_I - NUL_SZ] = key;
+			ACT_LINE[CURSOR_VERTICAL_I - nul_sz] = key;
 			ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
 			// Initializer handling.
@@ -194,8 +113,6 @@ f_mtdt* linefeed(f_mtdt* Buff)
 		Buff->lines_i++;
 		Buff = extend_lines_array_mem(Buff);
 
-		/* If user moved the cursor before hitting ENTER, text on the right
-		will be moved to the new line. */
 		if(Buff->cusr_x > 0)
 		{
 			PREV_LINE_LEN_I -= Buff->cusr_x;
@@ -309,79 +226,5 @@ f_mtdt* backspace(f_mtdt* Buff)
 	ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 	SET_STATUS("edited\0");
 
-	return Buff;
-}
-
-f_mtdt* delete_last_line(f_mtdt* Buff)
-{
-	safer_free(LAST_LINE);
-
-	Buff->lines_i--;
-	Buff = shrink_lines_array_mem(Buff);
-
-	return Buff;
-}
-
-f_mtdt* delete_line(f_mtdt* Buff)
-{
-	if(Buff->lines_i > 0)
-	{
-		if(Buff->cusr_y == 0)
-		{
-			Buff = delete_last_line(Buff);
-
-			/* With the last line deletion there is a need to remove the
-			linefeed in the previous line. */
-			LAST_LINE_LEN_I--;
-			LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
-
-			Buff->cusr_x = 0;
-		}
-		else
-		{
-			Buff = copy_lines_backward(Buff);
-			Buff = delete_last_line(Buff);
-
-			Buff->cusr_x = 1;
-			Buff->cusr_y--;
-		}
-	}
-	else
-	{
-		LAST_LINE_LEN_I = 0;
-		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
-
-		LAST_LINE = realloc(LAST_LINE, sizeof(Buff->text));
-		chk_ptr(Buff, LAST_LINE, "malloc after the first line removal");
-
-		Buff->cusr_x = 0;
-	}
-	return Buff;
-}
-
-f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
-{
-	const bool prev = 1;
-
-	switch(direction)
-	{
-		case 'l':
-		{
-			for(buff_t char_i = CURSOR_VERTICAL_I;
-			char_i <= ACT_LINE_LEN_I; char_i++)
-			{
-				ACT_LINE[char_i - prev] = ACT_LINE[char_i];
-			}
-			break;
-		}
-		case 'r':
-		{
-			for(buff_t char_i = ACT_LINE_LEN_I;
-			char_i >= CURSOR_VERTICAL_I; char_i--)
-			{
-				ACT_LINE[char_i] = ACT_LINE[char_i - prev];
-			}
-		}
-	}
 	return Buff;
 }

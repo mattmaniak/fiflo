@@ -1,6 +1,19 @@
 #include "buffer.h"
 #include "memory.h"
 
+_Noreturn void free_buff_exit(f_mtdt* Buff, const bool code)
+{
+	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
+	{
+		safer_free(Buff->text[line_i]);
+	}
+	safer_free(Buff->text);
+	safer_free(Buff->line_len_i);
+	safer_free(Buff);
+
+	exit(code);
+}
+
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
 {
 	if(ptr == NULL)

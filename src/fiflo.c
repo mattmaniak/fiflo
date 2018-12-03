@@ -3,6 +3,31 @@
 #include "memory.h"
 #include "fiflo.h"
 
+f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
+{
+	Buff = set_fname(Buff, arg);
+
+	Buff->text = malloc(ADDR_SZ);
+	chk_ptr(Buff, Buff->text, "malloc the array with lines\0");
+
+	Buff->line_len_i =
+	malloc(((sizeof(Buff->line_len_i) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
+
+	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length\0");
+
+	Buff->chars_i         = 0;
+	Buff->lines_i         = 0;
+	Buff->cusr_x          = 0;
+	Buff->cusr_y          = 0;
+	ACT_LINE_LEN_I        = 0;
+	Buff->live_fname_edit = false;
+
+	ACT_LINE = malloc(ADDR_SZ);
+	chk_ptr(Buff, ACT_LINE, "malloc the first line\0");
+
+	return Buff;
+}
+
 void options(const char* arg)
 {
 	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))

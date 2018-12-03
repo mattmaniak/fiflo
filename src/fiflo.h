@@ -17,8 +17,10 @@
 #define NUL_SZ 1
 #define LF     10
 
-// buffer.h
-extern f_mtdt*        init_buffer(f_mtdt* Buff, const char* arg);
+// Initializes all Buff structure members.
+f_mtdt* init_buffer(f_mtdt* Buff, const char* arg);
+
+// memory.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
 // file.h

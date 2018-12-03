@@ -1,5 +1,37 @@
 #include "buffer.h"
-#include "cursor.h"
+#include "arrows.h"
+
+f_mtdt* recognize_arrow(f_mtdt* Buff, char key)
+{
+	switch(key)
+	{
+		case 'A':
+		{
+			Buff = move_cursor_up(Buff);
+			break;
+		}
+		case 'B':
+		{
+			Buff = move_cursor_down(Buff);
+			break;
+		}
+		case 'C':
+		{
+			Buff = move_cursor_right(Buff);
+			break;
+		}
+		case 'D':
+		{
+			Buff = move_cursor_left(Buff);
+		}
+	}
+
+#ifdef DEBUG
+	printf("CURSOR_VERTICAL_I %d\n", CURSOR_VERTICAL_I);
+#endif
+
+	return Buff;
+}
 
 f_mtdt* move_cursor_left(f_mtdt* Buff)
 {

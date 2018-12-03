@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <linux/limits.h>
@@ -50,17 +49,5 @@ f_mtdt;
 
 #define LAST_LINE         Buff->text[Buff->lines_i]
 #define LAST_LINE_LEN_I   Buff->line_len_i[Buff->lines_i]
-
-// memory.h
-extern void* safer_malloc(f_mtdt* Buff, size_t sz, uint32_t line);
-
-// file.h
-extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
-
-// Initializes all Buff structure members.
-f_mtdt* init_buffer(f_mtdt* Buff, const char* arg);
-
-// Frees everything and exits with status code.
-_Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
 #endif

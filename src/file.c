@@ -1,5 +1,4 @@
 #include "buffer.h"
-#include "memory.h"
 #include "file.h"
 
 f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
