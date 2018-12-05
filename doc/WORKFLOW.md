@@ -22,7 +22,7 @@ provide updated code on the "develop" branch.
 ## Coding rules:
 - Allman-like brace style, indentation: hard tab (4 spaces wide),
 - only snake_case is allowed,
-- align all statements that are above or below if they are the same type,
+- use visual alignment, it's helpful,
 - single line should not exceed 80 chars printable chars,
 - insert short TODOs near thing to fix as uppercase comments,
 - write doc comments in .c files above statements, in .h at the right side.
@@ -33,6 +33,6 @@ provide updated code on the "develop" branch.
 Based on the https://semver.org.
 
 ## Testing
-Using LXTerminal daily. before the stable release, fiflo is tested with the
-native Linux tty. Correct rendering of the window depends on quirk emulators
+Daily with the LXTerminal. Before the stable release, fiflo is tested with the
+native Linux tty. Correct rendering of the window can depend on quirk emulators
 implementations.

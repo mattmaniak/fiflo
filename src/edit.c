@@ -1,23 +1,21 @@
 #include "buffer.h"
-#include "keys.h"
+#include "charmap.h"
 #include "edit.h"
 
 f_mtdt* parse_key(f_mtdt* Buff, char key)
 {
-	// Notice: these globals are used only in that function.
 	enum           {seq_len = 8};
 	static char    key_sequence[seq_len];
-	static bool    ansi_esc_enabled;
 	static uint8_t char_i;
 
-	/* If You want to see the values of sequences just comment everything
-	excluding "Buff = key_action(Buff, key);". */
-	if((key == ESC__CTRL_LEFT_SQR_BRACKET) && !Buff->live_fname_edit)
+	if((key == ESC__CTRL_LEFT_SQR_BRACKET) && (!Buff->live_fname_edit))
 	{
-		ansi_esc_enabled = true;
-		char_i           = 0;
+#ifndef VALUES_INSTEAD_OF_ACTIONS
+		Buff->key_sequence = true;
+#endif
+		char_i = 0;
 	}
-	if(ansi_esc_enabled == true)
+	if(Buff->key_sequence)
 	{
 		key_sequence[char_i]          = key;
 		key_sequence[char_i + NUL_SZ] = NUL__CTRL_SHIFT_2;
@@ -26,13 +24,10 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 		{
 			char_i++;
 		}
-		if((key_sequence[char_i - NUL_SZ] == 'A')
-		|| (key_sequence[char_i - NUL_SZ] == 'B')
-		|| (key_sequence[char_i - NUL_SZ] == 'C')
-		|| (key_sequence[char_i - NUL_SZ] == 'D'))
+		Buff = recognize_arrow(Buff, key_sequence);
+
+		if(!Buff->key_sequence)
 		{
-			ansi_esc_enabled = false;
-			Buff = recognize_arrow(Buff, key_sequence[char_i - NUL_SZ]);
 			char_i = 0;
 		}
 	}
@@ -97,13 +92,13 @@ f_mtdt* delete_line(f_mtdt* Buff)
 f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 {
 	const bool prev = 1;
+	buff_t     char_i;
 
 	switch(direction)
 	{
 		case 'l':
 		{
-			for(buff_t char_i = CURSOR_VERTICAL_I;
-			char_i <= ACT_LINE_LEN_I; char_i++)
+			for(char_i = CURSOR_VERTICAL_I; char_i <= ACT_LINE_LEN_I; char_i++)
 			{
 				ACT_LINE[char_i - prev] = ACT_LINE[char_i];
 			}
@@ -111,8 +106,7 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 		}
 		case 'r':
 		{
-			for(buff_t char_i = ACT_LINE_LEN_I;
-			char_i >= CURSOR_VERTICAL_I; char_i--)
+			for(char_i = ACT_LINE_LEN_I; char_i >= CURSOR_VERTICAL_I; char_i--)
 			{
 				ACT_LINE[char_i] = ACT_LINE[char_i - prev];
 			}

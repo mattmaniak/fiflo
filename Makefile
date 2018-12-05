@@ -16,8 +16,8 @@ MSAN_FLAGS = -fsanitize=memory -fPIE -pie -fno-omit-frame-pointer \
 
 DEPS = $(TARGET).h
 
-# All in obj folder depending on the src dir.
-OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*c))
+# All in ./obj depending on the ./src.
+OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
 
 # Check and set the compiler.
 ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
@@ -43,11 +43,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/$(DEPS)
 
 # Builds the binary by linking object files.
 $(TARGET): $(OBJ)
-	@mkdir -p $(BIN_DIR)
+	mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
 	$(CFLAGS)
 
-sanitize: $(OBJ)
+address: $(OBJ)
 	@mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$(TARGET) $^ \
 	$(CFLAGS) \
@@ -59,8 +59,9 @@ memory: $(OBJ)
 	$(CFLAGS) \
 	$(MSAN_FLAGS)
 
-install:
+install: $(TARGET)
 	sudo cp $(BIN_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)
+	sudo $(RM) /usr/share/man/man1/$(TARGET).1
 	sudo cp $(MAN_DIR)/$(TARGET).1 /usr/share/man/man1/$(TARGET).1
 	sudo gzip /usr/share/man/man1/$(TARGET).1
 

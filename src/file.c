@@ -1,25 +1,26 @@
 #include "buffer.h"
 #include "file.h"
 
-f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
+f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 {
-	const bool slash_sz = 1;
+	const bool slash_sz   = 1;
+	uint16_t   arg_len = (uint16_t) strlen(arg);
 
-	if(passed[strlen(passed) - NUL_SZ] == '/')
+	if((arg[0] == '/') && (arg[1] != 0x00))
 	{
 		fputs("Can't open the directory as a file, exit(1).\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
 
 	// Is the absolute path.
-	else if(passed[0] == '/')
+	else if(arg[0] == '/')
 	{
-		if((strlen(passed) + NUL_SZ) > PATH_MAX)
+		if((arg_len + NUL_SZ) > PATH_MAX)
 		{
 			fputs("The passed filename is too long, exit(1).\n", stderr);
 			free_buff_exit(Buff, 1);
 		}
-		strncpy(Buff->fname, passed, PATH_MAX);
+		strncpy(Buff->fname, arg, PATH_MAX);
 	}
 	// Relative path or the basename.
 	else
@@ -31,7 +32,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 		getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz));
 
 		// Exceeded 4096 chars.
-		if((strlen(cw_dir) + strlen(passed)) >= PATH_MAX)
+		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
 			fputs("Passed filename is too long, exit(1).\n", stderr);
 			free_buff_exit(Buff, 1);
@@ -43,9 +44,10 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* passed)
 		Buff->fname[strlen(cw_dir)] = '/';
 
 		// Append the basename.
-		for(uint16_t pos = 0; pos < strlen(passed); pos++)
+		for(uint16_t char_i = 0; char_i < arg_len; char_i++)
 		{
-			strcpy(&Buff->fname[strlen(cw_dir) + slash_sz + pos], &passed[pos]);
+			strcpy(&Buff->fname[strlen(cw_dir) + slash_sz + char_i],
+			&arg[char_i]);
 		}
 		free(cw_dir);
 		cw_dir = NULL;
@@ -67,7 +69,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 			SET_STATUS("current directory set\0");
 			return Buff;
 		}
-		while((ch = (char) getc(textfile)) != EOF)
+		while((ch = (char) fgetc(textfile)) != EOF)
 		{
 			// Temponary and ugly tab to two spaces conversion.
 			if(ch == '\t')
@@ -91,9 +93,9 @@ f_mtdt* read_file(f_mtdt* Buff)
 
 f_mtdt* save_file(f_mtdt* Buff)
 {
-	FILE*        textfile;
 	const int8_t not_created = -1;
 	int          file_status = access(Buff->fname, F_OK);
+	FILE*        textfile;
 
 	if(file_status == not_created)
 	{
@@ -133,9 +135,9 @@ f_mtdt* edit_fname(f_mtdt* Buff, char key)
 {
 	if((key >= 32) && (key != 127) && (Buff->fname_len < PATH_MAX))
 	{
+		Buff->fname[Buff->fname_len]          = key;
+		Buff->fname[Buff->fname_len + NUL_SZ] = 0;
 		Buff->fname_len++;
-		Buff->fname[Buff->fname_len - NUL_SZ] = key;
-		Buff->fname[Buff->fname_len]          = 0;
 	}
 	else if((key == 127) && (Buff->fname_len > 0))
 	{

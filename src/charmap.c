@@ -1,5 +1,5 @@
 #include "buffer.h"
-#include "keys.h"
+#include "charmap.h"
 
 f_mtdt* key_action(f_mtdt* Buff, char key)
 {
@@ -48,18 +48,16 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 			Buff = printable_char(Buff, key);
 		}
 	}
-
 #ifdef DEBUG
 	printf("pressed_key %d, cusr_x %d, cusr_y %d.\n",
 	key, Buff->cusr_x, Buff->cusr_y);
 #endif
-
 	return Buff;
 }
 
 f_mtdt* printable_char(f_mtdt* Buff, char key)
 {
-	const bool nul_sz = 1;
+	static const bool nul_sz = 1;
 
 	/* Only printable chars will be added. Combinations that aren't specified
 	above will be omited. Set "if(key)" to enable them. */

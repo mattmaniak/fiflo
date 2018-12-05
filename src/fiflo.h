@@ -43,6 +43,6 @@ char getch(f_mtdt* Buff);
 // Some initializers and the main program loop.
 _Noreturn void run(const char* arg);
 
-int main(int argc, char** argv);
+int main(const int argc, const char** argv);
 
 #endif

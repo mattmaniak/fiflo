@@ -8,7 +8,7 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	const bool   line_height = 1;
 
 	// Remember to not override the upper bar width.
-	const term_t  w_min  = (term_t) (strlen(LBAR_STR) + SPACE_SZ);
+	const term_t  w_min  = (term_t) strlen(LBAR_STR) + SPACE_SZ;
 	const uint8_t h_min  = BARS_SZ + line_height;
 	const term_t  sz_max = USHRT_MAX;
 
@@ -102,12 +102,12 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 
 	if((ACT_LINE_LEN_I < Ui.text_x) || (CURSOR_VERTICAL_I < Ui.text_x))
 	{
-		printf("%*d' \n", indicator_width,
+		printf("%*d^ \n", indicator_width,
 		get_term_sz(Buff, 'X') - Ui.line_num_len - SPACE_SZ);
 	}
 	else
 	{
-		printf("%*d' \n", indicator_width, CURSOR_VERTICAL_I);
+		printf("%*d^ \n", indicator_width, CURSOR_VERTICAL_I);
 	}
 	ANSI_RESET();
 }
@@ -152,23 +152,22 @@ void render_window(f_mtdt* Buff)
 	Ui.text_y       = get_term_sz(Buff, 'Y') - BARS_SZ;
 
 	ANSI_RESET();
+
 	upper_bar(Buff, Ui);
 
 	display_text(Buff, Ui);
 	fill(Buff, Ui);
 
 	lower_bar(Buff);
+
 	set_cursor_pos(Buff, Ui);
 }
 
-void print_line_num(buff_t line_i, uint8_t line_num_len, const bool mode)
+void print_line_num(buff_t line_i, uint8_t line_num_len, const bool act_line)
 {
-	// One with the cursor.
-	const bool actual_line = true;
-
 	ANSI_INVERT();
 
-	if(mode == actual_line)
+	if(act_line)
 	{
 		// Higlight the current line.
 		ANSI_UNDERSCORE();
@@ -193,7 +192,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 	{
 		move_up = get_term_sz(Buff, 'Y') - LBAR_SZ;
 
-		ANSI_CUR_RIGHT(Buff->fname_len + SPACE_SZ + 3);
+		ANSI_CUR_RIGHT(Buff->fname_len + SPACE_SZ + 3); // 3 - LOGO_SZ TODO.
 	}
 	else
 	{

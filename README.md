@@ -37,7 +37,7 @@ make clean
 
 ## Link the AddressSanitizer and some friends
 ```
-make sanitize
+make address
 ```
 Warning! The program will consume much more memory. Also it will be slower.
 

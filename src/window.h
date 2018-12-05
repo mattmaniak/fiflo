@@ -51,7 +51,7 @@ void fill(f_mtdt* Buff, win_mtdt Ui);
 void render_window(f_mtdt* Buff);
 
 // Prints the line number.
-void print_line_num(buff_t line_i, uint8_t line_num_len, const bool mode);
+void print_line_num(buff_t line_i, uint8_t line_num_len, const bool act_line);
 
 // Sets the cursor position from the left bottom.
 void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui);

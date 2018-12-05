@@ -21,6 +21,8 @@ typedef struct
 	bool     live_fname_edit;
 	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
 
+	bool     key_sequence;
+
 	// File's content and some indicators.
 	char**   text;               // Text buffer. Eg. text[lines_i][chars_i].
 	buff_t   lines_i;            // Lines index.

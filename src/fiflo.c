@@ -15,15 +15,18 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 
 	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length\0");
 
-	Buff->chars_i         = 0;
-	Buff->lines_i         = 0;
-	Buff->cusr_x          = 0;
-	Buff->cusr_y          = 0;
-	ACT_LINE_LEN_I        = 0;
+	Buff->chars_i  = 0;
+	Buff->lines_i  = 0;
+	Buff->cusr_x   = 0;
+	Buff->cusr_y   = 0;
+	ACT_LINE_LEN_I = 0;
+
 	Buff->live_fname_edit = false;
 
 	ACT_LINE = malloc(ADDR_SZ);
 	chk_ptr(Buff, ACT_LINE, "malloc the first line\0");
+
+	Buff->key_sequence = false;
 
 	return Buff;
 }
@@ -36,9 +39,9 @@ void options(const char* arg)
 		"Usage: fiflo [option].",
 
 		"Options:      Description:",
-		"<no_option>   Don't set the filename.",
-		"<name>        Specify the base/filename.",
-		"-h, --help    Show program help.",
+		"<no_option>   Don't set a filename. Only a current will be set.",
+		"<name>        Specify a base/filename.",
+		"-h, --help    Show a program help.",
 		"-v, --version Display information about a version You use.");
 		exit(0);
 	}
@@ -47,7 +50,7 @@ void options(const char* arg)
 		printf("%s\n%s\n%s\n",
 		"fiflo v2.2.0 (WIP)",
 		"https://gitlab.com/mattmaniak/fiflo.git",
-		"(c) 2018 mattmaniak, MIT License.");
+		"(C) 2018 mattmaniak, MIT License.");
 		exit(0);
 	}
 }
@@ -77,8 +80,8 @@ char getch(f_mtdt* Buff)
 	new_term_settings = old_term_settings;
 
 	// Look that the options of below flags are negated.
-	new_term_settings.c_lflag &= (unsigned int)
-	~(canonical_mode_on | echo_input_chars | enable_signals);
+	new_term_settings.c_lflag &=
+	(unsigned int) ~(canonical_mode_on | echo_input_chars | enable_signals);
 
 	new_term_settings.c_iflag &= (unsigned int) ~(enable_xon);
 
@@ -124,9 +127,9 @@ _Noreturn void run(const char* arg)
 	}
 }
 
-int main(int argc, char** argv)
+int main(const int argc, const char** argv)
 {
-	if((argc != 1) && (argc != 2))
+	if(argc > 2)
 	{
 		fputs("Only one additional arg can be passed, exit(1).\n", stderr);
 		exit(1);

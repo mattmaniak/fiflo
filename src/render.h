@@ -1,5 +1,5 @@
-#ifndef TEXT_RENDERING_H
-#define TEXT_RENDERING_H
+#ifndef RENDER_H
+#define RENDER_H
 
 #include <stdio.h>
 

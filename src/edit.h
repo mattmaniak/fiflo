@@ -6,12 +6,8 @@
 
 #define NUL_SZ 1
 
-// cursor.h
-extern f_mtdt* recognize_arrow  (f_mtdt* Buff, char key);
-extern f_mtdt* move_cursor_left (f_mtdt* Buff);
-extern f_mtdt* move_cursor_right(f_mtdt* Buff);
-extern f_mtdt* move_cursor_up   (f_mtdt* Buff);
-extern f_mtdt* move_cursor_down (f_mtdt* Buff);
+// seqmap.h
+extern f_mtdt* recognize_arrow(f_mtdt* Buff, char sequence[8]);
 
 // file.h
 extern f_mtdt* save_file (f_mtdt* Buff);
