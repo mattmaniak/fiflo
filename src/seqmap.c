@@ -6,10 +6,10 @@ f_mtdt* recognize_arrow(f_mtdt* Buff, char sequence[8])
 	/* Notice that the structure of these sequences is:
 	<ansi_esc_code> + '[' + <some_unique_numbers_and_letters> + '\0'.
 	Comments at the right side are identifiers of these codes. */
-	static const char* arrow_up    = "\x1b\x5b\x41\x00"; // A
-	static const char* arrow_down  = "\x1b\x5b\x42\x00"; // B
-	static const char* arrow_right = "\x1b\x5b\x43\x00"; // C
-	static const char* arrow_left  = "\x1b\x5b\x44\x00"; // D
+	const char* arrow_up    = "\x1b\x5b\x41\x00"; // A
+	const char* arrow_down  = "\x1b\x5b\x42\x00"; // B
+	const char* arrow_right = "\x1b\x5b\x43\x00"; // C
+	const char* arrow_left  = "\x1b\x5b\x44\x00"; // D
 
 	if(!strcmp(sequence, arrow_up))
 	{
@@ -31,9 +31,9 @@ f_mtdt* recognize_arrow(f_mtdt* Buff, char sequence[8])
 		Buff = cursor_left(Buff);
 		Buff->key_sequence = false;
 	}
+	// Prevent everything other than bare arrows in a very ugly way.
 	else if(strlen(sequence) >= 5)
 	{
-		// Ugly way to ignore CTRL^ARROWS, CTRL^DELETE and similar ones.
 		getch(Buff);
 
 		if(strlen(sequence) == 6)
@@ -83,8 +83,17 @@ f_mtdt* cursor_up(f_mtdt* Buff)
 {
 	if(Buff->cusr_y < Buff->lines_i)
 	{
-		// Ignore the linefeed.
-		Buff->cusr_x = 1;
+		if(Buff->cusr_x == ACT_LINE_LEN_I)
+		{
+			/* Cursor at the left side: doesn't go at the end of a line. Always
+			at the beginning */
+			Buff->cusr_x = PREV_LINE_LEN_I;
+		}
+		else
+		{
+			// Ignore the linefeed.
+			Buff->cusr_x = 1;
+		}
 		Buff->cusr_y++;
 	}
 	return Buff;
@@ -96,13 +105,24 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 	{
 		Buff->cusr_y--;
 
-		if(Buff->cusr_y > 0)
+		if(Buff->cusr_x == PREV_LINE_LEN_I)
 		{
-			Buff->cusr_x = 1;
+			/* Cursor at the left side: doesn't go at the end of a line. Always
+			at the beginning */
+			Buff->cusr_x = ACT_LINE_LEN_I;
 		}
 		else
 		{
-			Buff->cusr_x = 0;
+			// Is last line so ignoring the LF isn't needed.
+			if(Buff->cusr_y == 0)
+			{
+				Buff->cusr_x = 0;
+			}
+			else
+			{
+				// Ignore the linefeed.
+				Buff->cusr_x = 1;
+			}
 		}
 	}
 	return Buff;

@@ -15,6 +15,8 @@
 // Text that is shown on the lower bar. Also defines the minimal terminal width.
 #define LBAR_STR "CTRL^: D - delete line; O - save as; Q - exit; S - save\0"
 
+#define WRAP_LINE() putchar(0x0a)
+
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
 #pragma pack(push, 1)

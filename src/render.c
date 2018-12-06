@@ -28,7 +28,7 @@ void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 	a line. */
 	if(Buff->cusr_y > 0)
 	{
-		putchar(LF);
+		WRAP_LINE();
 	}
 }
 
@@ -53,16 +53,16 @@ void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool mode)
 		// For proper rendering.
 		if(mode == LAST_RENDERED_LINE)
 		{
-			putchar(LF);
+			WRAP_LINE();
 		}
 	}
 }
 
 void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 {
-	buff_t line_i = 0;
+	buff_t line_i;
 
-	for(; line_i < ACT_LINE_I; line_i++)
+	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
 		print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
 
@@ -71,7 +71,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 		if(Buff->line_len_i[line_i] > Ui.text_x)
 		{
 			// Just because there is place for the cursor and LF isn't printed.
-			putchar(LF);
+			WRAP_LINE();
 		}
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
@@ -89,7 +89,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 			{
 				/* Just because there is place for the cursor and LF isn't
 				printed. */
-				putchar(LF);
+				WRAP_LINE();
 			}
 		}
 	}
@@ -97,10 +97,10 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 
 void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 {
-	buff_t line_i = 0;
+	buff_t line_i;
 
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(; line_i < ACT_LINE_I; line_i++)
+	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
 		print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
 
@@ -109,7 +109,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 		if(Buff->line_len_i[line_i] > Ui.text_x)
 		{
 			// Just because there is place for the cursor and LF isn't printed.
-			putchar(LF);
+			WRAP_LINE();
 		}
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
@@ -127,7 +127,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 		if(Buff->line_len_i[line_i] > Ui.text_x)
 		{
 			// Just because there is place for the cursor and LF isn't printed.
-			putchar(LF);
+			WRAP_LINE();
 		}
 	}
 	print_line_num(Ui.text_y - INDEX, Ui.line_num_len, THIN_LINE_NUM);
@@ -139,8 +139,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 {
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(buff_t line_i = set_start_line(Buff, Ui);
-	line_i < ACT_LINE_I; line_i++)
+	for(buff_t line_i = set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
 	{
 		print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
@@ -148,7 +147,7 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 		if(Buff->line_len_i[line_i] > Ui.text_x)
 		{
 			// Just because there is place for the cursor and LF isn't printed.
-			putchar(LF);
+			WRAP_LINE();
 		}
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);

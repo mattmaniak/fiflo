@@ -73,7 +73,7 @@ char* shrink_act_line_mem(f_mtdt* Buff)
 		// Shrink to size of the MEMBLK.
 		memblock = MEMBLK;
 	}
-	else if(ACT_LINE_LEN_I >= MEMBLK)// && (ACT_LINE_LEN_I % MEMBLK == 0))
+	else if(ACT_LINE_LEN_I >= MEMBLK)
 	{
 		// Remove the newest memblock because isn't needed now.
 		memblock = ((ACT_LINE_LEN_I / MEMBLK) * MEMBLK) + MEMBLK;

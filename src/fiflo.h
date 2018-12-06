@@ -10,16 +10,6 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define DEBUG // Uncomment if You want to get some variables values, et al.
-
-// Some semantic substitutes.
-#define INDEX  1
-#define NUL_SZ 1
-#define LF     10
-
-// Initializes all Buff structure members.
-f_mtdt* init_buffer(f_mtdt* Buff, const char* arg);
-
 // memory.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
@@ -33,6 +23,9 @@ extern f_mtdt* parse_key(f_mtdt* Buff, char key);
 // render.h
 extern void flush_window (f_mtdt* Buff);
 extern void render_window(f_mtdt* Buff);
+
+// Initializes all Buff structure members.
+f_mtdt* init_buffer(f_mtdt* Buff, const char* arg);
 
 // Program parameters, eg. "--help".
 void options(const char* arg);

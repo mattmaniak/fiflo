@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- every header description,
 - pipe handling,
 - improve the makefile,
 - rework man-pages and --help option to become more understable,

@@ -10,9 +10,11 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 
 	if((key == ESC__CTRL_LEFT_SQR_BRACKET) && (!Buff->live_fname_edit))
 	{
+
 #ifndef VALUES_INSTEAD_OF_ACTIONS
 		Buff->key_sequence = true;
 #endif
+
 		char_i = 0;
 	}
 	if(Buff->key_sequence)

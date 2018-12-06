@@ -59,45 +59,39 @@ char getch(f_mtdt* Buff)
 {
 	const int8_t error = -1;
 
-	const int echo_input_chars  = ECHO;
-	const int enable_signals    = ISIG;
-	const int canonical_mode_on = ICANON;
-	const int enable_xon        = IXON;
+	const unsigned int echo_input        = ECHO;
+	const unsigned int enable_sigs       = ISIG;
+	const unsigned int canonical_mode_on = ICANON;
+	const unsigned int enable_xon        = IXON;
 
-	static struct termios old_term_settings;
-	static struct termios new_term_settings;
+	static struct termios old_term_params;
+	static struct termios new_term_params;
 
 	char key;
 
-	// Put the state of the STDIN_FILENO into the *old_term_settings.
-	if(tcgetattr(STDIN_FILENO, &old_term_settings) == error)
+	// Put the state of the STDIN_FILENO into the *old_term_params.
+	if(tcgetattr(STDIN_FILENO, &old_term_params) == error)
 	{
 		fputs("Can't get the terminal's termios attribiutes.", stderr);
 		free_buff_exit(Buff, 1);
 	}
-
-	// Create the copy of the old terminal settings to modify it's.
-	new_term_settings = old_term_settings;
+	new_term_params = old_term_params;
 
 	// Look that the options of below flags are negated.
-	new_term_settings.c_lflag &=
-	(unsigned int) ~(canonical_mode_on | echo_input_chars | enable_signals);
+	new_term_params.c_iflag &= ~(enable_xon);
+	new_term_params.c_lflag &= ~(canonical_mode_on | echo_input | enable_sigs);
 
-	new_term_settings.c_iflag &= (unsigned int) ~(enable_xon);
-
-	/* Immediately set the state of the STDIN_FILENO to the *new_term_settings.
+	/* Immediately set the state of the STDIN_FILENO to the *new_term_params.
 	Use the new terminal I/O settings. */
-	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_settings) == error)
+	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == error)
 	{
 		fputs("Can't set the terminal state to it's raw mode.", stderr);
 		free_buff_exit(Buff, 1);
 	}
-
 	key = (char) getchar();
 
-	/* Immediately restore the state of the STDIN_FILENO to the
-	*new_term_settings. */
-	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_settings) == error)
+	// Immediately restore the state of the stdin (0) to the *new_term_params.
+	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == error)
 	{
 		fputs("Can't restore the terminal state to it's normal mode.", stderr);
 		free_buff_exit(Buff, 1);
@@ -108,7 +102,7 @@ char getch(f_mtdt* Buff)
 _Noreturn void run(const char* arg)
 {
 	// Initializer. Equal to the null terminator.
-	char pressed = 0;
+	char pressed = 0x00;
 
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
 	chk_ptr(Buff, Buff, "malloc the metadata buffer\0");

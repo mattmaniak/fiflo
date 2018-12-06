@@ -84,8 +84,10 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	if(Buff->fname_len < fname_max)
 	{
 		// Whole filename will be displayed.
-		printf("%s%*s\n", Buff->fname, get_term_sz(Buff, 'X')
+		printf("%s%*s", Buff->fname, get_term_sz(Buff, 'X')
 		- (term_t) (strlen(half_logo) + Buff->fname_len), " ");
+
+		WRAP_LINE();
 	}
 	else
 	{
@@ -102,13 +104,14 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 
 	if((ACT_LINE_LEN_I < Ui.text_x) || (CURSOR_VERTICAL_I < Ui.text_x))
 	{
-		printf("%*d^ \n", indicator_width,
+		printf("%*d^ ", indicator_width,
 		get_term_sz(Buff, 'X') - Ui.line_num_len - SPACE_SZ);
 	}
 	else
 	{
-		printf("%*d^ \n", indicator_width, CURSOR_VERTICAL_I);
+		printf("%*d^ ", indicator_width, CURSOR_VERTICAL_I);
 	}
+	WRAP_LINE();
 	ANSI_RESET();
 }
 
@@ -117,7 +120,9 @@ void lower_bar(f_mtdt* Buff)
 	term_t horizontal_fill = (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
 
 	ANSI_INVERT();
-	printf("\n%s%*s", LBAR_STR, horizontal_fill, " ");
+	WRAP_LINE();
+
+	printf("%s%*s", LBAR_STR, horizontal_fill, " ");
 	ANSI_RESET();
 }
 
@@ -132,7 +137,8 @@ void fill(f_mtdt* Buff, win_mtdt Ui)
 		for(buff_t line = Buff->lines_i + INDEX + 1; line < Ui.text_y; line++)
 		{
 			// Just empty line num block but without the number.
-			printf("%*s\n", Ui.line_num_len - SPACE_SZ, " ");
+			printf("%*s", Ui.line_num_len - SPACE_SZ, " ");
+			WRAP_LINE();
 		}
 		printf("%*s", Ui.line_num_len - SPACE_SZ, " ");
 		ANSI_RESET();

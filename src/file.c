@@ -3,8 +3,8 @@
 
 f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 {
-	const bool slash_sz   = 1;
-	uint16_t   arg_len = (uint16_t) strlen(arg);
+	const bool slash_sz = 1;
+	uint16_t   arg_len  = (uint16_t) strlen(arg);
 
 	if((arg[0] == '/') && (arg[1] != 0x00))
 	{
@@ -17,7 +17,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	{
 		if((arg_len + NUL_SZ) > PATH_MAX)
 		{
-			fputs("The passed filename is too long, exit(1).\n", stderr);
+			fputs("Passed filename is too long, exit(1).\n", stderr);
 			free_buff_exit(Buff, 1);
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
@@ -34,7 +34,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		// Exceeded 4096 chars.
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
-			fputs("Passed filename is too long, exit(1).\n", stderr);
+			fputs("Current directory is too long, exit(1).\n", stderr);
 			free_buff_exit(Buff, 1);
 		}
 		// Copy the path.
@@ -46,12 +46,10 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		// Append the basename.
 		for(uint16_t char_i = 0; char_i < arg_len; char_i++)
 		{
-			strcpy(&Buff->fname[strlen(cw_dir) + slash_sz + char_i],
-			&arg[char_i]);
+			strcpy
+			(&Buff->fname[strlen(cw_dir) + slash_sz + char_i], &arg[char_i]);
 		}
-		free(cw_dir);
-		cw_dir = NULL;
-
+		safer_free(cw_dir);
 		Buff->fname_len = (uint16_t) strlen(Buff->fname);
 	}
 	return Buff;
@@ -94,8 +92,9 @@ f_mtdt* read_file(f_mtdt* Buff)
 f_mtdt* save_file(f_mtdt* Buff)
 {
 	const int8_t not_created = -1;
-	int          file_status = access(Buff->fname, F_OK);
-	FILE*        textfile;
+
+	int   file_status = access(Buff->fname, F_OK);
+	FILE* textfile;
 
 	if(file_status == not_created)
 	{
@@ -136,13 +135,13 @@ f_mtdt* edit_fname(f_mtdt* Buff, char key)
 	if((key >= 32) && (key != 127) && (Buff->fname_len < PATH_MAX))
 	{
 		Buff->fname[Buff->fname_len]          = key;
-		Buff->fname[Buff->fname_len + NUL_SZ] = 0;
+		Buff->fname[Buff->fname_len + NUL_SZ] = 0x00;
 		Buff->fname_len++;
 	}
-	else if((key == 127) && (Buff->fname_len > 0))
+	else if((key == 127) && (Buff->fname_len > 0x00))
 	{
 		Buff->fname_len--;
-		Buff->fname[Buff->fname_len] = 0;
+		Buff->fname[Buff->fname_len] = 0x00;
 	}
 	else if(key == 10)
 	{

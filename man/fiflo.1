@@ -36,7 +36,12 @@ Exit the program.
 Save a file with a filename specified in the upper bar.
 .TP
 .B ARROWS
-Move the cursor one char/line in a specified direction.
+Move the cursor one char/line in a specified direction. If the cursor is in the
+end or in the middle of a line, it would be scrolled vertically through the
+lines endings. Else if the cursor is in the beginning of the line, it's
+horizontal position won't be changed during vertical scroll. Also if the
+X-axis scroll reaches beggining/end of the line, the cursor will be moved one
+line up/down depending on left/right arrow.
 .SH SEE ALSO
 https://gitlab.com/mattmaniak/fiflo.git
 .SH BUGS

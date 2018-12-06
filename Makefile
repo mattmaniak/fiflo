@@ -11,7 +11,7 @@ CFLAGS = -std=gnu99 -O3
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined \
 -fsanitize-address-use-after-scope
 
-MSAN_FLAGS = -fsanitize=memory -fPIE -pie -fno-omit-frame-pointer \
+MSAN_FLAGS = -fsanitize=memory -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins
 
 DEPS = $(TARGET).h
@@ -41,11 +41,22 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/$(DEPS)
 	$(CC) -c -o $@ $< \
 	$(CFLAGS) \
 
+
+
 # Builds the binary by linking object files.
 $(TARGET): $(OBJ)
 	mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
 	$(CFLAGS)
+
+# TODO
+# address: clean
+# address: CFLAGS += $(ASAN_FLAGS)
+# address: $(TARGET)
+
+# memory: clean
+# memory: CFLAGS += $(MSAN_FLAGS)
+# memory: $(TARGET)
 
 address: $(OBJ)
 	@mkdir -p $(BIN_DIR)
