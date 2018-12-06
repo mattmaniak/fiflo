@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 // memory.h
-extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
+extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 
 // file.h
 extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);

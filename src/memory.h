@@ -16,7 +16,7 @@
 #define MEMBLK 128
 
 // Frees everything and exits with status code.
-_Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
+_Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
@@ -40,9 +40,9 @@ f_mtdt* extend_lines_array_mem(f_mtdt* Buff);
 f_mtdt* shrink_lines_array_mem(f_mtdt* Buff);
 
 // Shifts the lines down.
-f_mtdt* copy_lines_forward(f_mtdt* Buff);
+f_mtdt* copy_lines_mem_forward(f_mtdt* Buff);
 
 // Shifts the lines up.
-f_mtdt* copy_lines_backward(f_mtdt* Buff);
+f_mtdt* copy_lines_mem_backward(f_mtdt* Buff);
 
 #endif

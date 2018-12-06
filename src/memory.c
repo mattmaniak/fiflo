@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "memory.h"
 
-_Noreturn void free_buff_exit(f_mtdt* Buff, const bool code)
+_Noreturn void free_buff_exit(f_mtdt* Buff, const bool status)
 {
 	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
@@ -11,7 +11,7 @@ _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code)
 	safer_free(Buff->line_len_i);
 	safer_free(Buff);
 
-	exit(code);
+	exit(status);
 }
 
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
@@ -152,7 +152,7 @@ f_mtdt* shrink_lines_array_mem(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* copy_lines_forward(f_mtdt* Buff)
+f_mtdt* copy_lines_mem_forward(f_mtdt* Buff)
 {
 	const bool prev = 1;
 
@@ -180,7 +180,7 @@ f_mtdt* copy_lines_forward(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* copy_lines_backward(f_mtdt* Buff)
+f_mtdt* copy_lines_mem_backward(f_mtdt* Buff)
 {
 	const bool next = 1;
 

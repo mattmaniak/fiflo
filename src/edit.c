@@ -58,7 +58,15 @@ f_mtdt* delete_line(f_mtdt* Buff)
 {
 	if(Buff->lines_i > 0)
 	{
-		if(Buff->cusr_y == 0)
+		if(CURSOR_Y_SCROLLED)
+		{
+			Buff = copy_lines_mem_backward(Buff);
+			Buff = delete_last_line(Buff);
+
+			Buff->cusr_x = 1;
+			Buff->cusr_y--;
+		}
+		else
 		{
 			Buff = delete_last_line(Buff);
 
@@ -68,14 +76,6 @@ f_mtdt* delete_line(f_mtdt* Buff)
 			LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
 			Buff->cusr_x = 0;
-		}
-		else
-		{
-			Buff = copy_lines_backward(Buff);
-			Buff = delete_last_line(Buff);
-
-			Buff->cusr_x = 1;
-			Buff->cusr_y--;
 		}
 	}
 	else
@@ -114,5 +114,32 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 			}
 		}
 	}
+	return Buff;
+}
+
+f_mtdt* move_lines_forward(f_mtdt* Buff)
+{
+	PREV_LINE_LEN_I -= Buff->cusr_x;
+
+	// Move more lines vertically with the part of the current line.
+	if(CURSOR_Y_SCROLLED)
+	{
+		Buff = copy_lines_mem_forward(Buff);
+		ACT_LINE_LEN_I = 0;
+	}
+
+	// Move the right part (separated by the cursor) of the line to the next.
+	for(buff_t char_i = PREV_LINE_LEN_I;
+	char_i < PREV_LINE_LEN_I + Buff->cusr_x; char_i++)
+	{
+		ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
+		ACT_LINE_LEN_I++;
+		ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
+	}
+
+	// Now the length of the upper line will be shortened after copying.
+	PREV_LINE[PREV_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
+	PREV_LINE = shrink_prev_line_mem(Buff);
+
 	return Buff;
 }

@@ -48,29 +48,33 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 			Buff = printable_char(Buff, key);
 		}
 	}
+
 #ifdef SHOW_VALUES
 	printf("pressed_key %d, cusr_x %d, cusr_y %d.\n",
 	key, Buff->cusr_x, Buff->cusr_y);
 #endif
+
 	return Buff;
 }
 
 f_mtdt* printable_char(f_mtdt* Buff, char key)
 {
-	const bool nul_sz = 1;
+	const bool nul_sz    = 1;
+	const bool in_keymap =
+	(key == NUL__CTRL_SHIFT_2) || (key == LF__CTRL_J) || (key >= 32);
 
 	/* Only printable chars will be added. Combinations that aren't specified
 	above will be omited. Set "if(key)" to enable them. */
-	if((key == NUL__CTRL_SHIFT_2) || (key == LF__CTRL_J) || (key >= 32))
+	if(in_keymap)
 	{
-		if(Buff->chars_i < BUFF_MAX)
+		if(BUFFER_NOT_FULL)
 		{
 			Buff->chars_i++;
 			ACT_LINE_LEN_I++;
 
 			ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
 
-			if(Buff->cusr_x > 0)
+			if(CURSOR_X_SCROLLED)
 			{
 				Buff = shift_text_horizonally(Buff, 'r');
 			}
@@ -78,7 +82,7 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 			ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
 			// Initializer handling.
-			if(key == NUL__CTRL_SHIFT_2 && ACT_LINE_LEN_I > 0)
+			if((key == NUL__CTRL_SHIFT_2) && LINE_NON_EMPTY)
 			{
 				Buff->chars_i--;
 				ACT_LINE_LEN_I--;
@@ -99,60 +103,48 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 	}
 	else
 	{
-		SET_STATUS("WARNING - unsupported octet(s)\0");
+		SET_STATUS("unsupported octet(s)\0");
 	}
 	return Buff;
 }
 
 f_mtdt* linefeed(f_mtdt* Buff)
 {
-	if(Buff->lines_i < BUFF_MAX)
+	if(BUFFER_NOT_FULL)
 	{
 		Buff->lines_i++;
 		Buff = extend_lines_array_mem(Buff);
 
-		if(Buff->cusr_x > 0)
+		if(CURSOR_X_SCROLLED)
 		{
-			PREV_LINE_LEN_I -= Buff->cusr_x;
-
-			// Move more lines vertically with the part of the current line.
-			if(Buff->cusr_y > 0)
-			{
-				Buff = copy_lines_forward(Buff);
-				ACT_LINE_LEN_I = 0;
-			}
-
-			/* Move the right part (separated by the cursor) of the line to the
-			next. */
-			for(buff_t char_i = PREV_LINE_LEN_I;
-			char_i < PREV_LINE_LEN_I + Buff->cusr_x; char_i++)
-			{
-				ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
-				ACT_LINE_LEN_I++;
-				ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
-			}
-
-			// Now the length of the upper line will be shortened after copying.
-			PREV_LINE[PREV_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
-			PREV_LINE = shrink_prev_line_mem(Buff);
+			Buff = move_lines_forward(Buff);
 		}
-		// Cursor is at the end of the line. Shifted vertically.
-		else if(Buff->cusr_y > 0)
+		// Cursor is at the end of the line.
+		else if(CURSOR_Y_SCROLLED)
 		{
-			Buff = copy_lines_forward(Buff);
+			Buff = copy_lines_mem_forward(Buff);
 		}
 		ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 	}
 	return Buff;
 }
 
-f_mtdt* backspace(f_mtdt* Buff)
+// f_mtdt* (f_mtdt* Buff)
+// {
+//
+// }
+
+// f_mtdt* (f_mtdt* Buff)
+// {
+//
+// }
+
+f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLYFI IF_ELSES.
 {
-	static const bool next = 1;
+	const bool next = 1;
 
 	if(ACT_LINE_LEN_I > 0)
 	{
-		// If the cursor at the maximum left position, char won't be deleted.
 		if(Buff->cusr_x != ACT_LINE_LEN_I)
 		{
 			Buff = shift_text_horizonally(Buff, 'l');
@@ -181,13 +173,13 @@ f_mtdt* backspace(f_mtdt* Buff)
 			// Shift lines vertically.
 			if(Buff->cusr_y > 0)
 			{
-				Buff = copy_lines_backward(Buff);
+				Buff = copy_lines_mem_backward(Buff);
 			}
 			Buff = delete_last_line(Buff);
 		}
 	}
 	// Deletes the last empty line.
-	else if((ACT_LINE_LEN_I == 0) && (ACT_LINE_I > 0) && (Buff->cusr_y == 0))
+	else if((ACT_LINE_I > 0) && (Buff->cusr_y == 0))
 	{
 		safer_free(ACT_LINE);
 
@@ -199,7 +191,8 @@ f_mtdt* backspace(f_mtdt* Buff)
 
 		Buff = shrink_lines_array_mem(Buff);
 	}
-	else if((Buff->cusr_x == ACT_LINE_LEN_I) && (Buff->cusr_y > 0))
+	// Delete the non last line and shift the rest.
+	else if(Buff->cusr_x == ACT_LINE_LEN_I)
 	{
 		for(buff_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
 		{

@@ -33,8 +33,4 @@ typedef struct
 win_mtdt;
 #pragma pack(pop)
 
-// buffer.h
-extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
-
-
 #endif
