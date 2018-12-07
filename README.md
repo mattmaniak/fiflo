@@ -14,7 +14,7 @@ User-friendly ASCII terminal-based text editor.
 git clone https://gitlab.com/mattmaniak/fiflo.git
 cd fiflo
 make
-bin/fiflo
+./bin/fiflo
 ```
 
 Also You can try the latest unstable snapshot

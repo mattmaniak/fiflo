@@ -41,10 +41,12 @@
 #define US__CTRL_DASH              0x1f // Unit separator.
 #define DEL__BACKSPACE             0x7f // Delete that is really backspace.
 
-#define BUFFER_NOT_FULL   (Buff->lines_i < BUFF_MAX)
-#define CURSOR_X_SCROLLED (Buff->cusr_x > 0)
-#define CURSOR_Y_SCROLLED (Buff->cusr_y > 0)
-#define LINE_NON_EMPTY    (ACT_LINE_LEN_I > 0)
+#define BUFFER_NOT_FULL      (Buff->lines_i < BUFF_MAX)
+#define CURSOR_X_SCROLLED    (Buff->cusr_x > 0)
+#define CURSOR_Y_SCROLLED    (Buff->cusr_y > 0)
+#define EMPTY_LINE           (ACT_LINE_LEN_I == 0)
+#define ONE_LINE             (ACT_LINE_I == 0)
+#define CURSOR_AT_LINE_START (Buff->cusr_x == ACT_LINE_LEN_I)
 
 // Doesn't work properly.
 #define CR__CTRL_M 0x0d // Carriage return, converted to 10 (linefeed).

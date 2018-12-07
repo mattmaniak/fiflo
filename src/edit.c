@@ -56,14 +56,23 @@ f_mtdt* delete_last_line(f_mtdt* Buff)
 
 f_mtdt* delete_line(f_mtdt* Buff)
 {
-	if(Buff->lines_i > 0)
+	buff_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
+
+	if(!ONE_LINE)
 	{
 		if(CURSOR_Y_SCROLLED)
 		{
+			if(CURSOR_AT_LINE_START)
+			{
+				Buff->cusr_x = next_line_len;
+			}
+			else
+			{
+				Buff->cusr_x = 1;
+			}
 			Buff = copy_lines_mem_backward(Buff);
 			Buff = delete_last_line(Buff);
 
-			Buff->cusr_x = 1;
 			Buff->cusr_y--;
 		}
 		else

@@ -82,7 +82,7 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 			ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
 			// Initializer handling.
-			if((key == NUL__CTRL_SHIFT_2) && LINE_NON_EMPTY)
+			if((key == NUL__CTRL_SHIFT_2) && !EMPTY_LINE)
 			{
 				Buff->chars_i--;
 				ACT_LINE_LEN_I--;
@@ -139,13 +139,12 @@ f_mtdt* linefeed(f_mtdt* Buff)
 //
 // }
 
-f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLYFI IF_ELSES.
+f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLIFY IF_ELSES.
 {
 	const bool next = 1;
-
-	if(ACT_LINE_LEN_I > 0)
+	if(!EMPTY_LINE)
 	{
-		if(Buff->cusr_x != ACT_LINE_LEN_I)
+		if(!CURSOR_AT_LINE_START)
 		{
 			Buff = shift_text_horizonally(Buff, 'l');
 			ACT_LINE = shrink_act_line_mem(Buff);
@@ -154,7 +153,7 @@ f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLYFI IF_ELSES.
 			Buff->chars_i--;
 		}
 		// Deletes the non-empty line and copy chars to previous.
-		else if(ACT_LINE_I > 0)
+		else if(!ONE_LINE)
 		{
 			PREV_LINE_LEN_I--;
 			Buff->chars_i--;
@@ -171,7 +170,7 @@ f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLYFI IF_ELSES.
 			}
 
 			// Shift lines vertically.
-			if(Buff->cusr_y > 0)
+			if(CURSOR_Y_SCROLLED)
 			{
 				Buff = copy_lines_mem_backward(Buff);
 			}
@@ -179,7 +178,7 @@ f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLYFI IF_ELSES.
 		}
 	}
 	// Deletes the last empty line.
-	else if((ACT_LINE_I > 0) && (Buff->cusr_y == 0))
+	else if(!ONE_LINE && !CURSOR_Y_SCROLLED && EMPTY_LINE)
 	{
 		safer_free(ACT_LINE);
 
@@ -191,8 +190,7 @@ f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLYFI IF_ELSES.
 
 		Buff = shrink_lines_array_mem(Buff);
 	}
-	// Delete the non last line and shift the rest.
-	else if(Buff->cusr_x == ACT_LINE_LEN_I)
+	else if(CURSOR_Y_SCROLLED && CURSOR_AT_LINE_START)
 	{
 		for(buff_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
 		{
@@ -205,6 +203,7 @@ f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLYFI IF_ELSES.
 
 		for(buff_t line_i = ACT_LINE_I + next; line_i < Buff->lines_i; line_i++)
 		{
+			// Copies only adresses.
 			Buff->text[line_i] = Buff->text[line_i + next];
 			Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];
 		}
