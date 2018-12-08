@@ -1,8 +1,10 @@
 #include "buffer.h"
 #include "seqmap.h"
 
-f_mtdt* recognize_arrow(f_mtdt* Buff, char sequence[8])
+f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8])
 {
+	const uint8_t seq_max = 4;
+
 	/* Notice that the structure of these sequences is:
 	<ansi_esc_code> + '[' + <some_unique_numbers_and_letters> + '\0'.
 	Comments at the right side are identifiers of these codes. */
@@ -32,11 +34,11 @@ f_mtdt* recognize_arrow(f_mtdt* Buff, char sequence[8])
 		Buff->key_sequence = false;
 	}
 	// Prevent everything other than bare arrows in a very ugly way.
-	else if(strlen(sequence) >= 5)
+	else if(strlen(sequence) > seq_max)
 	{
 		getch(Buff);
 
-		if(strlen(sequence) == 6)
+		if(strlen(sequence) == seq_max + 2)
 		{
 			getch(Buff);
 		}

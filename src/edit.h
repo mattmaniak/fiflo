@@ -7,7 +7,7 @@
 #define NUL_SZ 1
 
 // seqmap.h
-extern f_mtdt* recognize_arrow(f_mtdt* Buff, char sequence[8]);
+extern f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8]);
 
 // file.h
 extern f_mtdt* save_file (f_mtdt* Buff);

@@ -5,11 +5,6 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 {
 	switch(key)
 	{
-		case NEG:
-		{
-			fputs("Pipe isn't supported, exit(1).\n", stderr);
-			free_buff_exit(Buff, 1);
-		}
 		case HT__CTRL_I:
 		{
 			// Currently converts the tab to two spaces.
@@ -59,12 +54,15 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 
 f_mtdt* printable_char(f_mtdt* Buff, char key)
 {
-	const bool nul_sz    = 1;
+	const bool nul_sz = 1;
+
+#ifndef ALL_KEYS
 	const bool in_keymap =
 	(key == NUL__CTRL_SHIFT_2) || (key == LF__CTRL_J) || (key >= 32);
+#else
+	const bool in_keymap = true;
+#endif
 
-	/* Only printable chars will be added. Combinations that aren't specified
-	above will be omited. Set "if(key)" to enable them. */
 	if(in_keymap)
 	{
 		if(BUFFER_NOT_FULL)

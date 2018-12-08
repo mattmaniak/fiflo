@@ -26,7 +26,7 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 		{
 			char_i++;
 		}
-		Buff = recognize_arrow(Buff, key_sequence);
+		Buff = recognize_sequence(Buff, key_sequence);
 
 		if(!Buff->key_sequence)
 		{

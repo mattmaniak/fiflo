@@ -64,15 +64,17 @@ char getch(f_mtdt* Buff)
 	const unsigned int canonical_mode_on = ICANON;
 	const unsigned int enable_xon        = IXON;
 
-	static struct termios old_term_params;
-	static struct termios new_term_params;
+	struct termios old_term_params;
+	struct termios new_term_params;
 
 	char key;
 
-	// Put the state of the STDIN_FILENO into the *old_term_params.
+	// Get the state of the STDIN_FILENO.
 	if(tcgetattr(STDIN_FILENO, &old_term_params) == error)
 	{
-		fputs("Can't get the terminal's termios attribiutes.", stderr);
+		flush_window(Buff);
+		fputs("Can't get the stdin params. Pipe isn't supported, exit(1).\n",
+		stderr);
 		free_buff_exit(Buff, 1);
 	}
 	new_term_params = old_term_params;
@@ -85,15 +87,23 @@ char getch(f_mtdt* Buff)
 	Use the new terminal I/O settings. */
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == error)
 	{
-		fputs("Can't set the terminal state to it's raw mode.", stderr);
+		flush_window(Buff);
+		fputs("Can't set the terminal state to a raw mode, exit(1).\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
-	key = (char) getchar();
+
+	if((key = (char) getchar()) < 0)
+	{
+		flush_window(Buff);
+		fputs("Negative char has been passed to the stdin, exit(1).\n", stderr);
+		free_buff_exit(Buff, 1);
+	}
 
 	// Immediately restore the state of the stdin (0) to the *new_term_params.
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == error)
 	{
-		fputs("Can't restore the terminal state to it's normal mode.", stderr);
+		flush_window(Buff);
+		fputs("Can't restore the terminal state to a normal mode.\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
 	return key;
@@ -113,6 +123,7 @@ _Noreturn void run(const char* arg)
 	// The main program loop.
 	for(;;)
 	{
+
 		Buff = parse_key(Buff, pressed);
 		render_window(Buff);
 

@@ -9,17 +9,6 @@
 
 #define INDEX 1
 
-// ANSI escape codes:
-#define ANSI_RESET()           printf("\x1b[%s", "0m")
-#define ANSI_INVERT()          printf("\x1b[%s", "7m")
-#define ANSI_CLEAN_LINE()      printf("\x1b[%s", "2K")
-#define ANSI_CUR_UP(offset)    printf("\x1b[%dA", offset)
-#define ANSI_CUR_DOWN(offset)  printf("\x1b[%dB", offset)
-#define ANSI_CUR_RIGHT(offset) printf("\x1b[%dC", offset)
-#define ANSI_CUR_LEFT(offset)  printf("\x1b[%dD", offset)
-#define ANSI_SAVE_CUR_POS()    printf("\x1b[%s", "s")
-#define ANSI_RESTORE_CUR_POS() printf("\x1b[%s", "u")
-
 // buffer.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 

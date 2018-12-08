@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 
-#define NEG               -1 // Pipe.
-
 // Formatting control chars.
 #define NUL__CTRL_SHIFT_2 0x00 // Terminator.
 #define BEL__CTRL_G       0x07 // Alarm beeper.
