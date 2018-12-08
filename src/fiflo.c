@@ -73,7 +73,7 @@ char getch(f_mtdt* Buff)
 	if(tcgetattr(STDIN_FILENO, &old_term_params) == error)
 	{
 		flush_window(Buff);
-		fputs("Can't get the stdin params. Pipe isn't supported, exit(1).\n",
+		fputs("Can't get the stdin attribiutes. Pipe isn't supported.\n",
 		stderr);
 		free_buff_exit(Buff, 1);
 	}
@@ -88,14 +88,14 @@ char getch(f_mtdt* Buff)
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == error)
 	{
 		flush_window(Buff);
-		fputs("Can't set the terminal state to a raw mode, exit(1).\n", stderr);
+		fputs("Can't set the terminal state to a raw mode.\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
 
 	if((key = (char) getchar()) < 0)
 	{
 		flush_window(Buff);
-		fputs("Negative char has been passed to the stdin, exit(1).\n", stderr);
+		fputs("Negative char had been passed to the stdin.\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
 
@@ -136,7 +136,7 @@ int main(const int argc, const char** argv)
 {
 	if(argc > 2)
 	{
-		fputs("Only one additional arg can be passed, exit(1).\n", stderr);
+		fputs("Only one additional arg can be passed.\n", stderr);
 		exit(1);
 	}
 

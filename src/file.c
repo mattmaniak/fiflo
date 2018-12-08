@@ -8,7 +8,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 
 	if((arg[0] == '/') && (arg[1] != 0x00))
 	{
-		fputs("Can't open the directory as a file, exit(1).\n", stderr);
+		fputs("Can't open the directory as a file.\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
 
@@ -17,7 +17,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	{
 		if((arg_len + NUL_SZ) > PATH_MAX)
 		{
-			fputs("Passed filename is too long, exit(1).\n", stderr);
+			fputs("Passed filename is too long.\n", stderr);
 			free_buff_exit(Buff, 1);
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
@@ -34,7 +34,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		// Exceeded 4096 chars.
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
-			fputs("Current directory is too long, exit(1).\n", stderr);
+			fputs("Current directory is too long.\n", stderr);
 			free_buff_exit(Buff, 1);
 		}
 		// Copy the path.

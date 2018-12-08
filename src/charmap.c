@@ -101,7 +101,7 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 	}
 	else
 	{
-		SET_STATUS("unsupported octet(s)\0");
+		SET_STATUS("unsupported char(s)\0");
 	}
 	return Buff;
 }
