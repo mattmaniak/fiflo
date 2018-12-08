@@ -52,13 +52,13 @@ void flush_window(f_mtdt* Buff)
 {
 	// Restore to the left lower corner and clean the lowest line.
 	ANSI_RESTORE_CUR_POS();
-	ANSI_CLEAN_LN();
+	ANSI_CLEAN_LINE();
 
 	// Then from move up and clean the next lines till the window ends.
 	for(term_t line = 0; line < (get_term_sz(Buff, 'Y') - LBAR_SZ); line++)
 	{
 		ANSI_CUR_UP(1);
-		ANSI_CLEAN_LN();
+		ANSI_CLEAN_LINE();
 	}
 	fflush(stderr);
 	fflush(stdout);
@@ -171,16 +171,16 @@ void render_window(f_mtdt* Buff)
 
 void print_line_num(buff_t line_i, uint8_t line_num_len, const bool act_line)
 {
-	ANSI_INVERT();
-
-	if(act_line)
+	if(!act_line)
 	{
-		// Higlight the current line.
-		ANSI_UNDERSCORE();
+		// Higlight a current line.
+		ANSI_INVERT();
 	}
 	printf("%*d", line_num_len - SPACE_SZ, line_i + INDEX);
 
 	ANSI_RESET();
+
+	// Padding.
 	putchar(' ');
 }
 

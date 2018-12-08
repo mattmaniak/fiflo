@@ -40,4 +40,13 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction);
 // As in the name, but supports Y shift with the cursor scrolled horizontally.
 f_mtdt* move_lines_forward(f_mtdt* Buff);
 
+// Simply as in the name.
+f_mtdt* delete_last_empty_line(f_mtdt* Buff);
+
+// Also shifts lines from the bottom up.
+f_mtdt* delete_non_last_line(f_mtdt* Buff);
+
+// Optionally shifts the text horizontally.
+f_mtdt* delete_char(f_mtdt* Buff);
+
 #endif

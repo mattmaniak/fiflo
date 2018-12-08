@@ -129,88 +129,16 @@ f_mtdt* linefeed(f_mtdt* Buff)
 	return Buff;
 }
 
-// f_mtdt* (f_mtdt* Buff)
-// {
-//
-// }
-
-// f_mtdt* (f_mtdt* Buff)
-// {
-//
-// }
-
-f_mtdt* backspace(f_mtdt* Buff) // TODO: SIMPLIFY IF_ELSES.
+f_mtdt* backspace(f_mtdt* Buff)
 {
-	const bool next = 1;
 	if(!EMPTY_LINE)
 	{
-		if(!CURSOR_AT_LINE_START)
-		{
-			Buff = shift_text_horizonally(Buff, 'l');
-			ACT_LINE = shrink_act_line_mem(Buff);
-
-			ACT_LINE_LEN_I--;
-			Buff->chars_i--;
-		}
-		// Deletes the non-empty line and copy chars to previous.
-		else if(!ONE_LINE)
-		{
-			PREV_LINE_LEN_I--;
-			Buff->chars_i--;
-
-			for(buff_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
-			{
-				PREV_LINE[PREV_LINE_LEN_I] = ACT_LINE[char_i];
-
-				if(ACT_LINE[char_i] != NUL__CTRL_SHIFT_2)
-				{
-					PREV_LINE_LEN_I++;
-				}
-				PREV_LINE = extend_line_mem(Buff, PREV_LINE_I);
-			}
-
-			// Shift lines vertically.
-			if(CURSOR_Y_SCROLLED)
-			{
-				Buff = copy_lines_mem_backward(Buff);
-			}
-			Buff = delete_last_line(Buff);
-		}
+		Buff = delete_char(Buff);
 	}
 	// Deletes the last empty line.
-	else if(!ONE_LINE && !CURSOR_Y_SCROLLED && EMPTY_LINE)
+	else if(!ONE_LINE && !CURSOR_Y_SCROLLED)
 	{
-		safer_free(ACT_LINE);
-
-		Buff->lines_i--;
-		ACT_LINE = shrink_act_line_mem(Buff);
-
-		ACT_LINE_LEN_I--;
-		Buff->chars_i--;
-
-		Buff = shrink_lines_array_mem(Buff);
-	}
-	else if(CURSOR_Y_SCROLLED && CURSOR_AT_LINE_START)
-	{
-		for(buff_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
-		{
-			PREV_LINE[PREV_LINE_LEN_I] = PREV_LINE[char_i];
-			PREV_LINE_LEN_I++;
-			PREV_LINE = extend_line_mem(Buff, PREV_LINE_I);
-
-			ACT_LINE_LEN_I--;
-		}
-
-		for(buff_t line_i = ACT_LINE_I + next; line_i < Buff->lines_i; line_i++)
-		{
-			// Copies only adresses.
-			Buff->text[line_i] = Buff->text[line_i + next];
-			Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];
-		}
-		safer_free(LAST_LINE);
-
-		Buff->lines_i--;
-		Buff->chars_i--;
+		Buff = delete_last_empty_line(Buff);
 	}
 	// Replaces the linefeed with the terminator.
 	ACT_LINE[ACT_LINE_LEN_I] = NUL__CTRL_SHIFT_2;

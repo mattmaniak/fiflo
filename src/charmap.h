@@ -71,6 +71,9 @@ extern f_mtdt* delete_last_line      (f_mtdt* Buff);
 extern f_mtdt* delete_line           (f_mtdt* Buff);
 extern f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction);
 extern f_mtdt* move_lines_forward    (f_mtdt* Buff);
+extern f_mtdt* delete_last_empty_line(f_mtdt* Buff);
+extern f_mtdt* delete_non_last_line  (f_mtdt* Buff);
+extern f_mtdt* delete_char           (f_mtdt* Buff);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
 f_mtdt* key_action(f_mtdt* Buff, char key);

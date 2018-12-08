@@ -38,7 +38,7 @@ char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
 		// There are 4/8 chars, extend to MEMBLK.
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
 
-#ifdef DEBUG
+#ifdef DEBUG_MEMORY
 		printf("Extend_line_mem %d with mem of %d B.\n",
 		line_i + INDEX, memblock);
 #endif
@@ -51,7 +51,7 @@ char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
 		memblock = ((Buff->line_len_i[line_i] / MEMBLK) * MEMBLK) + MEMBLK;
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
 
-#ifdef DEBUG
+#ifdef DEBUG_MEMORY
 		printf("Extend_line_mem %d with mem of %d B.\n",
 		line_i + INDEX, memblock);
 #endif
@@ -80,7 +80,7 @@ char* shrink_act_line_mem(f_mtdt* Buff)
 	}
 	ACT_LINE = realloc(ACT_LINE, memblock);
 
-#ifdef DEBUG
+#ifdef DEBUG_MEMORY
 	printf("Shrink_act_line_mem %d with mem of %d B.\n",
 	ACT_LINE_I + INDEX, memblock);
 #endif
@@ -105,7 +105,7 @@ char* shrink_prev_line_mem(f_mtdt* Buff)
 	}
 	PREV_LINE = realloc(PREV_LINE, memblock);
 
-#ifdef DEBUG
+#ifdef DEBUG_MEMORY
 	printf("Shrink_prev_line_mem %d with mem of %d B\n",
 	PREV_LINE_I + INDEX, memblock);
 #endif
@@ -163,7 +163,7 @@ f_mtdt* copy_lines_mem_forward(f_mtdt* Buff)
 
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
 
-#ifdef DEBUG
+#ifdef DEBUG_MEMORY
 		printf("Copied line %d forward to %d with new mem of %d B.\n",
 		line_i + INDEX - prev, line_i + INDEX, memblock);
 #endif
@@ -191,7 +191,7 @@ f_mtdt* copy_lines_mem_backward(f_mtdt* Buff)
 
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
 
-#ifdef DEBUG
+#ifdef DEBUG_MEMORY
 		printf("Copied line %d backward to %d with new mem of %d B.\n",
 		line_i + INDEX + next, line_i + INDEX, memblock);
 #endif

@@ -11,9 +11,8 @@
 
 // ANSI escape codes:
 #define ANSI_RESET()           printf("\x1b[%s", "0m")
-#define ANSI_UNDERSCORE()      printf("\x1b[%s", "4m")
 #define ANSI_INVERT()          printf("\x1b[%s", "7m")
-#define ANSI_CLEAN_LN()        printf("\x1b[%s", "2K")
+#define ANSI_CLEAN_LINE()      printf("\x1b[%s", "2K")
 #define ANSI_CUR_UP(offset)    printf("\x1b[%dA", offset)
 #define ANSI_CUR_DOWN(offset)  printf("\x1b[%dB", offset)
 #define ANSI_CUR_RIGHT(offset) printf("\x1b[%dC", offset)

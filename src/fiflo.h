@@ -17,7 +17,7 @@ extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
 extern f_mtdt* read_file(f_mtdt* Buff);
 
-// text_processing.h
+// edit.h
 extern f_mtdt* parse_key(f_mtdt* Buff, char key);
 
 // render.h
