@@ -45,6 +45,11 @@ f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8])
 		}
 		Buff->key_sequence = false;
 	}
+
+#ifdef SHOW_VALUES
+	printf("cusr_x %d, cusr_y %d.\n", Buff->cusr_x, Buff->cusr_y);
+#endif
+
 	return Buff;
 }
 
@@ -106,7 +111,7 @@ f_mtdt* cursor_up(f_mtdt* Buff)
 
 f_mtdt* cursor_down(f_mtdt* Buff)
 {
-	bool cursor_at_prev_line_start = Buff->cusr_x == PREV_LINE_LEN_I;
+	bool cursor_at_prev_line_start = CURSOR_AT_LINE_START;
 
 	if(CURSOR_Y_SCROLLED)
 	{
@@ -120,7 +125,6 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 		}
 		else
 		{
-			// Is last line so ignoring the LF isn't needed.
 			if(CURSOR_Y_SCROLLED)
 			{
 				// Ignore the linefeed.
@@ -128,6 +132,7 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 			}
 			else
 			{
+				// Is last line so ignoring the LF isn't needed.
 				Buff->cusr_x = 0;
 			}
 		}

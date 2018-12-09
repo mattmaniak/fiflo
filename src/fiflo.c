@@ -9,9 +9,7 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	Buff->text = malloc(ADDR_SZ);
 	chk_ptr(Buff, Buff->text, "malloc the array with lines\0");
 
-	Buff->line_len_i =
-	malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
-
+	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length\0");
 
 	Buff->chars_i  = 0;
@@ -20,13 +18,14 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	Buff->cusr_y   = 0;
 	ACT_LINE_LEN_I = 0;
 
-	ACT_LINE = malloc(ADDR_SZ);
-	chk_ptr(Buff, ACT_LINE, "malloc the first line\0");
-
 	Buff->live_fname_edit = false;
 	Buff->key_sequence    = false;
+	Buff->pane_toggled    = false;
 
 	Buff = set_fname(Buff, arg);
+
+	ACT_LINE = malloc(ADDR_SZ);
+	chk_ptr(Buff, ACT_LINE, "malloc the first line\0");
 
 	return Buff;
 }
@@ -39,7 +38,7 @@ void options(const char* arg)
 		"Usage: fiflo [option].",
 
 		"Options:      Description:",
-		"<no_option>   Don't set a filename. Only a current will be set.",
+		"<no_option>   Don't set a filename. Only a current path will be set.",
 		"<name>        Specify a base/filename.",
 		"-h, --help    Show a program help.",
 		"-v, --version Display information about a version You use.");
@@ -88,7 +87,7 @@ char getch(f_mtdt* Buff)
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == error)
 	{
 		flush_window(Buff);
-		fputs("Can't set the terminal state to a raw mode.\n", stderr);
+		fputs("Can't set the terminal's raw mode.\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
 
@@ -103,7 +102,7 @@ char getch(f_mtdt* Buff)
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == error)
 	{
 		flush_window(Buff);
-		fputs("Can't restore the terminal state to a normal mode.\n", stderr);
+		fputs("Can't restore the terminal to a normal mode.\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
 	return key;
@@ -142,7 +141,7 @@ int main(const int argc, const char** argv)
 	// Sets the default basename and starts.
 	if(argv[1] == NULL)
 	{
-		run(NUL__CTRL_SHIFT_2);
+		run("\x00");
 	}
 	else
 	{

@@ -29,6 +29,11 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 			Buff = save_file(Buff);
 			break;
 		}
+		case FS__CTRL_BACKSLASH:
+		{
+			Buff->pane_toggled = toggle_pane(Buff);
+			break;
+		}
 		case SI__CTRL_O:
 		{
 			Buff->live_fname_edit = true;
@@ -44,12 +49,6 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 			Buff = printable_char(Buff, key);
 		}
 	}
-
-#ifdef SHOW_VALUES
-	printf("pressed_key %d, cusr_x %d, cusr_y %d.\n",
-	key, Buff->cusr_x, Buff->cusr_y);
-#endif
-
 	return Buff;
 }
 

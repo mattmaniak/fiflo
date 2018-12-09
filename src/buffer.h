@@ -21,10 +21,11 @@ typedef struct
 	// Modes.
 	bool     key_sequence;       // True if pressed key is ANSI escape code.
 	bool     live_fname_edit;    // As in the name.
+	bool     pane_toggled;
 
 	// Filename.
 	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
-	uint16_t fname_len;          // Strlen of the above array.
+	uint16_t fname_len_i;        // Strlen of the above array.
 
 	// File's content and some indicators.
 	char**   text;               // Text buffer. Eg. text[lines_i][chars_i].

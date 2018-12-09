@@ -53,4 +53,7 @@ f_mtdt* delete_non_last_line(f_mtdt* Buff);
 // Optionally shifts the text horizontally.
 f_mtdt* delete_char(f_mtdt* Buff);
 
+//
+bool toggle_pane(f_mtdt* Buff);
+
 #endif

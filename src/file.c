@@ -58,7 +58,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		}
 		safer_free(cw_dir);
 	}
-	Buff->fname_len = (uint16_t) strlen(Buff->fname);
+	Buff->fname_len_i = (uint16_t) strlen(Buff->fname);
 	return Buff;
 }
 
@@ -69,7 +69,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 
 	if(textfile != NULL)
 	{
-		if(Buff->fname[Buff->fname_len - NUL_SZ] == '/')
+		if(Buff->fname[Buff->fname_len_i - NUL_SZ] == '/')
 		{
 			SET_STATUS("current directory set\0");
 			fclose(textfile);
@@ -143,16 +143,16 @@ f_mtdt* edit_fname(f_mtdt* Buff, char key)
 	const bool index = 1;
 
 	if((key >= 32) && (key != DEL__BACKSPACE)
-	&& ((Buff->fname_len + index) < PATH_MAX))
+	&& ((Buff->fname_len_i + index) < PATH_MAX))
 	{
-		Buff->fname[Buff->fname_len] = key;
-		Buff->fname_len++;
-		Buff->fname[Buff->fname_len] = NUL__CTRL_SHIFT_2;
+		Buff->fname[Buff->fname_len_i] = key;
+		Buff->fname_len_i++;
+		Buff->fname[Buff->fname_len_i] = NUL__CTRL_SHIFT_2;
 	}
-	else if((key == DEL__BACKSPACE) && (Buff->fname_len > 0))
+	else if((key == DEL__BACKSPACE) && (Buff->fname_len_i > 0))
 	{
-		Buff->fname_len--;
-		Buff->fname[Buff->fname_len] = NUL__CTRL_SHIFT_2;
+		Buff->fname_len_i--;
+		Buff->fname[Buff->fname_len_i] = NUL__CTRL_SHIFT_2;
 	}
 	else if(key == LF__CTRL_J)
 	{

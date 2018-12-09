@@ -7,8 +7,7 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	const int8_t error       = -1;
 	const bool   line_height = 1;
 
-	// Remember to not override the upper bar width.
-	const term_t  w_min  = (term_t) strlen(LBAR_STR) + SPACE_SZ;
+	const term_t  w_min  = STATUS_MAX + 10; // TODO
 	const uint8_t h_min  = BARS_SZ + line_height;
 	const term_t  sz_max = USHRT_MAX;
 
@@ -81,18 +80,18 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	is not necessary, eg. for errors messages. They can be shifted. */
 	printf("\r%s", half_logo);
 
-	if(Buff->fname_len < fname_max)
+	if(Buff->fname_len_i < fname_max)
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s", Buff->fname, get_term_sz(Buff, 'X')
-		- (term_t) (strlen(half_logo) + Buff->fname_len), " ");
+		- (term_t) (strlen(half_logo) + Buff->fname_len_i), " ");
 
 		WRAP_LINE();
 	}
 	else
 	{
-		for(term_t char_i = Buff->fname_len - get_term_sz(Buff, 'X') + CUR_SZ
-		+ (term_t) (strlen(half_logo)); char_i < Buff->fname_len; char_i++)
+		for(term_t char_i = Buff->fname_len_i - get_term_sz(Buff, 'X') + CUR_SZ
+		+ (term_t) (strlen(half_logo)); char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
 		}
@@ -123,7 +122,17 @@ void lower_bar(f_mtdt* Buff)
 	ANSI_INVERT();
 	WRAP_LINE();
 
-	printf("%s%*s", LBAR_STR, horizontal_fill, " ");
+	if(Buff->pane_toggled)
+	{
+		for(uint8_t y = 0; y < TOGGLED_PANE_SZ; y++)
+		{
+			printf("%*s", get_term_sz(Buff, 'X'), " ");
+		}
+	}
+	else
+	{
+		printf("%s%*s", LBAR_STR, horizontal_fill, " ");
+	}
 	ANSI_RESET();
 }
 
@@ -154,9 +163,18 @@ void render_window(f_mtdt* Buff)
 	// Snprinf isn't needed because the format specifier gives a warning.
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
+	if(Buff->pane_toggled)
+	{
+		Ui.lbar_h = TOGGLED_PANE_SZ;
+	}
+	else
+	{
+		Ui.lbar_h = 1;
+	}
+
 	Ui.line_num_len = (uint8_t) strlen(Ui.line_num_str) + SPACE_SZ;
 	Ui.text_x       = get_term_sz(Buff, 'X') - Ui.line_num_len;
-	Ui.text_y       = get_term_sz(Buff, 'Y') - BARS_SZ;
+	Ui.text_y       = get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h;
 
 	ANSI_RESET();
 
@@ -199,7 +217,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 	{
 		move_up = get_term_sz(Buff, 'Y') - LBAR_SZ;
 
-		ANSI_CUR_RIGHT(Buff->fname_len + SPACE_SZ + 3); // 3 - LOGO_SZ TODO.
+		ANSI_CUR_RIGHT(Buff->fname_len_i + SPACE_SZ + 3); // 3 - LOGO_SZ TODO.
 	}
 	else
 	{
@@ -224,6 +242,10 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 			// Scrolled so cursor is moved only 1 line above.
 			move_up = Ui.text_y - (term_t) (Buff->lines_i - Buff->cusr_y);
 		}
+	}
+	if(Buff->pane_toggled)
+	{
+		move_up += TOGGLED_PANE_SZ - 1;
 	}
 	ANSI_CUR_UP(move_up);
 }
