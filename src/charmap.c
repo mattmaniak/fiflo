@@ -134,7 +134,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 		Buff = delete_char(Buff);
 	}
 	// Deletes the last empty line.
-	else if(!ONE_LINE && !CURSOR_Y_SCROLLED)
+	else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
 	{
 		Buff = delete_last_empty_line(Buff);
 	}

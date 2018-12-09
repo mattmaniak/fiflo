@@ -1,4 +1,5 @@
 #include "buffer.h"
+#include "charmap.h"
 #include "seqmap.h"
 
 f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8])
@@ -49,11 +50,13 @@ f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8])
 
 f_mtdt* cursor_left(f_mtdt* Buff)
 {
-	if(Buff->cusr_x < ACT_LINE_LEN_I)
+	bool more_than_one_line = Buff->lines_i > 0;
+
+	if(!CURSOR_AT_LINE_START)
 	{
 		Buff->cusr_x++;
 	}
-	else if((Buff->lines_i > 0) && (Buff->cusr_y < Buff->lines_i))
+	else if(more_than_one_line && !CURSOR_AT_TOP)
 	{
 		// Set to the right ignoring the linefeed.
 		Buff->cusr_x = 1;
@@ -64,16 +67,16 @@ f_mtdt* cursor_left(f_mtdt* Buff)
 
 f_mtdt* cursor_right(f_mtdt* Buff)
 {
-	if(Buff->cusr_x > 0)
+	if(CURSOR_X_SCROLLED)
 	{
 		Buff->cusr_x--;
-		if((Buff->cusr_y > 0) && (Buff->cusr_x == 0))
+		if(!CURSOR_X_SCROLLED && CURSOR_Y_SCROLLED)
 		{
 			Buff->cusr_y--;
 			Buff->cusr_x = ACT_LINE_LEN_I;
 		}
 		// Last line doesn't contain linefeed so ignoring that isn't necessary.
-		else if((Buff->cusr_y == 1) && (Buff->cusr_x == 0))
+		else if(!CURSOR_X_SCROLLED && (Buff->cusr_y == 1))
 		{
 			Buff->cusr_y--;
 		}
@@ -83,9 +86,9 @@ f_mtdt* cursor_right(f_mtdt* Buff)
 
 f_mtdt* cursor_up(f_mtdt* Buff)
 {
-	if(Buff->cusr_y < Buff->lines_i)
+	if(CURSOR_AT_TOP)
 	{
-		if(Buff->cusr_x == ACT_LINE_LEN_I)
+		if(CURSOR_AT_LINE_START)
 		{
 			/* Cursor at the left side: doesn't go at the end of a line. Always
 			at the beginning */
@@ -103,11 +106,13 @@ f_mtdt* cursor_up(f_mtdt* Buff)
 
 f_mtdt* cursor_down(f_mtdt* Buff)
 {
-	if(Buff->cusr_y > 0)
+	bool cursor_at_prev_line_start = Buff->cusr_x == PREV_LINE_LEN_I;
+
+	if(CURSOR_Y_SCROLLED)
 	{
 		Buff->cusr_y--;
 
-		if(Buff->cusr_x == PREV_LINE_LEN_I)
+		if(cursor_at_prev_line_start)
 		{
 			/* Cursor at the left side: doesn't go at the end of a line. Always
 			at the beginning */
@@ -116,14 +121,14 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 		else
 		{
 			// Is last line so ignoring the LF isn't needed.
-			if(Buff->cusr_y == 0)
-			{
-				Buff->cusr_x = 0;
-			}
-			else
+			if(CURSOR_Y_SCROLLED)
 			{
 				// Ignore the linefeed.
 				Buff->cusr_x = 1;
+			}
+			else
+			{
+				Buff->cusr_x = 0;
 			}
 		}
 	}

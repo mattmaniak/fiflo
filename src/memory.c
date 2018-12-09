@@ -45,7 +45,7 @@ char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
 
 	}
 	else if((Buff->line_len_i[line_i] > INIT_MEMBLK)
-	&&      (Buff->line_len_i[line_i] % MEMBLK == 0))
+	&& (Buff->line_len_i[line_i] % MEMBLK == 0))
 	{
 		// There are more chars so append the new memblock.
 		memblock = ((Buff->line_len_i[line_i] / MEMBLK) * MEMBLK) + MEMBLK;

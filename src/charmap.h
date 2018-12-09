@@ -39,26 +39,30 @@
 #define US__CTRL_DASH              0x1f // Unit separator.
 #define DEL__BACKSPACE             0x7f // Delete that is really backspace.
 
-#define BUFFER_NOT_FULL      (Buff->lines_i < BUFF_MAX)
-#define CURSOR_X_SCROLLED    (Buff->cusr_x > 0)
-#define CURSOR_Y_SCROLLED    (Buff->cusr_y > 0)
+#define BUFFER_NOT_FULL      (Buff->lines_i  <  BUFF_MAX)
+#define CURSOR_X_SCROLLED    (Buff->cusr_x   >  0)
+#define CURSOR_Y_SCROLLED    (Buff->cusr_y   >  0)
 #define EMPTY_LINE           (ACT_LINE_LEN_I == 0)
-#define ONE_LINE             (ACT_LINE_I == 0)
-#define CURSOR_AT_LINE_START (Buff->cusr_x == ACT_LINE_LEN_I)
+#define FIRST_LINE           (ACT_LINE_I     == 0)
+#define CURSOR_AT_LINE_START (Buff->cusr_x   == ACT_LINE_LEN_I)
+#define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
 // Doesn't work properly.
 #define CR__CTRL_M 0x0d // Carriage return, converted to 10 (linefeed).
 
 // memory.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
-extern void    chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
-extern void    safer_free(void* ptr);
-extern char*   extend_line_mem(f_mtdt* Buff, buff_t line_i);
-extern char*   shrink_act_line_mem(f_mtdt* Buff);
-extern char*   shrink_prev_line_mem(f_mtdt* Buff);
-extern f_mtdt* extend_lines_array_mem(f_mtdt* Buff);
-extern f_mtdt* shrink_lines_array_mem(f_mtdt* Buff);
-extern f_mtdt* copy_lines_mem_forward(f_mtdt* Buff);
+
+extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
+
+extern void safer_free(void* ptr);
+
+extern char*   extend_line_mem        (f_mtdt* Buff, buff_t line_i);
+extern char*   shrink_act_line_mem    (f_mtdt* Buff);
+extern char*   shrink_prev_line_mem   (f_mtdt* Buff);
+extern f_mtdt* extend_lines_array_mem (f_mtdt* Buff);
+extern f_mtdt* shrink_lines_array_mem (f_mtdt* Buff);
+extern f_mtdt* copy_lines_mem_forward (f_mtdt* Buff);
 extern f_mtdt* copy_lines_mem_backward(f_mtdt* Buff);
 
 // file.h

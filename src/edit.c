@@ -58,7 +58,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 {
 	buff_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
 
-	if(!ONE_LINE)
+	if(!FIRST_LINE)
 	{
 		if(CURSOR_Y_SCROLLED)
 		{
@@ -204,7 +204,7 @@ f_mtdt* delete_char(f_mtdt* Buff)
 		Buff->chars_i--;
 	}
 	// Deletes the non-empty line and copy chars to previous.
-	else if(!ONE_LINE)
+	else if(!FIRST_LINE)
 	{
 		Buff = delete_non_last_line(Buff);
 	}
