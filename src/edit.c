@@ -19,7 +19,7 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	}
 	if(Buff->key_sequence)
 	{
-		key_sequence[char_i]          = key;
+		key_sequence[char_i] = key;
 		key_sequence[char_i + NUL_SZ] = NUL__CTRL_SHIFT_2;
 
 		if(char_i < (seq_len - NUL_SZ))
@@ -89,7 +89,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 	}
 	else
 	{
-		LAST_LINE_LEN_I = 0;
+		LAST_LINE_LEN_I            = 0;
 		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
 
 		LAST_LINE = realloc(LAST_LINE, sizeof(Buff->text));
@@ -208,6 +208,5 @@ f_mtdt* delete_char(f_mtdt* Buff)
 	{
 		Buff = delete_non_last_line(Buff);
 	}
-
 	return Buff;
 }

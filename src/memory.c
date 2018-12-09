@@ -7,8 +7,8 @@ _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status)
 	{
 		safer_free(Buff->text[line_i]);
 	}
-	safer_free(Buff->text);
 	safer_free(Buff->line_len_i);
+	safer_free(Buff->text);
 	safer_free(Buff);
 
 	exit(status);
@@ -124,7 +124,7 @@ f_mtdt* extend_lines_array_mem(f_mtdt* Buff)
 
 	// Enhance the array that contains lines length indicators.
 	Buff->line_len_i = realloc(Buff->line_len_i,
-	(Buff->lines_i + INDEX) * sizeof(buff_t));
+	(Buff->lines_i + INDEX) * ADDR_SZ);
 
 	chk_ptr(Buff, Buff->line_len_i, "extend the array with lines length\0");
 
@@ -145,7 +145,7 @@ f_mtdt* shrink_lines_array_mem(f_mtdt* Buff)
 	chk_ptr(Buff, Buff->text, "shrink the array with lines\0");
 
 	Buff->line_len_i = realloc(Buff->line_len_i,
-	(Buff->lines_i + INDEX) * sizeof(buff_t));
+	(Buff->lines_i + INDEX) * ADDR_SZ);
 
 	chk_ptr(Buff, Buff->line_len_i, "shrink the array with lines length\0");
 

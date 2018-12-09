@@ -5,13 +5,11 @@
 
 f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {
-	Buff = set_fname(Buff, arg);
-
 	Buff->text = malloc(ADDR_SZ);
 	chk_ptr(Buff, Buff->text, "malloc the array with lines\0");
 
 	Buff->line_len_i =
-	malloc(((sizeof(Buff->line_len_i) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
+	malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 
 	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length\0");
 
@@ -21,12 +19,13 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	Buff->cusr_y   = 0;
 	ACT_LINE_LEN_I = 0;
 
-	Buff->live_fname_edit = false;
-
 	ACT_LINE = malloc(ADDR_SZ);
 	chk_ptr(Buff, ACT_LINE, "malloc the first line\0");
 
-	Buff->key_sequence = false;
+	Buff->live_fname_edit = false;
+	Buff->key_sequence    = false;
+
+	Buff = set_fname(Buff, arg);
 
 	return Buff;
 }
@@ -123,7 +122,6 @@ _Noreturn void run(const char* arg)
 	// The main program loop.
 	for(;;)
 	{
-
 		Buff = parse_key(Buff, pressed);
 		render_window(Buff);
 

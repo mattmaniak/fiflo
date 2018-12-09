@@ -6,14 +6,20 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	const bool slash_sz = 1;
 	uint16_t   arg_len  = (uint16_t) strlen(arg);
 
-	if((arg[0] == '/') && (arg[1] != 0x00))
+	bool arg_non_empty   = arg_len > 0;
+	bool arg_as_dir      = (arg[arg_len - NUL_SZ] == '/') && (arg[arg_len] == 0x00);
+	bool arg_as_abs_path = arg[0] == '/';
+
+	if(arg_non_empty)
 	{
-		fputs("Can't open the directory as a file.\n", stderr);
-		free_buff_exit(Buff, 1);
+		if(arg_as_dir)
+		{
+			fputs("Can't open the directory as a file.\n", stderr);
+			free_buff_exit(Buff, 1);
+		}
 	}
 
-	// Is the absolute path.
-	else if(arg[0] == '/')
+	if(arg_as_abs_path)
 	{
 		if((arg_len + NUL_SZ) > PATH_MAX)
 		{
@@ -26,12 +32,11 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	else
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
-		chk_ptr(Buff, "malloc for the current path\0", cw_dir);
+		chk_ptr(Buff, cw_dir, "malloc for the current path\0");
 
-		chk_ptr(Buff, "get current path. Too long\0",
-		getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz));
+		cw_dir = getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz);
+		chk_ptr(Buff, cw_dir, "get current path. Too long\0");
 
-		// Exceeded 4096 chars.
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
 			fputs("Current directory is too long.\n", stderr);
@@ -46,12 +51,11 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		// Append the basename.
 		for(uint16_t char_i = 0; char_i < arg_len; char_i++)
 		{
-			strcpy
-			(&Buff->fname[strlen(cw_dir) + slash_sz + char_i], &arg[char_i]);
+			Buff->fname[strlen(cw_dir) + char_i + slash_sz] = arg[char_i];
 		}
 		safer_free(cw_dir);
-		Buff->fname_len = (uint16_t) strlen(Buff->fname);
 	}
+	Buff->fname_len = (uint16_t) strlen(Buff->fname);
 	return Buff;
 }
 
@@ -65,6 +69,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 		if(Buff->fname[Buff->fname_len - NUL_SZ] == '/')
 		{
 			SET_STATUS("current directory set\0");
+			fclose(textfile);
 			return Buff;
 		}
 		while((ch = (char) fgetc(textfile)) != EOF)
@@ -72,7 +77,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 			// Temponary and ugly tab to two spaces conversion.
 			if(ch == '\t')
 			{
-				ch = ' ';
+				ch   = ' ';
 				Buff = printable_char(Buff, ch);
 			}
 
@@ -134,9 +139,9 @@ f_mtdt* edit_fname(f_mtdt* Buff, char key)
 {
 	if((key >= 32) && (key != 127) && (Buff->fname_len < PATH_MAX))
 	{
-		Buff->fname[Buff->fname_len]          = key;
-		Buff->fname[Buff->fname_len + NUL_SZ] = 0x00;
+		Buff->fname[Buff->fname_len] = key;
 		Buff->fname_len++;
+		Buff->fname[Buff->fname_len] = 0x00;
 	}
 	else if((key == 127) && (Buff->fname_len > 0x00))
 	{

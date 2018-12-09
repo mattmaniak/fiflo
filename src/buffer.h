@@ -15,6 +15,7 @@ typedef uint32_t buff_t; // Only for amount indicators.
 
 #pragma pack(push, 2)
 #pragma pack(push, 1)
+
 typedef struct
 {
 	uint16_t fname_len;
@@ -35,6 +36,7 @@ typedef struct
 	char     status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 f_mtdt;
+
 #pragma pack(pop)
 #pragma pack(pop)
 

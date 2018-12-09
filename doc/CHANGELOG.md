@@ -12,9 +12,9 @@ files use git-show or git-log.
 - inverted color UI,
 - vertically movable cursor,
 - fluid line numbers indicators,
-- actual line number is underscored,
+- actual line number highlight,
 - permament line numbers blocks,
-- first step into the Common User Access bindings,
+- a few Common User Access bindings,
 - private mode deleted, keyboard shortcuts also don't generete signals now.
 
 ### v2.1.0 (2018, November 10):

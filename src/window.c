@@ -55,7 +55,7 @@ void flush_window(f_mtdt* Buff)
 	ANSI_CLEAN_LINE();
 
 	// Then from move up and clean the next lines till the window ends.
-	for(term_t line = 0; line < (get_term_sz(Buff, 'Y') - LBAR_SZ); line++)
+	for(term_t line = 1; line < get_term_sz(Buff, 'Y'); line++)
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LINE();

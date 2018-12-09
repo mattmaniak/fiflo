@@ -8,7 +8,7 @@
 - git branch indicator,
 - scroll with eg. 10 lines ahead,
 - cut/copy/paste,
-- more advance scroll (eg. full words),
+- more advanced scroll (eg. full words),
 - full ASCII support (keymap),
 - side/bottom pane with filenames and keyboard shortcuts,
 - TAB key,
