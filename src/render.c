@@ -78,7 +78,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 
 	print_actual_line(Buff, Ui, ANOTHER_RENDERED_LINE);
 
-	if(Buff->cusr_y > 0)
+	if(CURSOR_Y_SCROLLED)
 	{
 		for(line_i = ACT_LINE_I + INDEX; line_i <= Buff->lines_i; line_i++)
 		{
@@ -155,7 +155,7 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 	// Display the last line without the linefeed.
 	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
-		if(Buff->cusr_y == 0)
+		if(!CURSOR_Y_SCROLLED)
 		{
 			printf("%s", ACT_LINE);
 		}

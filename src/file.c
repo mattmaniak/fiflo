@@ -1,3 +1,4 @@
+#include "ascii.h"
 #include "buffer.h"
 #include "file.h"
 
@@ -6,8 +7,10 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	const bool slash_sz = 1;
 	uint16_t   arg_len  = (uint16_t) strlen(arg);
 
-	bool arg_non_empty   = arg_len > 0;
-	bool arg_as_dir      = (arg[arg_len - NUL_SZ] == '/') && (arg[arg_len] == 0x00);
+	bool arg_non_empty = arg_len > 0;
+	bool arg_as_dir    =
+	(arg[arg_len - NUL_SZ] == '/') && (arg[arg_len] == NUL__CTRL_SHIFT_2);
+
 	bool arg_as_abs_path = arg[0] == '/';
 
 	if(arg_non_empty)
@@ -75,7 +78,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
 			// Temponary and ugly tab to two spaces conversion.
-			if(ch == '\t')
+			if(ch == HT__CTRL_I)
 			{
 				ch   = ' ';
 				Buff = printable_char(Buff, ch);
@@ -137,18 +140,21 @@ f_mtdt* save_file(f_mtdt* Buff)
 
 f_mtdt* edit_fname(f_mtdt* Buff, char key)
 {
-	if((key >= 32) && (key != 127) && (Buff->fname_len < PATH_MAX))
+	const bool index = 1;
+
+	if((key >= 32) && (key != DEL__BACKSPACE)
+	&& ((Buff->fname_len + index) < PATH_MAX))
 	{
 		Buff->fname[Buff->fname_len] = key;
 		Buff->fname_len++;
-		Buff->fname[Buff->fname_len] = 0x00;
+		Buff->fname[Buff->fname_len] = NUL__CTRL_SHIFT_2;
 	}
-	else if((key == 127) && (Buff->fname_len > 0x00))
+	else if((key == DEL__BACKSPACE) && (Buff->fname_len > 0))
 	{
 		Buff->fname_len--;
-		Buff->fname[Buff->fname_len] = 0x00;
+		Buff->fname[Buff->fname_len] = NUL__CTRL_SHIFT_2;
 	}
-	else if(key == 10)
+	else if(key == LF__CTRL_J)
 	{
 		Buff->live_fname_edit = false;
 		SET_STATUS("filename edited\0");

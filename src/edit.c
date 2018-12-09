@@ -1,5 +1,5 @@
+#include "ascii.h"
 #include "buffer.h"
-#include "charmap.h"
 #include "edit.h"
 
 f_mtdt* parse_key(f_mtdt* Buff, char key)

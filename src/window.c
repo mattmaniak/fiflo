@@ -96,7 +96,8 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 		{
 			putchar(Buff->fname[char_i]);
 		}
-		puts(" ");
+		putchar(' ');
+		WRAP_LINE();
 	}
 
 	// The lower part with the "chars in the current line" indicator.

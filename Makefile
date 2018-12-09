@@ -14,6 +14,7 @@ ASAN_FLAGS = -fsanitize=address -fsanitize=undefined \
 MSAN_FLAGS = -fsanitize=memory -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins
 
+# TODO: DEPENDENCIES.
 DEPS = $(TARGET).h
 
 # All in ./obj depending on the ./src.

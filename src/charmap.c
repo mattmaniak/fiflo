@@ -1,3 +1,4 @@
+#include "ascii.h"
 #include "buffer.h"
 #include "charmap.h"
 

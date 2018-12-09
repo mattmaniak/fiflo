@@ -12,7 +12,9 @@
 
 // memory.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
+
 extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
+
 extern void safer_free(void* ptr);
 
 // text_processing.h

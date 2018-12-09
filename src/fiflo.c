@@ -1,4 +1,5 @@
 #ifdef __linux__
+#include "ascii.h"
 #include "buffer.h"
 #include "memory.h"
 #include "fiflo.h"
@@ -58,9 +59,9 @@ char getch(f_mtdt* Buff)
 {
 	const int8_t error = -1;
 
+	const unsigned int canonical_mode_on = ICANON;
 	const unsigned int echo_input        = ECHO;
 	const unsigned int enable_sigs       = ISIG;
-	const unsigned int canonical_mode_on = ICANON;
 	const unsigned int enable_xon        = IXON;
 
 	struct termios old_term_params;
@@ -94,7 +95,7 @@ char getch(f_mtdt* Buff)
 	if((key = (char) getchar()) < 0)
 	{
 		flush_window(Buff);
-		fputs("Negative char had been passed to the stdin.\n", stderr);
+		fputs("Negative char has been passed to the stdin.\n", stderr);
 		free_buff_exit(Buff, 1);
 	}
 
@@ -110,8 +111,8 @@ char getch(f_mtdt* Buff)
 
 _Noreturn void run(const char* arg)
 {
-	// Initializer. Equal to the null terminator.
-	char pressed = 0x00;
+	// Initializer.
+	char pressed = NUL__CTRL_SHIFT_2;
 
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
 	chk_ptr(Buff, Buff, "malloc the metadata buffer\0");
@@ -141,7 +142,7 @@ int main(const int argc, const char** argv)
 	// Sets the default basename and starts.
 	if(argv[1] == NULL)
 	{
-		run("\0");
+		run(NUL__CTRL_SHIFT_2);
 	}
 	else
 	{

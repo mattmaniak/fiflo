@@ -18,11 +18,13 @@ typedef uint32_t buff_t; // Only for amount indicators.
 
 typedef struct
 {
-	uint16_t fname_len;
-	bool     live_fname_edit;
-	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
+	// Modes.
+	bool     key_sequence;       // True if pressed key is ANSI escape code.
+	bool     live_fname_edit;    // As in the name.
 
-	bool     key_sequence;
+	// Filename.
+	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
+	uint16_t fname_len;          // Strlen of the above array.
 
 	// File's content and some indicators.
 	char**   text;               // Text buffer. Eg. text[lines_i][chars_i].
@@ -44,7 +46,6 @@ f_mtdt;
 #define ACT_LINE_I        (Buff->lines_i - Buff->cusr_y)
 #define ACT_LINE          Buff->text[ACT_LINE_I]
 #define ACT_LINE_LEN_I    Buff->line_len_i[ACT_LINE_I]
-
 #define CURSOR_VERTICAL_I (ACT_LINE_LEN_I - Buff->cusr_x)
 
 #define PREV_LINE_I       (ACT_LINE_I - 1)
@@ -53,5 +54,13 @@ f_mtdt;
 
 #define LAST_LINE         Buff->text[Buff->lines_i]
 #define LAST_LINE_LEN_I   Buff->line_len_i[Buff->lines_i]
+
+#define BUFFER_NOT_FULL      (Buff->chars_i  <  BUFF_MAX)
+#define CURSOR_X_SCROLLED    (Buff->cusr_x   >  0)
+#define CURSOR_Y_SCROLLED    (Buff->cusr_y   >  0)
+#define EMPTY_LINE           (ACT_LINE_LEN_I == 0)
+#define FIRST_LINE           (ACT_LINE_I     == 0)
+#define CURSOR_AT_LINE_START (Buff->cusr_x   == ACT_LINE_LEN_I)
+#define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
 #endif

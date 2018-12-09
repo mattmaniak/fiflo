@@ -86,7 +86,7 @@ f_mtdt* cursor_right(f_mtdt* Buff)
 
 f_mtdt* cursor_up(f_mtdt* Buff)
 {
-	if(CURSOR_AT_TOP)
+	if(!CURSOR_AT_TOP)
 	{
 		if(CURSOR_AT_LINE_START)
 		{
