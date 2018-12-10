@@ -119,20 +119,28 @@ void lower_bar(f_mtdt* Buff)
 {
 	term_t horizontal_fill = (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
 
+	const char binding[4][STATUS_MAX] =
+	{
+		"CTRL^D - delete a current line\0",
+		"CTRL^O - save as\0",
+		"CTRL^Q - abort changes and exit\0",
+		"CTRL^D - save\0",
+	};
+
 	ANSI_INVERT();
 	WRAP_LINE();
 
 	if(Buff->pane_toggled)
 	{
-		for(uint8_t y = 0; y < TOGGLED_PANE_SZ; y++)
+		for(uint8_t y = 0; y < TOGGLED_PANE_SZ - 1; y++)
 		{
-			printf("%*s", get_term_sz(Buff, 'X'), " ");
+			printf("%s%*s", binding[y],
+			(int) (get_term_sz(Buff, 'X') - strlen(binding[y])), " ");
+
+			WRAP_LINE();
 		}
 	}
-	else
-	{
-		printf("%s%*s", LBAR_STR, horizontal_fill, " ");
-	}
+	printf("%s%*s", LBAR_STR, horizontal_fill, " ");
 	ANSI_RESET();
 }
 
@@ -205,7 +213,8 @@ void print_line_num(buff_t line_i, uint8_t line_num_len, const bool act_line)
 
 void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 {
-	term_t move_up = 0;
+	term_t move_up    = 0;
+//	term_t move_right = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
@@ -242,10 +251,16 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 			// Scrolled so cursor is moved only 1 line above.
 			move_up = Ui.text_y - (term_t) (Buff->lines_i - Buff->cusr_y);
 		}
-	}
-	if(Buff->pane_toggled)
-	{
-		move_up += TOGGLED_PANE_SZ - 1;
+		else
+		{
+			move_up = LBAR_SZ;
+		}
+
+		if(Buff->pane_toggled)
+		{
+			move_up += TOGGLED_PANE_SZ - LBAR_SZ;
+		}
+
 	}
 	ANSI_CUR_UP(move_up);
 }

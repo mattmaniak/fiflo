@@ -15,9 +15,9 @@
 #define TOGGLED_PANE_SZ 5
 
 // Text that is shown on the lower bar. Also defines the minimal terminal width.
-#define LBAR_STR "CTRL^\\ - toggle the bingings pane\0"
+#define LBAR_STR "CTRL^\\ - toggle the bindings pane\0"
 
-#define WRAP_LINE() putchar(0x0a)
+#define WRAP_LINE() putchar('\n')
 
 // ANSI escape codes.
 #define ANSI_RESET()           printf("\x1b[%s", "0m")
