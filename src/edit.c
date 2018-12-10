@@ -8,7 +8,7 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	static char    key_sequence[seq_len];
 	static uint8_t char_i;
 
-	if((key == ESC__CTRL_LEFT_SQR_BRACKET) && (!Buff->live_fname_edit))
+	if((key == CTRL_LEFT_SQR_BRACKET) && (!Buff->live_fname_edit))
 	{
 
 #ifndef VALUES_INSTEAD_OF_ACTIONS
@@ -20,18 +20,21 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	if(Buff->key_sequence)
 	{
 		key_sequence[char_i] = key;
-		key_sequence[char_i + NUL_SZ] = NUL__CTRL_SHIFT_2;
+		key_sequence[char_i + NUL_SZ] = '\0';
 
-		if(char_i < (seq_len - NUL_SZ))
-		{
-			char_i++;
-		}
-		Buff = recognize_sequence(Buff, key_sequence);
+		char_i += (char_i < (seq_len - NUL_SZ)) ? 1 : 0;
 
-		if(!Buff->key_sequence)
+		// TODO: CTRL^[ PREVENTION.
+		if((char_i > 0) &&
+		(key_sequence[char_i - NUL_SZ] == CTRL_LEFT_SQR_BRACKET))
 		{
 			char_i = 0;
+			key_sequence[char_i] = '\0';
+			Buff->key_sequence = false;
 		}
+
+		Buff = recognize_sequence(Buff, key_sequence);
+		(!Buff->key_sequence) ? char_i = 0 : 0;
 	}
 	else if(Buff->live_fname_edit)
 	{
@@ -62,14 +65,8 @@ f_mtdt* delete_line(f_mtdt* Buff)
 	{
 		if(CURSOR_Y_SCROLLED)
 		{
-			if(CURSOR_AT_LINE_START)
-			{
-				Buff->cusr_x = next_line_len;
-			}
-			else
-			{
-				Buff->cusr_x = 1;
-			}
+			Buff->cusr_x = (CURSOR_AT_LINE_START) ? next_line_len : 1;
+
 			Buff = copy_lines_mem_backward(Buff);
 			Buff = delete_last_line(Buff);
 
@@ -82,15 +79,15 @@ f_mtdt* delete_line(f_mtdt* Buff)
 			/* With the last line deletion there is a need to remove the
 			linefeed in the previous line. */
 			LAST_LINE_LEN_I--;
-			LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
+			LAST_LINE[LAST_LINE_LEN_I] = '\0';
 
 			Buff->cusr_x = 0;
 		}
 	}
 	else
 	{
-		LAST_LINE_LEN_I            = 0;
-		LAST_LINE[LAST_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
+		LAST_LINE_LEN_I = 0;
+		LAST_LINE[LAST_LINE_LEN_I] = '\0';
 
 		LAST_LINE = realloc(LAST_LINE, sizeof(Buff->text));
 		chk_ptr(Buff, LAST_LINE, "malloc after the first line removal");
@@ -108,20 +105,17 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 	switch(direction)
 	{
 		case 'l':
-		{
 			for(char_i = CURSOR_VERTICAL_I; char_i <= ACT_LINE_LEN_I; char_i++)
 			{
 				ACT_LINE[char_i - prev] = ACT_LINE[char_i];
 			}
 			break;
-		}
+
 		case 'r':
-		{
 			for(char_i = ACT_LINE_LEN_I; char_i >= CURSOR_VERTICAL_I; char_i--)
 			{
 				ACT_LINE[char_i] = ACT_LINE[char_i - prev];
 			}
-		}
 	}
 	return Buff;
 }
@@ -147,7 +141,7 @@ f_mtdt* move_lines_forward(f_mtdt* Buff)
 	}
 
 	// Now the length of the upper line will be shortened after copying.
-	PREV_LINE[PREV_LINE_LEN_I] = NUL__CTRL_SHIFT_2;
+	PREV_LINE[PREV_LINE_LEN_I] = '\0';
 	PREV_LINE = shrink_prev_line_mem(Buff);
 
 	return Buff;
@@ -178,7 +172,7 @@ f_mtdt* delete_non_last_line(f_mtdt* Buff)
 	{
 		PREV_LINE[PREV_LINE_LEN_I] = ACT_LINE[char_i];
 
-		if(ACT_LINE[char_i] != NUL__CTRL_SHIFT_2)
+		if(ACT_LINE[char_i] != '\0')
 		{
 			PREV_LINE_LEN_I++;
 		}

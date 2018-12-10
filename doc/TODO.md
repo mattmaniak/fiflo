@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- all formatting control chars,
 - every header description,
 - improve the makefile,
 - rework man-pages and --help option to become more understable,
@@ -9,7 +10,6 @@
 - scroll with eg. 10 lines ahead,
 - cut/copy/paste,
 - more advanced scroll (eg. full words),
-- full ASCII support (keymap),
 - side/bottom pane with filenames and keyboard shortcuts,
 - TAB key,
 - paging,

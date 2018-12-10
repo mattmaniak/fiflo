@@ -11,8 +11,8 @@
 #define BOLD_LINE_NUM true
 #define THIN_LINE_NUM false
 
-#define LAST_RENDERED_LINE    true
-#define ANOTHER_RENDERED_LINE false
+#define LAST_RENDERED_LINE true
+#define ANOTHER_LINE       false
 
 // buffer.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
@@ -27,7 +27,7 @@ buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui);
 void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui);
 
 // Decides how to show it. Can scroll it or the cursor.
-void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool  last_rendered_line);
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui);
 
 // Renders a text when there is smaller amount of lines than the window height.
 void fit_lines(f_mtdt* Buff, win_mtdt Ui);

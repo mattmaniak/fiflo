@@ -24,12 +24,12 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	// Terminal size check.
 	if((term.ws_col < w_min) || (term.ws_row < h_min))
 	{
-		fprintf(stderr, "Min. term size: %dx%d.\n", w_min, h_min);
+		fprintf(stderr, "Min. terminal size: %dx%d.\n", w_min, h_min);
 		free_buff_exit(Buff, 1);
 	}
 	else if((term.ws_col > sz_max) || (term.ws_row > sz_max))
 	{
-		fprintf(stderr, "Max. term size: %dx%d.\n", sz_max, sz_max);
+		fprintf(stderr, "Max. terminal size: %dx%d.\n", sz_max, sz_max);
 		free_buff_exit(Buff, 1);
 	}
 
@@ -126,7 +126,7 @@ void lower_bar(f_mtdt* Buff)
 
 	if(Buff->pane_toggled)
 	{
-		for(uint8_t y = 0; y < TOGGLED_PANE_SZ - 1; y++)
+		for(uint8_t y = 0; y < TOGGLED_PANE_SZ - LBAR_SZ; y++)
 		{
 			printf("%s%*s", binding[y],
 			(int) (get_term_sz(Buff, 'X') - strlen(binding[y])), " ");

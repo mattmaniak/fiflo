@@ -93,17 +93,9 @@ f_mtdt* cursor_up(f_mtdt* Buff)
 {
 	if(!CURSOR_AT_TOP)
 	{
-		if(CURSOR_AT_LINE_START)
-		{
-			/* Cursor at the left side: doesn't go at the end of a line. Always
-			at the beginning */
-			Buff->cusr_x = PREV_LINE_LEN_I;
-		}
-		else
-		{
-			// Ignore the linefeed.
-			Buff->cusr_x = 1;
-		}
+		/* Cursor at the left side: doesn't go at the end of a line. Always
+		at the beginning or ignore the linefeed. */
+		Buff->cusr_x = (CURSOR_AT_LINE_START) ? PREV_LINE_LEN_I : 1;
 		Buff->cusr_y++;
 	}
 	return Buff;
@@ -125,16 +117,8 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 		}
 		else
 		{
-			if(CURSOR_Y_SCROLLED)
-			{
-				// Ignore the linefeed.
-				Buff->cusr_x = 1;
-			}
-			else
-			{
-				// Is last line so ignoring the LF isn't needed.
-				Buff->cusr_x = 0;
-			}
+			// Ignore the linefeed or no.
+			Buff->cusr_x = (CURSOR_Y_SCROLLED) ? 1 : 0;
 		}
 	}
 	return Buff;

@@ -8,10 +8,10 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	uint16_t   arg_len  = (uint16_t) strlen(arg);
 
 	bool arg_non_empty = arg_len > 0;
-	bool arg_as_dir    =
-	(arg[arg_len - NUL_SZ] == '/') && (arg[arg_len] == NUL__CTRL_SHIFT_2);
-
 	bool arg_as_abs_path = arg[0] == '/';
+
+	bool arg_as_dir = (arg[arg_len - NUL_SZ] == '/') && (arg[arg_len] == '\0');
+
 
 	if(arg_non_empty)
 	{
@@ -78,9 +78,9 @@ f_mtdt* read_file(f_mtdt* Buff)
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
 			// Temponary and ugly tab to two spaces conversion.
-			if(ch == HT__CTRL_I)
+			if(ch == '\t')
 			{
-				ch   = ' ';
+				ch = ' ';
 				Buff = printable_char(Buff, ch);
 			}
 
@@ -114,7 +114,6 @@ f_mtdt* save_file(f_mtdt* Buff)
 
 	if(textfile != NULL)
 	{
-		// Write each line to the file. NULL terminator is ignored.
 		for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 		{
 			/* Using fputs or fprintf causes use-of-uninitialized-value using
@@ -138,19 +137,19 @@ f_mtdt* edit_fname(f_mtdt* Buff, char key)
 {
 	const bool index = 1;
 
-	if((key >= 32) && (key != DEL__BACKSPACE)
+	if((key >= 32) && (key != BACKSPACE)
 	&& ((Buff->fname_len_i + index) < PATH_MAX))
 	{
 		Buff->fname[Buff->fname_len_i] = key;
 		Buff->fname_len_i++;
-		Buff->fname[Buff->fname_len_i] = NUL__CTRL_SHIFT_2;
+		Buff->fname[Buff->fname_len_i] = '\0';
 	}
-	else if((key == DEL__BACKSPACE) && (Buff->fname_len_i > 0))
+	else if((key == BACKSPACE) && (Buff->fname_len_i > 0))
 	{
 		Buff->fname_len_i--;
-		Buff->fname[Buff->fname_len_i] = NUL__CTRL_SHIFT_2;
+		Buff->fname[Buff->fname_len_i] = '\0';
 	}
-	else if(key == LF__CTRL_J)
+	else if(key == '\n')
 	{
 		Buff->live_fname_edit = false;
 		SET_STATUS("filename edited\0");

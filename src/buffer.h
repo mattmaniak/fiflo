@@ -8,7 +8,7 @@
 #include <linux/limits.h>
 
 #define BUFF_MAX        (UINT_MAX / 256) // (16 MB - 1) buffer limit.
-#define STATUS_MAX      40
+#define STATUS_MAX      32
 #define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX)
 
 typedef uint32_t buff_t; // Only for amount indicators.

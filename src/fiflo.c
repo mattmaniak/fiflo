@@ -111,7 +111,7 @@ char getch(f_mtdt* Buff)
 _Noreturn void run(const char* arg)
 {
 	// Initializer.
-	char pressed = NUL__CTRL_SHIFT_2;
+	char pressed = '\0';
 
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
 	chk_ptr(Buff, Buff, "malloc the metadata buffer\0");
@@ -141,7 +141,7 @@ int main(const int argc, const char** argv)
 	// Sets the default basename and starts.
 	if(argv[1] == NULL)
 	{
-		run("\x00");
+		run("\0");
 	}
 	else
 	{

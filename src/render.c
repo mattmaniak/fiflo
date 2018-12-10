@@ -29,7 +29,7 @@ void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 	(CURSOR_Y_SCROLLED) ? WRAP_LINE() : 0;
 }
 
-void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool last_rendered_line)
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui)
 {
 	// There is small amount of chars. Horizontal scroll isn't required.
 	if(ACT_LINE_LEN_I < Ui.text_x)
@@ -58,7 +58,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
-		print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
+		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
 
@@ -68,14 +68,14 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 			WRAP_LINE();
 		}
 	}
-	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
-	print_actual_line(Buff, Ui, ANOTHER_RENDERED_LINE);
+	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
+	print_actual_line(Buff, Ui);
 
 	if(CURSOR_Y_SCROLLED)
 	{
 		for(line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
 		{
-			print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
+			print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
 
 			if(Buff->line_len_i[line_i] > Ui.text_x)
@@ -86,7 +86,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 				puts("KICK IT");
 			}
 		}
-		print_line_num(Ui.text_y - INDEX, Ui.line_num_len, THIN_LINE_NUM);
+		print_line_num(Ui.text_y - INDEX, Ui.line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui.text_x - CUR_SZ, LAST_LINE);
 	}
 }
@@ -98,7 +98,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
-		print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
+		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
 
@@ -108,14 +108,14 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 			WRAP_LINE();
 		}
 	}
-	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
-	print_actual_line(Buff, Ui, ANOTHER_RENDERED_LINE);
+	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
+	print_actual_line(Buff, Ui);
 
 	// Next lines. If scrolled. Only beginning is shown.
 	line_i = ACT_LINE_I + INDEX;
 	for(; line_i < (buff_t) (Ui.text_y - INDEX); line_i++)
 	{
-		print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
+		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
 
@@ -125,7 +125,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 			WRAP_LINE();
 		}
 	}
-	print_line_num(Ui.text_y - INDEX, Ui.line_num_len, THIN_LINE_NUM);
+	print_line_num(Ui.text_y - INDEX, Ui.line_num_len, ANOTHER_LINE);
 
 	printf("%.*s", Buff->line_len_i[Ui.text_y - INDEX] - LF_SZ,
 	Buff->text[Ui.text_y - INDEX]);
@@ -136,7 +136,7 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(buff_t line_i = set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
 	{
-		print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
+		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
 
 		if(Buff->line_len_i[line_i] > Ui.text_x)
@@ -145,19 +145,19 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 			WRAP_LINE();
 		}
 	}
-	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
+	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
 
 	// Display the last line without the linefeed.
 	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
-		if(!CURSOR_Y_SCROLLED)
-		{
-			printf("%s", ACT_LINE);
-		}
-		else
+		if(CURSOR_Y_SCROLLED)
 		{
 			// There is small amount of chars. Horizontal scroll isn't required.
 			printf("%.*s", ACT_LINE_LEN_I - LF_SZ, ACT_LINE);
+		}
+		else
+		{
+			printf("%s", ACT_LINE);
 		}
 	}
 	// Chars won't fits in the horizontal space.
