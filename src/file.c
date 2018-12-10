@@ -108,11 +108,7 @@ f_mtdt* save_file(f_mtdt* Buff)
 	{
 		// There is no file so create with -rw------- mode.
 		int create = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
-
-		if(create == not_created)
-		{
-			SET_STATUS("failed to create the new file\0");
-		}
+		(create == not_created) ? SET_STATUS("failed to create the file\0") : 0;
 	}
 	textfile = fopen(Buff->fname, "w");
 

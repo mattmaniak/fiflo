@@ -210,16 +210,3 @@ f_mtdt* delete_char(f_mtdt* Buff)
 	}
 	return Buff;
 }
-
-bool toggle_pane(f_mtdt* Buff)
-{
-	if(Buff->pane_toggled)
-	{
-		Buff->pane_toggled = false;
-	}
-	else
-	{
-		Buff->pane_toggled = true;
-	}
-	return Buff->pane_toggled;
-}

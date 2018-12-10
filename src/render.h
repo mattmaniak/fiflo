@@ -27,15 +27,15 @@ buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui);
 void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui);
 
 // Decides how to show it. Can scroll it or the cursor.
-void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool mode);
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool  last_rendered_line);
 
 // Renders a text when there is smaller amount of lines than the window height.
 void fit_lines(f_mtdt* Buff, win_mtdt Ui);
 
-// If there is more lines but they are scrolled to a start.
+// If there is more lines but they are scrolled to the start.
 void shrink_lines(f_mtdt* Buff, win_mtdt Ui);
 
-// Lines rendering starts at specified by user offset.s
+// Lines rendering starts at specified by user offset.
 void scroll_lines(f_mtdt* Buff, win_mtdt Ui);
 
 // Shows a text in the window.

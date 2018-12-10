@@ -26,17 +26,14 @@ void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
 	/* Sometimes is needed because the "fill" function renders the smallest
 	amount of linefeeds. In other cases the linefeed is provided by the char in
 	a line. */
-	if(Buff->cusr_y > 0)
-	{
-		WRAP_LINE();
-	}
+	(CURSOR_Y_SCROLLED) ? WRAP_LINE() : 0;
 }
 
-void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool mode)
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool last_rendered_line)
 {
+	// There is small amount of chars. Horizontal scroll isn't required.
 	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
-		// There is small amount of chars. Horizontal scroll isn't required.
 		printf("%s", ACT_LINE);
 	}
 	// Chars won't fits in the horizontal space.
@@ -51,10 +48,7 @@ void print_actual_line(f_mtdt* Buff, win_mtdt Ui, const bool mode)
 		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LINE);
 
 		// For proper rendering.
-		if(mode == LAST_RENDERED_LINE)
-		{
-			WRAP_LINE();
-		}
+		((ACT_LINE_I + INDEX) < Ui.text_y) ? WRAP_LINE() : 0;
 	}
 }
 
@@ -75,12 +69,11 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 		}
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
-
 	print_actual_line(Buff, Ui, ANOTHER_RENDERED_LINE);
 
 	if(CURSOR_Y_SCROLLED)
 	{
-		for(line_i = ACT_LINE_I + INDEX; line_i <= Buff->lines_i; line_i++)
+		for(line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
 		{
 			print_line_num(line_i, Ui.line_num_len, THIN_LINE_NUM);
 			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
@@ -90,8 +83,11 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 				/* Just because there is place for the cursor and LF isn't
 				printed. */
 				WRAP_LINE();
+				puts("KICK IT");
 			}
 		}
+		print_line_num(Ui.text_y - INDEX, Ui.line_num_len, THIN_LINE_NUM);
+		printf("%.*s", Ui.text_x - CUR_SZ, LAST_LINE);
 	}
 }
 
@@ -113,8 +109,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 		}
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, BOLD_LINE_NUM);
-
-	print_actual_line(Buff, Ui, LAST_RENDERED_LINE);
+	print_actual_line(Buff, Ui, ANOTHER_RENDERED_LINE);
 
 	// Next lines. If scrolled. Only beginning is shown.
 	line_i = ACT_LINE_I + INDEX;

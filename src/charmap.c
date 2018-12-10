@@ -31,7 +31,7 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 		}
 		case FS__CTRL_BACKSLASH:
 		{
-			Buff->pane_toggled = toggle_pane(Buff);
+			Buff->pane_toggled = !Buff->pane_toggled;
 			break;
 		}
 		case SI__CTRL_O:

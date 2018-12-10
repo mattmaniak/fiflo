@@ -35,14 +35,8 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 
 	switch(axis)
 	{
-		case 'X':
-		{
-			return term.ws_col;
-		}
-		case 'Y':
-		{
-			return term.ws_row;
-		}
+		case 'X': return term.ws_col;
+		case 'Y': return term.ws_row;
 	}
 	return 1;
 }
@@ -171,14 +165,7 @@ void render_window(f_mtdt* Buff)
 	// Snprinf isn't needed because the format specifier gives a warning.
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
-	if(Buff->pane_toggled)
-	{
-		Ui.lbar_h = TOGGLED_PANE_SZ;
-	}
-	else
-	{
-		Ui.lbar_h = 1;
-	}
+	Ui.lbar_h = (Buff->pane_toggled) ? TOGGLED_PANE_SZ : LBAR_SZ;
 
 	Ui.line_num_len = (uint8_t) strlen(Ui.line_num_str) + SPACE_SZ;
 	Ui.text_x       = get_term_sz(Buff, 'X') - Ui.line_num_len;
@@ -214,53 +201,39 @@ void print_line_num(buff_t line_i, uint8_t line_num_len, const bool act_line)
 void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 {
 	term_t move_up    = 0;
-//	term_t move_right = 0;
+	term_t move_right = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
-
-	// Lower left side. Will be used to position the cursor and flush each line.
 	ANSI_SAVE_CUR_POS();
 
 	if(Buff->live_fname_edit)
 	{
 		move_up = get_term_sz(Buff, 'Y') - LBAR_SZ;
-
-		ANSI_CUR_RIGHT(Buff->fname_len_i + SPACE_SZ + 3); // 3 - LOGO_SZ TODO.
+		move_right = Buff->fname_len_i + SPACE_SZ + 3; // 3 - LOGO_SZ TODO.
 	}
 	else
 	{
 		if(ACT_LINE_LEN_I < Ui.text_x)
 		{
 			// No horizontal scrolling.
-			ANSI_CUR_RIGHT(Ui.line_num_len + CURSOR_VERTICAL_I);
+			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
 		}
 		else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
 		{
 			// Last Ui.text_x chars are seen. Current line is scrolled, not cursor.
-			ANSI_CUR_RIGHT(get_term_sz(Buff, 'X') - CUR_SZ);
+			move_right = get_term_sz(Buff, 'X') - CUR_SZ;
 		}
 		else
 		{
 			// Text is scrolled horizontally to the start. Cursor can be moved.
-			ANSI_CUR_RIGHT(Ui.line_num_len + CURSOR_VERTICAL_I);
+			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
 		}
+		move_up = (ACT_LINE_I < Ui.text_y) ?
+		(Ui.text_y - (term_t) (Buff->lines_i - Buff->cusr_y)) : LBAR_SZ;
 
-		if(ACT_LINE_I < Ui.text_y)
-		{
-			// Scrolled so cursor is moved only 1 line above.
-			move_up = Ui.text_y - (term_t) (Buff->lines_i - Buff->cusr_y);
-		}
-		else
-		{
-			move_up = LBAR_SZ;
-		}
-
-		if(Buff->pane_toggled)
-		{
-			move_up += TOGGLED_PANE_SZ - LBAR_SZ;
-		}
-
+		move_up += (Buff->pane_toggled) ? (TOGGLED_PANE_SZ - LBAR_SZ) : 0;
 	}
+	ANSI_CUR_RIGHT(move_right);
 	ANSI_CUR_UP(move_up);
 }
