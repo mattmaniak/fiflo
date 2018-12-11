@@ -6,7 +6,7 @@ BIN_DIR = bin
 MAN_DIR = man
 INSTALL_DIR = /usr/bin
 
-CFLAGS = -std=gnu99 -O3
+CFLAGS = -std=gnu99 -Os
 
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined \
 -fsanitize-address-use-after-scope
