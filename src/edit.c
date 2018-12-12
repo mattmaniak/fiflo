@@ -8,7 +8,7 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	static char    key_sequence[seq_len];
 	static uint8_t char_i;
 
-	if((key == CTRL_LEFT_SQR_BRACKET) && (!Buff->live_fname_edit))
+	if((key == CTRL_LEFT_BRACKET) && (!Buff->live_fname_edit))
 	{
 
 #ifndef VALUES_INSTEAD_OF_ACTIONS
@@ -51,7 +51,6 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	{
 		Buff = key_action(Buff, key);
 	}
-
 	return Buff;
 }
 

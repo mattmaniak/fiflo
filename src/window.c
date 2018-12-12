@@ -113,7 +113,7 @@ void lower_bar(f_mtdt* Buff)
 {
 	term_t horizontal_fill = (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
 
-	const char binding[4][STATUS_MAX] =
+	const char key_binding[4][STATUS_MAX] =
 	{
 		"CTRL^D - delete a current line\0",
 		"CTRL^O - save as\0",
@@ -128,8 +128,8 @@ void lower_bar(f_mtdt* Buff)
 	{
 		for(uint8_t y = 0; y < TOGGLED_PANE_SZ - LBAR_SZ; y++)
 		{
-			printf("%s%*s", binding[y],
-			(int) (get_term_sz(Buff, 'X') - strlen(binding[y])), " ");
+			printf("%s%*s", key_binding[y],
+			(int) (get_term_sz(Buff, 'X') - strlen(key_binding[y])), " ");
 
 			WRAP_LINE();
 		}

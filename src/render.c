@@ -83,7 +83,6 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 				/* Just because there is place for the cursor and LF isn't
 				printed. */
 				WRAP_LINE();
-				puts("KICK IT");
 			}
 		}
 		print_line_num(Ui.text_y - INDEX, Ui.line_num_len, ANOTHER_LINE);
@@ -165,11 +164,12 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 	{
 		// Render only right part of the line.
 		scroll_line_horizontally(Buff, Ui);
+		// TODO
 	}
 	else
 	{
 		// Render only left part of the line. Cursor can scrolled.
-		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LINE);
+		printf("%.*s", Ui.text_x - LF_SZ, ACT_LINE);
 	}
 }
 

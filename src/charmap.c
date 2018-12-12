@@ -10,14 +10,12 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 			return printable_char(Buff, key);
 
 		case '\t':
-		{
-			// Currently converts the tab to two spaces.
 			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
 			{
 				Buff = printable_char(Buff, ' ');
 			}
 			break;
-		}
+
 		case BACKSPACE:
 			return backspace(Buff);
 
