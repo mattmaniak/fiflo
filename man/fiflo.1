@@ -48,8 +48,13 @@ line up/down depending on left/right arrow.
 .SH SEE ALSO
 https://gitlab.com/mattmaniak/fiflo.git
 .SH BUGS
+.TP
+.B Blinking
 Blinking window on a default tty. It's caused by the implementation wnich
 renders a full window everytime. Modern terminal emulators, the problem does
 not occur.
+.TP
+.B CTRL^[
+It will cause that next 3 chars will be ignored.
 .SH AUTHOR
 mattmaniak

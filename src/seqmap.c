@@ -4,15 +4,15 @@
 
 f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8])
 {
-	const uint8_t seq_max = 4;
+	const uint8_t seq_max = 3;
 
 	/* Notice that the structure of these sequences is:
 	<ansi_esc_code> + '[' + <some_unique_numbers_and_letters> + '\0'.
 	Comments at the right side are identifiers of these codes. */
-	const char* arrow_up    = "\x1b[A\0"; // A
-	const char* arrow_down  = "\x1b[B\0"; // B
-	const char* arrow_right = "\x1b[C\0"; // C
-	const char* arrow_left  = "\x1b[D\0"; // D
+	const char* arrow_up    = "\x1b[A\0";
+	const char* arrow_down  = "\x1b[B\0";
+	const char* arrow_right = "\x1b[C\0";
+	const char* arrow_left  = "\x1b[D\0";
 
 	if(!strcmp(sequence, arrow_up))
 	{
@@ -38,17 +38,6 @@ f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8])
 	{
 		Buff->key_sequence = false;
 	}
-	// Prevent everything other than bare arrows in a very ugly way.
-	// else if(strlen(sequence) > seq_max)
-	// {
-	// 	getch(Buff);
-	//
-	// 	if(strlen(sequence) == seq_max + 2)
-	// 	{
-	// 		getch(Buff);
-	// 	}
-	// 	Buff->key_sequence = false;
-	// }
 
 #ifdef SHOW_VALUES
 	printf("cusr_x %d, cusr_y %d.\n", Buff->cusr_x, Buff->cusr_y);

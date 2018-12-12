@@ -22,26 +22,10 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 		key_sequence[char_i] = key;
 		key_sequence[char_i + NUL_SZ] = '\0';
 
-		(char_i < (seq_len - NUL_SZ)) ? char_i++ : 0;
-
-		// if(!strcmp(key_sequence, "\033\0"))
-		// {
-		// 	char_i = 0;
-		// 	key_sequence[char_i] = '\0';
-		// 	Buff->key_sequence = false;
-		// }
-
-		// TODO: CTRL^[ PREVENTION.
-		// if((char_i > 0) &&
-		// (key_sequence[char_i - NUL_SZ] == CTRL_LEFT_SQR_BRACKET))
-		// {
-		// 	char_i = 0;
-		// 	key_sequence[char_i] = '\0';
-		// 	Buff->key_sequence = false;
-		// }
-
+		char_i += (char_i < (seq_len - NUL_SZ)) ? 1 : 0;
 		Buff = recognize_sequence(Buff, key_sequence);
-		(!Buff->key_sequence) ? char_i = 0 : 0;
+
+		char_i = (!Buff->key_sequence) ? 0 : char_i;
 	}
 	else if(Buff->live_fname_edit)
 	{

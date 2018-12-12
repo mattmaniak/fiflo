@@ -5,7 +5,6 @@
 
 #define CUR_SZ 1
 #define LF_SZ  1
-#define LF     10
 #define INDEX  1
 
 #define BOLD_LINE_NUM true
