@@ -17,8 +17,11 @@ typedef uint32_t buff_t;
 #define BUFF_MAX (UINT_MAX / 256)
 
 // Maximum length of the message displayed below the filename.
-#define STATUS_MAX      32
+#define STATUS_MAX 32
 #define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX)
+
+// Provides more readable handling with indicators.
+#define INDEX 1
 
 #pragma pack(push, 2)
 #pragma pack(push, 1)

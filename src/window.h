@@ -8,7 +8,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-#define INDEX 1
+//#define INDEX 1
 
 // buffer.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);

@@ -57,7 +57,7 @@ char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
 #endif
 
 	}
-	chk_ptr(Buff, Buff->text[line_i], "extend the memblock for the line\0");
+	chk_ptr(Buff, Buff->text[line_i], "extend the memblock for the line");
 
 	return Buff->text[line_i];
 }
@@ -85,7 +85,7 @@ char* shrink_act_line_mem(f_mtdt* Buff)
 	ACT_LINE_I + INDEX, memblock);
 #endif
 
-	chk_ptr(Buff, ACT_LINE, "shrink the memblock with the current line\0");
+	chk_ptr(Buff, ACT_LINE, "shrink the memblock with the current line");
 
 	return ACT_LINE;
 }
@@ -110,7 +110,7 @@ char* shrink_prev_line_mem(f_mtdt* Buff)
 	PREV_LINE_I + INDEX, memblock);
 #endif
 
-	chk_ptr(Buff, PREV_LINE, "shrink the memblock with the previous line\0");
+	chk_ptr(Buff, PREV_LINE, "shrink the memblock with the previous line");
 
 	return PREV_LINE;
 }
@@ -120,17 +120,17 @@ f_mtdt* extend_lines_array_mem(f_mtdt* Buff)
 	// Enhance the array that contains pointers to lines.
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 
-	chk_ptr(Buff, Buff->text, "extend the array with lines\0");
+	chk_ptr(Buff, Buff->text, "extend the array with lines");
 
 	// Enhance the array that contains lines length indicators.
 	Buff->line_len_i = realloc(Buff->line_len_i,
 	(Buff->lines_i + INDEX) * ADDR_SZ);
 
-	chk_ptr(Buff, Buff->line_len_i, "extend the array with lines length\0");
+	chk_ptr(Buff, Buff->line_len_i, "extend the array with lines length");
 
 	// The new line is allocated with only 4 or 8 bytes bytes.
 	LAST_LINE = malloc(INIT_MEMBLK);
-	chk_ptr(Buff, LAST_LINE, "malloc the new line\0");
+	chk_ptr(Buff, LAST_LINE, "malloc the new line");
 
 	// Naturally the new line doesn't contains any chars - only terminator.
 	LAST_LINE_LEN_I = 0;
@@ -142,12 +142,12 @@ f_mtdt* shrink_lines_array_mem(f_mtdt* Buff)
 {
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 
-	chk_ptr(Buff, Buff->text, "shrink the array with lines\0");
+	chk_ptr(Buff, Buff->text, "shrink the array with lines");
 
 	Buff->line_len_i = realloc(Buff->line_len_i,
 	(Buff->lines_i + INDEX) * ADDR_SZ);
 
-	chk_ptr(Buff, Buff->line_len_i, "shrink the array with lines length\0");
+	chk_ptr(Buff, Buff->line_len_i, "shrink the array with lines length");
 
 	return Buff;
 }
@@ -168,12 +168,12 @@ f_mtdt* copy_lines_mem_forward(f_mtdt* Buff)
 		line_i + INDEX - prev, line_i + INDEX, memblock);
 #endif
 
-		chk_ptr(Buff, Buff->text[line_i], "resize the line forward\0");
+		chk_ptr(Buff, Buff->text[line_i], "resize the line forward");
 
 		Buff->text[line_i] =
 		strcpy(Buff->text[line_i], Buff->text[line_i - prev]);
 
-		chk_ptr(Buff, Buff->text[line_i], "copy the line forward\0");
+		chk_ptr(Buff, Buff->text[line_i], "copy the line forward");
 
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i - prev];
 	}
@@ -196,12 +196,12 @@ f_mtdt* copy_lines_mem_backward(f_mtdt* Buff)
 		line_i + INDEX + next, line_i + INDEX, memblock);
 #endif
 
-		chk_ptr(Buff, Buff->text[line_i], "resize the line backward\0");
+		chk_ptr(Buff, Buff->text[line_i], "resize the line backward");
 
 		Buff->text[line_i] =
 		strcpy(Buff->text[line_i], Buff->text[line_i + next]);
 
-		chk_ptr(Buff, Buff->text[line_i], "copy the line backward\0");
+		chk_ptr(Buff, Buff->text[line_i], "copy the line backward");
 
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];
 	}

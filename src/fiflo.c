@@ -8,10 +8,10 @@
 f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {
 	Buff->text = malloc(ADDR_SZ);
-	chk_ptr(Buff, Buff->text, "malloc the array with lines\0");
+	chk_ptr(Buff, Buff->text, "malloc the array with lines");
 
 	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
-	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length\0");
+	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length");
 
 	Buff->chars_i  = 0;
 	Buff->lines_i  = 0;
@@ -26,7 +26,7 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	Buff = set_fname(Buff, arg);
 
 	ACT_LINE = malloc(ADDR_SZ);
-	chk_ptr(Buff, ACT_LINE, "malloc the first line\0");
+	chk_ptr(Buff, ACT_LINE, "malloc the first line");
 
 	return Buff;
 }
@@ -113,7 +113,7 @@ _Noreturn void run(const char* arg)
 	char pressed = '\0';
 
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
-	chk_ptr(Buff, Buff, "malloc the metadata buffer\0");
+	chk_ptr(Buff, Buff, "malloc the metadata buffer");
 
 	Buff = init_buffer(Buff, arg);
 	Buff = read_file(Buff);
@@ -140,7 +140,7 @@ int main(const int argc, const char** argv)
 	// Sets the default basename and starts.
 	if(argv[1] == NULL)
 	{
-		run("\0");
+		run("");
 	}
 	else
 	{

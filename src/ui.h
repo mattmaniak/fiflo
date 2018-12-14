@@ -17,7 +17,7 @@
 #define TOGGLED_PANE_SZ 5
 
 // Text that is shown on the lower bar. Also defines the minimal terminal width.
-#define LBAR_STR "CTRL^\\ - toggle the key bindings pane\0"
+#define LBAR_STR "CTRL^\\ - toggle the key bindings pane"
 
 #define WRAP_LINE() putchar('\n')
 
@@ -42,8 +42,8 @@ typedef struct
 	uint8_t line_num_len;     // Dynamic width of the lines numbers.
 	term_t  text_x;           // Horizontal space for the text (width: chars).
 	term_t  text_y;           // Vertical space for the text (lines).
-	uint8_t ubar_h;           //
-	uint8_t lbar_h;           //
+	uint8_t ubar_h;           // Upper bar height (lines).
+	uint8_t lbar_h;           // Lower bar height (lines).
 }
 win_mtdt;
 

@@ -7,8 +7,8 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	const bool slash_sz = 1;
 	uint16_t   arg_len  = (uint16_t) strlen(arg);
 
-	bool arg_non_empty = arg_len > 0;
-	bool arg_as_abs_path = arg[0] == '/';
+	bool arg_non_empty   = arg_len > 0;
+	bool arg_as_abs_path = arg[0]  == '/';
 
 	bool arg_as_dir = (arg[arg_len - NUL_SZ] == '/') && (arg[arg_len] == '\0');
 
@@ -35,10 +35,10 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	else
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
-		chk_ptr(Buff, cw_dir, "malloc for the current path\0");
+		chk_ptr(Buff, cw_dir, "malloc for the current path");
 
 		cw_dir = getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz);
-		chk_ptr(Buff, cw_dir, "get current path. Too long\0");
+		chk_ptr(Buff, cw_dir, "get current path. Too long");
 
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
@@ -71,7 +71,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 	{
 		if(Buff->fname[Buff->fname_len_i - NUL_SZ] == '/')
 		{
-			SET_STATUS("current directory set\0");
+			SET_STATUS("current directory set");
 			fclose(textfile);
 			return Buff;
 		}
@@ -88,11 +88,11 @@ f_mtdt* read_file(f_mtdt* Buff)
 			Buff = printable_char(Buff, ch);
 		}
 		fclose(textfile);
-		SET_STATUS("read the file\0");
+		SET_STATUS("read the file");
 	}
 	else
 	{
-		SET_STATUS("the file will be created\0");
+		SET_STATUS("the file will be created");
 	}
 	return Buff;
 }
@@ -108,7 +108,7 @@ f_mtdt* save_file(f_mtdt* Buff)
 	{
 		// There is no file so create with -rw------- mode.
 		int create = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
-		(create == not_created) ? SET_STATUS("failed to create the file\0") : 0;
+		(create == not_created) ? SET_STATUS("failed to create the file") : 0;
 	}
 	textfile = fopen(Buff->fname, "w");
 
@@ -124,11 +124,11 @@ f_mtdt* save_file(f_mtdt* Buff)
 			}
 		}
 		fclose(textfile);
-		SET_STATUS("saved\0");
+		SET_STATUS("saved");
 	}
 	else
 	{
-		SET_STATUS("can't write to the file\0");
+		SET_STATUS("can't write to the file");
 	}
 	return Buff;
 }
@@ -152,7 +152,7 @@ f_mtdt* edit_fname(f_mtdt* Buff, char key)
 	else if(key == '\n')
 	{
 		Buff->live_fname_edit = false;
-		SET_STATUS("filename edited\0");
+		SET_STATUS("filename edited");
 	}
 	return Buff;
 }

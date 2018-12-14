@@ -6,13 +6,12 @@ f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8])
 {
 	const uint8_t seq_max = 3;
 
-	/* Notice that the structure of these sequences is:
-	<ansi_esc_code> + '[' + <some_unique_numbers_and_letters> + '\0'.
-	Comments at the right side are identifiers of these codes. */
-	const char* arrow_up    = "\x1b[A\0";
-	const char* arrow_down  = "\x1b[B\0";
-	const char* arrow_right = "\x1b[C\0";
-	const char* arrow_left  = "\x1b[D\0";
+	/* Notice that the structure of these sequences is: <ansi_esc_code> + '['
+	+ <some_unique_numbers_and_letters>. */
+	const char* arrow_up    = "\x1b[A";
+	const char* arrow_down  = "\x1b[B";
+	const char* arrow_right = "\x1b[C";
+	const char* arrow_left  = "\x1b[D";
 
 	if(!strcmp(sequence, arrow_up))
 	{

@@ -75,16 +75,16 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 			{
 				Buff = linefeed(Buff);
 			}
-			(key != '\0') ? SET_STATUS("edited\0") : 0;
+			(key != '\0') ? SET_STATUS("edited") : 0;
 		}
 		else
 		{
-			SET_STATUS("can't read or insert more chars\0");
+			SET_STATUS("can't read or insert more chars");
 		}
 	}
 	else
 	{
-		SET_STATUS("unsupported char(s)\0");
+		SET_STATUS("unsupported char(s)");
 	}
 	return Buff;
 }
@@ -123,7 +123,7 @@ f_mtdt* backspace(f_mtdt* Buff)
 	}
 	// Replaces the linefeed with the terminator.
 	ACT_LINE[ACT_LINE_LEN_I] = '\0';
-	SET_STATUS("edited\0");
+	SET_STATUS("edited");
 
 	return Buff;
 }

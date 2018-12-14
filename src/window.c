@@ -59,7 +59,7 @@ void flush_window(f_mtdt* Buff)
 
 void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 {
-	const char* half_logo = "|`` \0"; // Lower and upper parts are the same.
+	const char* half_logo = "|`` "; // Lower and upper parts are the same.
 
 	term_t fname_max = get_term_sz(Buff, 'X') - (term_t) strlen(half_logo);
 
@@ -115,10 +115,10 @@ void lower_bar(f_mtdt* Buff)
 
 	const char key_binding[4][STATUS_MAX] =
 	{
-		"CTRL^D - delete a current line\0",
-		"CTRL^O - save as\0",
-		"CTRL^Q - abort changes and exit\0",
-		"CTRL^D - save\0",
+		"CTRL^D - delete a current line",
+		"CTRL^O - save as",
+		"CTRL^Q - abort changes and exit",
+		"CTRL^D - save",
 	};
 
 	ANSI_INVERT();
