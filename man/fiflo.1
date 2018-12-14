@@ -3,58 +3,26 @@
 .TP
 fiflo
 .SH SYNOPSIS
-fiflo [option]
+fiflo [basename/filename/option]
 .SH DESCRIPTION
 User-friendly ASCII terminal-based text editor.
 .SH OPTIONS
-.TP
-.B <no_option>
-Don't set a filename. Only a current path will be set.
-.TP
-.B <name>
-Specify a base/filename.
 .TP
 .B -h, --help
 Show a program help.
 .TP
 .B -v, --version
 Display information about a version You use.
-.SH KEY BINDINGS
-'^' (carret) means that the neighbour keys are should be pressed at the same \
-moment. The program supports partial Common User Access.
-.TP
-.B CTRL^D
-Delete a current line.
-.TP
-.B CTRL^O
-Save as - edit and save with a different name (confirm by the ENTER).
-.TP
-.B CTRL^Q
-Abort changes and exit.
-.TP
-.B CTRL^S
-Save a file with a filename specified in the upper bar.
-.TP
-.B CTRL^\
-Toggle key the bindings pane.
-.TP
-.B ARROWS
-Move the cursor one char/line in a specified direction. If the cursor is in the
-end or in the middle of a line, it would be scrolled vertically through the
-lines endings. Else if the cursor is in the beginning of the line, it's
-horizontal position won't be changed during vertical scroll. Also if the
-X-axis scroll reaches beggining/end of the line, the cursor will be moved one
-line up/down depending on left/right arrow.
 .SH SEE ALSO
 https://gitlab.com/mattmaniak/fiflo.git
 .SH BUGS
 .TP
 .B Blinking
-Blinking window on a default tty. It's caused by the implementation wnich
-renders a full window everytime. Modern terminal emulators, the problem does
+Blinking window with a default tty. It's caused by the implementation wnich
+renders a full window everytime. On modern terminal emulators, the problem does
 not occur.
 .TP
 .B CTRL^[
-It will cause that next 3 chars will be ignored.
+Next 3 chars will be ignored.
 .SH AUTHOR
 mattmaniak

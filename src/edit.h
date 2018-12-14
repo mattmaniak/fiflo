@@ -1,6 +1,8 @@
 #ifndef EDIT_H
 #define EDIT_H
 
+// All the unseen magic that will happen when You insert the char.
+
 #include <stdio.h>
 #include <stdlib.h>
 

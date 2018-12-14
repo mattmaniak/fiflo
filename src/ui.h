@@ -1,6 +1,8 @@
 #ifndef UI_H
 #define UI_H
 
+// Data about a current viewport.
+
 // Some semantic macros.
 #define CUR_SZ   1
 #define LF_SZ    1

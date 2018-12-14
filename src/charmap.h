@@ -1,6 +1,8 @@
 #ifndef CHARMAP_H
 #define CHARMAP_H
 
+// Currently supported ASCII characters and their actions inside.
+
 #include <stdio.h>
 
 // memory.h

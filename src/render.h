@@ -1,6 +1,8 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+// Renders the text itself. Cares about scrolling.
+
 #include <stdio.h>
 
 #define CUR_SZ 1

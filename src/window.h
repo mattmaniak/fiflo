@@ -1,5 +1,6 @@
 #ifndef WINDOW_H
 #define WINDOW_H
+// Contains all the elements that will be rendered.
 
 #include <limits.h>
 #include <stdio.h>

@@ -1,17 +1,24 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+/* This file is included in every source file to provide the main structure
+that describes the buffer. */
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 #include <limits.h>
 #include <linux/limits.h>
 
-#define BUFF_MAX        (UINT_MAX / 256) // (16 MB - 1) buffer limit.
+// Needed to char/lines/chars_in_line values.
+typedef uint32_t buff_t;
+
+// Max amount of chars: (16 MB - 1). Newline is also the char.
+#define BUFF_MAX (UINT_MAX / 256)
+
+// Maximum length of the message displayed below the filename.
 #define STATUS_MAX      32
 #define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX)
-
-typedef uint32_t buff_t; // Only for amount indicators.
 
 #pragma pack(push, 2)
 #pragma pack(push, 1)
@@ -21,7 +28,7 @@ typedef struct
 	// Modes.
 	bool     key_sequence;       // True if pressed key is ANSI escape code.
 	bool     live_fname_edit;    // As in the name.
-	bool     pane_toggled;
+	bool     pane_toggled;       // As in the name.
 
 	// Filename.
 	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
@@ -43,7 +50,7 @@ f_mtdt;
 #pragma pack(pop)
 #pragma pack(pop)
 
-// Placeholders.
+// Placeholders. Note that "_i" means "index".
 #define ACT_LINE_I        (Buff->lines_i - Buff->cusr_y)
 #define ACT_LINE          Buff->text[ACT_LINE_I]
 #define ACT_LINE_LEN_I    Buff->line_len_i[ACT_LINE_I]

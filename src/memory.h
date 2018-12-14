@@ -1,6 +1,8 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+// Allocation/freeing the memory blocks that holds the text and it's metadata.
+
 #include <stdio.h>
 #include <stdlib.h>
 

@@ -1,13 +1,15 @@
 #ifndef ASCII_H
 #define ASCII_H
 
-// Control characters that can be used as keyboard shortcuts.
+// Ancient ASCII control characters that can be used as keyboard shortcuts.
+
 #define CTRL_A             1   // Start of header
 #define CTRL_B             2   // Start of text.
 #define CTRL_C             3   // End of text.
 #define CTRL_D             4   // End of transmission.
 #define	CTRL_E             5   // Enquiry.
 #define CTRL_F             6   // Acknowledge.
+#define CTRL_M             13  // Carriage return. Converted to linefeed (10).
 #define CTRL_N             14  // Shift out.
 #define CTRL_O             15  // Shift in.
 #define CTRL_P             16  // Data link escape.
@@ -27,9 +29,6 @@
 #define CTRL_CARRET        30  // Record separator.
 #define CTRL_DASH          31  // Unit separator.
 #define BACKSPACE          127 // Delete that is really backspace.
-
-// Doesn't work properly.
-#define CR__CTRL_M 13 // Carriage return, converted to 10 (linefeed).
 
 #define NUL_SZ 1
 

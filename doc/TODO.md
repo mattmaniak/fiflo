@@ -1,9 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
 - all escapes and formatting control chars,
-- every header description,
 - improve the makefile,
-- rework man-pages and --help option to become more understable,
 - full text horizontal scroll,
 - pre-allocation of a memory, eg. next 16 lines,
 - git branch indicator,

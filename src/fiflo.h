@@ -1,6 +1,8 @@
 #ifndef FIFLO_H
 #define FIFLO_H
 
+// Some shit that starts the program.
+
 #include <limits.h>
 #include <stdint.h>
 #include <string.h>

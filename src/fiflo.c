@@ -1,4 +1,5 @@
 #ifdef __linux__
+
 #include "ascii.h"
 #include "buffer.h"
 #include "memory.h"
@@ -34,12 +35,10 @@ void options(const char* arg)
 {
 	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 	{
-		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n",
-		"Usage: fiflo [option].",
+		printf("%s\n\n%s\n%s\n%s\n",
+		"Usage: fiflo [basename/filename/option].",
 
 		"Options:      Description:",
-		"<no_option>   Don't set a filename. Only a current path will be set.",
-		"<name>        Specify a base/filename.",
 		"-h, --help    Show a program help.",
 		"-v, --version Display information about a version You use.");
 		exit(0);
@@ -48,8 +47,8 @@ void options(const char* arg)
 	{
 		printf("%s\n%s\n%s\n",
 		"fiflo v2.2.0 (WIP)",
-		"https://gitlab.com/mattmaniak/fiflo.git",
-		"(C) 2018 mattmaniak, MIT License.");
+		"(c) 2018 mattmaniak, MIT License",
+		"https://gitlab.com/mattmaniak/fiflo.git");
 		exit(0);
 	}
 }

@@ -1,5 +1,6 @@
 #ifndef SEQMAP_H
 #define SEQMAP_H
+// Handles with sequences that aren't single ASCII char.
 
 // fiflo.h
 extern char getch(f_mtdt* Buff);

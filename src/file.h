@@ -1,6 +1,8 @@
 #ifndef FILE_H
 #define FILE_H
 
+// File operations.
+
 #include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +33,7 @@ f_mtdt* read_file(f_mtdt* Buff);
 // Puts the whole text to the file.
 f_mtdt* save_file(f_mtdt* Buff);
 
-//
+// When the CTRL^O is pressed, there is possibility to basically edit the fname.
 f_mtdt* edit_fname(f_mtdt* Buff, char key);
 
 #endif
