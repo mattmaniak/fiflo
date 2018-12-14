@@ -8,16 +8,14 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-//#define INDEX 1
-
 // buffer.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
 // text_processing.h
-extern buff_t set_start_line   (f_mtdt* Buff);
-extern void   scroll_line_x    (f_mtdt* Buff, win_mtdt Ui);
+extern buff_t set_start_line(f_mtdt* Buff);
+extern void   scroll_line_x(f_mtdt* Buff, win_mtdt Ui);
 extern void   print_actual_line(f_mtdt* Buff, win_mtdt Ui);
-extern void   display_text     (f_mtdt* Buff, win_mtdt Ui);
+extern void   display_text(f_mtdt* Buff, win_mtdt Ui);
 
 // Returns current terminal width and height and exits if is wrong.
 term_t get_term_sz(f_mtdt* Buff, char axis);

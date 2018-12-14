@@ -83,7 +83,6 @@ f_mtdt* read_file(f_mtdt* Buff)
 				ch = ' ';
 				Buff = printable_char(Buff, ch);
 			}
-
 			// Read all chars before end of file.
 			Buff = printable_char(Buff, ch);
 		}

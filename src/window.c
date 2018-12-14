@@ -8,7 +8,7 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	const bool   line_height = 1;
 
 	const term_t  w_min  = STATUS_MAX + 10; // TODO
-	const uint8_t h_min  = BARS_SZ + line_height;
+	const uint8_t h_min  = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
 	const term_t  sz_max = USHRT_MAX;
 
 	struct winsize term;
@@ -59,12 +59,10 @@ void flush_window(f_mtdt* Buff)
 
 void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 {
-	const char* half_logo = "|`` "; // Lower and upper parts are the same.
-
-	term_t fname_max = get_term_sz(Buff, 'X') - (term_t) strlen(half_logo);
+	term_t fname_max = get_term_sz(Buff, 'X') - Ui.icon_width;
 
 	buff_t indicator_width = (buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
-	- (strlen(half_logo) + strlen(Buff->status)));
+	- Ui.icon_width - strlen(Buff->status));
 
 	ANSI_INVERT();
 
@@ -72,20 +70,20 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	the upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
-	printf("\r%s", half_logo);
+	printf("\r%s", Ui.half_icon);
 
 	if(Buff->fname_len_i < fname_max)
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s", Buff->fname, get_term_sz(Buff, 'X')
-		- (term_t) (strlen(half_logo) + Buff->fname_len_i), " ");
+		- Ui.icon_width - Buff->fname_len_i, " ");
 
 		WRAP_LINE();
 	}
 	else
 	{
 		for(term_t char_i = Buff->fname_len_i - get_term_sz(Buff, 'X') + CUR_SZ
-		+ (term_t) (strlen(half_logo)); char_i < Buff->fname_len_i; char_i++)
+		+ Ui.icon_width; char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
 		}
@@ -94,12 +92,12 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	}
 
 	// The lower part with the "chars in the current line" indicator.
-	printf("%s%*s", half_logo, (buff_t) strlen(Buff->status), Buff->status);
+	printf("%s%*s", Ui.half_icon, (buff_t) strlen(Buff->status), Buff->status);
 
 	if((ACT_LINE_LEN_I < Ui.text_x) || (CURSOR_VERTICAL_I < Ui.text_x))
 	{
 		printf("%*d^ ", indicator_width,
-		get_term_sz(Buff, 'X') - Ui.line_num_len - SPACE_SZ);
+		get_term_sz(Buff, 'X') - Ui.line_num_len - CUR_SZ);
 	}
 	else
 	{
@@ -118,9 +116,8 @@ void lower_bar(f_mtdt* Buff)
 		"CTRL^D - delete a current line",
 		"CTRL^O - save as",
 		"CTRL^Q - abort changes and exit",
-		"CTRL^D - save",
+		"CTRL^O - save",
 	};
-
 	ANSI_INVERT();
 	WRAP_LINE();
 
@@ -161,6 +158,9 @@ void fill(f_mtdt* Buff, win_mtdt Ui)
 void render_window(f_mtdt* Buff)
 {
 	win_mtdt Ui;
+
+	strcpy(Ui.half_icon, "|`` ");
+	Ui.icon_width = (uint8_t) strlen(Ui.half_icon);
 
 	// Snprinf isn't needed because the format specifier gives a warning.
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
@@ -210,7 +210,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 	if(Buff->live_fname_edit)
 	{
 		move_up = get_term_sz(Buff, 'Y') - LBAR_SZ;
-		move_right = Buff->fname_len_i + SPACE_SZ + 3; // 3 - LOGO_SZ TODO.
+		move_right = Buff->fname_len_i + 4; // 4 - LOGO_SZ TODO.
 	}
 	else
 	{
@@ -230,7 +230,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
 		}
 		move_up = (ACT_LINE_I < Ui.text_y) ?
-		(Ui.text_y - (term_t) (Buff->lines_i - Buff->cusr_y)) : LBAR_SZ;
+		(Ui.text_y - (term_t) ACT_LINE_I) : LBAR_SZ;
 
 		move_up += (Buff->pane_toggled) ? (TOGGLED_PANE_SZ - LBAR_SZ) : 0;
 	}

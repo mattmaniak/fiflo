@@ -12,7 +12,6 @@
 // TODO: IN WIN_MTDT.
 #define UBAR_SZ 2
 #define LBAR_SZ 1 // Must be equal 1 otherwise will break rendering a little.
-#define BARS_SZ (UBAR_SZ + LBAR_SZ)
 
 #define TOGGLED_PANE_SZ 5
 
@@ -44,6 +43,8 @@ typedef struct
 	term_t  text_y;           // Vertical space for the text (lines).
 	uint8_t ubar_h;           // Upper bar height (lines).
 	uint8_t lbar_h;           // Lower bar height (lines).
+	char    half_icon[8];     // Lower and upper parts are the same.
+	term_t  icon_width;       // Just strlen of a above one.
 }
 win_mtdt;
 
