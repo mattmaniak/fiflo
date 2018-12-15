@@ -4,8 +4,8 @@
 
 f_mtdt* parse_key(f_mtdt* Buff, char key)
 {
-	enum           {seq_len = 8};
-	static char    key_sequence[seq_len];
+	enum {seq_len = 8};
+	static char key_sequence[seq_len];
 	static uint8_t char_i;
 
 	if((key == CTRL_LEFT_BRACKET) && (!Buff->live_fname_edit))
@@ -20,11 +20,11 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	if(Buff->key_sequence)
 	{
 		key_sequence[char_i] = key;
-		key_sequence[char_i + NUL_SZ] = '\0';
+		// char_i += (char_i < (seq_len - NUL_SZ)) ? 1 : 0;
+		(char_i < (seq_len - NUL_SZ)) ? char_i++ : 0;
+		key_sequence[char_i] = '\0';
 
-		char_i += (char_i < (seq_len - NUL_SZ)) ? 1 : 0;
 		Buff = recognize_sequence(Buff, key_sequence);
-
 		char_i = (!Buff->key_sequence) ? 0 : char_i;
 	}
 	else if(Buff->live_fname_edit)

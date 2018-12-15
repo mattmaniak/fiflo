@@ -9,11 +9,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdnoreturn.h>
 #include <termios.h>
 #include <unistd.h>
-
-// memory.h
-extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 
 // file.h
 extern f_mtdt* set_fname(f_mtdt* Buff, const char* passed);
@@ -23,7 +21,7 @@ extern f_mtdt* read_file(f_mtdt* Buff);
 extern f_mtdt* parse_key(f_mtdt* Buff, char key);
 
 // render.h
-extern void flush_window (f_mtdt* Buff);
+extern void flush_window(f_mtdt* Buff);
 extern void render_window(f_mtdt* Buff);
 
 // Initializes all Buff structure members.
@@ -36,7 +34,7 @@ void options(const char* arg);
 char getch(f_mtdt* Buff);
 
 // Some initializers and the main program loop.
-_Noreturn void run(const char* arg);
+noreturn void run(const char* arg);
 
 int main(const int argc, const char** argv);
 

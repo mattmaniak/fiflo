@@ -79,7 +79,7 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 		}
 		else
 		{
-			SET_STATUS("can't read or insert more chars");
+			SET_STATUS("can't read or insert more data");
 		}
 	}
 	else

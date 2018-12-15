@@ -107,7 +107,7 @@ char getch(f_mtdt* Buff)
 	return key;
 }
 
-_Noreturn void run(const char* arg)
+noreturn void run(const char* arg)
 {
 	// Initializer.
 	char pressed = '\0';

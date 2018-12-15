@@ -6,7 +6,7 @@ User-friendly ASCII terminal-based text editor.
 ## Requirements for the GNU/Linux:
 - git,
 - make,
-- clang or gcc,
+- gcc or clang,
 - gzip (only for the installation).
 
 ## Download, compile and run the current stable release

@@ -22,7 +22,7 @@ provide updated code on the "develop" branch.
 ## Coding rules:
 - Allman-like brace style, indentation: 1 hard tab (equal to 4 spaces),
 - only snake_case is allowed,
-- visually align declarations'/definitons' types/names/initializations,
+- visually align defines and structures declarations,
 - single line should not exceed 80 chars printable chars,
 - insert short TODOs near thing to fix as uppercase comments,
 - write doc comments above declarations, statements etc.,

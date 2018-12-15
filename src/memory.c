@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "memory.h"
 
-_Noreturn void free_buff_exit(f_mtdt* Buff, const bool status)
+noreturn void free_buff_exit(f_mtdt* Buff, const bool status)
 {
 	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{

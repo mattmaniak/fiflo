@@ -6,7 +6,8 @@ BIN_DIR = bin
 MAN_DIR = man
 INSTALL_DIR = /usr/bin
 
-CFLAGS = -std=gnu99 -Os
+CFLAGS = -std=c11 -Os
+DEBUGFLAGS =
 
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined \
 -fsanitize-address-use-after-scope
@@ -21,16 +22,18 @@ DEPS = $(TARGET).h
 OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
 
 # Check and set the compiler.
-ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
+ifeq ($(INSTALL_DIR)/gcc, $(shell ls $(INSTALL_DIR)/gcc))
+CC = gcc
+CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align \
+-Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls \
+-Wnested-externs -Winline -Wno-long-long -Wconversion -Wstrict-prototypes
+
+else ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
 CC = clang
 CFLAGS += -Weverything
 
-else ifeq ($(INSTALL_DIR)/gcc, $(shell ls $(INSTALL_DIR)/gcc))
-CC = gcc
-CFLAGS += -Wall -Wextra
-
 else
-$(error Compilation driver was not found: clang or gcc is required.)
+$(error Compilation driver was not found: gcc or clang is required.)
 endif
 
 # Compilation of object files depends on source files wnich depends on headers.
@@ -42,34 +45,17 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/$(DEPS)
 	$(CC) -c -o $@ $< \
 	$(CFLAGS) \
 
-
-
 # Builds the binary by linking object files.
 $(TARGET): $(OBJ)
 	mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
-	$(CFLAGS)
+	$(CFLAGS) $(DEBUGFLAGS)
 
-# TODO
-# address: clean
-# address: CFLAGS += $(ASAN_FLAGS)
-# address: $(TARGET)
+address: DEBUGFLAGS = $(ASAN_FLAGS)
+address: $(TARGET)
 
-# memory: clean
-# memory: CFLAGS += $(MSAN_FLAGS)
-# memory: $(TARGET)
-
-address: $(OBJ)
-	@mkdir -p $(BIN_DIR)
-	$(CC) -o $(BIN_DIR)/$(TARGET) $^ \
-	$(CFLAGS) \
-	$(ASAN_FLAGS)
-
-memory: $(OBJ)
-	@mkdir -p $(BIN_DIR)
-	$(CC) -o $(BIN_DIR)/$(TARGET) $^ \
-	$(CFLAGS) \
-	$(MSAN_FLAGS)
+memory: DEBUGFLAGS = $(MSAN_FLAGS)
+memory: $(TARGET)
 
 install: $(TARGET)
 	sudo cp $(BIN_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)

@@ -106,7 +106,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 
 		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
 	}
-	print_line_num(Ui.text_y - INDEX, Ui.line_num_len, ANOTHER_LINE);
+	print_line_num((buff_t) (Ui.text_y - INDEX), Ui.line_num_len, ANOTHER_LINE);
 
 	if(Buff->line_len_i[Ui.text_y - INDEX] < Ui.text_x)
 	{

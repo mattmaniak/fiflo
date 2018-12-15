@@ -4,12 +4,11 @@
 
 term_t get_term_sz(f_mtdt* Buff, char axis)
 {
-	const int8_t error       = -1;
-	const bool   line_height = 1;
-
-	const term_t  w_min  = STATUS_MAX + 10; // TODO
-	const uint8_t h_min  = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
-	const term_t  sz_max = USHRT_MAX;
+	const int8_t error = -1;
+	const bool line_height = 1;
+	const term_t w_min = STATUS_MAX + 10; // TODO
+	const uint8_t h_min = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
+	const term_t sz_max = USHRT_MAX;
 
 	struct winsize term;
 
@@ -59,10 +58,10 @@ void flush_window(f_mtdt* Buff)
 
 void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 {
-	term_t fname_max = get_term_sz(Buff, 'X') - Ui.icon_width;
+	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - Ui.icon_width);
 
 	buff_t indicator_width = (buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
-	- Ui.icon_width - strlen(Buff->status));
+	- Ui.icon_width - STATUS_MAX);
 
 	ANSI_INVERT();
 
@@ -82,7 +81,7 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	}
 	else
 	{
-		for(term_t char_i = Buff->fname_len_i - get_term_sz(Buff, 'X') + CUR_SZ
+		for(term_t char_i = (term_t) Buff->fname_len_i - get_term_sz(Buff, 'X') + CUR_SZ
 		+ Ui.icon_width; char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
@@ -92,7 +91,8 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	}
 
 	// The lower part with the "chars in the current line" indicator.
-	printf("%s%*s", Ui.half_icon, (buff_t) strlen(Buff->status), Buff->status);
+	printf("%s%.*s%*s", Ui.half_icon, STATUS_MAX, Buff->status,
+	(int) (STATUS_MAX - strlen(Buff->status)), " ");
 
 	if((ACT_LINE_LEN_I < Ui.text_x) || (CURSOR_VERTICAL_I < Ui.text_x))
 	{
@@ -109,8 +109,7 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 
 void lower_bar(f_mtdt* Buff)
 {
-	term_t horizontal_fill = (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
-
+	term_t horizontal_fill = (term_t) (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
 	const char key_binding[4][STATUS_MAX] =
 	{
 		"CTRL^D - delete a current line",
@@ -168,8 +167,8 @@ void render_window(f_mtdt* Buff)
 	Ui.lbar_h = (Buff->pane_toggled) ? TOGGLED_PANE_SZ : LBAR_SZ;
 
 	Ui.line_num_len = (uint8_t) strlen(Ui.line_num_str) + SPACE_SZ;
-	Ui.text_x       = get_term_sz(Buff, 'X') - Ui.line_num_len;
-	Ui.text_y       = get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h;
+	Ui.text_x = get_term_sz(Buff, 'X') - Ui.line_num_len;
+	Ui.text_y = get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h;
 
 	ANSI_RESET();
 
@@ -200,7 +199,7 @@ void print_line_num(buff_t line_i, uint8_t line_num_len, const bool act_line)
 
 void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 {
-	term_t move_up    = 0;
+	term_t move_up = 0;
 	term_t move_right = 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
@@ -232,7 +231,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 		move_up = (ACT_LINE_I < Ui.text_y) ?
 		(Ui.text_y - (term_t) ACT_LINE_I) : LBAR_SZ;
 
-		move_up += (Buff->pane_toggled) ? (TOGGLED_PANE_SZ - LBAR_SZ) : 0;
+		(Buff->pane_toggled) ? move_up += (TOGGLED_PANE_SZ - LBAR_SZ) : 0;
 	}
 	ANSI_CUR_RIGHT(move_right);
 	ANSI_CUR_UP(move_up);

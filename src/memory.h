@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdnoreturn.h>
 
 #define INDEX 1
 
@@ -18,7 +19,7 @@
 #define MEMBLK 128
 
 // Frees everything and exits with status code.
-_Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
+noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);

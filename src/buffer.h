@@ -18,7 +18,7 @@ typedef uint32_t buff_t;
 
 // Maximum length of the message displayed below the filename.
 #define STATUS_MAX 32
-#define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX)
+#define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - 1)
 
 // Provides more readable handling with indicators.
 #define INDEX 1
@@ -59,12 +59,12 @@ f_mtdt;
 #define ACT_LINE_LEN_I    Buff->line_len_i[ACT_LINE_I]
 #define CURSOR_VERTICAL_I (ACT_LINE_LEN_I - Buff->cusr_x)
 
-#define PREV_LINE_I       (ACT_LINE_I - 1)
-#define PREV_LINE         Buff->text[PREV_LINE_I]
-#define PREV_LINE_LEN_I   Buff->line_len_i[PREV_LINE_I]
+#define PREV_LINE_I     (ACT_LINE_I - 1)
+#define PREV_LINE       Buff->text[PREV_LINE_I]
+#define PREV_LINE_LEN_I Buff->line_len_i[PREV_LINE_I]
 
-#define LAST_LINE         Buff->text[Buff->lines_i]
-#define LAST_LINE_LEN_I   Buff->line_len_i[Buff->lines_i]
+#define LAST_LINE       Buff->text[Buff->lines_i]
+#define LAST_LINE_LEN_I Buff->line_len_i[Buff->lines_i]
 
 #define BUFFER_NOT_FULL      (Buff->chars_i  <  BUFF_MAX)
 #define CURSOR_X_SCROLLED    (Buff->cusr_x   >  0)
