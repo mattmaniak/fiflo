@@ -6,6 +6,7 @@ BIN_DIR = bin
 MAN_DIR = man
 INSTALL_DIR = /usr/bin
 
+CC =
 CFLAGS = -std=c11 -Os
 DEBUGFLAGS =
 
@@ -23,17 +24,18 @@ OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
 
 # Check and set the compiler.
 ifeq ($(INSTALL_DIR)/gcc, $(shell ls $(INSTALL_DIR)/gcc))
-CC = gcc
-CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align \
--Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls \
--Wnested-externs -Winline -Wno-long-long -Wconversion -Wstrict-prototypes
+	CC = gcc
+	CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align \
+	-Wwrite-strings -Wmissing-prototypes -Wmissing-declarations \
+	-Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wconversion \
+	-Wstrict-prototypes
 
 else ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
-CC = clang
-CFLAGS += -Weverything
+	CC = clang
+	CFLAGS += -Weverything
 
 else
-$(error Compilation driver was not found: gcc or clang is required.)
+	$(error Compilation driver was not found: gcc or clang is required.)
 endif
 
 # Compilation of object files depends on source files wnich depends on headers.

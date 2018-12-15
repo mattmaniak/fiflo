@@ -58,10 +58,10 @@ void flush_window(f_mtdt* Buff)
 
 void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 {
-	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - Ui.icon_width);
+	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - HALF_ICON_LEN);
 
 	buff_t indicator_width = (buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
-	- Ui.icon_width - STATUS_MAX);
+	- HALF_ICON_LEN - STATUS_MAX);
 
 	ANSI_INVERT();
 
@@ -69,20 +69,20 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	the upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
-	printf("\r%s", Ui.half_icon);
+	printf("\r%s", HALF_ICON);
 
 	if(Buff->fname_len_i < fname_max)
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s", Buff->fname, get_term_sz(Buff, 'X')
-		- Ui.icon_width - Buff->fname_len_i, " ");
+		- HALF_ICON_LEN - Buff->fname_len_i, " ");
 
 		WRAP_LINE();
 	}
 	else
 	{
 		for(term_t char_i = (term_t) Buff->fname_len_i - get_term_sz(Buff, 'X') + CUR_SZ
-		+ Ui.icon_width; char_i < Buff->fname_len_i; char_i++)
+		+ HALF_ICON_LEN; char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
 		}
@@ -91,7 +91,7 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	}
 
 	// The lower part with the "chars in the current line" indicator.
-	printf("%s%.*s%*s", Ui.half_icon, STATUS_MAX, Buff->status,
+	printf("%s%.*s%*s", HALF_ICON, STATUS_MAX, Buff->status,
 	(int) (STATUS_MAX - strlen(Buff->status)), " ");
 
 	if((ACT_LINE_LEN_I < Ui.text_x) || (CURSOR_VERTICAL_I < Ui.text_x))
@@ -136,13 +136,14 @@ void lower_bar(f_mtdt* Buff)
 
 void fill(f_mtdt* Buff, win_mtdt Ui)
 {
-	if((Buff->lines_i + INDEX) < Ui.text_y)
+	if(Buff->lines_i < (buff_t) (Ui.text_y - LBAR_SZ))
 	{
 		WRAP_LINE();
 		ANSI_INVERT();
 
 		// Fill the empty area below the text to position the lower bar.
-		for(buff_t line = Buff->lines_i + INDEX + 1; line < Ui.text_y; line++)
+		for(buff_t line = Buff->lines_i + INDEX;
+		line < (buff_t) (Ui.text_y - LBAR_SZ); line++)
 		{
 			// Just empty line num block but without the number.
 			printf("%*s", Ui.line_num_len - SPACE_SZ, " ");
@@ -154,21 +155,18 @@ void fill(f_mtdt* Buff, win_mtdt Ui)
 	// Else the lower bar will by positioned by the text.
 }
 
-void render_window(f_mtdt* Buff)
+void render_window(f_mtdt* Buff) // TODO: INITIALIZER
 {
 	win_mtdt Ui;
-
-	strcpy(Ui.half_icon, "|`` ");
-	Ui.icon_width = (uint8_t) strlen(Ui.half_icon);
 
 	// Snprinf isn't needed because the format specifier gives a warning.
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
 	Ui.lbar_h = (Buff->pane_toggled) ? TOGGLED_PANE_SZ : LBAR_SZ;
 
-	Ui.line_num_len = (uint8_t) strlen(Ui.line_num_str) + SPACE_SZ;
-	Ui.text_x = get_term_sz(Buff, 'X') - Ui.line_num_len;
-	Ui.text_y = get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h;
+	Ui.line_num_len = (uint8_t) (strlen(Ui.line_num_str) + SPACE_SZ);
+	Ui.text_x = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
+	Ui.text_y = (term_t) (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();
 
@@ -208,8 +206,8 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 
 	if(Buff->live_fname_edit)
 	{
-		move_up = get_term_sz(Buff, 'Y') - LBAR_SZ;
-		move_right = Buff->fname_len_i + 4; // 4 - LOGO_SZ TODO.
+		move_up = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
+		move_right = (term_t) (Buff->fname_len_i + HALF_ICON_LEN);
 	}
 	else
 	{
@@ -221,7 +219,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 		else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
 		{
 			// Last Ui.text_x chars are seen. Current line is scrolled, not cursor.
-			move_right = get_term_sz(Buff, 'X') - CUR_SZ;
+			move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ);
 		}
 		else
 		{
@@ -229,7 +227,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
 		}
 		move_up = (ACT_LINE_I < Ui.text_y) ?
-		(Ui.text_y - (term_t) ACT_LINE_I) : LBAR_SZ;
+		(term_t) (Ui.text_y - ACT_LINE_I) : LBAR_SZ;
 
 		(Buff->pane_toggled) ? move_up += (TOGGLED_PANE_SZ - LBAR_SZ) : 0;
 	}

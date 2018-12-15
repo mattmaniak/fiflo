@@ -34,7 +34,6 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 
 		case CTRL_O:
 			Buff->live_fname_edit = true;
-			break;
 	}
 	return Buff;
 }

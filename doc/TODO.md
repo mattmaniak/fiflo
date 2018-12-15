@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- alt+char handling,
 - rendering rework,
 - all escapes and formatting control chars,
 - improve the makefile,

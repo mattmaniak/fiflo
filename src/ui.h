@@ -9,7 +9,9 @@
 #define SLASH_SZ 1
 #define SPACE_SZ 1
 
-// TODO: IN WIN_MTDT.
+#define HALF_ICON     "|`` "
+#define HALF_ICON_LEN 4
+
 #define UBAR_SZ 2
 #define LBAR_SZ 1 // Must be equal 1 otherwise will break rendering a little.
 
@@ -41,10 +43,7 @@ typedef struct
 	uint8_t line_num_len;     // Dynamic width of the lines numbers.
 	term_t  text_x;           // Horizontal space for the text (width: chars).
 	term_t  text_y;           // Vertical space for the text (lines).
-	uint8_t ubar_h;           // Upper bar height (lines).
 	uint8_t lbar_h;           // Lower bar height (lines).
-	char    half_icon[8];     // Lower and upper parts are the same.
-	term_t  icon_width;       // Just strlen of a above one.
 }
 win_mtdt;
 
