@@ -35,17 +35,11 @@ sudo make uninstall
 make clean
 ```
 
-## Link the AddressSanitizer and some friends
+## Link the AddressSanitizer for memory errors handling
 ```
-make address
+make sanitize
 ```
-Warning! The program will consume much more memory. Also it will be slower.
-
-## Link the MemorySanitizer (only with clang)
-```
-make memory
-```
-Causes 1.5-2.5x slowdown.
+The program will consume much more memory. Also it will be slower.
 
 ## FAQ
 How can I contribute?

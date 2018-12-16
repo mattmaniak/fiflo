@@ -4,12 +4,13 @@
 
 f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 {
+	const bool nul_sz = 1;
 	const bool slash_sz = 1;
 	uint16_t arg_len = (uint16_t) strlen(arg);
 
 	bool arg_non_empty = arg_len > 0;
 	bool arg_as_abs_path = arg[0]  == '/';
-	bool arg_as_dir = (arg[arg_len - NUL_SZ] == '/') && (arg[arg_len] == '\0');
+	bool arg_as_dir = (arg[arg_len - nul_sz] == '/') && (arg[arg_len] == '\0');
 
 	if(arg_non_empty)
 	{
@@ -22,7 +23,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 
 	if(arg_as_abs_path)
 	{
-		if((arg_len + NUL_SZ) > PATH_MAX)
+		if((arg_len + nul_sz) > PATH_MAX)
 		{
 			fputs("Passed filename is too long.\n", stderr);
 			free_buff_exit(Buff, 1);
@@ -62,12 +63,13 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 
 f_mtdt* read_file(f_mtdt* Buff)
 {
+	const bool nul_sz = 1;
 	FILE* textfile = fopen(Buff->fname, "r");
 	char ch;
 
 	if(textfile != NULL)
 	{
-		if(Buff->fname[Buff->fname_len_i - NUL_SZ] == '/')
+		if(Buff->fname[Buff->fname_len_i - nul_sz] == '/')
 		{
 			SET_STATUS("current directory set");
 			fclose(textfile);

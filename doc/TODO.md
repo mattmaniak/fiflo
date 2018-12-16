@@ -2,6 +2,7 @@
 ## delete one if done:
 - alt+char handling,
 - rendering rework,
+- simplify file.c,
 - all escapes and formatting control chars,
 - improve the makefile,
 - full text horizontal scroll,

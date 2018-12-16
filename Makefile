@@ -1,20 +1,19 @@
 TARGET = fiflo
-CC =
-CFLAGS = -std=c11 -Os
-DEBUGFLAGS =
-
-ASAN_FLAGS = -fsanitize=address -fsanitize=undefined \
--fsanitize-address-use-after-scope
-
-MSAN_FLAGS = -fsanitize=memory -fno-omit-frame-pointer \
--fsanitize-memory-track-origins
 
 SRC_DIR = src
+INC_DIR = $(SRC_DIR)/include
 OBJ_DIR = obj
 BIN_DIR = bin
 MAN_DIR = man
 INSTALL_DIR = /usr/bin
 MAN_INSTALL_DIR = /usr/share/man/man1
+
+CC =
+CFLAGS = -std=c11 -Os -I$(INC_DIR)
+
+ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
+-fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \
+-fstack-protector-all
 
 # All in the ./obj depending on the ./src.
 OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
@@ -38,7 +37,7 @@ endif
 # "$@" - alias to name on the left of ':', "$^" - on the right.
 # "$<" is a first item in the dependencies list.
 # "-c" generates the object file.
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/%.h
 	@mkdir -p $(OBJ_DIR)
 	$(CC) -c -o $@ $< \
 	$(CFLAGS) \
@@ -47,13 +46,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 $(TARGET): $(OBJ)
 	mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
-	$(CFLAGS) $(DEBUGFLAGS)
+	$(CFLAGS) \
+	$(DEBUGFLAGS)
 
-address: DEBUGFLAGS = $(ASAN_FLAGS)
-address: $(TARGET)
-
-memory: DEBUGFLAGS = $(MSAN_FLAGS)
-memory: $(TARGET)
+sanitize: DEBUGFLAGS = $(ASAN_FLAGS)
+sanitize: $(TARGET)
 
 install: $(TARGET)
 	sudo cp $(BIN_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)
