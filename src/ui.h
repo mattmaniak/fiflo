@@ -3,6 +3,8 @@
 
 // Data about a current viewport.
 
+#include <stdio.h>
+
 // Some semantic macros.
 #define CUR_SZ   1
 #define LF_SZ    1
@@ -36,7 +38,6 @@
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
 #pragma pack(push, 1)
-
 typedef struct
 {
 	char   line_num_str[16]; // Place for string of the highest line number.
@@ -47,7 +48,6 @@ typedef struct
 	term_t pane_h;           // As above but toggled.
 }
 win_mtdt;
-
 #pragma pack(pop)
 
 #endif

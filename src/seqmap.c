@@ -1,6 +1,6 @@
 #include "buffer.h"
-#include "charmap.h"
 #include "seqmap.h"
+#include "charmap.h"
 
 f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8])
 {

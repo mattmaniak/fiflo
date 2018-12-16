@@ -2,16 +2,13 @@
 #define WINDOW_H
 // Contains all the elements that will be rendered.
 
-#include <limits.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
 // buffer.h
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
-// text_processing.h
+// render.h
 extern buff_t set_start_line(f_mtdt* Buff);
 extern void scroll_line_x(f_mtdt* Buff, win_mtdt Ui);
 extern void print_actual_line(f_mtdt* Buff, win_mtdt Ui);

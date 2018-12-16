@@ -30,6 +30,4 @@
 #define CTRL_DASH          31  // Unit separator.
 #define BACKSPACE          127 // Delete that is really backspace.
 
-#define NUL_SZ 1
-
 #endif

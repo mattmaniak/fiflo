@@ -3,7 +3,6 @@
 
 // All the unseen magic that will happen when You insert the char.
 
-#include <stdio.h>
 #include <stdlib.h>
 
 // edit.h

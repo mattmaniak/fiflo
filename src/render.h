@@ -3,12 +3,6 @@
 
 // Renders the text itself. Cares about scrolling.
 
-#include <stdio.h>
-
-#define CUR_SZ 1
-#define LF_SZ  1
-#define INDEX  1
-
 #define BOLD_LINE_NUM true
 #define THIN_LINE_NUM false
 

@@ -16,16 +16,13 @@ typedef uint32_t buff_t;
 // Max amount of chars: (16 MB - 1). Newline is also the char.
 #define BUFF_MAX (UINT_MAX / 256)
 
-// Maximum length of the message displayed below the filename.
-#define STATUS_MAX 32
+#define STATUS_MAX      32
 #define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - 1)
 
-// Provides more readable handling with indicators.
 #define INDEX 1
 
 #pragma pack(push, 2)
 #pragma pack(push, 1)
-
 typedef struct
 {
 	// Modes.
@@ -49,7 +46,6 @@ typedef struct
 	char     status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 f_mtdt;
-
 #pragma pack(pop)
 #pragma pack(pop)
 

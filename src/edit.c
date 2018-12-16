@@ -1,9 +1,10 @@
-#include "ascii.h"
 #include "buffer.h"
+#include "ascii.h"
 #include "edit.h"
 
 f_mtdt* parse_key(f_mtdt* Buff, char key)
 {
+	const bool nul_sz = 1;
 	enum {seq_len = 8};
 	static char key_sequence[seq_len];
 	static uint8_t char_i;
@@ -20,7 +21,7 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	if(Buff->key_sequence)
 	{
 		key_sequence[char_i] = key;
-		(char_i < (seq_len - NUL_SZ)) ? char_i++ : 0;
+		(char_i < (seq_len - nul_sz)) ? char_i++ : 0;
 
 		key_sequence[char_i] = '\0';
 
@@ -91,7 +92,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 {
 	const bool prev = 1;
-	buff_t     char_i;
+	buff_t char_i;
 
 	switch(direction)
 	{

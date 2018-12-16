@@ -1,5 +1,5 @@
-#include "ascii.h"
 #include "buffer.h"
+#include "ascii.h"
 #include "file.h"
 
 f_mtdt* set_fname(f_mtdt* Buff, const char* arg)

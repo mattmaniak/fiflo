@@ -6,7 +6,6 @@
 #include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/file.h>
 #include <unistd.h>
 
@@ -17,7 +16,7 @@ extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 extern void safer_free(void* ptr);
 
-// text_processing.h
+// charmap.h
 extern f_mtdt* printable_char(f_mtdt* Buff, char key);
 extern f_mtdt* linefeed(f_mtdt* Buff);
 extern f_mtdt* backspace(f_mtdt* Buff);

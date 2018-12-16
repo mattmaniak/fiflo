@@ -1,9 +1,9 @@
 #ifdef __linux__
 
-#include "ascii.h"
 #include "buffer.h"
-#include "memory.h"
+#include "ascii.h"
 #include "fiflo.h"
+#include "memory.h"
 
 f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {

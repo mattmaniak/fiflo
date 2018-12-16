@@ -7,8 +7,6 @@
 #include <stdlib.h>
 #include <stdnoreturn.h>
 
-#define INDEX 1
-
 // Bytes of the memory width. Depends on an architecture. Eg. 8 bytes.
 #define ADDR_SZ sizeof(Buff->text)
 

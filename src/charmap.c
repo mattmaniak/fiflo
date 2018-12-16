@@ -1,5 +1,5 @@
-#include "ascii.h"
 #include "buffer.h"
+#include "ascii.h"
 #include "charmap.h"
 
 f_mtdt* key_action(f_mtdt* Buff, char key)
@@ -99,8 +99,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 		{
 			Buff = move_lines_forward(Buff);
 		}
-		// Cursor is at the end of the line.
-		else if(CURSOR_Y_SCROLLED)
+		else if(CURSOR_Y_SCROLLED) // Cursor is to the end of the line.
 		{
 			Buff = copy_lines_mem_forward(Buff);
 		}
@@ -115,13 +114,11 @@ f_mtdt* backspace(f_mtdt* Buff)
 	{
 		Buff = delete_char(Buff);
 	}
-	// Deletes the last empty line.
 	else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
 	{
 		Buff = delete_last_empty_line(Buff);
 	}
-	// Replaces the linefeed with the terminator.
-	ACT_LINE[ACT_LINE_LEN_I] = '\0';
+	ACT_LINE[ACT_LINE_LEN_I] = '\0'; // Linefeed to the terminator.
 	SET_STATUS("edited");
 
 	return Buff;

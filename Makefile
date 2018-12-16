@@ -1,11 +1,4 @@
 TARGET = fiflo
-
-SRC_DIR = src
-OBJ_DIR = obj
-BIN_DIR = bin
-MAN_DIR = man
-INSTALL_DIR = /usr/bin
-
 CC =
 CFLAGS = -std=c11 -Os
 DEBUGFLAGS =
@@ -16,19 +9,22 @@ ASAN_FLAGS = -fsanitize=address -fsanitize=undefined \
 MSAN_FLAGS = -fsanitize=memory -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins
 
-# TODO: DEPENDENCIES.
-DEPS = $(TARGET).h
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
+MAN_DIR = man
+INSTALL_DIR = /usr/bin
+MAN_INSTALL_DIR = /usr/share/man/man1
 
-# All in ./obj depending on the ./src.
+# All in the ./obj depending on the ./src.
 OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
 
-# Check and set the compiler.
+# Check and set the Compilation driver.
 ifeq ($(INSTALL_DIR)/gcc, $(shell ls $(INSTALL_DIR)/gcc))
 	CC = gcc
-	CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align \
-	-Wwrite-strings -Wmissing-prototypes -Wmissing-declarations \
-	-Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wconversion \
-	-Wstrict-prototypes
+	CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wno-long-long \
+	-Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wconversion \
+	-Winline -Wredundant-decls -Wnested-externs -Wcast-align -Wstrict-prototypes
 
 else ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
 	CC = clang
@@ -42,7 +38,7 @@ endif
 # "$@" - alias to name on the left of ':', "$^" - on the right.
 # "$<" is a first item in the dependencies list.
 # "-c" generates the object file.
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/$(DEPS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 	@mkdir -p $(OBJ_DIR)
 	$(CC) -c -o $@ $< \
 	$(CFLAGS) \
@@ -61,14 +57,14 @@ memory: $(TARGET)
 
 install: $(TARGET)
 	sudo cp $(BIN_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)
-	sudo $(RM) /usr/share/man/man1/$(TARGET).1
-	sudo cp $(MAN_DIR)/$(TARGET).1 /usr/share/man/man1/$(TARGET).1
-	sudo gzip /usr/share/man/man1/$(TARGET).1
+	sudo $(RM) $(MAN_INSTALL_DIR)/$(TARGET).1
+	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INSTALL_DIR)/$(TARGET).1
+	sudo gzip $(MAN_INSTALL_DIR)/$(TARGET).1
 
 uninstall:
 	sudo $(RM) \
 	$(INSTALL_DIR)/$(TARGET) \
-	/usr/share/man/man1/$(TARGET).1.gz
+	$(MAN_INSTALL_DIR)/$(TARGET).1.gz
 
 .PHONY: clean
 

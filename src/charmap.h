@@ -3,7 +3,6 @@
 
 // Currently supported ASCII characters and their actions inside.
 
-#include <stdio.h>
 #include <stdnoreturn.h>
 
 // memory.h

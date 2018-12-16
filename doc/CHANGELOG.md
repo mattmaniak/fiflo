@@ -16,7 +16,8 @@ files use git-show or git-log.
 - permament line numbers blocks,
 - a few Common User Access bindings,
 - lower pane with keybindings,
-- private mode deleted, keyboard shortcuts also don't generete signals now.
+- private mode deleted, keyboard shortcuts also don't generete signals now,
+- more efficient compilation.
 
 ### v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,
