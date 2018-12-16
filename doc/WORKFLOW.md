@@ -25,7 +25,7 @@ provide updated code on the "develop" branch.
 - visually align defines and structures declarations,
 - single line should not exceed 80 chars printable chars,
 - insert short TODOs near thing to fix as uppercase comments,
-- write doc comments above declarations, statements etc.,
+- write doc comments,
 - keep docs up-to-date with the code in stable releases,
 
 ## Versions

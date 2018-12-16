@@ -58,10 +58,10 @@ void flush_window(f_mtdt* Buff)
 
 void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 {
-	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - HALF_ICON_LEN);
+	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - ICON_LEN);
 
 	buff_t indicator_width = (buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
-	- HALF_ICON_LEN - STATUS_MAX);
+	- ICON_LEN - STATUS_MAX);
 
 	ANSI_INVERT();
 
@@ -69,20 +69,20 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	the upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
-	printf("\r%s", HALF_ICON);
+	printf("\r%s", ICON);
 
 	if(Buff->fname_len_i < fname_max)
 	{
 		// Whole filename will be displayed.
 		printf("%s%*s", Buff->fname, get_term_sz(Buff, 'X')
-		- HALF_ICON_LEN - Buff->fname_len_i, " ");
+		- ICON_LEN - Buff->fname_len_i, " ");
 
 		WRAP_LINE();
 	}
 	else
 	{
 		for(term_t char_i = (term_t) (Buff->fname_len_i - get_term_sz(Buff, 'X')
-		+ CUR_SZ + HALF_ICON_LEN); char_i < Buff->fname_len_i; char_i++)
+		+ CUR_SZ + ICON_LEN); char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
 		}
@@ -91,7 +91,7 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	}
 
 	// The lower part with the "chars in the current line" indicator.
-	printf("%s%.*s%*s", HALF_ICON, STATUS_MAX, Buff->status,
+	printf("%s%.*s%*s", ICON, STATUS_MAX, Buff->status,
 	(int) (STATUS_MAX - strlen(Buff->status)), " ");
 
 	if((ACT_LINE_LEN_I < Ui.text_x) || (CURSOR_VERTICAL_I < Ui.text_x))
@@ -184,32 +184,28 @@ void print_line_num(buff_t line_i, term_t line_num_len, const bool act_line)
 {
 	if(!act_line)
 	{
-		// Higlight a current line.
-		ANSI_INVERT();
+		ANSI_INVERT(); // Higlight a current line.
 	}
-	printf("%*d", line_num_len - SPACE_SZ, line_i + INDEX);
+	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
 
 	ANSI_RESET();
-
-	// Padding.
-	putchar(' ');
+	putchar(' '); // Whitespace adding.
 }
 
 void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 {
-	term_t move_up = 0;
-	term_t move_right = 0;
+	// Set by default to a filename edit.
+	term_t move_up = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
+	term_t move_right = (term_t) (ICON_LEN + Buff->fname_len_i);
+
+	(move_right >= get_term_sz(Buff, 'X')) ?
+	move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ) : 0;
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
 	ANSI_SAVE_CUR_POS();
 
-	if(Buff->live_fname_edit)
-	{
-		move_up = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
-		move_right = (term_t) (Buff->fname_len_i + HALF_ICON_LEN);
-	}
-	else
+	if(!Buff->live_fname_edit)
 	{
 		if(ACT_LINE_LEN_I < Ui.text_x)
 		{
@@ -227,7 +223,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
 		}
 		move_up = (ACT_LINE_I < Ui.text_y) ?
-		(term_t) ((Ui.text_y - ACT_LINE_I) + Ui.lbar_h - LBAR_SZ) : Ui.lbar_h;
+		(term_t) ((Ui.text_y - ACT_LINE_I - INDEX) + Ui.lbar_h) : Ui.lbar_h;
 	}
 	ANSI_CUR_RIGHT(move_right);
 	ANSI_CUR_UP(move_up);

@@ -9,8 +9,8 @@
 #define SLASH_SZ 1
 #define SPACE_SZ 1
 
-#define HALF_ICON     "|`` "
-#define HALF_ICON_LEN 4
+#define ICON     "|`` " // The upper and lower parts are the same, so it's half.
+#define ICON_LEN 4
 
 #define UBAR_SZ 2
 #define LBAR_SZ 1 // Must be equal 1, otherwise will break rendering a little.
