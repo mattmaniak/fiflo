@@ -13,15 +13,15 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length");
 
-	Buff->chars_i  = 0;
-	Buff->lines_i  = 0;
-	Buff->cusr_x   = 0;
-	Buff->cusr_y   = 0;
+	Buff->chars_i = 0;
+	Buff->lines_i = 0;
+	Buff->cusr_x = 0;
+	Buff->cusr_y = 0;
 	ACT_LINE_LEN_I = 0;
 
 	Buff->live_fname_edit = false;
-	Buff->key_sequence    = false;
-	Buff->pane_toggled    = false;
+	Buff->key_sequence = false;
+	Buff->pane_toggled = false;
 
 	Buff = set_fname(Buff, arg);
 

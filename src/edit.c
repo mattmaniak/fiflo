@@ -20,12 +20,12 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	if(Buff->key_sequence)
 	{
 		key_sequence[char_i] = key;
-		// char_i += (char_i < (seq_len - NUL_SZ)) ? 1 : 0;
 		(char_i < (seq_len - NUL_SZ)) ? char_i++ : 0;
+
 		key_sequence[char_i] = '\0';
 
 		Buff = recognize_sequence(Buff, key_sequence);
-		char_i = (!Buff->key_sequence) ? 0 : char_i;
+		(!Buff->key_sequence) ? char_i = 0 : 0;
 	}
 	else if(Buff->live_fname_edit)
 	{

@@ -19,7 +19,7 @@
 extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 
 // window.h
-extern void print_line_num(buff_t line, uint8_t line_num_len, const bool mode);
+extern void print_line_num(buff_t line, term_t line_num_len, const bool mode);
 
 // Returns value of hidden lines.
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui);

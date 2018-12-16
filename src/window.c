@@ -81,8 +81,8 @@ void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 	}
 	else
 	{
-		for(term_t char_i = (term_t) Buff->fname_len_i - get_term_sz(Buff, 'X') + CUR_SZ
-		+ HALF_ICON_LEN; char_i < Buff->fname_len_i; char_i++)
+		for(term_t char_i = (term_t) (Buff->fname_len_i - get_term_sz(Buff, 'X')
+		+ CUR_SZ + HALF_ICON_LEN); char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
 		}
@@ -155,14 +155,14 @@ void fill(f_mtdt* Buff, win_mtdt Ui)
 	// Else the lower bar will by positioned by the text.
 }
 
-void render_window(f_mtdt* Buff) // TODO: INITIALIZER
+void render_window(f_mtdt* Buff)
 {
 	win_mtdt Ui;
 
-	// Snprinf isn't needed because the format specifier gives a warning.
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
-	Ui.lbar_h = (Buff->pane_toggled) ? TOGGLED_PANE_SZ : LBAR_SZ;
+	Ui.pane_h = TOGGLED_PANE_SZ;
+	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
 	Ui.line_num_len = (uint8_t) (strlen(Ui.line_num_str) + SPACE_SZ);
 	Ui.text_x = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
@@ -180,7 +180,7 @@ void render_window(f_mtdt* Buff) // TODO: INITIALIZER
 	set_cursor_pos(Buff, Ui);
 }
 
-void print_line_num(buff_t line_i, uint8_t line_num_len, const bool act_line)
+void print_line_num(buff_t line_i, term_t line_num_len, const bool act_line)
 {
 	if(!act_line)
 	{
@@ -227,9 +227,7 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
 		}
 		move_up = (ACT_LINE_I < Ui.text_y) ?
-		(term_t) (Ui.text_y - ACT_LINE_I) : LBAR_SZ;
-
-		(Buff->pane_toggled) ? move_up += (TOGGLED_PANE_SZ - LBAR_SZ) : 0;
+		(term_t) ((Ui.text_y - ACT_LINE_I) + Ui.lbar_h - LBAR_SZ) : Ui.lbar_h;
 	}
 	ANSI_CUR_RIGHT(move_right);
 	ANSI_CUR_UP(move_up);
