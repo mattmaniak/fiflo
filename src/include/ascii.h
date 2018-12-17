@@ -28,6 +28,6 @@
 #define CTRL_RIGHT_BRACKET 29  // Group separator.
 #define CTRL_CARRET        30  // Record separator.
 #define CTRL_DASH          31  // Unit separator.
-#define BACKSPACE          127 // Delete that is really backspace.
+#define BACKSPACE          127 // Delete. Backspace for real.
 
 #endif

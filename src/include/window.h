@@ -1,12 +1,14 @@
 #ifndef WINDOW_H
 #define WINDOW_H
+
 // Contains all the elements that will be rendered.
 
+#include <stdnoreturn.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
 // buffer.h
-extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
+extern noreturn void free_buff_exit(f_mtdt* Buff, const bool code);
 
 // render.h
 extern buff_t set_start_line(f_mtdt* Buff);

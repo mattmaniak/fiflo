@@ -2,43 +2,6 @@
 #include "ascii.h"
 #include "edit.h"
 
-f_mtdt* parse_key(f_mtdt* Buff, char key)
-{
-	const bool nul_sz = 1;
-	enum {seq_len = 8};
-	static char key_sequence[seq_len];
-	static uint8_t char_i;
-
-	if((key == CTRL_LEFT_BRACKET) && (!Buff->live_fname_edit))
-	{
-
-#ifndef VALUES_INSTEAD_OF_ACTIONS
-		Buff->key_sequence = true;
-#endif
-
-		char_i = 0;
-	}
-	if(Buff->key_sequence)
-	{
-		key_sequence[char_i] = key;
-		(char_i < (seq_len - nul_sz)) ? char_i++ : 0;
-
-		key_sequence[char_i] = '\0';
-
-		Buff = recognize_sequence(Buff, key_sequence);
-		(!Buff->key_sequence) ? char_i = 0 : 0;
-	}
-	else if(Buff->live_fname_edit)
-	{
-		Buff = edit_fname(Buff, key);
-	}
-	else
-	{
-		Buff = key_action(Buff, key);
-	}
-	return Buff;
-}
-
 f_mtdt* delete_last_line(f_mtdt* Buff)
 {
 	safer_free(LAST_LINE);

@@ -4,6 +4,7 @@
 // All the unseen magic that will happen when You insert the char.
 
 #include <stdlib.h>
+#include <stdnoreturn.h>
 
 // edit.h
 extern f_mtdt* key_action(f_mtdt* Buff, char key);
@@ -16,7 +17,7 @@ extern f_mtdt* save_file(f_mtdt* Buff);
 extern f_mtdt* edit_fname(f_mtdt* Buff, char key);
 
 // memory.h
-extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
+extern noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 extern void safer_free(void* ptr);
 extern char* extend_line_mem(f_mtdt* Buff, buff_t line_i);
@@ -26,9 +27,6 @@ extern f_mtdt* extend_lines_array_mem(f_mtdt* Buff);
 extern f_mtdt* shrink_lines_array_mem(f_mtdt* Buff);
 extern f_mtdt* copy_lines_mem_forward(f_mtdt* Buff);
 extern f_mtdt* copy_lines_mem_backward(f_mtdt* Buff);
-
-// Saves the last pressed key to the temponary buffer and analyzes it.
-f_mtdt* parse_key(f_mtdt* Buff, char key);
 
 // As in the name.
 f_mtdt* delete_last_line(f_mtdt* Buff);

@@ -136,7 +136,7 @@ void lower_bar(f_mtdt* Buff)
 
 void fill(f_mtdt* Buff, win_mtdt Ui)
 {
-	if(Buff->lines_i < (buff_t) (Ui.text_y - LBAR_SZ))
+	if((Buff->lines_i + INDEX) < (buff_t) Ui.text_y)
 	{
 		WRAP_LINE();
 		ANSI_INVERT();
@@ -207,14 +207,9 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 
 	if(!Buff->live_fname_edit)
 	{
-		if(ACT_LINE_LEN_I < Ui.text_x)
+		if((ACT_LINE_LEN_I - Ui.text_x) < Buff->cusr_x)
 		{
-			// No horizontal scrolling.
-			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
-		}
-		else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
-		{
-			// Last Ui.text_x chars are seen. Current line is scrolled, not cursor.
+			// Current line is scrolled, not cursor.
 			move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ);
 		}
 		else

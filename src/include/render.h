@@ -3,6 +3,8 @@
 
 // Renders the text itself. Cares about scrolling.
 
+#include <stdnoreturn.h>
+
 #define BOLD_LINE_NUM true
 #define THIN_LINE_NUM false
 
@@ -10,7 +12,7 @@
 #define ANOTHER_LINE       false
 
 // buffer.h
-extern _Noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
+extern noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 
 // window.h
 extern void print_line_num(buff_t line, term_t line_num_len, const bool mode);
