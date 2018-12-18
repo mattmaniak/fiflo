@@ -1,6 +1,6 @@
-#include "buffer.h"
-#include "ui.h"
-#include "render.h"
+#include "include/buffer.h"
+#include "include/ui.h"
+#include "include/render.h"
 
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)
 {

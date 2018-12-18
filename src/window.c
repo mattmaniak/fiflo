@@ -1,6 +1,6 @@
-#include "buffer.h"
-#include "ui.h"
-#include "window.h"
+#include "include/buffer.h"
+#include "include/ui.h"
+#include "include/window.h"
 
 term_t get_term_sz(f_mtdt* Buff, char axis)
 {

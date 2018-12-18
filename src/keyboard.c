@@ -1,6 +1,6 @@
-#include "ascii.h"
-#include "buffer.h"
-#include "keyboard.h"
+#include "include/ascii.h"
+#include "include/buffer.h"
+#include "include/keyboard.h"
 
 char getch(f_mtdt* Buff)
 {

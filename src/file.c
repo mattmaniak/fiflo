@@ -1,6 +1,6 @@
-#include "buffer.h"
-#include "ascii.h"
-#include "file.h"
+#include "include/buffer.h"
+#include "include/ascii.h"
+#include "include/file.h"
 
 f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 {

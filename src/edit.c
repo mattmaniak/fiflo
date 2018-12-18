@@ -1,6 +1,6 @@
-#include "buffer.h"
-#include "ascii.h"
-#include "edit.h"
+#include "include/buffer.h"
+#include "include/ascii.h"
+#include "include/edit.h"
 
 f_mtdt* delete_last_line(f_mtdt* Buff)
 {
