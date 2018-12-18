@@ -3,7 +3,12 @@
 
 // Some shit that starts the program.
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdnoreturn.h>
+
+// memory.h
+extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 
 // keyboard.h
 extern char getch(f_mtdt* Buff);

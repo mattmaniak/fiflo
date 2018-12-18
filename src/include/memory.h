@@ -7,23 +7,11 @@
 #include <stdlib.h>
 #include <stdnoreturn.h>
 
-// Bytes of the memory width. Depends on an architecture. Eg. 8 bytes.
-#define ADDR_SZ sizeof(Buff->text)
-
-// Aligned initial memblk for a new line.
-#define INIT_MEMBLK ADDR_SZ
-
-// Must be >= 16 and dividable by 8.
-#define MEMBLK 128
-
 // Frees everything and exits with status code.
 noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
-
-// Frees and sets the pointer to NULL.
-void safer_free(void* ptr);
 
 // Allocs next memory block for chars in a line if needed.
 char* extend_line_mem(f_mtdt* Buff, buff_t line_i);

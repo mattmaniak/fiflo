@@ -4,7 +4,7 @@
 
 f_mtdt* delete_last_line(f_mtdt* Buff)
 {
-	safer_free(LAST_LINE);
+	free(LAST_LINE);
 
 	Buff->lines_i--;
 	Buff = shrink_lines_array_mem(Buff);
@@ -104,7 +104,7 @@ f_mtdt* move_lines_forward(f_mtdt* Buff)
 
 f_mtdt* delete_last_empty_line(f_mtdt* Buff)
 {
-	safer_free(ACT_LINE);
+	free(ACT_LINE);
 
 	Buff->lines_i--;
 	ACT_LINE = shrink_act_line_mem(Buff);

@@ -110,7 +110,7 @@ f_mtdt* cursor_down(f_mtdt* Buff)
 		else
 		{
 			// Ignore the linefeed or no.
-			Buff->cusr_x = (CURSOR_Y_SCROLLED) ? 1 : 0;
+			(CURSOR_Y_SCROLLED) ? Buff->cusr_x = 1 : 0;
 		}
 	}
 	return Buff;

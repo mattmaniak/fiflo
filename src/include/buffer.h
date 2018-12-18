@@ -49,6 +49,10 @@ f_mtdt;
 #pragma pack(pop)
 #pragma pack(pop)
 
+#define ADDR_SZ     sizeof(Buff->text) // Bytes of the memory width.
+#define INIT_MEMBLK ADDR_SZ // Aligned initial memblk for a new line.
+#define MEMBLK      128     // Must be >= 16 and dividable by 8.
+
 // Placeholders. Note that "_i" means "index".
 #define ACT_LINE_I        (Buff->lines_i - Buff->cusr_y)
 #define ACT_LINE          Buff->text[ACT_LINE_I]

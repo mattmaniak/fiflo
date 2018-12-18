@@ -55,7 +55,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		{
 			Buff->fname[strlen(cw_dir) + char_i + slash_sz] = arg[char_i];
 		}
-		safer_free(cw_dir);
+		free(cw_dir);
 	}
 	Buff->fname_len_i = (uint16_t) strlen(Buff->fname);
 	return Buff;

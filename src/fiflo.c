@@ -2,17 +2,25 @@
 
 #include "buffer.h"
 #include "ascii.h"
-#include "memory.h"
 #include "fiflo.h"
 
 f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {
 	Buff->text = malloc(ADDR_SZ);
-	chk_ptr(Buff, Buff->text, "malloc the array with lines");
 
+	if(Buff->text == NULL)
+	{
+		fputs("Can't malloc the array with lines.", stderr);
+		exit(1);
+	}
 	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
-	chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length");
 
+	if(Buff->line_len_i == NULL)
+	{
+		fputs("Can't malloc the array with lines length.", stderr);
+		free(Buff->text);
+		exit(1);
+	}
 	Buff->chars_i = 0;
 	Buff->lines_i = 0;
 	Buff->cusr_x = 0;
@@ -23,10 +31,16 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	Buff->key_sequence = false;
 	Buff->pane_toggled = false;
 
-	Buff = set_fname(Buff, arg);
-
 	ACT_LINE = malloc(ADDR_SZ);
-	chk_ptr(Buff, ACT_LINE, "malloc the first line");
+
+	if(ACT_LINE == NULL)
+	{
+		fputs("Can't malloc the array with lines length.", stderr);
+		free(Buff->text);
+		free(Buff->line_len_i);
+		exit(1);
+	}
+	Buff = set_fname(Buff, arg);
 
 	return Buff;
 }
@@ -55,8 +69,7 @@ void options(const char* arg)
 
 noreturn void run(const char* arg)
 {
-	// Initializer.
-	char pressed = '\0';
+	char pressed = '\0'; // Initializer.
 
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
 	chk_ptr(Buff, Buff, "malloc the metadata buffer");
@@ -64,8 +77,7 @@ noreturn void run(const char* arg)
 	Buff = init_buffer(Buff, arg);
 	Buff = read_file(Buff);
 
-	// The main program loop.
-	for(;;)
+	for(;;) // The main program loop.
 	{
 		Buff = parse_key(Buff, pressed);
 		render_window(Buff);
@@ -83,8 +95,7 @@ int main(const int argc, const char** argv)
 		exit(1);
 	}
 
-	// Sets the default basename and starts.
-	if(argv[1] == NULL)
+	if(argv[1] == NULL)	// Sets the default basename and starts.
 	{
 		run("");
 	}

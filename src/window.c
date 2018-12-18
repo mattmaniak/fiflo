@@ -6,7 +6,7 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 {
 	const int8_t error = -1;
 	const bool line_height = 1;
-	const term_t w_min = STATUS_MAX + 10; // TODO
+	const term_t w_min = STATUS_MAX + 16; // Generally works.
 	const uint8_t h_min = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
 	const term_t sz_max = USHRT_MAX;
 

@@ -5,11 +5,11 @@ noreturn void free_buff_exit(f_mtdt* Buff, const bool status)
 {
 	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
-		safer_free(Buff->text[line_i]);
+		free(Buff->text[line_i]);
 	}
-	safer_free(Buff->line_len_i);
-	safer_free(Buff->text);
-	safer_free(Buff);
+	free(Buff->line_len_i);
+	free(Buff->text);
+	free(Buff);
 
 	exit(status);
 }
@@ -21,12 +21,6 @@ void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
 		fprintf(stderr, "Can't %s.\n", err_msg);
 		free_buff_exit(Buff, 1);
 	}
-}
-
-void safer_free(void* ptr)
-{
-	free(ptr);
-	ptr = NULL;
 }
 
 char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
