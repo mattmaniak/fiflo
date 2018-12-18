@@ -135,9 +135,8 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 
 	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
-		printf("%.*s",
-		(CURSOR_Y_SCROLLED) ? ACT_LINE_LEN_I - LF_SZ : ACT_LINE_LEN_I,
-		ACT_LINE);
+		printf("%.*s", (CURSOR_Y_SCROLLED) ? ACT_LINE_LEN_I - LF_SZ :
+		ACT_LINE_LEN_I, ACT_LINE);
 	}
 	// Chars won't fits in the horizontal space.
 	else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)

@@ -7,7 +7,7 @@ User-friendly ASCII terminal-based text editor.
 - git,
 - make,
 - gcc or clang,
-- gzip (only for the installation).
+- gzip (only for an installation).
 
 ## Download, compile and run the current stable release
 ```

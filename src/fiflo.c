@@ -60,8 +60,8 @@ void options(const char* arg)
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo v2.2.0 (WIP)",
-		"(c) 2018 mattmaniak, MIT License",
+		"fiflo v2.2.0",
+		"(C) 2018 mattmaniak, MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
 		exit(0);
 	}
