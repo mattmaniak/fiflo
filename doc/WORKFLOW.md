@@ -7,7 +7,7 @@ https://gitlab.com/mattmaniak/fiflo.git (upstreamed)
 - master,
 - hotfix,
 - develop.
-Inspiraion: https://nvie.com/posts/a-successful-git-branching-model/.
+Inspiration: https://nvie.com/posts/a-successful-git-branching-model/.
 
 Everything connected with the development, tests etc. happens on the "develop".
 When everything is ok and the changelog is up-to-date content is merged without
@@ -20,20 +20,18 @@ any development commit. Everything is pushed between one or a few commits to
 provide updated code on the "develop" branch.
 
 ## Coding rules:
-- Allman-like brace style, indentation: hard tab (4 spaces wide),
+- Allman-like brace style, indentation: 1 hard tab (equal to 4 spaces),
 - only snake_case is allowed,
+- visually align defines and structures declarations,
 - single line should not exceed 80 chars printable chars,
 - insert short TODOs near thing to fix as uppercase comments,
-- write doc comments in .c files above statements, in .h at the right side.
-- visually align values of defines && structures' members,
+- write doc comments,
 - keep docs up-to-date with the code in stable releases,
-- function"s args names need to be shorter than variables' names.
 
 ## Versions
 Based on the https://semver.org.
 
 ## Testing
-Using LXTerminal daily. before the stable release, fiflo is tested with the
-native Linux tty. Correct rendering of the window depends on quirk emulators
+Daily with the LXTerminal. Before the stable release, fiflo is tested with the
+native Linux tty. Correct rendering of the window can depend on quirk emulators
 implementations.
-

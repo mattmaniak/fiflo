@@ -3,28 +3,26 @@
 .TP
 fiflo
 .SH SYNOPSIS
-fiflo [option]
+fiflo [basename/filename/option]
 .SH DESCRIPTION
-ASCII terminal-based text editor.
+User-friendly ASCII terminal-based text editor.
 .SH OPTIONS
 .TP
-.B <no_option>
-Set the filename to "<current_path>/noname.asdf".
-.TP
-.B basename
-Set the basename to "basename" using current path.
-.TP
-.B /dir/bname
-Set the filename to "/dir/bname".
-.TP
 .B -h, --help
-Show program help.
+Show a program help.
 .TP
 .B -v, --version
-Display information about the used version.
+Display information about a version You use.
 .SH SEE ALSO
 https://gitlab.com/mattmaniak/fiflo.git
 .SH BUGS
-Maybe.
+.TP
+.B Blinking
+Blinking window with a default tty. It's caused by the implementation wnich
+renders a full window everytime. On modern terminal emulators, the problem does
+not occur.
+.TP
+.B CTRL^[
+Next 3 chars will be ignored.
 .SH AUTHOR
 mattmaniak

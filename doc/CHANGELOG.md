@@ -7,6 +7,18 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
+### v2.2.0 (2018, December 18):
+- logo added,
+- inverted color UI,
+- vertically movable cursor,
+- fluid line numbers indicators,
+- actual line number highlight,
+- permament line numbers blocks,
+- a few Common User Access bindings,
+- lower pane with keybindings,
+- private mode deleted, keyboard shortcuts also don't generete signals now,
+- more efficient compilation.
+
 ### v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,
 - messages and the chars indicator in the upper bar,
@@ -48,7 +60,7 @@ files use git-show or git-log.
 
 ### v0.5.0-unstable (2018, July 1):
 (The last v0.y.z version and showup of the old program logic. Mostly insecure.
-Not merged with "master" so look for it with tags.)
+Not merged with "master" so look for it using tags.)
 - multiple lines writing && rendering,
 - file input/output operations,
 - man-page added,
@@ -93,4 +105,3 @@ Not merged with "master" so look for it with tags.)
 
 ### v0.0.0 (2018, May 27):
 - initial release (basic window rendering).
-

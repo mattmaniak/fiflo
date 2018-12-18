@@ -1,70 +1,69 @@
 TARGET = fiflo
 
-SDIR = src
-ODIR = obj
-MDIR = man
-BDIR = /usr/bin
+SRC_DIR = src
+INC_DIR = $(SRC_DIR)/include
+OBJ_DIR = obj
+BIN_DIR = bin
+MAN_DIR = man
+INSTALL_DIR = /usr/bin
+MAN_INSTALL_DIR = /usr/share/man/man1
 
-CFLAGS = -std=gnu99 -O3
+CC =
+CFLAGS = -std=c11 -Os -I$(INC_DIR)
 
-ifeq ($(BDIR)/clang, $(shell ls $(BDIR)/clang))
-CC = clang
-CFLAGS += -Weverything
+ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
+-fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \
+-fstack-protector-all
 
-else ifeq ($(BDIR)/gcc, $(shell ls $(BDIR)/gcc))
-CC = gcc
-CFLAGS += -Wall -Wextra
+# All in the ./obj depending on the ./src.
+OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
+
+# Check and set the Compilation driver.
+ifeq ($(INSTALL_DIR)/gcc, $(shell ls $(INSTALL_DIR)/gcc))
+	CC = gcc
+	CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wno-long-long \
+	-Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wconversion \
+	-Winline -Wredundant-decls -Wnested-externs -Wcast-align -Wstrict-prototypes
+
+else ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
+	CC = clang
+	CFLAGS += -Weverything
 
 else
-$(error Compiler not found: gcc or clang is required.)
+	$(error Compilation driver was not found: gcc or clang is required.)
 endif
-
-DEPS = $(TARGET).h
-
-OBJ = \
-$(ODIR)/$(TARGET).o \
-$(ODIR)/file.o \
-$(ODIR)/memory.o \
-$(ODIR)/render.o \
-$(ODIR)/text.o
 
 # Compilation of object files depends on source files wnich depends on headers.
 # "$@" - alias to name on the left of ':', "$^" - on the right.
 # "$<" is a first item in the dependencies list.
 # "-c" generates the object file.
-$(ODIR)/%.o: $(SDIR)/%.c $(SDIR)/$(DEPS)
-	@mkdir -p $(ODIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/%.h
+	@mkdir -p $(OBJ_DIR)
 	$(CC) -c -o $@ $< \
-	$(CFLAGS)
+	$(CFLAGS) \
 
 # Builds the binary by linking object files.
 $(TARGET): $(OBJ)
-	$(CC) -o $@ $^ \
-	$(CFLAGS)
-
-address: $(OBJ)
-	$(CC) -o $(TARGET) $^ \
+	mkdir -p $(BIN_DIR)
+	$(CC) -o $(BIN_DIR)/$@ $^ \
 	$(CFLAGS) \
-	-fsanitize=address
+	$(DEBUGFLAGS)
 
-memory: $(OBJ)
-	$(CC) -o $(TARGET) $^ \
-	$(CFLAGS) \
-	-fsanitize=memory -fPIE -pie \
-	-fno-omit-frame-pointer -fsanitize-memory-track-origins
+sanitize: DEBUGFLAGS = $(ASAN_FLAGS)
+sanitize: $(TARGET)
 
-install:
-	sudo cp $(TARGET) $(BDIR)/$(TARGET)
-	sudo cp $(MDIR)/$(TARGET).1 /usr/share/man/man1/$(TARGET).1
-	sudo gzip /usr/share/man/man1/$(TARGET).1
+install: $(TARGET)
+	sudo cp $(BIN_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)
+	sudo $(RM) $(MAN_INSTALL_DIR)/$(TARGET).1
+	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INSTALL_DIR)/$(TARGET).1
+	sudo gzip $(MAN_INSTALL_DIR)/$(TARGET).1
 
 uninstall:
 	sudo $(RM) \
-	$(BDIR)/$(TARGET) \
-	/usr/share/man/man1/$(TARGET).1.gz
+	$(INSTALL_DIR)/$(TARGET) \
+	$(MAN_INSTALL_DIR)/$(TARGET).1.gz
 
 .PHONY: clean
 
 clean:
-	$(RM) $(TARGET) -r $(ODIR)
-
+	$(RM) -r $(OBJ_DIR) $(BIN_DIR)

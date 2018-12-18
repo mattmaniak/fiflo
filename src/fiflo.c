@@ -1,155 +1,103 @@
 #ifdef __linux__
-#include "fiflo.h" // All typedefs are there.
 
-_Noreturn void free_all_exit(_Bool code, f_mtdt* Buff)
+#include "buffer.h"
+#include "ascii.h"
+#include "fiflo.h"
+
+f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {
-	for(buff_t line = 0; line <= Buff->lines; line++)
+	Buff->text = malloc(ADDR_SZ);
+
+	if(Buff->text == NULL)
 	{
-		free(Buff->text[line]);
-		Buff->text[line] = NULL;
+		fputs("Can't malloc the array with lines.", stderr);
+		exit(1);
 	}
-	free(Buff->text);
-	Buff->text = NULL;
+	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 
-	free(Buff->line_len);
-	Buff->line_len = NULL;
-
-	free(Buff);
-	Buff = NULL;
-
-	exit(code);
-}
-
-void ignore_sig(int sig_num)
-{
-	if(sig_num) {}
-}
-
-void chk_ptr(void* ptr, const char* err_msg, f_mtdt* Buff)
-{
-	if(!ptr)
+	if(Buff->line_len_i == NULL)
 	{
-		fprintf(stderr, "Can't %s, exit(1).\n", err_msg);
-		free_all_exit(1, Buff);
+		fputs("Can't malloc the array with lines length.", stderr);
+		free(Buff->text);
+		exit(1);
 	}
+	Buff->chars_i = 0;
+	Buff->lines_i = 0;
+	Buff->cusr_x = 0;
+	Buff->cusr_y = 0;
+	ACT_LINE_LEN_I = 0;
+
+	Buff->live_fname_edit = false;
+	Buff->key_sequence = false;
+	Buff->pane_toggled = false;
+
+	ACT_LINE = malloc(ADDR_SZ);
+
+	if(ACT_LINE == NULL)
+	{
+		fputs("Can't malloc the array with lines length.", stderr);
+		free(Buff->text);
+		free(Buff->line_len_i);
+		exit(1);
+	}
+	Buff = set_fname(Buff, arg);
+
+	return Buff;
 }
 
 void options(const char* arg)
 {
 	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 	{
-		printf("%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n",
-		"Usage: fiflo [option].",
+		printf("%s\n\n%s\n%s\n%s\n",
+		"Usage: fiflo [basename/filename/option].",
 
 		"Options:      Description:",
-		"<no_option>   Set the filename to \"/<current_path>/noname.asdf\".",
-		"basename      Set the basename to \"basename\" using current path.",
-		"/dir/bname    Set the filename to \"/dir/bname\"",
-		"-h, --help    Show program help.",
-		"-v, --version Display information about the used version.");
+		"-h, --help    Show a program help.",
+		"-v, --version Display information about a version You use.");
 		exit(0);
 	}
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo v2.1.0",
-		"https://gitlab.com/mattmaniak/fiflo.git",
-		"(C) 2018 mattmaniak under the MIT License.");
+		"fiflo v2.2.0",
+		"(C) 2018 mattmaniak, MIT License",
+		"https://gitlab.com/mattmaniak/fiflo.git");
 		exit(0);
 	}
 }
 
-char getch(void)
+noreturn void run(const char* arg)
 {
-	char key;
+	char pressed = '\0'; // Initializer.
 
-	struct termios old;
-	struct termios new;
-
-	// Put the state of the STDIN_FILENO into *old.
-	tcgetattr(STDIN_FILENO, &old);
-
-	// Create the copy of the old terminal settings to modify it's.
-	new = old;
-
-	// Disable buffered I/O and echo mode.
-	new.c_lflag &= ~(unsigned int) (ICANON | ECHO);
-
-	/* Immediately set the state of the STDIN_FILENO to the *new. Use new
-	terminal I/O settings. */
-	tcsetattr(STDIN_FILENO, TCSANOW, &new);
-
-	key = (char) getchar();
-
-	// Immediately restore the state of STDIN_FILENO to *new.
-	tcsetattr(STDIN_FILENO, TCSANOW, &old);
-
-	return key;
-}
-
-f_mtdt* init(const char* arg, f_mtdt* Buff)
-{
-	Buff = set_fname(arg, Buff);
-
-	Buff->text = malloc(sizeof(Buff->text));
-	chk_ptr(Buff->text, "malloc for an array that contains lines\0", Buff);
-
-	Buff->line_len = malloc(sizeof(Buff->line_len));
-	chk_ptr(Buff->line_len, "malloc for an array with lines length\0", Buff);
-
-	Buff->chars = 0;
-	Buff->lines = 0;
-	Buff->cusr_x = 0;
-
-	ACT_LN_LEN = 0;
-	ACT_LN = malloc(sizeof(Buff->text));
-
-	return Buff;
-}
-
-_Noreturn void run(const char* arg)
-{
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
-	chk_ptr(Buff, "malloc for a file metadata\0", Buff);
+	chk_ptr(Buff, Buff, "malloc the metadata buffer");
 
-	Buff = init(arg, Buff);
+	Buff = init_buffer(Buff, arg);
 	Buff = read_file(Buff);
 
-	// Initializer. Equal to the null terminator.
-	char pressed = 0;
-
-	// Main program loop.
-	for(;;)
+	for(;;) // The main program loop.
 	{
-		Buff = recognize_key(pressed, Buff);
-		window(Buff);
+		Buff = parse_key(Buff, pressed);
+		render_window(Buff);
 
-		pressed = getch();
+		pressed = getch(Buff);
 		flush_window(Buff);
 	}
 }
 
-int main(int argc, char** argv)
+int main(const int argc, const char** argv)
 {
-	// Catch CTRL^Z, CTRL^C and CTRL^\.
-	if(signal(SIGTSTP, ignore_sig) == SIG_ERR
-	|| signal(SIGINT, ignore_sig) == SIG_ERR
-	|| signal(SIGQUIT, ignore_sig) == SIG_ERR)
+	if(argc > 2)
 	{
-		fputs("Can't catch one of the signals, exit(1)\n", stderr);
+		fputs("Only one additional arg can be passed.\n", stderr);
 		exit(1);
 	}
 
-	if(argc != 1 && argc != 2)
+	if(argv[1] == NULL)	// Sets the default basename and starts.
 	{
-		fputs("Only one additional arg can be passed, exit(1).\n", stderr);
-		exit(1);
-	}
-
-	// Sets the default basename to "noname.asdf".
-	if(argv[1] == NULL)
-	{
-		run("noname.asdf\0");
+		run("");
 	}
 	else
 	{
@@ -159,6 +107,5 @@ int main(int argc, char** argv)
 }
 
 #else
-#error "Linux-based desktop is required."
+#error "GNU/Linux is required."
 #endif
-

@@ -1,23 +1,32 @@
-#include "fiflo.h"
+#include "buffer.h"
+#include "ascii.h"
 #include "file.h"
 
-f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
+f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 {
-	const _Bool slash_sz = 1;
+	const bool nul_sz = 1;
+	const bool slash_sz = 1;
+	uint16_t arg_len = (uint16_t) strlen(arg);
 
-	if(arg[strlen(arg) - NUL_SZ] == '/')
+	bool arg_non_empty = arg_len > 0;
+	bool arg_as_abs_path = arg[0]  == '/';
+	bool arg_as_dir = (arg[arg_len - nul_sz] == '/') && (arg[arg_len] == '\0');
+
+	if(arg_non_empty)
 	{
-		fputs("Can't open the directory as a file, exit(1).\n", stderr);
-		free_all_exit(1, Buff);
+		if(arg_as_dir)
+		{
+			fputs("Can't open the directory as a file.\n", stderr);
+			free_buff_exit(Buff, 1);
+		}
 	}
 
-	// Is the absolute path.
-	if(arg[0] == '/')
+	if(arg_as_abs_path)
 	{
-		if((strlen(arg) + NUL_SZ) > PATH_MAX)
+		if((arg_len + nul_sz) > PATH_MAX)
 		{
-			fputs("The passed filename is too long, exit(1).\n", stderr);
-			free_all_exit(1, Buff);
+			fputs("Passed filename is too long.\n", stderr);
+			free_buff_exit(Buff, 1);
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
@@ -25,16 +34,15 @@ f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
 	else
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
-		chk_ptr(cw_dir, "malloc for the current path\0", Buff);
+		chk_ptr(Buff, cw_dir, "malloc for the current path");
 
-		chk_ptr((getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz)),
-		"get current path. Too long\0", Buff);
+		cw_dir = getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz);
+		chk_ptr(Buff, cw_dir, "get current path. Too long");
 
-		// Exceeded 4096 chars.
-		if((strlen(cw_dir) + strlen(arg)) >= PATH_MAX)
+		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
-			fputs("Passed filename is too long, exit(1).\n", stderr);
-			free_all_exit(1, Buff);
+			fputs("Current directory is too long.\n", stderr);
+			free_buff_exit(Buff, 1);
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
@@ -43,83 +51,107 @@ f_mtdt* set_fname(const char* arg, f_mtdt* Buff)
 		Buff->fname[strlen(cw_dir)] = '/';
 
 		// Append the basename.
-		for(uint16_t pos = 0; pos < strlen(arg); pos++)
+		for(uint16_t char_i = 0; char_i < arg_len; char_i++)
 		{
-			strcpy(&Buff->fname[strlen(cw_dir) + slash_sz + pos], &arg[pos]);
+			Buff->fname[strlen(cw_dir) + char_i + slash_sz] = arg[char_i];
 		}
 		free(cw_dir);
-		cw_dir = NULL;
 	}
+	Buff->fname_len_i = (uint16_t) strlen(Buff->fname);
 	return Buff;
 }
 
 f_mtdt* read_file(f_mtdt* Buff)
 {
+	const bool nul_sz = 1;
+	FILE* textfile = fopen(Buff->fname, "r");
 	char ch;
-	Buff->textf = fopen(Buff->fname, "r");
 
-	if(Buff->textf)
+	if(textfile != NULL)
 	{
-		while((ch = (char) getc(Buff->textf)) != EOF)
+		if(Buff->fname[Buff->fname_len_i - nul_sz] == '/')
+		{
+			SET_STATUS("current directory set");
+			fclose(textfile);
+			return Buff;
+		}
+		while((ch = (char) fgetc(textfile)) != EOF)
 		{
 			// Temponary and ugly tab to two spaces conversion.
 			if(ch == '\t')
 			{
 				ch = ' ';
-				Buff = text_char(ch, Buff);
+				Buff = printable_char(Buff, ch);
 			}
-
 			// Read all chars before end of file.
-			Buff = text_char(ch, Buff);
+			Buff = printable_char(Buff, ch);
 		}
-		fclose(Buff->textf);
-		SET_STATUS("read the file\0");
+		fclose(textfile);
+		SET_STATUS("read the file");
 	}
 	else
 	{
-		SET_STATUS("the file will be created\0");
+		SET_STATUS("the file will be created");
 	}
 	return Buff;
 }
 
-void save_file(f_mtdt* Buff)
+f_mtdt* save_file(f_mtdt* Buff)
 {
-	if(access(Buff->fname, F_OK) == -1)
+	const int8_t not_created = -1;
+
+	int file_status = access(Buff->fname, F_OK);
+	FILE* textfile;
+
+	if(file_status == not_created)
 	{
-		// There is no file so create with -rw------- file mode.
+		// There is no file so create with -rw------- mode.
 		int create = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
-		if(create == -1)
-		{
-			fputs("Failed to create the new file, exit(1).\n", stderr);
-			free_all_exit(1, Buff);
-		}
+		(create == not_created) ? SET_STATUS("failed to create the file") : 0;
 	}
-	Buff->textf = fopen(Buff->fname, "w");
+	textfile = fopen(Buff->fname, "w");
 
-	if(Buff->textf)
+	if(textfile != NULL)
 	{
-		// Prevents blinking a little.
-		window(Buff);
-
-		// Write each line to the file. NULL terminator is ignored.
-		for(buff_t line = 0; line <= Buff->lines; line++)
+		for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 		{
-			/* Using fputs or fprintf causes "use-of-uninitialized-value" using
+			/* Using fputs or fprintf causes use-of-uninitialized-value using
 			MSan because of there is more memory allocated than is needed. */
-			for(buff_t ch = 0; ch < Buff->line_len[line]; ch++)
+			for(buff_t char_i = 0; char_i < Buff->line_len_i[line_i]; char_i++)
 			{
-				fputc(Buff->text[line][ch], Buff->textf);
+				putc(Buff->text[line_i][char_i], textfile);
 			}
 		}
-		fclose(Buff->textf);
-
-		SET_STATUS("saved\0");
-
-		flush_window(Buff);
+		fclose(textfile);
+		SET_STATUS("saved");
 	}
 	else
 	{
 		SET_STATUS("can't write to the file");
 	}
+	return Buff;
 }
 
+f_mtdt* edit_fname(f_mtdt* Buff, char key)
+{
+	const bool index = 1;
+
+	if((key >= 32) && (key != BACKSPACE)
+	&& ((Buff->fname_len_i + index) < PATH_MAX))
+	{
+		Buff->fname[Buff->fname_len_i] = key;
+		Buff->fname_len_i++;
+		Buff->fname[Buff->fname_len_i] = '\0';
+	}
+	else if((key == BACKSPACE) && (Buff->fname_len_i > 0))
+	{
+		Buff->fname_len_i--;
+		Buff->fname[Buff->fname_len_i] = '\0';
+	}
+	else if(key == '\n')
+	{
+		Buff->live_fname_edit = false;
+		SET_STATUS("filename edited");
+	}
+	return Buff;
+}

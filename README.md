@@ -1,21 +1,20 @@
 # fiflo
 
 ## Description
-ASCII terminal-based text editor.
+User-friendly ASCII terminal-based text editor.
 
-## Requirements:
-- Linux-based desktop,
+## Requirements for the GNU/Linux:
 - git,
 - make,
-- clang or gcc,
-- gzip (only for installation).
+- gcc or clang,
+- gzip (only for an installation).
 
-## Download, compile and run current stable release
+## Download, compile and run the current stable release
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git
 cd fiflo
 make
-./fiflo
+bin/fiflo
 ```
 
 Also You can try the latest unstable snapshot
@@ -23,16 +22,10 @@ Also You can try the latest unstable snapshot
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
 
-## Install
+## (Un)install
 ```
 sudo make install
 ```
-After that there is a possibility to run it directly
-```
-fiflo
-```
-
-## Uninstall
 ```
 sudo make uninstall
 ```
@@ -42,16 +35,11 @@ sudo make uninstall
 make clean
 ```
 
-## Link AddressSanitizer
+## Link the AddressSanitizer for memory errors handling
 ```
-make address
+make sanitize
 ```
-Warning! The program will consume much more memory.
-
-## Link MemorySanitizer (only with clang)
-```
-make memory
-```
+The program will consume much more memory. Also it will be slower.
 
 ## FAQ
 How can I contribute?
@@ -59,4 +47,3 @@ How can I contribute?
 
 Will you port it into the Windows?
 - No.
-

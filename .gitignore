@@ -1,8 +1,8 @@
-*.asdf
-fiflo
-*.o
+bin/
+*.flop
 obj/
 *.out
 *.save
+*.sh
 *.swp
-
+vgcore.*
