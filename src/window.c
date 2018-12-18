@@ -59,7 +59,6 @@ void flush_window(f_mtdt* Buff)
 void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 {
 	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - ICON_LEN);
-
 	buff_t indicator_width = (buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
 	- ICON_LEN - STATUS_MAX);
 
@@ -182,10 +181,7 @@ void render_window(f_mtdt* Buff)
 
 void print_line_num(buff_t line_i, term_t line_num_len, const bool act_line)
 {
-	if(!act_line)
-	{
-		ANSI_INVERT(); // Higlight a current line.
-	}
+	(!act_line) ? ANSI_INVERT() : 0; // Higlight a current line.
 	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
 
 	ANSI_RESET();
@@ -207,9 +203,14 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui)
 
 	if(!Buff->live_fname_edit)
 	{
-		if((ACT_LINE_LEN_I - Ui.text_x) < Buff->cusr_x)
+		if(ACT_LINE_LEN_I < Ui.text_x)
 		{
-			// Current line is scrolled, not cursor.
+			// No horizontal scrolling.
+			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
+		}
+		else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
+		{
+			// Last Ui.text_x chars are seen. Current line is scrolled, not cursor.
 			move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ);
 		}
 		else

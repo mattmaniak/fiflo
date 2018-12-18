@@ -60,7 +60,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
 		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
-		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
+		printf("%.*s", Ui.text_x - LF_SZ, Buff->text[line_i]);
 
 		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
 	}
@@ -72,12 +72,12 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 		for(line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
 		{
 			print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
-			printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
+			printf("%.*s", Ui.text_x - LF_SZ, Buff->text[line_i]);
 
 			(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
 		}
 		print_line_num(Buff->lines_i, Ui.line_num_len, ANOTHER_LINE);
-		printf("%.*s", Ui.text_x - CUR_SZ, LAST_LINE);
+		printf("%.*s", Ui.text_x - LF_SZ, LAST_LINE);
 	}
 }
 
@@ -110,12 +110,12 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 
 	if(Buff->line_len_i[Ui.text_y - INDEX] < Ui.text_x)
 	{
-		printf("%.*s", Buff->line_len_i[Ui.text_y - INDEX] - CUR_SZ,
+		printf("%.*s", Buff->line_len_i[Ui.text_y - INDEX] - LF_SZ,
 		Buff->text[Ui.text_y - INDEX]);
 	}
 	else
 	{
-		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[Ui.text_y - INDEX]);
+		printf("%.*s", Ui.text_x - LF_SZ, Buff->text[Ui.text_y - INDEX]);
 	}
 }
 
@@ -125,13 +125,14 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 	for(buff_t line_i = set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
 	{
 		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
-		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
+		printf("%.*s", Ui.text_x, Buff->text[line_i]);
 
 		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
 	}
-	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
 
 	// Display the last line without the linefeed.
+	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
+
 	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
 		printf("%.*s",
@@ -151,7 +152,7 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 	else
 	{
 		// Render only left part of the line. Cursor can scrolled.
-		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LINE);
+		printf("%.*s", Ui.text_x - LF_SZ, ACT_LINE);
 	}
 }
 
