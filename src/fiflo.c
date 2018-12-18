@@ -54,13 +54,13 @@ void options(const char* arg)
 
 		"Options:      Description:",
 		"-h, --help    Show a program help.",
-		"-v, --version Display information about a version You use.");
+		"-v, --version Display information about the version You use.");
 		exit(0);
 	}
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo v2.2.0",
+		"fiflo v2.3.0 (WIP)",
 		"(C) 2018 mattmaniak, MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
 		exit(0);

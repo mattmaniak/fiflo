@@ -7,6 +7,9 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
+### v2.3.0 (WIP):
+- .
+
 ### v2.2.0 (2018, December 18):
 - logo added,
 - inverted color UI,

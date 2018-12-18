@@ -5,7 +5,6 @@
 - rendering rework,
 - simplify file.c,
 - all escapes and formatting control chars,
-- improve the makefile,
 - full text horizontal scroll,
 - pre-allocation of a memory, eg. next 16 lines,
 - git branch indicator,
