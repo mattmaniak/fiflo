@@ -1,5 +1,8 @@
-fiflo
-*.swp
-*.save
+bin/
+*.flop
+obj/
 *.out
-textfile.asdf
+*.save
+*.sh
+*.swp
+vgcore.*

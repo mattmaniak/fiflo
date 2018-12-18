@@ -1,68 +1,172 @@
+#include "buffer.h"
+#include "ui.h"
 #include "render.h"
-#include "ui.c"
 
-// Drawing funcions.
-static char text[10][81];
-
-static uint16_t windowSize(char axis) // Check term size.
+buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)
 {
-	struct winsize win;
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+	buff_t scrolled_lines = 0;
 
-	if(win.ws_col < MIN_WIDTH || win.ws_row < MIN_HEIGHT)
+	if(ACT_LINE_I >= Ui.text_y)
 	{
-		fputs("Minimal terminal size is 80x20.\n", stderr);
-		exit(1);
+		// Amount of lines to hide in the magic upper area.
+		scrolled_lines = Buff->lines_i + INDEX - Ui.text_y - Buff->cusr_y;
 	}
-	else if(win.ws_col > MAX_WIDTH || win.ws_row > MAX_HEIGHT)
+	return scrolled_lines;
+}
+
+void scroll_line_horizontally(f_mtdt* Buff, win_mtdt Ui)
+{
+	buff_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui.text_x;
+
+	// Text will be scrolled. Not cursor.
+	for(; char_i < CURSOR_VERTICAL_I; char_i++)
 	{
-		fputs("Maximum terminal size is 500x300.\n", stderr);
-		exit(1);
+		putchar(ACT_LINE[char_i]);
 	}
+	/* Sometimes is needed because the "fill" function renders the smallest
+	amount of linefeeds. In other cases the linefeed is provided by the char in
+	a line. */
+	(CURSOR_Y_SCROLLED) ? WRAP_LINE() : 0;
+}
 
-	switch(axis)
+void print_actual_line(f_mtdt* Buff, win_mtdt Ui)
+{
+	// There is small amount of chars. Horizontal scroll isn't required.
+	if(ACT_LINE_LEN_I < Ui.text_x)
 	{
-		case 'x':
-			return win.ws_col;
-		case 'y':
-			return win.ws_row;
+		printf("%s", ACT_LINE);
 	}
-	return 0; // Protection from the -Wreturn-type warning.
+	// Chars won't fits in the horizontal space.
+	else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
+	{
+		// Render only right part of the line.
+		scroll_line_horizontally(Buff, Ui);
+	}
+	else
+	{
+		// Render only left part of the line. Cursor can scrolled.
+		printf("%.*s", Ui.text_x - CUR_SZ, ACT_LINE);
+
+		// For proper rendering.
+		(((ACT_LINE_I + INDEX) < Ui.text_y) && (ACT_LINE_I != Buff->lines_i))
+		? WRAP_LINE() : 0;
+	}
 }
 
-void cleanFrame(void) // To provide rendering in a one frame.
+void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 {
-	uint16_t lines;
-	for(lines = 0; lines < windowSize('y'); lines++)
-		printf("%s", "\033[F\033[K");
+	buff_t line_i;
+
+	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
+	{
+		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
+		printf("%.*s", Ui.text_x - LF_SZ, Buff->text[line_i]);
+
+		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+	}
+	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
+	print_actual_line(Buff, Ui);
+
+	if(CURSOR_Y_SCROLLED)
+	{
+		for(line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
+		{
+			print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
+			printf("%.*s", Ui.text_x - LF_SZ, Buff->text[line_i]);
+
+			(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+		}
+		print_line_num(Buff->lines_i, Ui.line_num_len, ANOTHER_LINE);
+		printf("%.*s", Ui.text_x - LF_SZ, LAST_LINE);
+	}
 }
 
-static void allocateChars(int8_t chars, int8_t lines, char key)
+void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 {
-	int8_t char_pos;
-	char* line_buffer = malloc(chars * lines * sizeof(char) + 1);
-	memCheck(line_buffer);
+	buff_t line_i;
 
-	if(key != BACKSPACE) // To prevent double 'backspace'.
-		text[lines - 1][chars - 1] = key; // Allocation.
+	// Previous lines. If scrolled. Only beginning is shown.
+	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
+	{
+		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
+		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
 
-	text[lines - 1][chars] = '\0';
+		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+	}
+	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
+	print_actual_line(Buff, Ui);
 
-	for(char_pos = 1; char_pos <= chars; char_pos++) // String rendering.
-		printf("%c", text[lines - 1][char_pos - 1]);
+	// Next lines. If scrolled. Only beginning is shown.
+	line_i = ACT_LINE_I + INDEX;
 
-	cursor();
-	free(line_buffer);
+	for(; line_i < (buff_t) (Ui.text_y - INDEX); line_i++)
+	{
+		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
+		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
+
+		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+	}
+	print_line_num((buff_t) (Ui.text_y - INDEX), Ui.line_num_len, ANOTHER_LINE);
+
+	if(Buff->line_len_i[Ui.text_y - INDEX] < Ui.text_x)
+	{
+		printf("%.*s", Buff->line_len_i[Ui.text_y - INDEX] - LF_SZ,
+		Buff->text[Ui.text_y - INDEX]);
+	}
+	else
+	{
+		printf("%.*s", Ui.text_x - LF_SZ, Buff->text[Ui.text_y - INDEX]);
+	}
 }
 
-void window(int8_t chars, int8_t lines, char key, char base_filename[])
+void scroll_lines(f_mtdt* Buff, win_mtdt Ui)
 {
-	uint16_t height;
-	allocateChars(chars, lines, key);
+	// Previous lines. If scrolled. Only beginning is shown.
+	for(buff_t line_i = set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
+	{
+		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
+		printf("%.*s", Ui.text_x, Buff->text[line_i]);
 
-	for(height = lines; height < windowSize('y'); height++)
-		printf("%c", '\n');
+		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+	}
 
-	infoBar(chars, lines, base_filename);
+	// Display the last line without the linefeed.
+	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
+
+	if(ACT_LINE_LEN_I < Ui.text_x)
+	{
+		printf("%.*s", (CURSOR_Y_SCROLLED) ? ACT_LINE_LEN_I - LF_SZ :
+		ACT_LINE_LEN_I, ACT_LINE);
+	}
+	// Chars won't fits in the horizontal space.
+	else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
+	{
+		// Text will be scrolled. Not cursor.
+		for(buff_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui.text_x;
+		char_i < CURSOR_VERTICAL_I; char_i++)
+		{
+			putchar(ACT_LINE[char_i]);
+		}
+	}
+	else
+	{
+		// Render only left part of the line. Cursor can scrolled.
+		printf("%.*s", Ui.text_x - LF_SZ, ACT_LINE);
+	}
 }
 
+void display_text(f_mtdt* Buff, win_mtdt Ui)
+{
+	if(Buff->lines_i < Ui.text_y)
+	{
+		fit_lines(Buff, Ui);
+	}
+	else if((ACT_LINE_I + INDEX) < Ui.text_y)
+	{
+		shrink_lines(Buff, Ui);
+	}
+	else
+	{
+		scroll_lines(Buff, Ui);
+	}
+}

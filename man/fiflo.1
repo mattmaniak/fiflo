@@ -1,0 +1,28 @@
+.TH fiflo 1 "General Commands Manual"
+.SH NAME
+.TP
+fiflo
+.SH SYNOPSIS
+fiflo [basename/filename/option]
+.SH DESCRIPTION
+User-friendly ASCII terminal-based text editor.
+.SH OPTIONS
+.TP
+.B -h, --help
+Show a program help.
+.TP
+.B -v, --version
+Display information about a version You use.
+.SH SEE ALSO
+https://gitlab.com/mattmaniak/fiflo.git
+.SH BUGS
+.TP
+.B Blinking
+Blinking window with a default tty. It's caused by the implementation wnich
+renders a full window everytime. On modern terminal emulators, the problem does
+not occur.
+.TP
+.B CTRL^[
+Next 3 chars will be ignored.
+.SH AUTHOR
+mattmaniak
