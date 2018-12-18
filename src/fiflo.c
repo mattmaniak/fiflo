@@ -1,8 +1,8 @@
 #ifdef __linux__
 
-#include "buffer.h"
-#include "ascii.h"
-#include "fiflo.h"
+#include "include/buffer.h"
+#include "include/ascii.h"
+#include "include/fiflo.h"
 
 f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {

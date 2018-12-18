@@ -10,6 +10,9 @@ files use git-show or git-log.
 ### v2.3.0 (WIP):
 - .
 
+### v2.2.1 (2018, December 18):
+- headers directory specified for clang compilation.
+
 ### v2.2.0 (2018, December 18):
 - logo added,
 - inverted color UI,

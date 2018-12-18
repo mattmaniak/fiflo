@@ -1,5 +1,5 @@
-#include "buffer.h"
-#include "memory.h"
+#include "include/buffer.h"
+#include "include/memory.h"
 
 noreturn void free_buff_exit(f_mtdt* Buff, const bool status)
 {

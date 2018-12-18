@@ -1,6 +1,6 @@
-#include "buffer.h"
-#include "ascii.h"
-#include "charmap.h"
+#include "include/buffer.h"
+#include "include/ascii.h"
+#include "include/charmap.h"
 
 f_mtdt* key_action(f_mtdt* Buff, char key)
 {
