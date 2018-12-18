@@ -1,8 +1,8 @@
 #ifdef __linux__
 
-#include "buffer.h"
-#include "ascii.h"
-#include "fiflo.h"
+#include "include/buffer.h"
+#include "include/ascii.h"
+#include "include/fiflo.h"
 
 f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {
@@ -60,7 +60,7 @@ void options(const char* arg)
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
 		printf("%s\n%s\n%s\n",
-		"fiflo v2.2.0",
+		"fiflo v2.2.1",
 		"(C) 2018 mattmaniak, MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
 		exit(0);
