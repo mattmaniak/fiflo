@@ -16,7 +16,7 @@ ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 -fstack-protector-all
 
 # All in the ./obj depending on the ./src.
-OBJ = $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
 
 # Check and set the Compilation driver.
 ifeq ($(INSTALL_DIR)/gcc, $(shell ls $(INSTALL_DIR)/gcc))
