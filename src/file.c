@@ -17,7 +17,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if(arg_as_dir)
 		{
 			fputs("Can't open the directory as a file.\n", stderr);
-			free_buff_exit(Buff, 1);
+			free_all_exit(Buff, 1);
 		}
 	}
 
@@ -26,12 +26,11 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if((arg_len + nul_sz) > PATH_MAX)
 		{
 			fputs("Passed filename is too long.\n", stderr);
-			free_buff_exit(Buff, 1);
+			free_all_exit(Buff, 1);
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
-	// Relative path or the basename.
-	else
+	else // Relative path or the basename.
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
 		chk_ptr(Buff, cw_dir, "malloc for the current path");
@@ -42,13 +41,12 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
 			fputs("Current directory is too long.\n", stderr);
-			free_buff_exit(Buff, 1);
+			free_all_exit(Buff, 1);
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
 
-		// Add the slash between.
-		Buff->fname[strlen(cw_dir)] = '/';
+		Buff->fname[strlen(cw_dir)] = '/'; // Add the slash between.
 
 		// Append the basename.
 		for(uint16_t char_i = 0; char_i < arg_len; char_i++)
@@ -77,13 +75,11 @@ f_mtdt* read_file(f_mtdt* Buff)
 		}
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
-			// Temponary and ugly tab to two spaces conversion.
-			if(ch == '\t')
+			if(ch == '\t') // Temponary and ugly tab to two spaces conversion.
 			{
 				ch = ' ';
 				Buff = printable_char(Buff, ch);
 			}
-			// Read all chars before end of file.
 			Buff = printable_char(Buff, ch);
 		}
 		fclose(textfile);

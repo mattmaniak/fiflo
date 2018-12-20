@@ -17,19 +17,19 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &term) == error)
 	{
 		fputs("Can't get the terminal size.\n", stderr);
-		free_buff_exit(Buff, 1);
+		free_all_exit(Buff, 1);
 	}
 
 	// Terminal size check.
 	if((term.ws_col < w_min) || (term.ws_row < h_min))
 	{
 		fprintf(stderr, "Min. terminal size: %dx%d.\n", w_min, h_min);
-		free_buff_exit(Buff, 1);
+		free_all_exit(Buff, 1);
 	}
 	else if((term.ws_col > sz_max) || (term.ws_row > sz_max))
 	{
 		fprintf(stderr, "Max. terminal size: %dx%d.\n", sz_max, sz_max);
-		free_buff_exit(Buff, 1);
+		free_all_exit(Buff, 1);
 	}
 
 	switch(axis)

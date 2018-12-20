@@ -13,7 +13,7 @@ extern f_mtdt* edit_fname(f_mtdt* Buff, char key);
 extern void flush_window(f_mtdt* Buff);
 
 // memory.h
-extern noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
+extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
 
 // charmap.h
 extern f_mtdt* key_action(f_mtdt* Buff, char key);

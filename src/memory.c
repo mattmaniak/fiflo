@@ -1,16 +1,27 @@
 #include "include/buffer.h"
 #include "include/memory.h"
 
-noreturn void free_buff_exit(f_mtdt* Buff, const bool status)
+noreturn void free_all_exit(f_mtdt* Buff, const bool status)
 {
 	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
-		free(Buff->text[line_i]);
+		if(Buff->text[line_i] != NULL)
+		{
+			free(Buff->text[line_i]);
+		}
 	}
-	free(Buff->line_len_i);
-	free(Buff->text);
-	free(Buff);
-
+	if(Buff->line_len_i != NULL)
+	{
+		free(Buff->line_len_i);
+	}
+	if(Buff->text != NULL)
+	{
+		free(Buff->text);
+	}
+	if(Buff != NULL)
+	{
+		free(Buff);
+	}
 	exit(status);
 }
 
@@ -19,7 +30,7 @@ void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
 	if(ptr == NULL)
 	{
 		fprintf(stderr, "Can't %s.\n", err_msg);
-		free_buff_exit(Buff, 1);
+		free_all_exit(Buff, 1);
 	}
 }
 

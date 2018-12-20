@@ -7,9 +7,9 @@ char getch(f_mtdt* Buff)
 	const int8_t error = -1;
 
 	const unsigned int canonical_mode_on = ICANON;
-	const unsigned int echo_input        = ECHO;
-	const unsigned int enable_sigs       = ISIG;
-	const unsigned int enable_xon        = IXON;
+	const unsigned int echo_input = ECHO;
+	const unsigned int enable_sigs = ISIG;
+	const unsigned int enable_xon = IXON;
 
 	struct termios old_term_params;
 	struct termios new_term_params;
@@ -20,9 +20,8 @@ char getch(f_mtdt* Buff)
 	if(tcgetattr(STDIN_FILENO, &old_term_params) == error)
 	{
 		flush_window(Buff);
-		fputs("Can't get the stdin attribiutes. Pipe isn't supported.\n",
-		stderr);
-		free_buff_exit(Buff, 1);
+		fputs("Can't get the stdin params. Pipe isn't supported.\n", stderr);
+		free_all_exit(Buff, 1);
 	}
 	new_term_params = old_term_params;
 
@@ -36,22 +35,22 @@ char getch(f_mtdt* Buff)
 	{
 		flush_window(Buff);
 		fputs("Can't set the terminal's raw mode.\n", stderr);
-		free_buff_exit(Buff, 1);
+		free_all_exit(Buff, 1);
 	}
 
 	if((key = (char) getchar()) < 0)
 	{
 		flush_window(Buff);
 		fputs("Negative char has been passed to the stdin.\n", stderr);
-		free_buff_exit(Buff, 1);
+		free_all_exit(Buff, 1);
 	}
 
 	// Immediately restore the state of the stdin (0) to the *new_term_params.
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == error)
 	{
 		flush_window(Buff);
-		fputs("Can't restore the terminal to a normal mode.\n", stderr);
-		free_buff_exit(Buff, 1);
+		fputs("Can't restore the terminal's normal mode.\n", stderr);
+		free_all_exit(Buff, 1);
 	}
 	return key;
 }

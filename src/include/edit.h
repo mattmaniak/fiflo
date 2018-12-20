@@ -17,7 +17,7 @@ extern f_mtdt* save_file(f_mtdt* Buff);
 extern f_mtdt* edit_fname(f_mtdt* Buff, char key);
 
 // memory.h
-extern noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
+extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
 extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 extern char* extend_line_mem(f_mtdt* Buff, buff_t line_i);
 extern char* shrink_act_line_mem(f_mtdt* Buff);

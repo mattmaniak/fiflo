@@ -20,7 +20,7 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 			return backspace(Buff);
 
 		case CTRL_Q:
-			free_buff_exit(Buff, 1);
+			free_all_exit(Buff, 1);
 
 		case CTRL_S:
 			return save_file(Buff);

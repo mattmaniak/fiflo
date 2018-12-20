@@ -6,7 +6,7 @@
 #include <stdnoreturn.h>
 
 // memory.h
-extern noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
+extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
 extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 extern void safer_free(void* ptr);
 extern char* extend_line_mem(f_mtdt* Buff, buff_t line_i);

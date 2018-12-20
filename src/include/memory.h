@@ -8,7 +8,7 @@
 #include <stdnoreturn.h>
 
 // Frees everything and exits with status code.
-noreturn void free_buff_exit(f_mtdt* Buff, const bool status);
+noreturn void free_all_exit(f_mtdt* Buff, const bool status);
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
 void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);

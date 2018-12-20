@@ -10,16 +10,15 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 
 	if(Buff->text == NULL)
 	{
-		fputs("Can't malloc the array with lines.", stderr);
-		exit(1);
+		fputs("Can't malloc the array with lines.\n", stderr);
+		free_all_exit(Buff, 1);
 	}
 	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 
 	if(Buff->line_len_i == NULL)
 	{
-		fputs("Can't malloc the array with lines length.", stderr);
-		free(Buff->text);
-		exit(1);
+		fputs("Can't malloc the array with lines length.\n", stderr);
+		free_all_exit(Buff, 1);
 	}
 	Buff->chars_i = 0;
 	Buff->lines_i = 0;
@@ -35,10 +34,8 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 
 	if(ACT_LINE == NULL)
 	{
-		fputs("Can't malloc the array with lines length.", stderr);
-		free(Buff->text);
-		free(Buff->line_len_i);
-		exit(1);
+		fputs("Can't malloc the array with lines length.\n", stderr);
+		free_all_exit(Buff, 1);
 	}
 	Buff = set_fname(Buff, arg);
 
