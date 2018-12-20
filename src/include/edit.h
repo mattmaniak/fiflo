@@ -17,7 +17,7 @@ extern f_mtdt* save_file(f_mtdt* Buff);
 extern f_mtdt* edit_fname(f_mtdt* Buff, char key);
 
 // memory.h
-extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
+//extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
 extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 extern char* extend_line_mem(f_mtdt* Buff, buff_t line_i);
 extern char* shrink_act_line_mem(f_mtdt* Buff);
@@ -47,5 +47,26 @@ f_mtdt* delete_non_last_line(f_mtdt* Buff);
 
 // Optionally shifts the text horizontally.
 f_mtdt* delete_char(f_mtdt* Buff);
+
+static const struct
+{
+	f_mtdt* (*delete_last_line)(f_mtdt* Buff);
+	f_mtdt* (*delete_line)(f_mtdt* Buff);
+	f_mtdt* (*shift_text_horizonally)(f_mtdt* Buff, char direction);
+	f_mtdt* (*move_lines_forward)(f_mtdt* Buff);
+	f_mtdt* (*delete_last_empty_line)(f_mtdt* Buff);
+	f_mtdt* (*delete_non_last_line)(f_mtdt* Buff);
+	f_mtdt* (*delete_char)(f_mtdt* Buff);
+}
+edit =
+{
+	delete_last_line,
+	delete_line,
+	shift_text_horizonally,
+	move_lines_forward,
+	delete_last_empty_line,
+	delete_non_last_line,
+	delete_char
+};
 
 #endif

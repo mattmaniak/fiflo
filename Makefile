@@ -5,11 +5,12 @@ INC_DIR = $(SRC_DIR)/include
 OBJ_DIR = obj
 BIN_DIR = bin
 MAN_DIR = man
+
 INSTALL_DIR = /usr/bin
 MAN_INSTALL_DIR = /usr/share/man/man1
 
 CC =
-CFLAGS = -std=c11 -Os -I$(INC_DIR)
+CFLAGS = -std=c11 -Os
 
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 -fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \

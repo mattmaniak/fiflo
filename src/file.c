@@ -2,6 +2,8 @@
 #include "include/ascii.h"
 #include "include/file.h"
 
+#include "include/memory.h"
+
 f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 {
 	const bool nul_sz = 1;
@@ -17,7 +19,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if(arg_as_dir)
 		{
 			fputs("Can't open the directory as a file.\n", stderr);
-			free_all_exit(Buff, 1);
+			buffer.free_all_exit(Buff, 1);
 		}
 	}
 
@@ -26,7 +28,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if((arg_len + nul_sz) > PATH_MAX)
 		{
 			fputs("Passed filename is too long.\n", stderr);
-			free_all_exit(Buff, 1);
+			buffer.free_all_exit(Buff, 1);
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
@@ -41,7 +43,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
 			fputs("Current directory is too long.\n", stderr);
-			free_all_exit(Buff, 1);
+			buffer.free_all_exit(Buff, 1);
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);

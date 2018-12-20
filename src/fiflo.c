@@ -4,6 +4,8 @@
 #include "include/ascii.h"
 #include "include/fiflo.h"
 
+#include "include/file.h"
+
 f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 {
 	Buff->text = malloc(ADDR_SZ);
@@ -11,14 +13,14 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	if(Buff->text == NULL)
 	{
 		fputs("Can't malloc the array with lines.\n", stderr);
-		free_all_exit(Buff, 1);
+		buffer.free_all_exit(Buff, 1);
 	}
 	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 
 	if(Buff->line_len_i == NULL)
 	{
 		fputs("Can't malloc the array with lines length.\n", stderr);
-		free_all_exit(Buff, 1);
+		buffer.free_all_exit(Buff, 1);
 	}
 	Buff->chars_i = 0;
 	Buff->lines_i = 0;
@@ -35,9 +37,9 @@ f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
 	if(ACT_LINE == NULL)
 	{
 		fputs("Can't malloc the array with lines length.\n", stderr);
-		free_all_exit(Buff, 1);
+		buffer.free_all_exit(Buff, 1);
 	}
-	Buff = set_fname(Buff, arg);
+	Buff = file.set_fname(Buff, arg);
 
 	return Buff;
 }
@@ -71,8 +73,8 @@ noreturn void run(const char* arg)
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
 	chk_ptr(Buff, Buff, "malloc the metadata buffer");
 
-	Buff = init_buffer(Buff, arg);
-	Buff = read_file(Buff);
+	Buff = fiflo.init_buffer(Buff, arg);
+	Buff = file.read_file(Buff);
 
 	for(;;) // The main program loop.
 	{
@@ -94,12 +96,12 @@ int main(const int argc, const char** argv)
 
 	if(argv[1] == NULL)	// Sets the default basename and starts.
 	{
-		run("");
+		fiflo.run("");
 	}
 	else
 	{
-		options(argv[1]);
-		run(argv[1]);
+		fiflo.options(argv[1]);
+		fiflo.run(argv[1]);
 	}
 }
 

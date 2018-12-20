@@ -6,7 +6,7 @@
 #include <stdnoreturn.h>
 
 // memory.h
-extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
+//extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
 extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
 extern void safer_free(void* ptr);
 extern char* extend_line_mem(f_mtdt* Buff, buff_t line_i);
@@ -40,5 +40,20 @@ f_mtdt* linefeed(f_mtdt* Buff);
 
 // Removes a last char and optionally deletes the last line.
 f_mtdt* backspace(f_mtdt* Buff);
+
+static const struct
+{
+	f_mtdt* (*key_action)(f_mtdt* Buff, char key);
+	f_mtdt* (*printable_char)(f_mtdt* Buff, char key);
+	f_mtdt* (*linefeed)(f_mtdt* Buff);
+	f_mtdt* (*backspace)(f_mtdt* Buff);
+}
+charmap =
+{
+	key_action,
+	printable_char,
+	linefeed,
+	backspace
+};
 
 #endif

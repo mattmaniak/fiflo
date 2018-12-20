@@ -6,6 +6,8 @@ that describes the buffer. */
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdnoreturn.h>
 #include <string.h>
 #include <limits.h>
 #include <linux/limits.h>
@@ -13,13 +15,13 @@ that describes the buffer. */
 // Needed to char/lines/chars_in_line values.
 typedef uint32_t buff_t;
 
+#define INDEX 1
+
 // Max amount of chars: (16 MB - 1). Newline is also the char.
 #define BUFF_MAX (UINT_MAX / 256)
 
 #define STATUS_MAX      32
-#define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - 1)
-
-#define INDEX 1
+#define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - INDEX)
 
 #pragma pack(push, 2)
 #pragma pack(push, 1)
@@ -73,5 +75,17 @@ f_mtdt;
 #define FIRST_LINE           (ACT_LINE_I     == 0)
 #define CURSOR_AT_LINE_START (Buff->cusr_x   == ACT_LINE_LEN_I)
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
+
+// Frees everything and exits with status code.
+noreturn void free_all_exit(f_mtdt* Buff, const bool status);
+
+static const struct
+{
+	void (*free_all_exit)(f_mtdt* Buff, const bool status);
+}
+buffer =
+{
+	free_all_exit
+};
 
 #endif

@@ -12,7 +12,7 @@
 #define ANOTHER_LINE       false
 
 // buffer.h
-extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
+//extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
 
 // window.h
 extern void print_line_num(buff_t line, term_t line_num_len, const bool mode);
@@ -37,5 +37,26 @@ void scroll_lines(f_mtdt* Buff, win_mtdt Ui);
 
 // Shows a text in the window.
 void display_text(f_mtdt* Buff, win_mtdt Ui);
+
+static const struct
+{
+	buff_t (*set_start_line)(f_mtdt* Buff, win_mtdt Ui);
+	void   (*scroll_line_horizontally)(f_mtdt* Buff, win_mtdt Ui);
+	void   (*print_actual_line)(f_mtdt* Buff, win_mtdt Ui);
+	void   (*fit_lines)(f_mtdt* Buff, win_mtdt Ui);
+	void   (*shrink_lines)(f_mtdt* Buff, win_mtdt Ui);
+	void   (*scroll_lines)(f_mtdt* Buff, win_mtdt Ui);
+	void   (*display_text)(f_mtdt* Buff, win_mtdt Ui);
+}
+render =
+{
+	set_start_line,
+	scroll_line_horizontally,
+	print_actual_line,
+	fit_lines,
+	shrink_lines,
+	scroll_lines,
+	display_text
+};
 
 #endif

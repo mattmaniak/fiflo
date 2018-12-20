@@ -20,7 +20,8 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 			return backspace(Buff);
 
 		case CTRL_Q:
-			free_all_exit(Buff, 1);
+			buffer.free_all_exit(Buff, 1); // TODO.
+			break;
 
 		case CTRL_S:
 			return save_file(Buff);

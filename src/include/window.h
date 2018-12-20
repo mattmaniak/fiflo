@@ -7,9 +7,6 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-// buffer.h
-extern noreturn void free_all_exit(f_mtdt* Buff, const bool code);
-
 // render.h
 extern buff_t set_start_line(f_mtdt* Buff);
 extern void scroll_line_x(f_mtdt* Buff, win_mtdt Ui);
@@ -39,5 +36,28 @@ void print_line_num(buff_t line_i, term_t line_num_len, const bool act_line);
 
 // Sets the cursor position from the left bottom.
 void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui);
+
+static const struct
+{
+	term_t (*get_term_sz)(f_mtdt* Buff, char axis);
+	void   (*flush_window)(f_mtdt* Buff);
+	void   (*upper_bar)(f_mtdt* Buff, win_mtdt Ui);
+	void   (*lower_bar)(f_mtdt* Buff);
+	void   (*fill)(f_mtdt* Buff, win_mtdt Ui);
+	void   (*render_window)(f_mtdt* Buff);
+	void   (*print_line_num)(buff_t line_i, term_t line_num_len, const bool act_line);
+	void   (*set_cursor_pos)(f_mtdt* Buff, win_mtdt Ui);
+}
+window =
+{
+	get_term_sz,
+	flush_window,
+	upper_bar,
+	lower_bar,
+	fill,
+	render_window,
+	print_line_num,
+	set_cursor_pos
+};
 
 #endif

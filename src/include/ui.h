@@ -3,6 +3,7 @@
 
 // Data about a current viewport.
 
+#include <stdint.h>
 #include <stdio.h>
 
 // Some semantic macros.
