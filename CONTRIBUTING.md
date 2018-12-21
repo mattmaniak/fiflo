@@ -6,9 +6,8 @@ before making a change.
 
 ## Workflow
 ### Branching: 
-[A successfull Git branching model derivative]
-(https://nvie.com/posts/a-successful-git-branching-model/) Just as described
-but only with: master, develop, hotifx branches.
+[V. Driessen's](https://nvie.com/posts/a-successful-git-branching-model/)
+Just as described but only with: master, develop, hotifx branches.
 
 ### Version scheme: [SemVer](https://semver.org/).
 
