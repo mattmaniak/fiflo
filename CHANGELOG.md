@@ -8,7 +8,7 @@ files use git-show or git-log.
 
 ## Versions:
 ### v2.3.0 (WIP):
-- .
+- CONTRIBUTING.md.
 
 ### v2.2.1 (2018, December 18):
 - headers directory specified for clang compilation.
