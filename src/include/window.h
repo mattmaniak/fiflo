@@ -39,14 +39,14 @@ void set_cursor_pos(f_mtdt* Buff, win_mtdt Ui);
 
 static const struct
 {
-	term_t (*get_term_sz)(f_mtdt* Buff, char axis);
-	void   (*flush_window)(f_mtdt* Buff);
-	void   (*upper_bar)(f_mtdt* Buff, win_mtdt Ui);
-	void   (*lower_bar)(f_mtdt* Buff);
-	void   (*fill)(f_mtdt* Buff, win_mtdt Ui);
-	void   (*render_window)(f_mtdt* Buff);
-	void   (*print_line_num)(buff_t line_i, term_t line_num_len, const bool act_line);
-	void   (*set_cursor_pos)(f_mtdt* Buff, win_mtdt Ui);
+	term_t (*get_term_sz)(f_mtdt*, char);
+	void   (*flush_window)(f_mtdt*);
+	void   (*upper_bar)(f_mtdt*, win_mtdt);
+	void   (*lower_bar)(f_mtdt*);
+	void   (*fill)(f_mtdt*, win_mtdt);
+	void   (*render_window)(f_mtdt*);
+	void   (*print_line_num)(buff_t, term_t, const bool);
+	void   (*set_cursor_pos)(f_mtdt*, win_mtdt);
 }
 window =
 {

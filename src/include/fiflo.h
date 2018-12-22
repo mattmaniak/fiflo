@@ -20,9 +20,6 @@ extern f_mtdt* parse_key(f_mtdt* Buff, char key);
 extern void flush_window(f_mtdt* Buff);
 extern void render_window(f_mtdt* Buff);
 
-// Initializes all Buff structure members.
-f_mtdt* init_buffer(f_mtdt* Buff, const char* arg);
-
 // Program parameters, eg. "--help".
 void options(const char* arg);
 
@@ -33,13 +30,11 @@ int main(const int argc, const char** argv);
 
 static const struct
 {
-	f_mtdt* (*init_buffer)(f_mtdt* Buff, const char* arg);
-	void (*options)(const char* arg);
-	void (*run)(const char* arg);
+	void (*options)(const char*);
+	void (*run)(const char*);
 }
 fiflo =
 {
-	init_buffer,
 	options,
 	run
 };

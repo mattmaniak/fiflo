@@ -7,6 +7,7 @@ that describes the buffer. */
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdnoreturn.h>
 #include <string.h>
 #include <limits.h>
@@ -76,16 +77,22 @@ f_mtdt;
 #define CURSOR_AT_LINE_START (Buff->cusr_x   == ACT_LINE_LEN_I)
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
+// Initializes all Buff structure members.
+f_mtdt* init(f_mtdt* Buff);
+
 // Frees everything and exits with status code.
-noreturn void free_all_exit(f_mtdt* Buff, const bool status);
+noreturn void free_exit(f_mtdt* Buff, const bool status);
+
 
 static const struct
 {
-	void (*free_all_exit)(f_mtdt* Buff, const bool status);
+	f_mtdt* (*init)(f_mtdt*);
+	void (*free_exit)(f_mtdt*, const bool);
 }
 buffer =
 {
-	free_all_exit
+	init,
+	free_exit
 };
 
 #endif

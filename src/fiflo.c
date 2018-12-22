@@ -6,44 +6,6 @@
 
 #include "include/file.h"
 
-f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
-{
-	Buff->text = malloc(ADDR_SZ);
-
-	if(Buff->text == NULL)
-	{
-		fputs("Can't malloc the array with lines.\n", stderr);
-		buffer.free_all_exit(Buff, 1);
-	}
-	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
-
-	if(Buff->line_len_i == NULL)
-	{
-		fputs("Can't malloc the array with lines length.\n", stderr);
-		buffer.free_all_exit(Buff, 1);
-	}
-	Buff->chars_i = 0;
-	Buff->lines_i = 0;
-	Buff->cusr_x = 0;
-	Buff->cusr_y = 0;
-	ACT_LINE_LEN_I = 0;
-
-	Buff->live_fname_edit = false;
-	Buff->key_sequence = false;
-	Buff->pane_toggled = false;
-
-	ACT_LINE = malloc(ADDR_SZ);
-
-	if(ACT_LINE == NULL)
-	{
-		fputs("Can't malloc the array with lines length.\n", stderr);
-		buffer.free_all_exit(Buff, 1);
-	}
-	Buff = file.set_fname(Buff, arg);
-
-	return Buff;
-}
-
 void options(const char* arg)
 {
 	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
@@ -73,8 +35,9 @@ noreturn void run(const char* arg)
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
 	chk_ptr(Buff, Buff, "malloc the metadata buffer");
 
-	Buff = fiflo.init_buffer(Buff, arg);
-	Buff = file.read_file(Buff);
+	Buff = buffer.init(Buff);
+	Buff = file.set_name(Buff, arg);
+	Buff = file.load(Buff);
 
 	for(;;) // The main program loop.
 	{

@@ -17,11 +17,11 @@ f_mtdt* cursor_down(f_mtdt* Buff);
 
 static const struct
 {
-	f_mtdt* (*recognize_sequence)(f_mtdt* Buff, char sequence[8]);
-	f_mtdt* (*cursor_left)(f_mtdt* Buff);
-	f_mtdt* (*cursor_right)(f_mtdt* Buff);
-	f_mtdt* (*cursor_up)(f_mtdt* Buff);
-	f_mtdt* (*cursor_down)(f_mtdt* Buff);
+	f_mtdt* (*recognize_sequence)(f_mtdt*, char[8]);
+	f_mtdt* (*cursor_left)(f_mtdt*);
+	f_mtdt* (*cursor_right)(f_mtdt*);
+	f_mtdt* (*cursor_up)(f_mtdt*);
+	f_mtdt* (*cursor_down)(f_mtdt*);
 }
 seqmap =
 {

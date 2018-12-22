@@ -40,13 +40,13 @@ void display_text(f_mtdt* Buff, win_mtdt Ui);
 
 static const struct
 {
-	buff_t (*set_start_line)(f_mtdt* Buff, win_mtdt Ui);
-	void   (*scroll_line_horizontally)(f_mtdt* Buff, win_mtdt Ui);
-	void   (*print_actual_line)(f_mtdt* Buff, win_mtdt Ui);
-	void   (*fit_lines)(f_mtdt* Buff, win_mtdt Ui);
-	void   (*shrink_lines)(f_mtdt* Buff, win_mtdt Ui);
-	void   (*scroll_lines)(f_mtdt* Buff, win_mtdt Ui);
-	void   (*display_text)(f_mtdt* Buff, win_mtdt Ui);
+	buff_t (*set_start_line)(f_mtdt*, win_mtdt);
+	void   (*scroll_line_horizontally)(f_mtdt*, win_mtdt);
+	void   (*print_actual_line)(f_mtdt*, win_mtdt);
+	void   (*fit_lines)(f_mtdt*, win_mtdt);
+	void   (*shrink_lines)(f_mtdt*, win_mtdt);
+	void   (*scroll_lines)(f_mtdt*, win_mtdt);
+	void   (*display_text)(f_mtdt*, win_mtdt);
 }
 render =
 {

@@ -50,13 +50,13 @@ f_mtdt* delete_char(f_mtdt* Buff);
 
 static const struct
 {
-	f_mtdt* (*delete_last_line)(f_mtdt* Buff);
-	f_mtdt* (*delete_line)(f_mtdt* Buff);
-	f_mtdt* (*shift_text_horizonally)(f_mtdt* Buff, char direction);
-	f_mtdt* (*move_lines_forward)(f_mtdt* Buff);
-	f_mtdt* (*delete_last_empty_line)(f_mtdt* Buff);
-	f_mtdt* (*delete_non_last_line)(f_mtdt* Buff);
-	f_mtdt* (*delete_char)(f_mtdt* Buff);
+	f_mtdt* (*delete_last_line)(f_mtdt*);
+	f_mtdt* (*delete_line)(f_mtdt*);
+	f_mtdt* (*shift_text_horizonally)(f_mtdt*, char);
+	f_mtdt* (*move_lines_forward)(f_mtdt*);
+	f_mtdt* (*delete_last_empty_line)(f_mtdt*);
+	f_mtdt* (*delete_non_last_line)(f_mtdt*);
+	f_mtdt* (*delete_char)(f_mtdt*);
 }
 edit =
 {

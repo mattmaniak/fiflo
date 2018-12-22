@@ -36,19 +36,17 @@ f_mtdt* copy_lines_mem_backward(f_mtdt* Buff);
 
 static const struct
 {
-void    (*free_all_exit)(f_mtdt* Buff, const bool status);
-void    (*chk_ptr)(f_mtdt* Buff, void* ptr, const char* err_msg);
-char*   (*extend_line_mem)(f_mtdt* Buff, buff_t line_i);
-char*   (*shrink_act_line_mem)(f_mtdt* Buff);
-char*   (*shrink_prev_line_mem)(f_mtdt* Buff);
-f_mtdt* (*extend_lines_array_mem)(f_mtdt* Buff);
-f_mtdt* (*shrink_lines_array_mem)(f_mtdt* Buff);
-f_mtdt* (*copy_lines_mem_forward)(f_mtdt* Buff);
-f_mtdt* (*copy_lines_mem_backward)(f_mtdt* Buff);
+	void    (*chk_ptr)(f_mtdt*, void*, const char*);
+	char*   (*extend_line_mem)(f_mtdt*, buff_t);
+	char*   (*shrink_act_line_mem)(f_mtdt*);
+	char*   (*shrink_prev_line_mem)(f_mtdt*);
+	f_mtdt* (*extend_lines_array_mem)(f_mtdt*);
+	f_mtdt* (*shrink_lines_array_mem)(f_mtdt*);
+	f_mtdt* (*copy_lines_mem_forward)(f_mtdt*);
+	f_mtdt* (*copy_lines_mem_backward)(f_mtdt*);
 }
 memory =
 {
-	free_all_exit,
 	chk_ptr,
 	extend_line_mem,
 	shrink_act_line_mem,

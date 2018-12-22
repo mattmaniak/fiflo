@@ -2,6 +2,8 @@
 #include "include/ascii.h"
 #include "include/charmap.h"
 
+#include "include/file.h"
+
 f_mtdt* key_action(f_mtdt* Buff, char key)
 {
 	switch(key)
@@ -20,11 +22,11 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 			return backspace(Buff);
 
 		case CTRL_Q:
-			buffer.free_all_exit(Buff, 1); // TODO.
+			buffer.free_exit(Buff, 1); // TODO.
 			break;
 
 		case CTRL_S:
-			return save_file(Buff);
+			return file.save(Buff);
 
 		case CTRL_BACKSLASH:
 			Buff->pane_toggled = !Buff->pane_toggled;

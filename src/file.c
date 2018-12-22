@@ -4,7 +4,7 @@
 
 #include "include/memory.h"
 
-f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
+f_mtdt* set_name(f_mtdt* Buff, const char* arg)
 {
 	const bool nul_sz = 1;
 	const bool slash_sz = 1;
@@ -19,7 +19,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if(arg_as_dir)
 		{
 			fputs("Can't open the directory as a file.\n", stderr);
-			buffer.free_all_exit(Buff, 1);
+			buffer.free_exit(Buff, 1);
 		}
 	}
 
@@ -28,7 +28,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if((arg_len + nul_sz) > PATH_MAX)
 		{
 			fputs("Passed filename is too long.\n", stderr);
-			buffer.free_all_exit(Buff, 1);
+			buffer.free_exit(Buff, 1);
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
@@ -43,7 +43,7 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
 			fputs("Current directory is too long.\n", stderr);
-			buffer.free_all_exit(Buff, 1);
+			buffer.free_exit(Buff, 1);
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
@@ -61,7 +61,31 @@ f_mtdt* set_fname(f_mtdt* Buff, const char* arg)
 	return Buff;
 }
 
-f_mtdt* read_file(f_mtdt* Buff)
+f_mtdt* edit_name(f_mtdt* Buff, char key)
+{
+	const bool index = 1;
+
+	if((key >= 32) && (key != BACKSPACE)
+	&& ((Buff->fname_len_i + index) < PATH_MAX))
+	{
+		Buff->fname[Buff->fname_len_i] = key;
+		Buff->fname_len_i++;
+		Buff->fname[Buff->fname_len_i] = '\0';
+	}
+	else if((key == BACKSPACE) && (Buff->fname_len_i > 0))
+	{
+		Buff->fname_len_i--;
+		Buff->fname[Buff->fname_len_i] = '\0';
+	}
+	else if(key == '\n')
+	{
+		Buff->live_fname_edit = false;
+		SET_STATUS("filename edited");
+	}
+	return Buff;
+}
+
+f_mtdt* load(f_mtdt* Buff)
 {
 	const bool nul_sz = 1;
 	FILE* textfile = fopen(Buff->fname, "r");
@@ -94,7 +118,7 @@ f_mtdt* read_file(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* save_file(f_mtdt* Buff)
+f_mtdt* save(f_mtdt* Buff)
 {
 	const int8_t not_created = -1;
 
@@ -126,30 +150,6 @@ f_mtdt* save_file(f_mtdt* Buff)
 	else
 	{
 		SET_STATUS("can't write to the file");
-	}
-	return Buff;
-}
-
-f_mtdt* edit_fname(f_mtdt* Buff, char key)
-{
-	const bool index = 1;
-
-	if((key >= 32) && (key != BACKSPACE)
-	&& ((Buff->fname_len_i + index) < PATH_MAX))
-	{
-		Buff->fname[Buff->fname_len_i] = key;
-		Buff->fname_len_i++;
-		Buff->fname[Buff->fname_len_i] = '\0';
-	}
-	else if((key == BACKSPACE) && (Buff->fname_len_i > 0))
-	{
-		Buff->fname_len_i--;
-		Buff->fname[Buff->fname_len_i] = '\0';
-	}
-	else if(key == '\n')
-	{
-		Buff->live_fname_edit = false;
-		SET_STATUS("filename edited");
 	}
 	return Buff;
 }

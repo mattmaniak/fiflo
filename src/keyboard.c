@@ -2,6 +2,8 @@
 #include "include/buffer.h"
 #include "include/keyboard.h"
 
+#include "include/file.h"
+
 char getch(f_mtdt* Buff)
 {
 	const int8_t error = -1;
@@ -21,7 +23,7 @@ char getch(f_mtdt* Buff)
 	{
 		flush_window(Buff);
 		fputs("Can't get the stdin params. Pipe isn't supported.\n", stderr);
-		buffer.free_all_exit(Buff, 1);
+		buffer.free_exit(Buff, 1);
 	}
 	new_term_params = old_term_params;
 
@@ -35,14 +37,14 @@ char getch(f_mtdt* Buff)
 	{
 		flush_window(Buff);
 		fputs("Can't set the terminal's raw mode.\n", stderr);
-		buffer.free_all_exit(Buff, 1);
+		buffer.free_exit(Buff, 1);
 	}
 
-	if((key = (char) getchar()) < 0)
+	if((key = (char) getchar()) < 0) // TODO: RESTORE TERM SETTINGS ON EXIT.
 	{
 		flush_window(Buff);
 		fputs("Negative char has been passed to the stdin.\n", stderr);
-		buffer.free_all_exit(Buff, 1);
+		buffer.free_exit(Buff, 1);
 	}
 
 	// Immediately restore the state of the stdin (0) to the *new_term_params.
@@ -50,7 +52,7 @@ char getch(f_mtdt* Buff)
 	{
 		flush_window(Buff);
 		fputs("Can't restore the terminal's normal mode.\n", stderr);
-		buffer.free_all_exit(Buff, 1);
+		buffer.free_exit(Buff, 1);
 	}
 	return key;
 }
@@ -83,7 +85,7 @@ f_mtdt* parse_key(f_mtdt* Buff, char key)
 	}
 	else if(Buff->live_fname_edit)
 	{
-		Buff = edit_fname(Buff, key);
+		Buff = file.edit_name(Buff, key);
 	}
 	else
 	{
