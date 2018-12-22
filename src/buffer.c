@@ -1,21 +1,15 @@
 #include "include/buffer.h"
 
+#include "include/memory.h"
+
 f_mtdt* init(f_mtdt* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
+	memory.chk_ptr(Buff, Buff->text, " malloc the array with lines");
 
-	if(Buff->text == NULL)
-	{
-		fputs("Can't malloc the array with lines.\n", stderr);
-		buffer.free_exit(Buff, 1);
-	}
 	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
+	memory.chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length");
 
-	if(Buff->line_len_i == NULL)
-	{
-		fputs("Can't malloc the array with lines length.\n", stderr);
-		buffer.free_exit(Buff, 1);
-	}
 	Buff->chars_i = 0;
 	Buff->lines_i = 0;
 	Buff->cusr_x = 0;
@@ -27,12 +21,8 @@ f_mtdt* init(f_mtdt* Buff)
 	Buff->pane_toggled = false;
 
 	ACT_LINE = malloc(ADDR_SZ);
+	memory.chk_ptr(Buff, ACT_LINE, "malloc the first line");
 
-	if(ACT_LINE == NULL)
-	{
-		fputs("Can't malloc the array with lines length.\n", stderr);
-		buffer.free_exit(Buff, 1);
-	}
 	return Buff;
 }
 

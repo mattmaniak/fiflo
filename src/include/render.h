@@ -3,19 +3,11 @@
 
 // Renders the text itself. Cares about scrolling.
 
-#include <stdnoreturn.h>
-
 #define BOLD_LINE_NUM true
 #define THIN_LINE_NUM false
 
 #define LAST_RENDERED_LINE true
 #define ANOTHER_LINE       false
-
-// buffer.h
-//extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
-
-// window.h
-extern void print_line_num(buff_t line, term_t line_num_len, const bool mode);
 
 // Returns value of hidden lines.
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui);

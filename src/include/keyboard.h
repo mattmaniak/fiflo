@@ -2,18 +2,8 @@
 #define KEYBOARD_H
 
 #include <stdio.h>
-#include <stdnoreturn.h>
 #include <termios.h>
 #include <unistd.h>
-
-// file.h
-// extern f_mtdt* edit_fname(f_mtdt* Buff, char key);
-
-// window.h
-extern void flush_window(f_mtdt* Buff);
-
-// memory.h
-// extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
 
 // charmap.h
 extern f_mtdt* key_action(f_mtdt* Buff, char key);

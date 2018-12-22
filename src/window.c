@@ -2,6 +2,8 @@
 #include "include/ui.h"
 #include "include/window.h"
 
+#include "include/render.h"
+
 term_t get_term_sz(f_mtdt* Buff, char axis)
 {
 	const int8_t error = -1;
@@ -10,37 +12,37 @@ term_t get_term_sz(f_mtdt* Buff, char axis)
 	const uint8_t h_min = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
 	const term_t sz_max = USHRT_MAX;
 
-	struct winsize term;
+	struct winsize terminal;
 
 	/* TIOCGWINSZ request to the stdout descriptor. &term is required by that
 	specific device (stdout). */
-	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &term) == error)
+	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == error)
 	{
 		fputs("Can't get the terminal size.\n", stderr);
 		buffer.free_exit(Buff, 1);
 	}
 
 	// Terminal size check.
-	if((term.ws_col < w_min) || (term.ws_row < h_min))
+	if((terminal.ws_col < w_min) || (terminal.ws_row < h_min))
 	{
-		fprintf(stderr, "Min. terminal size: %dx%d.\n", w_min, h_min);
+		fprintf(stderr, "Minimal terminal size: %dx%d.\n", w_min, h_min);
 		buffer.free_exit(Buff, 1);
 	}
-	else if((term.ws_col > sz_max) || (term.ws_row > sz_max))
+	else if((terminal.ws_col > sz_max) || (terminal.ws_row > sz_max))
 	{
-		fprintf(stderr, "Max. terminal size: %dx%d.\n", sz_max, sz_max);
+		fprintf(stderr, "Maximum terminal size: %dx%d.\n", sz_max, sz_max);
 		buffer.free_exit(Buff, 1);
 	}
 
 	switch(axis)
 	{
-		case 'X': return term.ws_col;
-		case 'Y': return term.ws_row;
+		case 'X': return terminal.ws_col;
+		case 'Y': return terminal.ws_row;
 	}
 	return 1;
 }
 
-void flush_window(f_mtdt* Buff)
+void flush(f_mtdt* Buff)
 {
 	// Restore to the left lower corner and clean the lowest line.
 	ANSI_RESTORE_CUR_POS();
@@ -59,8 +61,8 @@ void flush_window(f_mtdt* Buff)
 void upper_bar(f_mtdt* Buff, win_mtdt Ui)
 {
 	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - ICON_LEN);
-	buff_t indicator_width = (buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ)
-	- ICON_LEN - STATUS_MAX);
+	buff_t indicator_width =
+	(buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ) - ICON_LEN - STATUS_MAX);
 
 	ANSI_INVERT();
 
@@ -154,7 +156,7 @@ void fill(f_mtdt* Buff, win_mtdt Ui)
 	// Else the lower bar will by positioned by the text.
 }
 
-void render_window(f_mtdt* Buff)
+void display(f_mtdt* Buff)
 {
 	win_mtdt Ui;
 
@@ -171,7 +173,7 @@ void render_window(f_mtdt* Buff)
 
 	upper_bar(Buff, Ui);
 
-	display_text(Buff, Ui);
+	render.display_text(Buff, Ui);
 	fill(Buff, Ui);
 
 	lower_bar(Buff);

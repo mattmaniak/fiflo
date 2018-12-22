@@ -83,7 +83,6 @@ f_mtdt* init(f_mtdt* Buff);
 // Frees everything and exits with status code.
 noreturn void free_exit(f_mtdt* Buff, const bool status);
 
-
 static const struct
 {
 	f_mtdt* (*init)(f_mtdt*);

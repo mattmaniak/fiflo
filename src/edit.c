@@ -2,12 +2,14 @@
 #include "include/ascii.h"
 #include "include/edit.h"
 
+#include "include/memory.h"
+
 f_mtdt* delete_last_line(f_mtdt* Buff)
 {
 	free(LAST_LINE);
 
 	Buff->lines_i--;
-	Buff = shrink_lines_array_mem(Buff);
+	Buff = memory.shrink_lines_array_mem(Buff);
 
 	return Buff;
 }
@@ -22,7 +24,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 		{
 			Buff->cusr_x = (CURSOR_AT_LINE_START) ? next_line_len : 1;
 
-			Buff = copy_lines_mem_backward(Buff);
+			Buff = memory.copy_lines_mem_backward(Buff);
 			Buff = delete_last_line(Buff);
 
 			Buff->cusr_y--;
@@ -82,7 +84,7 @@ f_mtdt* move_lines_forward(f_mtdt* Buff)
 	// Move more lines vertically with the part of the current line.
 	if(CURSOR_Y_SCROLLED)
 	{
-		Buff = copy_lines_mem_forward(Buff);
+		Buff = memory.copy_lines_mem_forward(Buff);
 		ACT_LINE_LEN_I = 0;
 	}
 
@@ -92,12 +94,12 @@ f_mtdt* move_lines_forward(f_mtdt* Buff)
 	{
 		ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
 		ACT_LINE_LEN_I++;
-		ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
+		ACT_LINE = memory.extend_line_mem(Buff, ACT_LINE_I);
 	}
 
 	// Now the length of the upper line will be shortened after copying.
 	PREV_LINE[PREV_LINE_LEN_I] = '\0';
-	PREV_LINE = shrink_prev_line_mem(Buff);
+	PREV_LINE = memory.shrink_prev_line_mem(Buff);
 
 	return Buff;
 }
@@ -107,12 +109,12 @@ f_mtdt* delete_last_empty_line(f_mtdt* Buff)
 	free(ACT_LINE);
 
 	Buff->lines_i--;
-	ACT_LINE = shrink_act_line_mem(Buff);
+	ACT_LINE = memory.shrink_act_line_mem(Buff);
 
 	ACT_LINE_LEN_I--;
 	Buff->chars_i--;
 
-	Buff = shrink_lines_array_mem(Buff);
+	Buff = memory.shrink_lines_array_mem(Buff);
 
 	return Buff;
 }
@@ -131,11 +133,11 @@ f_mtdt* delete_non_last_line(f_mtdt* Buff)
 		{
 			PREV_LINE_LEN_I++;
 		}
-		PREV_LINE = extend_line_mem(Buff, PREV_LINE_I);
+		PREV_LINE = memory.extend_line_mem(Buff, PREV_LINE_I);
 	}
 	if(CURSOR_Y_SCROLLED)
 	{
-		Buff = copy_lines_mem_backward(Buff);
+		Buff = memory.copy_lines_mem_backward(Buff);
 	}
 	Buff = delete_last_line(Buff);
 
@@ -147,7 +149,7 @@ f_mtdt* delete_char(f_mtdt* Buff)
 	if(!CURSOR_AT_LINE_START)
 	{
 		Buff = shift_text_horizonally(Buff, 'l');
-		ACT_LINE = shrink_act_line_mem(Buff);
+		ACT_LINE = memory.shrink_act_line_mem(Buff);
 
 		ACT_LINE_LEN_I--;
 		Buff->chars_i--;

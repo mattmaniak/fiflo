@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- less includes,
 - noreturns,
 - namespaces, functions names,
 - alt+char handling,

@@ -3,6 +3,8 @@
 #include "include/charmap.h"
 
 #include "include/file.h"
+#include "include/memory.h"
+#include "include/edit.h"
 
 f_mtdt* key_action(f_mtdt* Buff, char key)
 {
@@ -58,7 +60,7 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 			Buff->chars_i++;
 			ACT_LINE_LEN_I++;
 
-			ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
+			ACT_LINE = memory.extend_line_mem(Buff, ACT_LINE_I);
 
 			if(CURSOR_X_SCROLLED)
 			{
@@ -96,7 +98,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 	if(BUFFER_NOT_FULL)
 	{
 		Buff->lines_i++;
-		Buff = extend_lines_array_mem(Buff);
+		Buff = memory.extend_lines_array_mem(Buff);
 
 		if(CURSOR_X_SCROLLED)
 		{
@@ -104,7 +106,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 		}
 		else if(CURSOR_Y_SCROLLED) // Cursor is to the end of the line.
 		{
-			Buff = copy_lines_mem_forward(Buff);
+			Buff = memory.copy_lines_mem_forward(Buff);
 		}
 		ACT_LINE[ACT_LINE_LEN_I] = '\0';
 	}
@@ -115,11 +117,11 @@ f_mtdt* backspace(f_mtdt* Buff)
 {
 	if(!EMPTY_LINE)
 	{
-		Buff = delete_char(Buff);
+		Buff = edit.delete_char(Buff);
 	}
 	else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
 	{
-		Buff = delete_last_empty_line(Buff);
+		Buff = edit.delete_last_empty_line(Buff);
 	}
 	ACT_LINE[ACT_LINE_LEN_I] = '\0'; // Linefeed to the terminator.
 	SET_STATUS("edited");

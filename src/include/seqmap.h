@@ -3,9 +3,6 @@
 
 // Handles with sequences that aren't single ASCII char.
 
-// fiflo.h
-extern char getch(f_mtdt* Buff);
-
 // Converts the given letter by the parse_key and chooses the cursror direction.
 f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8]);
 

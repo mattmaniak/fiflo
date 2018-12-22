@@ -3,6 +3,7 @@
 #include "include/file.h"
 
 #include "include/memory.h"
+#include "include/charmap.h"
 
 f_mtdt* set_name(f_mtdt* Buff, const char* arg)
 {
@@ -104,9 +105,9 @@ f_mtdt* load(f_mtdt* Buff)
 			if(ch == '\t') // Temponary and ugly tab to two spaces conversion.
 			{
 				ch = ' ';
-				Buff = printable_char(Buff, ch);
+				Buff = charmap.printable_char(Buff, ch);
 			}
-			Buff = printable_char(Buff, ch);
+			Buff = charmap.printable_char(Buff, ch);
 		}
 		fclose(textfile);
 		SET_STATUS("read the file");
@@ -122,10 +123,10 @@ f_mtdt* save(f_mtdt* Buff)
 {
 	const int8_t not_created = -1;
 
-	int file_status = access(Buff->fname, F_OK);
+	int status = access(Buff->fname, F_OK);
 	FILE* textfile;
 
-	if(file_status == not_created)
+	if(status == not_created)
 	{
 		// There is no file so create with -rw------- mode.
 		int create = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);

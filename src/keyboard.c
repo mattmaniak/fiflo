@@ -3,6 +3,8 @@
 #include "include/keyboard.h"
 
 #include "include/file.h"
+#include "include/ui.h"
+#include "include/window.h"
 
 char getch(f_mtdt* Buff)
 {
@@ -21,7 +23,7 @@ char getch(f_mtdt* Buff)
 	// Get the state of the STDIN_FILENO.
 	if(tcgetattr(STDIN_FILENO, &old_term_params) == error)
 	{
-		flush_window(Buff);
+		window.flush(Buff);
 		fputs("Can't get the stdin params. Pipe isn't supported.\n", stderr);
 		buffer.free_exit(Buff, 1);
 	}
@@ -35,14 +37,14 @@ char getch(f_mtdt* Buff)
 	Use the new terminal I/O settings. */
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == error)
 	{
-		flush_window(Buff);
+		window.flush(Buff);
 		fputs("Can't set the terminal's raw mode.\n", stderr);
 		buffer.free_exit(Buff, 1);
 	}
 
 	if((key = (char) getchar()) < 0) // TODO: RESTORE TERM SETTINGS ON EXIT.
 	{
-		flush_window(Buff);
+		window.flush(Buff);
 		fputs("Negative char has been passed to the stdin.\n", stderr);
 		buffer.free_exit(Buff, 1);
 	}
@@ -50,7 +52,7 @@ char getch(f_mtdt* Buff)
 	// Immediately restore the state of the stdin (0) to the *new_term_params.
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == error)
 	{
-		flush_window(Buff);
+		window.flush(Buff);
 		fputs("Can't restore the terminal's normal mode.\n", stderr);
 		buffer.free_exit(Buff, 1);
 	}

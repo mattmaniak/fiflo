@@ -3,30 +3,6 @@
 
 // All the unseen magic that will happen when You insert the char.
 
-#include <stdlib.h>
-#include <stdnoreturn.h>
-
-// edit.h
-extern f_mtdt* key_action(f_mtdt* Buff, char key);
-
-// seqmap.h
-extern f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8]);
-
-// file.h
-extern f_mtdt* save_file(f_mtdt* Buff);
-extern f_mtdt* edit_fname(f_mtdt* Buff, char key);
-
-// memory.h
-//extern noreturn void free_all_exit(f_mtdt* Buff, const bool status);
-extern void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg);
-extern char* extend_line_mem(f_mtdt* Buff, buff_t line_i);
-extern char* shrink_act_line_mem(f_mtdt* Buff);
-extern char* shrink_prev_line_mem(f_mtdt* Buff);
-extern f_mtdt* extend_lines_array_mem(f_mtdt* Buff);
-extern f_mtdt* shrink_lines_array_mem(f_mtdt* Buff);
-extern f_mtdt* copy_lines_mem_forward(f_mtdt* Buff);
-extern f_mtdt* copy_lines_mem_backward(f_mtdt* Buff);
-
 // As in the name.
 f_mtdt* delete_last_line(f_mtdt* Buff);
 

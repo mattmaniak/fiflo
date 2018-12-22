@@ -2,6 +2,8 @@
 #include "include/ui.h"
 #include "include/render.h"
 
+#include "include/window.h"
+
 buff_t set_start_line(f_mtdt* Buff, win_mtdt Ui)
 {
 	buff_t scrolled_lines = 0;

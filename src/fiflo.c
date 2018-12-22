@@ -5,6 +5,10 @@
 #include "include/fiflo.h"
 
 #include "include/file.h"
+#include "include/keyboard.h"
+#include "include/ui.h"
+#include "include/window.h"
+#include "include/memory.h"
 
 void options(const char* arg)
 {
@@ -23,7 +27,7 @@ void options(const char* arg)
 		printf("%s\n%s\n%s\n",
 		"fiflo v2.3.0 (WIP)",
 		"(C) 2018 mattmaniak, MIT License",
-		"https://gitlab.com/mattmaniak/fiflo.git");
+		"https://gitlab.com/mattmaniak/git");
 		exit(0);
 	}
 }
@@ -33,7 +37,7 @@ noreturn void run(const char* arg)
 	char pressed = '\0'; // Initializer.
 
 	f_mtdt* Buff = malloc(sizeof(f_mtdt));
-	chk_ptr(Buff, Buff, "malloc the metadata buffer");
+	memory.chk_ptr(Buff, Buff, "malloc the metadata buffer");
 
 	Buff = buffer.init(Buff);
 	Buff = file.set_name(Buff, arg);
@@ -41,11 +45,11 @@ noreturn void run(const char* arg)
 
 	for(;;) // The main program loop.
 	{
-		Buff = parse_key(Buff, pressed);
-		render_window(Buff);
+		Buff = keyboard.parse_key(Buff, pressed);
+		window.display(Buff);
 
-		pressed = getch(Buff);
-		flush_window(Buff);
+		pressed = keyboard.getch(Buff);
+		window.flush(Buff);
 	}
 }
 
@@ -59,12 +63,12 @@ int main(const int argc, const char** argv)
 
 	if(argv[1] == NULL)	// Sets the default basename and starts.
 	{
-		fiflo.run("");
+		run("");
 	}
 	else
 	{
-		fiflo.options(argv[1]);
-		fiflo.run(argv[1]);
+		options(argv[1]);
+		run(argv[1]);
 	}
 }
 
