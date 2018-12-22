@@ -5,11 +5,12 @@ to make via issue, email, or any other method with the owners of this repo
 before making a change.
 
 ## Workflow
-### Branching: 
-[V. Driessen's](https://nvie.com/posts/a-successful-git-branching-model/)
+### Branching
+[V. Driessen's model](https://nvie.com/posts/a-successful-git-branching-model/)
 Just as described but only with: master, develop, hotifx branches.
 
-### Version scheme: [SemVer](https://semver.org/).
+### Version scheme
+[SemVer](https://semver.org/).
 
 ### Coding rules:
 - Allman-like brace style,
