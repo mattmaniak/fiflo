@@ -62,7 +62,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui.text_x - LF_SZ, Buff->text[line_i]);
 
-		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+		(Buff->line_len_i[line_i] >= Ui.text_x) ? WRAP_LINE() : 0;
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
 	print_actual_line(Buff, Ui);
@@ -74,7 +74,7 @@ void fit_lines(f_mtdt* Buff, win_mtdt Ui)
 			print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 			printf("%.*s", Ui.text_x - LF_SZ, Buff->text[line_i]);
 
-			(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+			(Buff->line_len_i[line_i] >= Ui.text_x) ? WRAP_LINE() : 0;
 		}
 		print_line_num(Buff->lines_i, Ui.line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui.text_x - LF_SZ, LAST_LINE);
@@ -91,7 +91,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
 
-		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+		(Buff->line_len_i[line_i] >= Ui.text_x) ? WRAP_LINE() : 0;
 	}
 	print_line_num(ACT_LINE_I, Ui.line_num_len, LAST_RENDERED_LINE);
 	print_actual_line(Buff, Ui);
@@ -104,7 +104,7 @@ void shrink_lines(f_mtdt* Buff, win_mtdt Ui)
 		print_line_num(line_i, Ui.line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui.text_x - CUR_SZ, Buff->text[line_i]);
 
-		(Buff->line_len_i[line_i] > Ui.text_x) ? WRAP_LINE() : 0;
+		(Buff->line_len_i[line_i] >= Ui.text_x) ? WRAP_LINE() : 0;
 	}
 	print_line_num((buff_t) (Ui.text_y - INDEX), Ui.line_num_len, ANOTHER_LINE);
 
