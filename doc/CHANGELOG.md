@@ -7,6 +7,10 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 ## Versions:
+### v2.2.2 (2018, December 22):
+- Repaired positions of line numbers when the line has same width as the
+editor's area.
+
 ### v2.2.1 (2018, December 18):
 - headers directory specified for clang compilation.
 
