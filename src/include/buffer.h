@@ -48,7 +48,7 @@ typedef struct
 	buff_t   cusr_y;             // As above but Y-axis.
 	char     status[STATUS_MAX]; // Displayed message in the upper bar.
 }
-f_mtdt;
+F_mtdt;
 #pragma pack(pop)
 #pragma pack(pop)
 
@@ -78,15 +78,15 @@ f_mtdt;
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
 // Initializes all Buff structure members.
-f_mtdt* init(f_mtdt* Buff);
+F_mtdt* init(F_mtdt* Buff);
 
 // Frees everything and exits with status code.
-noreturn void free_exit(f_mtdt* Buff, const bool status);
+noreturn void free_exit(F_mtdt* Buff, const bool status);
 
 static const struct
 {
-	f_mtdt* (*init)(f_mtdt*);
-	void (*free_exit)(f_mtdt*, const bool);
+	F_mtdt* (*init)(F_mtdt*);
+	void (*free_exit)(F_mtdt*, const bool);
 }
 buffer =
 {

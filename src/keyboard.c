@@ -6,7 +6,7 @@
 #include "include/ui.h"
 #include "include/window.h"
 
-char getch(f_mtdt* Buff)
+char getch(F_mtdt* Buff)
 {
 	const int8_t error = -1;
 
@@ -59,7 +59,7 @@ char getch(f_mtdt* Buff)
 	return key;
 }
 
-f_mtdt* parse_key(f_mtdt* Buff, char key)
+F_mtdt* parse_key(F_mtdt* Buff, char key)
 {
 	const bool nul_sz = 1;
 	enum {seq_len = 8};

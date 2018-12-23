@@ -1,7 +1,7 @@
 #include "include/buffer.h"
 #include "include/memory.h"
 
-void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
+void chk_ptr(F_mtdt* Buff, void* ptr, const char* err_msg)
 {
 	if(ptr == NULL)
 	{
@@ -10,7 +10,7 @@ void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
 	}
 }
 
-char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
+char* extend_line_mem(F_mtdt* Buff, buff_t line_i)
 {
 	buff_t memblock = MEMBLK;
 
@@ -43,7 +43,7 @@ char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
 	return Buff->text[line_i];
 }
 
-char* shrink_act_line_mem(f_mtdt* Buff)
+char* shrink_act_line_mem(F_mtdt* Buff)
 {
 	buff_t memblock = INIT_MEMBLK;
 
@@ -71,7 +71,7 @@ char* shrink_act_line_mem(f_mtdt* Buff)
 	return ACT_LINE;
 }
 
-char* shrink_prev_line_mem(f_mtdt* Buff)
+char* shrink_prev_line_mem(F_mtdt* Buff)
 {
 	buff_t memblock = INIT_MEMBLK;
 
@@ -96,7 +96,7 @@ char* shrink_prev_line_mem(f_mtdt* Buff)
 	return PREV_LINE;
 }
 
-f_mtdt* extend_lines_array_mem(f_mtdt* Buff)
+F_mtdt* extend_lines_array_mem(F_mtdt* Buff)
 {
 	// Enhance the array that contains pointers to lines.
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
@@ -119,7 +119,7 @@ f_mtdt* extend_lines_array_mem(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* shrink_lines_array_mem(f_mtdt* Buff)
+F_mtdt* shrink_lines_array_mem(F_mtdt* Buff)
 {
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 
@@ -133,7 +133,7 @@ f_mtdt* shrink_lines_array_mem(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* copy_lines_mem_forward(f_mtdt* Buff)
+F_mtdt* copy_lines_mem_forward(F_mtdt* Buff)
 {
 	const bool prev = 1;
 
@@ -161,7 +161,7 @@ f_mtdt* copy_lines_mem_forward(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* copy_lines_mem_backward(f_mtdt* Buff)
+F_mtdt* copy_lines_mem_backward(F_mtdt* Buff)
 {
 	const bool next = 1;
 

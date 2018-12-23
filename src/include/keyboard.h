@@ -6,21 +6,21 @@
 #include <unistd.h>
 
 // charmap.h
-extern f_mtdt* key_action(f_mtdt* Buff, char key);
+extern F_mtdt* key_action(F_mtdt* Buff, char key);
 
 // seqmap.h
-extern f_mtdt* recognize_sequence(f_mtdt* Buff, char sequence[8]);
+extern F_mtdt* recognize_sequence(F_mtdt* Buff, char sequence[8]);
 
 // Reads one char wthout confirming by the key. Based on the termios.
-char getch(f_mtdt* Buff);
+char getch(F_mtdt* Buff);
 
 // Saves the last pressed key to the temponary buffer and analyzes it.
-f_mtdt* parse_key(f_mtdt* Buff, char key);
+F_mtdt* parse_key(F_mtdt* Buff, char key);
 
 static const struct
 {
-	char    (*getch)(f_mtdt*);
-	f_mtdt* (*parse_key)(f_mtdt*, char);
+	char    (*getch)(F_mtdt*);
+	F_mtdt* (*parse_key)(F_mtdt*, char);
 }
 keyboard =
 {

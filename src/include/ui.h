@@ -48,7 +48,7 @@ typedef struct
 	term_t lbar_h;           // Lower bar height (lines).
 	term_t pane_h;           // As above but toggled.
 }
-win_mtdt;
+Win_mtdt;
 #pragma pack(pop)
 
 #endif

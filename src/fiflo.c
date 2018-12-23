@@ -36,7 +36,7 @@ noreturn void run(const char* arg)
 {
 	char pressed = '\0'; // Initializer.
 
-	f_mtdt* Buff = malloc(sizeof(f_mtdt));
+	F_mtdt* Buff = malloc(sizeof(F_mtdt));
 	memory.chk_ptr(Buff, Buff, "malloc the metadata buffer");
 
 	Buff = buffer.init(Buff);

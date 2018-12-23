@@ -4,7 +4,7 @@
 
 #include "include/memory.h"
 
-f_mtdt* delete_last_line(f_mtdt* Buff)
+F_mtdt* delete_last_line(F_mtdt* Buff)
 {
 	free(LAST_LINE);
 
@@ -14,7 +14,7 @@ f_mtdt* delete_last_line(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* delete_line(f_mtdt* Buff)
+F_mtdt* delete_line(F_mtdt* Buff)
 {
 	buff_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
 
@@ -54,7 +54,7 @@ f_mtdt* delete_line(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
+F_mtdt* shift_text_horizonally(F_mtdt* Buff, char direction)
 {
 	const bool prev = 1;
 	buff_t char_i;
@@ -77,7 +77,7 @@ f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
 	return Buff;
 }
 
-f_mtdt* move_lines_forward(f_mtdt* Buff)
+F_mtdt* move_lines_forward(F_mtdt* Buff)
 {
 	PREV_LINE_LEN_I -= Buff->cusr_x;
 
@@ -104,7 +104,7 @@ f_mtdt* move_lines_forward(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* delete_last_empty_line(f_mtdt* Buff)
+F_mtdt* delete_last_empty_line(F_mtdt* Buff)
 {
 	free(ACT_LINE);
 
@@ -119,7 +119,7 @@ f_mtdt* delete_last_empty_line(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* delete_non_last_line(f_mtdt* Buff)
+F_mtdt* delete_non_last_line(F_mtdt* Buff)
 {
 	PREV_LINE_LEN_I--;
 	Buff->chars_i--;
@@ -144,7 +144,7 @@ f_mtdt* delete_non_last_line(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* delete_char(f_mtdt* Buff)
+F_mtdt* delete_char(F_mtdt* Buff)
 {
 	if(!CURSOR_AT_LINE_START)
 	{

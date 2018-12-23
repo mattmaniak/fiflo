@@ -6,7 +6,7 @@
 #include "include/memory.h"
 #include "include/edit.h"
 
-f_mtdt* key_action(f_mtdt* Buff, char key)
+F_mtdt* key_action(F_mtdt* Buff, char key)
 {
 	switch(key)
 	{
@@ -43,7 +43,7 @@ f_mtdt* key_action(f_mtdt* Buff, char key)
 	return Buff;
 }
 
-f_mtdt* printable_char(f_mtdt* Buff, char key)
+F_mtdt* printable_char(F_mtdt* Buff, char key)
 {
 	const bool nul_sz = 1;
 
@@ -93,7 +93,7 @@ f_mtdt* printable_char(f_mtdt* Buff, char key)
 	return Buff;
 }
 
-f_mtdt* linefeed(f_mtdt* Buff)
+F_mtdt* linefeed(F_mtdt* Buff)
 {
 	if(BUFFER_NOT_FULL)
 	{
@@ -113,7 +113,7 @@ f_mtdt* linefeed(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* backspace(f_mtdt* Buff)
+F_mtdt* backspace(F_mtdt* Buff)
 {
 	if(!EMPTY_LINE)
 	{

@@ -2,7 +2,7 @@
 
 #include "include/memory.h"
 
-f_mtdt* init(f_mtdt* Buff)
+F_mtdt* init(F_mtdt* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
 	memory.chk_ptr(Buff, Buff->text, " malloc the array with lines");
@@ -26,7 +26,7 @@ f_mtdt* init(f_mtdt* Buff)
 	return Buff;
 }
 
-noreturn void free_exit(f_mtdt* Buff, const bool status)
+noreturn void free_exit(F_mtdt* Buff, const bool status)
 {
 	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{

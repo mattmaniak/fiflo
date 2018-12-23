@@ -10,23 +10,23 @@
 #include <unistd.h>
 
 // Sets the filename. If basename is passed as arg actent path will be added.
-f_mtdt* set_name(f_mtdt* Buff, const char* passed);
+F_mtdt* set_name(F_mtdt* Buff, const char* passed);
 
 // When the CTRL^O is pressed, there is possibility to basically edit the fname.
-f_mtdt* edit_name(f_mtdt* Buff, char key);
+F_mtdt* edit_name(F_mtdt* Buff, char key);
 
 // Reads the file using "recognize_char".
-f_mtdt* load(f_mtdt* Buff);
+F_mtdt* load(F_mtdt* Buff);
 
 // Puts the whole text to the file.
-f_mtdt* save(f_mtdt* Buff);
+F_mtdt* save(F_mtdt* Buff);
 
 static const struct
 {
-	f_mtdt* (*set_name)(f_mtdt*, const char*);
-	f_mtdt* (*edit_name)(f_mtdt*, char);
-	f_mtdt* (*load)(f_mtdt*);
-	f_mtdt* (*save)(f_mtdt*);
+	F_mtdt* (*set_name)(F_mtdt*, const char*);
+	F_mtdt* (*edit_name)(F_mtdt*, char);
+	F_mtdt* (*load)(F_mtdt*);
+	F_mtdt* (*save)(F_mtdt*);
 }
 file =
 {

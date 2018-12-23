@@ -5,7 +5,7 @@
 #include "include/memory.h"
 #include "include/charmap.h"
 
-f_mtdt* set_name(f_mtdt* Buff, const char* arg)
+F_mtdt* set_name(F_mtdt* Buff, const char* arg)
 {
 	const bool nul_sz = 1;
 	const bool slash_sz = 1;
@@ -62,7 +62,7 @@ f_mtdt* set_name(f_mtdt* Buff, const char* arg)
 	return Buff;
 }
 
-f_mtdt* edit_name(f_mtdt* Buff, char key)
+F_mtdt* edit_name(F_mtdt* Buff, char key)
 {
 	const bool index = 1;
 
@@ -86,7 +86,7 @@ f_mtdt* edit_name(f_mtdt* Buff, char key)
 	return Buff;
 }
 
-f_mtdt* load(f_mtdt* Buff)
+F_mtdt* load(F_mtdt* Buff)
 {
 	const bool nul_sz = 1;
 	FILE* textfile = fopen(Buff->fname, "r");
@@ -119,7 +119,7 @@ f_mtdt* load(f_mtdt* Buff)
 	return Buff;
 }
 
-f_mtdt* save(f_mtdt* Buff)
+F_mtdt* save(F_mtdt* Buff)
 {
 	const int8_t not_created = -1;
 
