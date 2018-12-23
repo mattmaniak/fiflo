@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- every extern funtion with it's file prefix (force it?),
 - less includes,
 - noreturns,
 - namespaces, functions names,

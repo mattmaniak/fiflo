@@ -36,10 +36,10 @@ f_mtdt* set_name(f_mtdt* Buff, const char* arg)
 	else // Relative path or the basename.
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
-		chk_ptr(Buff, cw_dir, "malloc for the current path");
+		memory.chk_ptr(Buff, cw_dir, "malloc for the current path");
 
 		cw_dir = getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz);
-		chk_ptr(Buff, cw_dir, "get current path. Too long");
+		memory.chk_ptr(Buff, cw_dir, "get current path. Too long");
 
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
