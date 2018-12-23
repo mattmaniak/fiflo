@@ -1,5 +1,13 @@
 TARGET = fiflo
 
+CC =
+CFLAGS = -std=c11 -Os
+DEBUGFLAGS =
+
+ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
+-fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \
+-fstack-protector-all
+
 SRC_DIR = src
 INC_DIR = $(SRC_DIR)/include
 OBJ_DIR = obj
@@ -8,13 +16,6 @@ MAN_DIR = man
 
 INSTALL_DIR = /usr/bin
 MAN_INSTALL_DIR = /usr/share/man/man1
-
-CC =
-CFLAGS = -std=c11 -Os
-
-ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
--fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \
--fstack-protector-all
 
 # All in the ./obj depending on the ./src.
 OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
@@ -50,8 +51,8 @@ $(TARGET): $(OBJ)
 	$(CFLAGS) \
 	$(DEBUGFLAGS)
 
-sanitize: DEBUGFLAGS = $(ASAN_FLAGS)
-sanitize: $(TARGET)
+address: DEBUGFLAGS = $(ASAN_FLAGS)
+address: $(TARGET)
 
 install: $(TARGET)
 	sudo cp $(BIN_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)

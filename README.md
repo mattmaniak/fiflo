@@ -6,7 +6,7 @@ User-friendly ASCII terminal-based text editor.
 ## Requirements for the GNU/Linux:
 - git,
 - make,
-- gcc or clang,
+- gcc >= 4.6 or clang >= 3.1,
 - gzip (only for an installation).
 
 ## Download, compile and run the current stable release
@@ -35,15 +35,12 @@ sudo make uninstall
 make clean
 ```
 
-## Link the AddressSanitizer for memory errors handling
+## Link the AddressSanitizer and friends for memory debugging
 ```
-make sanitize
+make address
 ```
 The program will consume much more memory. Also it will be slower.
 
 ## FAQ
-How can I contribute?
-- Read the doc/WORKFLOW.md and send a request.
-
 Will you port it into the Windows?
 - No.
