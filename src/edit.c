@@ -46,7 +46,7 @@ F_mtdt* delete_line(F_mtdt* Buff)
 		LAST_LINE_LEN_I = 0;
 		LAST_LINE[LAST_LINE_LEN_I] = '\0';
 
-		LAST_LINE = realloc(LAST_LINE, sizeof(Buff->text));
+		LAST_LINE = realloc(LAST_LINE, INIT_MEMBLK);
 		memory.chk_ptr(Buff, LAST_LINE, "malloc after the first line removal");
 
 		Buff->cusr_x = 0;

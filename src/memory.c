@@ -6,7 +6,8 @@ void chk_ptr(F_mtdt* Buff, void* ptr, const char* err_msg)
 	if(ptr == NULL)
 	{
 		fprintf(stderr, "Can't %s.\n", err_msg);
-		buffer.free_exit(Buff, 1);
+		buffer.free_all(Buff);
+		exit(1);
 	}
 }
 

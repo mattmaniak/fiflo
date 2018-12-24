@@ -11,34 +11,34 @@ F_mtdt* key_action(F_mtdt* Buff, char key)
 	switch(key)
 	{
 		default:
-			return printable_char(Buff, key);
+		return printable_char(Buff, key);
 
 		case '\t':
-			for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
-			{
-				Buff = printable_char(Buff, ' ');
-			}
-			break;
+		for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
+		{
+			Buff = printable_char(Buff, ' ');
+		}
+		break;
 
 		case BACKSPACE:
-			return backspace(Buff);
+		return backspace(Buff);
 
 		case CTRL_Q:
-			buffer.free_exit(Buff, 1); // TODO.
-			break;
+		buffer.free_all(Buff);
+		exit(0);
 
 		case CTRL_S:
-			return file.save(Buff);
+		return file.save(Buff);
 
 		case CTRL_BACKSLASH:
-			Buff->pane_toggled = !Buff->pane_toggled;
-			break;
+		Buff->pane_toggled = !Buff->pane_toggled;
+		break;
 
 		case CTRL_D:
-			return delete_line(Buff);
+		return delete_line(Buff);
 
 		case CTRL_O:
-			Buff->live_fname_edit = true;
+		Buff->live_fname_edit = true;
 	}
 	return Buff;
 }

@@ -24,8 +24,7 @@ char getch(F_mtdt* Buff)
 	if(tcgetattr(STDIN_FILENO, &old_term_params) == error)
 	{
 		window.flush(Buff);
-		fputs("Can't get the stdin params. Pipe isn't supported.\n", stderr);
-		buffer.free_exit(Buff, 1);
+		buffer.throw_error(Buff, "Stdin params error. Pipe isn't supported.");
 	}
 	new_term_params = old_term_params;
 
@@ -38,23 +37,20 @@ char getch(F_mtdt* Buff)
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == error)
 	{
 		window.flush(Buff);
-		fputs("Can't set the terminal's raw mode.\n", stderr);
-		buffer.free_exit(Buff, 1);
+		buffer.throw_error(Buff, "Can't set the terminal's raw mode.");
 	}
 
 	if((key = (char) getchar()) < 0) // TODO: RESTORE TERM SETTINGS ON EXIT.
 	{
 		window.flush(Buff);
-		fputs("Negative char has been passed to the stdin.\n", stderr);
-		buffer.free_exit(Buff, 1);
+		buffer.throw_error(Buff, "A negative char passed to the stdin.");
 	}
 
 	// Immediately restore the state of the stdin (0) to the *new_term_params.
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == error)
 	{
 		window.flush(Buff);
-		fputs("Can't restore the terminal's normal mode.\n", stderr);
-		buffer.free_exit(Buff, 1);
+		buffer.throw_error(Buff, "Can't restore the terminal's normal mode.");
 	}
 	return key;
 }
@@ -87,7 +83,7 @@ F_mtdt* parse_key(F_mtdt* Buff, char key)
 	}
 	else if(Buff->live_fname_edit)
 	{
-		Buff = file.edit_name(Buff, key);
+		Buff = file.live_edit_name(Buff, key);
 	}
 	else
 	{

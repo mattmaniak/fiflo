@@ -13,7 +13,7 @@
 F_mtdt* set_name(F_mtdt* Buff, const char* passed);
 
 // When the CTRL^O is pressed, there is possibility to basically edit the fname.
-F_mtdt* edit_name(F_mtdt* Buff, char key);
+F_mtdt* live_edit_name(F_mtdt* Buff, char key);
 
 // Reads the file using "recognize_char".
 F_mtdt* load(F_mtdt* Buff);
@@ -24,14 +24,14 @@ F_mtdt* save(F_mtdt* Buff);
 static const struct
 {
 	F_mtdt* (*set_name)(F_mtdt*, const char*);
-	F_mtdt* (*edit_name)(F_mtdt*, char);
+	F_mtdt* (*live_edit_name)(F_mtdt*, char);
 	F_mtdt* (*load)(F_mtdt*);
 	F_mtdt* (*save)(F_mtdt*);
 }
 file =
 {
 	set_name,
-	edit_name,
+	live_edit_name,
 	load,
 	save
 };

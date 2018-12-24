@@ -11,6 +11,9 @@ ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 MSAN_FLAGS = -fsanitize=memory -fPIE -pie -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins
 
+VALGRIND_FLAGS = -v
+ARG_FOR_FIFLO =
+
 SRC_DIR = src
 INC_DIR = $(SRC_DIR)/include
 OBJ_DIR = obj
@@ -64,7 +67,7 @@ msan: $(TARGET)
 
 valgrind: $(TARGET)
 valgrind:
-	valgrind -v ./$(BIN_DIR)/$(TARGET) $(FIFLO_ARG) # Dynamic variable.
+	valgrind $(VALGRING_FLAGS) ./$(BIN_DIR)/$(TARGET) $(ARG_FOR_FIFLO)
 
 # Fun with a filesystem.
 install: $(TARGET)

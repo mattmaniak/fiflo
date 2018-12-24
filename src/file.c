@@ -15,21 +15,16 @@ F_mtdt* set_name(F_mtdt* Buff, const char* arg)
 	bool arg_as_abs_path = arg[0]  == '/';
 	bool arg_as_dir = (arg[arg_len - nul_sz] == '/') && (arg[arg_len] == '\0');
 
-	if(arg_non_empty)
+	if(arg_non_empty && arg_as_dir)
 	{
-		if(arg_as_dir)
-		{
-			fputs("Can't open the directory as a file.\n", stderr);
-			buffer.free_exit(Buff, 1);
-		}
+		buffer.throw_error(Buff, "Can't open the directory as a file.");
 	}
 
 	if(arg_as_abs_path)
 	{
 		if((arg_len + nul_sz) > PATH_MAX)
 		{
-			fputs("Passed filename is too long.\n", stderr);
-			buffer.free_exit(Buff, 1);
+			buffer.throw_error(Buff, "Passed filename is too long.");
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
@@ -43,8 +38,7 @@ F_mtdt* set_name(F_mtdt* Buff, const char* arg)
 
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
-			fputs("Current directory is too long.\n", stderr);
-			buffer.free_exit(Buff, 1);
+			buffer.throw_error(Buff, "Current directory is too long.");
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
@@ -62,7 +56,7 @@ F_mtdt* set_name(F_mtdt* Buff, const char* arg)
 	return Buff;
 }
 
-F_mtdt* edit_name(F_mtdt* Buff, char key)
+F_mtdt* live_edit_name(F_mtdt* Buff, char key)
 {
 	const bool index = 1;
 

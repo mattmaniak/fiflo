@@ -26,7 +26,14 @@ F_mtdt* init(F_mtdt* Buff)
 	return Buff;
 }
 
-noreturn void free_exit(F_mtdt* Buff, const bool status)
+noreturn void throw_error(F_mtdt* Buff, const char* message)
+{
+	fprintf(stderr, "%s\n", message);
+	free_all(Buff);
+	exit(1);
+}
+
+void free_all(F_mtdt* Buff)
 {
 	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
@@ -47,5 +54,4 @@ noreturn void free_exit(F_mtdt* Buff, const bool status)
 	{
 		free(Buff);
 	}
-	exit(status);
 }

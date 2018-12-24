@@ -18,20 +18,21 @@ term_t get_term_sz(F_mtdt* Buff, char axis)
 	specific device (stdout). */
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == error)
 	{
-		fputs("Can't get the terminal size.\n", stderr);
-		buffer.free_exit(Buff, 1);
+		buffer.throw_error(Buff, "Can't get the terminal's size.");
 	}
 
 	// Terminal size check.
 	if((terminal.ws_col < w_min) || (terminal.ws_row < h_min))
 	{
 		fprintf(stderr, "Minimal terminal size: %dx%d.\n", w_min, h_min);
-		buffer.free_exit(Buff, 1);
+		buffer.free_all(Buff);
+		exit(1);
 	}
 	else if((terminal.ws_col > sz_max) || (terminal.ws_row > sz_max))
 	{
 		fprintf(stderr, "Maximum terminal size: %dx%d.\n", sz_max, sz_max);
-		buffer.free_exit(Buff, 1);
+		buffer.free_all(Buff);
+		exit(1);
 	}
 
 	switch(axis)

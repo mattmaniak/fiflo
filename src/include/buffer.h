@@ -39,9 +39,9 @@ typedef struct
 
 	// File's content and some indicators.
 	char**   text;               // Text buffer. Eg. text[lines_i][chars_i].
+	buff_t   chars_i;            // All chars index.
 	buff_t   lines_i;            // Lines index.
 	buff_t*  line_len_i;         // Chars in the current line (index).
-	buff_t   chars_i;            // All chars index.
 
 	// Visual shit.
 	buff_t   cusr_x;             // User's cursor position in the reversed X.
@@ -80,18 +80,23 @@ F_mtdt;
 // Initializes all Buff structure members.
 F_mtdt* init(F_mtdt* Buff);
 
+//
+noreturn void throw_error(F_mtdt* Buff, const char* message);
+
 // Frees everything and exits with status code.
-noreturn void free_exit(F_mtdt* Buff, const bool status);
+void free_all(F_mtdt* Buff);
 
 static const struct
 {
 	F_mtdt* (*init)(F_mtdt*);
-	void (*free_exit)(F_mtdt*, const bool);
+	void    (*throw_error)(F_mtdt*, const char*);
+	void    (*free_all)(F_mtdt*);
 }
 buffer =
 {
 	init,
-	free_exit
+	throw_error,
+	free_all
 };
 
 #endif
