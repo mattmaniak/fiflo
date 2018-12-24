@@ -8,6 +8,9 @@ ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 -fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \
 -fstack-protector-all
 
+MSAN_FLAGS = -fsanitize=memory -fPIE -pie -fno-omit-frame-pointer \
+-fsanitize-memory-track-origins
+
 SRC_DIR = src
 INC_DIR = $(SRC_DIR)/include
 OBJ_DIR = obj
@@ -51,9 +54,19 @@ $(TARGET): $(OBJ)
 	$(CFLAGS) \
 	$(DEBUGFLAGS)
 
-address: DEBUGFLAGS = $(ASAN_FLAGS)
-address: $(TARGET)
+# Debugging.
+asan: DEBUGFLAGS = $(ASAN_FLAGS)
+asan: $(TARGET)
 
+msan: CC = clang
+msan: DEBUGFLAGS = $(MSAN_FLAGS)
+msan: $(TARGET)
+
+valgrind: $(TARGET)
+valgrind:
+	valgrind -v ./$(BIN_DIR)/$(TARGET) $(FIFLO_ARG) # Dynamic variable.
+
+# Fun with a filesystem.
 install: $(TARGET)
 	sudo cp $(BIN_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)
 	sudo $(RM) $(MAN_INSTALL_DIR)/$(TARGET).1

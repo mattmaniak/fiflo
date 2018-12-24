@@ -3,13 +3,14 @@
 ## Description
 User-friendly ASCII terminal-based text editor.
 
-## Requirements for the GNU/Linux:
+## Get it
+### Requirements for the GNU/Linux:
 - git,
 - make,
 - gcc >= 4.6 or clang >= 3.1,
 - gzip (only for an installation).
 
-## Download, compile and run the current stable release
+### Quick guide to run it
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git
 cd fiflo
@@ -22,24 +23,54 @@ Also You can try the latest unstable snapshot
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
 ```
 
-## (Un)install
+### Installation
 ```
 sudo make install
 ```
+Then it will be posibility to run it directly from disk.
+```
+./fiflo
+```
+
+### Uninstallation
 ```
 sudo make uninstall
 ```
 
-## Delete object files and the binary
+### Delete object files and the binary
 ```
 make clean
 ```
 
-## Link the AddressSanitizer and friends for memory debugging
+## Development
+Dive into the "doc/" direcory.
+
+### Additional tools:
+- clang >= 3.1,
+- valgrind.
+
+### Get and check the development branch
 ```
-make address
+git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
+git checkout develop
 ```
-The program will consume much more memory. Also it will be slower.
+
+### Debugging
+Link the AddressSanitizer. Causes slowdown and huge memory usage.
+```
+make asan
+```
+
+Link the MemorySanitizer (only with clang). Causes slowdown.
+```
+make msan
+```
+
+Use the valgrind.
+```
+make valgrind FIFLO_ARG=<parameter passed to the fiflo>
+```
+Note: FIFLO_ARG is optional.
 
 ## FAQ
 Will you port it into the Windows?
