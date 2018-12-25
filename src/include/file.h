@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 // Sets the filename. If basename is passed as arg actent path will be added.
-F_mtdt* set_name(F_mtdt* Buff, const char* passed);
+F_mtdt* set_name(F_mtdt* Buff, const char * passed);
 
 // When the CTRL^O is pressed, there is possibility to basically edit the fname.
 F_mtdt* live_edit_name(F_mtdt* Buff, char key);

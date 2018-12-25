@@ -11,9 +11,9 @@ char getch(F_mtdt* Buff)
 	const int8_t error = -1;
 
 	const unsigned int canonical_mode_on = ICANON;
-	const unsigned int echo_input = ECHO;
-	const unsigned int enable_sigs = ISIG;
-	const unsigned int enable_xon = IXON;
+	const unsigned int echo_input        = ECHO;
+	const unsigned int enable_sigs       = ISIG;
+	const unsigned int enable_xon        = IXON;
 
 	struct termios old_term_params;
 	struct termios new_term_params;
@@ -32,7 +32,7 @@ char getch(F_mtdt* Buff)
 	new_term_params.c_iflag &= ~(enable_xon);
 	new_term_params.c_lflag &= ~(canonical_mode_on | echo_input | enable_sigs);
 
-	/* Immediately set the state of the STDIN_FILENO to the *new_term_params.
+	/* Immediately set the state of the STDIN_FILENO to the* new_term_params.
 	Use the new terminal I/O settings. */
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == error)
 	{
@@ -46,7 +46,7 @@ char getch(F_mtdt* Buff)
 		buffer.throw_error(Buff, "A negative char passed to the stdin.");
 	}
 
-	// Immediately restore the state of the stdin (0) to the *new_term_params.
+	// Immediately restore the state of the stdin (0) to the* new_term_params.
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == error)
 	{
 		window.flush(Buff);
@@ -57,9 +57,9 @@ char getch(F_mtdt* Buff)
 
 F_mtdt* parse_key(F_mtdt* Buff, char key)
 {
-	const bool nul_sz = 1;
-	enum {seq_len = 8};
-	static char key_sequence[seq_len];
+	enum           {seq_len = 8};
+	const bool     nul_sz = 1;
+	static char    key_sequence[seq_len];
 	static uint8_t char_i;
 
 	if((key == CTRL_LEFT_BRACKET) && (!Buff->live_fname_edit))

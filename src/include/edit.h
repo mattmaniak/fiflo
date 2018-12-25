@@ -28,11 +28,11 @@ static const struct
 {
 	F_mtdt* (*delete_last_line)(F_mtdt*);
 	F_mtdt* (*delete_line)(F_mtdt*);
-	F_mtdt* (*shift_text_horizonally)(F_mtdt*, char);
-	F_mtdt* (*move_lines_forward)(F_mtdt*);
-	F_mtdt* (*delete_last_empty_line)(F_mtdt*);
-	F_mtdt* (*delete_non_last_line)(F_mtdt*);
-	F_mtdt* (*delete_char)(F_mtdt*);
+	F_mtdt* (*shift_text_horizonally)(F_mtdt* , char);
+	F_mtdt* (*move_lines_forward)(F_mtdt* );
+	F_mtdt* (*delete_last_empty_line)(F_mtdt* );
+	F_mtdt* (*delete_non_last_line)(F_mtdt* );
+	F_mtdt* (*delete_char)(F_mtdt* );
 }
 edit =
 {

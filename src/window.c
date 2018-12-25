@@ -6,11 +6,11 @@
 
 term_t get_term_sz(F_mtdt* Buff, char axis)
 {
-	const int8_t error = -1;
-	const bool line_height = 1;
-	const term_t w_min = STATUS_MAX + 16; // Generally works.
-	const uint8_t h_min = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
-	const term_t sz_max = USHRT_MAX;
+	const int8_t  error       = -1;
+	const bool    line_height = 1;
+	const term_t  w_min       = STATUS_MAX + 16; // Generally works.
+	const uint8_t h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
+	const term_t  sz_max      = USHRT_MAX;
 
 	struct winsize terminal;
 
@@ -24,13 +24,13 @@ term_t get_term_sz(F_mtdt* Buff, char axis)
 	// Terminal size check.
 	if((terminal.ws_col < w_min) || (terminal.ws_row < h_min))
 	{
-		fprintf(stderr, "Minimal terminal size: %dx%d.\n", w_min, h_min);
+		fprintf(stderr, "Minimal terminal size: %ux%u.\n", w_min, h_min);
 		buffer.free_all(Buff);
 		exit(1);
 	}
 	else if((terminal.ws_col > sz_max) || (terminal.ws_row > sz_max))
 	{
-		fprintf(stderr, "Maximum terminal size: %dx%d.\n", sz_max, sz_max);
+		fprintf(stderr, "Maximum terminal size: %ux%u.\n", sz_max, sz_max);
 		buffer.free_all(Buff);
 		exit(1);
 	}
@@ -59,15 +59,15 @@ void flush(F_mtdt* Buff)
 	fflush(stdout);
 }
 
-void upper_bar(F_mtdt* Buff, Win_mtdt Ui)
+void upper_bar(F_mtdt* Buff, Win_mtdt* Ui)
 {
 	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - ICON_LEN);
 	buff_t indicator_width =
-	(buff_t) (get_term_sz(Buff, 'X') - (2 * SPACE_SZ) - ICON_LEN - STATUS_MAX);
+	(buff_t) (get_term_sz(Buff, 'X') - (2*  SPACE_SZ) - ICON_LEN - STATUS_MAX);
 
 	ANSI_INVERT();
 
-	/* Sometimes the empty space of width Ui.line_num_len will rendered before
+	/* Sometimes the empty space of width Ui->line_num_len will rendered before
 	the upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
@@ -96,10 +96,10 @@ void upper_bar(F_mtdt* Buff, Win_mtdt Ui)
 	printf("%s%.*s%*s", ICON, STATUS_MAX, Buff->status,
 	(int) (STATUS_MAX - strlen(Buff->status)), " ");
 
-	if((ACT_LINE_LEN_I < Ui.text_x) || (CURSOR_VERTICAL_I < Ui.text_x))
+	if((ACT_LINE_LEN_I < Ui->text_x) || (CURSOR_VERTICAL_I < Ui->text_x))
 	{
 		printf("%*d^ ", indicator_width,
-		get_term_sz(Buff, 'X') - Ui.line_num_len - CUR_SZ);
+		get_term_sz(Buff, 'X') - Ui->line_num_len - CUR_SZ);
 	}
 	else
 	{
@@ -136,22 +136,22 @@ void lower_bar(F_mtdt* Buff)
 	ANSI_RESET();
 }
 
-void fill(F_mtdt* Buff, Win_mtdt Ui)
+void fill(F_mtdt* Buff, Win_mtdt* Ui)
 {
-	if((Buff->lines_i + INDEX) < (buff_t) Ui.text_y)
+	if((Buff->lines_i + INDEX) < (buff_t) Ui->text_y)
 	{
 		WRAP_LINE();
 		ANSI_INVERT();
 
 		// Fill the empty area below the text to position the lower bar.
 		for(buff_t line = Buff->lines_i + INDEX;
-		line < (buff_t) (Ui.text_y - LBAR_SZ); line++)
+		line < (buff_t) (Ui->text_y - LBAR_SZ); line++)
 		{
 			// Just empty line num block but without the number.
-			printf("%*s", Ui.line_num_len - SPACE_SZ, " ");
+			printf("%*s", Ui->line_num_len - SPACE_SZ, " ");
 			WRAP_LINE();
 		}
-		printf("%*s", Ui.line_num_len - SPACE_SZ, " ");
+		printf("%*s", Ui->line_num_len - SPACE_SZ, " ");
 		ANSI_RESET();
 	}
 	// Else the lower bar will by positioned by the text.
@@ -167,34 +167,35 @@ void display(F_mtdt* Buff)
 	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
 	Ui.line_num_len = (uint8_t) (strlen(Ui.line_num_str) + SPACE_SZ);
-	Ui.text_x = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
-	Ui.text_y = (term_t) (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
+	Ui.text_x       = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
+	Ui.text_y       = (term_t) (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();
 
-	upper_bar(Buff, Ui);
+	upper_bar(Buff, &Ui);
 
-	render.display_text(Buff, Ui);
-	fill(Buff, Ui);
+	render.display_text(Buff, &Ui);
+	fill(Buff, &Ui);
 
 	lower_bar(Buff);
 
-	set_cursor_pos(Buff, Ui);
+	set_cursor_pos(Buff, &Ui);
 }
 
 void print_line_num(buff_t line_i, term_t line_num_len, const bool act_line)
 {
 	(!act_line) ? ANSI_INVERT() : 0; // Higlight a current line.
+
 	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
 
 	ANSI_RESET();
 	putchar(' '); // Whitespace adding.
 }
 
-void set_cursor_pos(F_mtdt* Buff, Win_mtdt Ui)
+void set_cursor_pos(F_mtdt* Buff, Win_mtdt* Ui)
 {
 	// Set by default to a filename edit.
-	term_t move_up = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
+	term_t move_up    = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
 	term_t move_right = (term_t) (ICON_LEN + Buff->fname_len_i);
 
 	(move_right >= get_term_sz(Buff, 'X')) ?
@@ -206,23 +207,23 @@ void set_cursor_pos(F_mtdt* Buff, Win_mtdt Ui)
 
 	if(!Buff->live_fname_edit)
 	{
-		if(ACT_LINE_LEN_I < Ui.text_x)
+		if(ACT_LINE_LEN_I < Ui->text_x)
 		{
 			// No horizontal scrolling.
-			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
+			move_right = (term_t) (Ui->line_num_len + CURSOR_VERTICAL_I);
 		}
-		else if((ACT_LINE_LEN_I - Ui.text_x) >= Buff->cusr_x)
+		else if((ACT_LINE_LEN_I - Ui->text_x) >= Buff->cusr_x)
 		{
-			// Last Ui.text_x chars are seen. Current line is scrolled, not cursor.
+			// Last Ui->text_x chars are seen. Current line is scrolled, not cursor.
 			move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ);
 		}
 		else
 		{
 			// Text is scrolled horizontally to the start. Cursor can be moved.
-			move_right = (term_t) (Ui.line_num_len + CURSOR_VERTICAL_I);
+			move_right = (term_t) (Ui->line_num_len + CURSOR_VERTICAL_I);
 		}
-		move_up = (ACT_LINE_I < Ui.text_y) ?
-		(term_t) ((Ui.text_y - ACT_LINE_I - INDEX) + Ui.lbar_h) : Ui.lbar_h;
+		move_up = (ACT_LINE_I < Ui->text_y) ?
+		(term_t) ((Ui->text_y - ACT_LINE_I - INDEX) + Ui->lbar_h) : Ui->lbar_h;
 	}
 	ANSI_CUR_RIGHT(move_right);
 	ANSI_CUR_UP(move_up);

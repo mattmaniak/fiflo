@@ -8,10 +8,10 @@ F_mtdt* recognize_sequence(F_mtdt* Buff, char sequence[8])
 
 	/* Notice that the structure of these sequences is: <ansi_esc_code> + '['
 	+ <some_unique_numbers_and_letters>. */
-	const char arrow_up[] = "\x1b[A";
-	const char arrow_down[] = "\x1b[B";
+	const char arrow_up[]    = "\x1b[A";
+	const char arrow_down[]  = "\x1b[B";
 	const char arrow_right[] = "\x1b[C";
-	const char arrow_left[] = "\x1b[D";
+	const char arrow_left[]  = "\x1b[D";
 
 	if(!strcmp(sequence, arrow_up))
 	{
@@ -100,17 +100,15 @@ F_mtdt* cursor_down(F_mtdt* Buff)
 	if(CURSOR_Y_SCROLLED)
 	{
 		Buff->cusr_y--;
-
 		if(cursor_at_prev_line_start)
 		{
 			/* Cursor at the left side: doesn't go at the end of a line. Always
-			at the beginning */
+			at the beginning. */
 			Buff->cusr_x = ACT_LINE_LEN_I;
 		}
 		else
 		{
-			// Ignore the linefeed or no.
-			(CURSOR_Y_SCROLLED) ? Buff->cusr_x = 1 : 0;
+			(CURSOR_Y_SCROLLED) ? Buff->cusr_x = 1 : 0; // Ignore the LF or no.
 		}
 	}
 	return Buff;

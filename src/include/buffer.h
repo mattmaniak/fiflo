@@ -81,16 +81,16 @@ F_mtdt;
 F_mtdt* init(F_mtdt* Buff);
 
 //
-noreturn void throw_error(F_mtdt* Buff, const char* message);
+noreturn void throw_error(F_mtdt* Buff, const char* err_msg);
 
 // Frees everything and exits with status code.
 void free_all(F_mtdt* Buff);
 
 static const struct
 {
-	F_mtdt* (*init)(F_mtdt*);
-	void    (*throw_error)(F_mtdt*, const char*);
-	void    (*free_all)(F_mtdt*);
+	F_mtdt* (*init)(F_mtdt* );
+	void    (*throw_error)(F_mtdt* , const char* );
+	void    (*free_all)(F_mtdt* );
 }
 buffer =
 {

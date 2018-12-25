@@ -26,9 +26,9 @@ F_mtdt* init(F_mtdt* Buff)
 	return Buff;
 }
 
-noreturn void throw_error(F_mtdt* Buff, const char* message)
+noreturn void throw_error(F_mtdt* Buff, const char* err_msg)
 {
-	fprintf(stderr, "%s\n", message);
+	fprintf(stderr, "%s\n", err_msg);
 	free_all(Buff);
 	exit(1);
 }
@@ -50,8 +50,4 @@ void free_all(F_mtdt* Buff)
 	{
 		free(Buff->text);
 	}
-	// if(Buff != NULL)
-	// {
-	// 	free(Buff);
-	// }
 }

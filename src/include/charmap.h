@@ -17,10 +17,10 @@ F_mtdt* backspace(F_mtdt* Buff);
 
 static const struct
 {
-	F_mtdt* (*key_action)(F_mtdt*, char);
-	F_mtdt* (*printable_char)(F_mtdt*, char);
-	F_mtdt* (*linefeed)(F_mtdt*);
-	F_mtdt* (*backspace)(F_mtdt*);
+	F_mtdt* (*key_action)(F_mtdt* , char);
+	F_mtdt* (*printable_char)(F_mtdt* , char);
+	F_mtdt* (*linefeed)(F_mtdt* );
+	F_mtdt* (*backspace)(F_mtdt* );
 }
 charmap =
 {

@@ -7,13 +7,13 @@
 
 F_mtdt* set_name(F_mtdt* Buff, const char* arg)
 {
-	const bool nul_sz = 1;
+	const bool nul_sz   = 1;
 	const bool slash_sz = 1;
-	uint16_t arg_len = (uint16_t) strlen(arg);
+	uint16_t   arg_len  = (uint16_t) strlen(arg);
 
-	bool arg_non_empty = arg_len > 0;
+	bool arg_non_empty   = arg_len > 0;
 	bool arg_as_abs_path = arg[0]  == '/';
-	bool arg_as_dir = (arg[arg_len - nul_sz] == '/') && (arg[arg_len] == '\0');
+	bool arg_as_dir      = (arg[arg_len - nul_sz] == '/') && (arg[arg_len] == '\0');
 
 	if(arg_non_empty && arg_as_dir)
 	{

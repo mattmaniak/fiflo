@@ -16,7 +16,7 @@ as described but only with: master, develop, hotifx branches.
 - Allman-like brace style,
 - indentation: 1 hard tab (equal to 4 spaces),
 - only snake_case is allowed,
-- visually align defines and structures declarations,
+- visually align: defines, types, names, assignments etc,
 - single line should not exceed 80 chars printable chars,
 - insert short TODOs near thing to fix as uppercase comments,
 - write doc comments,
