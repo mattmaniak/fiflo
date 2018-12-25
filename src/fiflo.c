@@ -36,20 +36,18 @@ noreturn void run(const char* arg)
 {
 	char pressed = '\0'; // Initializer.
 
-	F_mtdt* Buff = malloc(sizeof(F_mtdt));
-	memory.chk_ptr(Buff, Buff, "malloc the metadata buffer");
-
-	Buff = buffer.init(Buff);
-	Buff = file.set_name(Buff, arg);
-	Buff = file.load(Buff);
+	F_mtdt Buff;
+	Buff = *buffer.init(&Buff);
+	Buff = *file.set_name(&Buff, arg);
+	Buff = *file.load(&Buff);
 
 	for(;;) // The main program loop.
 	{
-		Buff = keyboard.parse_key(Buff, pressed);
-		window.display(Buff);
+		Buff = *keyboard.parse_key(&Buff, pressed);
+		window.display(&Buff);
 
-		pressed = keyboard.getch(Buff);
-		window.flush(Buff);
+		pressed = keyboard.getch(&Buff);
+		window.flush(&Buff);
 	}
 }
 
@@ -58,17 +56,22 @@ int main(const int argc, const char** argv)
 	if(argc > 2)
 	{
 		fputs("Only one additional arg can be passed.\n", stderr);
-		exit(1);
+		return 1;
 	}
 
 	if(argv[1] == NULL)	// Sets the default basename and starts.
 	{
 		run("");
 	}
-	else
+	else if(strlen(argv[1]) <= ARG_MAX)
 	{
 		options(argv[1]);
 		run(argv[1]);
+	}
+	else
+	{
+		fprintf(stderr, "Maximum length of a parameter is %u\n", ARG_MAX);
+		return 1;
 	}
 }
 

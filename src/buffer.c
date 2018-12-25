@@ -50,8 +50,8 @@ void free_all(F_mtdt* Buff)
 	{
 		free(Buff->text);
 	}
-	if(Buff != NULL)
-	{
-		free(Buff);
-	}
+	// if(Buff != NULL)
+	// {
+	// 	free(Buff);
+	// }
 }
