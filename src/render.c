@@ -4,9 +4,9 @@
 
 #include "include/window.h"
 
-buff_t set_start_line(F_mtdt* Buff, Win_mtdt* Ui)
+idx_t set_start_line(Buff_t* Buff, Ui_t* Ui)
 {
-	buff_t scrolled_lines = 0;
+	idx_t scrolled_lines = 0;
 
 	if(ACT_LINE_I >= Ui->text_y)
 	{
@@ -16,9 +16,9 @@ buff_t set_start_line(F_mtdt* Buff, Win_mtdt* Ui)
 	return scrolled_lines;
 }
 
-void scroll_line_horizontally(F_mtdt* Buff, Win_mtdt* Ui)
+void scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
 {
-	buff_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
+	idx_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
 
 	// Text will be scrolled. Not cursor.
 	for(; char_i < CURSOR_VERTICAL_I; char_i++)
@@ -31,7 +31,7 @@ void scroll_line_horizontally(F_mtdt* Buff, Win_mtdt* Ui)
 	(CURSOR_Y_SCROLLED) ? WRAP_LINE() : 0;
 }
 
-void print_actual_line(F_mtdt* Buff, Win_mtdt* Ui)
+void print_actual_line(Buff_t* Buff, Ui_t* Ui)
 {
 	// There is small amount of chars. Horizontal scroll isn't required.
 	if(ACT_LINE_LEN_I < Ui->text_x)
@@ -55,9 +55,9 @@ void print_actual_line(F_mtdt* Buff, Win_mtdt* Ui)
 	}
 }
 
-void fit_lines(F_mtdt* Buff, Win_mtdt* Ui)
+void fit_lines(Buff_t* Buff, Ui_t* Ui)
 {
-	buff_t line_i;
+	idx_t line_i;
 
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
@@ -83,9 +83,9 @@ void fit_lines(F_mtdt* Buff, Win_mtdt* Ui)
 	}
 }
 
-void shrink_lines(F_mtdt* Buff, Win_mtdt* Ui)
+void shrink_lines(Buff_t* Buff, Ui_t* Ui)
 {
-	buff_t line_i;
+	idx_t line_i;
 
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
@@ -101,14 +101,14 @@ void shrink_lines(F_mtdt* Buff, Win_mtdt* Ui)
 	// Next lines. If scrolled. Only beginning is shown.
 	line_i = ACT_LINE_I + INDEX;
 
-	for(; line_i < (buff_t) (Ui->text_y - INDEX); line_i++)
+	for(; line_i < (idx_t) (Ui->text_y - INDEX); line_i++)
 	{
 		print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui->text_x - CUR_SZ, Buff->text[line_i]);
 
 		(Buff->line_len_i[line_i] >= Ui->text_x) ? WRAP_LINE() : 0;
 	}
-	print_line_num((buff_t) (Ui->text_y - INDEX), Ui->line_num_len, ANOTHER_LINE);
+	print_line_num((idx_t) (Ui->text_y - INDEX), Ui->line_num_len, ANOTHER_LINE);
 
 	if(Buff->line_len_i[Ui->text_y - INDEX] < Ui->text_x)
 	{
@@ -121,10 +121,10 @@ void shrink_lines(F_mtdt* Buff, Win_mtdt* Ui)
 	}
 }
 
-void scroll_lines(F_mtdt* Buff, Win_mtdt* Ui)
+void scroll_lines(Buff_t* Buff, Ui_t* Ui)
 {
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(buff_t line_i = set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
+	for(idx_t line_i = set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
 	{
 		print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui->text_x, Buff->text[line_i]);
@@ -144,7 +144,7 @@ void scroll_lines(F_mtdt* Buff, Win_mtdt* Ui)
 	else if((ACT_LINE_LEN_I - Ui->text_x) >= Buff->cusr_x)
 	{
 		// Text will be scrolled. Not cursor.
-		for(buff_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
+		for(idx_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
 		char_i < CURSOR_VERTICAL_I; char_i++)
 		{
 			putchar(ACT_LINE[char_i]);
@@ -157,7 +157,7 @@ void scroll_lines(F_mtdt* Buff, Win_mtdt* Ui)
 	}
 }
 
-void display_text(F_mtdt* Buff, Win_mtdt* Ui)
+void display_text(Buff_t* Buff, Ui_t* Ui)
 {
 	if(Buff->lines_i < Ui->text_y)
 	{

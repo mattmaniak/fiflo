@@ -14,7 +14,7 @@ that describes the buffer. */
 #include <linux/limits.h>
 
 // Needed to char/lines/chars_in_line values.
-typedef uint32_t buff_t;
+typedef uint32_t idx_t;
 
 #define INDEX 1
 
@@ -29,26 +29,26 @@ typedef uint32_t buff_t;
 typedef struct
 {
 	// Modes.
-	bool     key_sequence;       // True if pressed key is ANSI escape code.
-	bool     live_fname_edit;    // As in the name.
-	bool     pane_toggled;       // As in the name.
+	bool     key_sequence;      // True if pressed key is ANSI escape code.
+	bool     live_fname_edit;   // As in the name.
+	bool     pane_toggled;      // As in the name.
 
 	// Filename.
-	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
-	uint16_t fname_len_i;        // Strlen of the above array.
+	char     fname[PATH_MAX];   // Full filename. Eg. /home/user/basename.
+	uint16_t fname_len_i;       // Strlen of the above array.
 
 	// File's content and some indicators.
-	char**   text;               // Text buffer. Eg. text[lines_i][chars_i].
-	buff_t   chars_i;            // All chars index.
-	buff_t   lines_i;            // Lines index.
-	buff_t*  line_len_i;         // Chars in the current line (index).
+	char**   text;              // Text buffer. Eg. text[lines_i][chars_i].
+	idx_t    chars_i;           // All chars index.
+	idx_t    lines_i;           // Lines index.
+	idx_t*   line_len_i;        // Chars in the current line (index).
 
 	// Visual shit.
-	buff_t   cusr_x;             // User's cursor position in the reversed X.
-	buff_t   cusr_y;             // As above but Y-axis.
-	char     status[STATUS_MAX]; // Displayed message in the upper bar.
+	idx_t   cusr_x;             // User's cursor position in the reversed X.
+	idx_t   cusr_y;             // As above but Y-axis.
+	char    status[STATUS_MAX]; // Displayed message in the upper bar.
 }
-F_mtdt;
+Buff_t;
 #pragma pack(pop)
 #pragma pack(pop)
 
@@ -78,19 +78,19 @@ F_mtdt;
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
 // Initializes all Buff structure members.
-F_mtdt* init(F_mtdt* Buff);
+Buff_t* init(Buff_t* Buff);
 
 //
-noreturn void throw_error(F_mtdt* Buff, const char* err_msg);
+noreturn void throw_error(Buff_t* Buff, const char* err_msg);
 
 // Frees everything and exits with status code.
-void free_all(F_mtdt* Buff);
+void free_all(Buff_t* Buff);
 
 static const struct
 {
-	F_mtdt* (*init)(F_mtdt* );
-	void    (*throw_error)(F_mtdt* , const char* );
-	void    (*free_all)(F_mtdt* );
+	Buff_t* (*init)(Buff_t*);
+	void    (*throw_error)(Buff_t* , const char*);
+	void    (*free_all)(Buff_t* );
 }
 buffer =
 {

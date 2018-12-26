@@ -5,7 +5,7 @@
 #include "include/memory.h"
 #include "include/charmap.h"
 
-F_mtdt* set_name(F_mtdt* Buff, const char* arg)
+Buff_t* set_name(Buff_t* Buff, const char* arg)
 {
 	const bool nul_sz   = 1;
 	const bool slash_sz = 1;
@@ -56,7 +56,7 @@ F_mtdt* set_name(F_mtdt* Buff, const char* arg)
 	return Buff;
 }
 
-F_mtdt* live_edit_name(F_mtdt* Buff, char key)
+Buff_t* live_edit_name(Buff_t* Buff, char key)
 {
 	const bool index = 1;
 
@@ -80,7 +80,7 @@ F_mtdt* live_edit_name(F_mtdt* Buff, char key)
 	return Buff;
 }
 
-F_mtdt* load(F_mtdt* Buff)
+Buff_t* load(Buff_t* Buff)
 {
 	const bool nul_sz = 1;
 	FILE* textfile = fopen(Buff->fname, "r");
@@ -113,7 +113,7 @@ F_mtdt* load(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* save(F_mtdt* Buff)
+Buff_t* save(Buff_t* Buff)
 {
 	const int8_t not_created = -1;
 
@@ -130,11 +130,11 @@ F_mtdt* save(F_mtdt* Buff)
 
 	if(textfile != NULL)
 	{
-		for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
+		for(idx_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 		{
 			/* Using fputs or fprintf causes use-of-uninitialized-value using
 			MSan because of there is more memory allocated than is needed. */
-			for(buff_t char_i = 0; char_i < Buff->line_len_i[line_i]; char_i++)
+			for(idx_t char_i = 0; char_i < Buff->line_len_i[line_i]; char_i++)
 			{
 				putc(Buff->text[line_i][char_i], textfile);
 			}

@@ -7,39 +7,39 @@
 #include <stdlib.h>
 
 // Checks if passed pointer is NULL. If yes - frees memory and exits.
-void chk_ptr(F_mtdt* Buff, void* ptr, const char* err_msg);
+void chk_ptr(Buff_t* Buff, void* ptr, const char* err_msg);
 
 // Allocs next memory block for chars in a line if needed.
-char* extend_line_mem(F_mtdt* Buff, buff_t line_i);
+char* extend_line_mem(Buff_t* Buff, idx_t line_i);
 
 // Works as the function above but shrinks memblocks.
-char* shrink_act_line_mem(F_mtdt* Buff);
+char* shrink_act_line_mem(Buff_t* Buff);
 
 // When the enter is hitted with shifted cursor, previous line will be shrinked.
-char* shrink_prev_line_mem(F_mtdt* Buff);
+char* shrink_prev_line_mem(Buff_t* Buff);
 
 // Allocs memory for the next line.
-F_mtdt* extend_lines_array_mem(F_mtdt* Buff);
+Buff_t* extend_lines_array_mem(Buff_t* Buff);
 
 // With pointers that contains: lines and their lenghts.
-F_mtdt* shrink_lines_array_mem(F_mtdt* Buff);
+Buff_t* shrink_lines_array_mem(Buff_t* Buff);
 
 // Shifts the lines down.
-F_mtdt* copy_lines_mem_forward(F_mtdt* Buff);
+Buff_t* copy_lines_mem_forward(Buff_t* Buff);
 
 // Shifts the lines up.
-F_mtdt* copy_lines_mem_backward(F_mtdt* Buff);
+Buff_t* copy_lines_mem_backward(Buff_t* Buff);
 
 static const struct
 {
-	void    (*chk_ptr)(F_mtdt*, void*, const char*);
-	char*   (*extend_line_mem)(F_mtdt*, buff_t);
-	char*   (*shrink_act_line_mem)(F_mtdt*);
-	char*   (*shrink_prev_line_mem)(F_mtdt*);
-	F_mtdt* (*extend_lines_array_mem)(F_mtdt*);
-	F_mtdt* (*shrink_lines_array_mem)(F_mtdt*);
-	F_mtdt* (*copy_lines_mem_forward)(F_mtdt*);
-	F_mtdt* (*copy_lines_mem_backward)(F_mtdt*);
+	void    (*chk_ptr)(Buff_t*, void*, const char*);
+	char*   (*extend_line_mem)(Buff_t*, idx_t);
+	char*   (*shrink_act_line_mem)(Buff_t*);
+	char*   (*shrink_prev_line_mem)(Buff_t*);
+	Buff_t* (*extend_lines_array_mem)(Buff_t*);
+	Buff_t* (*shrink_lines_array_mem)(Buff_t*);
+	Buff_t* (*copy_lines_mem_forward)(Buff_t*);
+	Buff_t* (*copy_lines_mem_backward)(Buff_t*);
 }
 memory =
 {

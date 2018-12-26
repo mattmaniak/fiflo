@@ -4,21 +4,21 @@
 // Handles with sequences that aren't single ASCII char.
 
 // Converts the given letter by the parse_key and chooses the cursror direction.
-F_mtdt* recognize_sequence(F_mtdt* Buff, char sequence[8]);
+Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8]);
 
 // These ones moves the cursor.
-F_mtdt* cursor_left(F_mtdt* Buff);
-F_mtdt* cursor_right(F_mtdt* Buff);
-F_mtdt* cursor_up(F_mtdt* Buff);
-F_mtdt* cursor_down(F_mtdt* Buff);
+Buff_t* cursor_left(Buff_t* Buff);
+Buff_t* cursor_right(Buff_t* Buff);
+Buff_t* cursor_up(Buff_t* Buff);
+Buff_t* cursor_down(Buff_t* Buff);
 
 static const struct
 {
-	F_mtdt* (*recognize_sequence)(F_mtdt*, char[8]);
-	F_mtdt* (*cursor_left)(F_mtdt*);
-	F_mtdt* (*cursor_right)(F_mtdt*);
-	F_mtdt* (*cursor_up)(F_mtdt*);
-	F_mtdt* (*cursor_down)(F_mtdt*);
+	Buff_t* (*recognize_sequence)(Buff_t*, char[8]);
+	Buff_t* (*cursor_left)(Buff_t*);
+	Buff_t* (*cursor_right)(Buff_t*);
+	Buff_t* (*cursor_up)(Buff_t*);
+	Buff_t* (*cursor_down)(Buff_t*);
 }
 seqmap =
 {

@@ -6,9 +6,9 @@
 #include "include/ui.h"
 #include "include/window.h"
 
-char getch(F_mtdt* Buff)
+char getch(Buff_t* Buff)
 {
-	const int8_t error = -1;
+	const int error = -1;
 
 	const unsigned int canonical_mode_on = ICANON;
 	const unsigned int echo_input        = ECHO;
@@ -55,7 +55,7 @@ char getch(F_mtdt* Buff)
 	return key;
 }
 
-F_mtdt* parse_key(F_mtdt* Buff, char key)
+Buff_t* parse_key(Buff_t* Buff, char key)
 {
 	enum           {seq_len = 8};
 	const bool     nul_sz = 1;

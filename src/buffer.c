@@ -2,12 +2,12 @@
 
 #include "include/memory.h"
 
-F_mtdt* init(F_mtdt* Buff)
+Buff_t* init(Buff_t* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
 	memory.chk_ptr(Buff, Buff->text, " malloc the array with lines");
 
-	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
+	Buff->line_len_i = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 	memory.chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length");
 
 	Buff->chars_i = 0;
@@ -26,16 +26,16 @@ F_mtdt* init(F_mtdt* Buff)
 	return Buff;
 }
 
-noreturn void throw_error(F_mtdt* Buff, const char* err_msg)
+noreturn void throw_error(Buff_t* Buff, const char* err_msg)
 {
 	fprintf(stderr, "%s\n", err_msg);
 	free_all(Buff);
 	exit(1);
 }
 
-void free_all(F_mtdt* Buff)
+void free_all(Buff_t* Buff)
 {
-	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
+	for(idx_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
 		if(Buff->text[line_i] != NULL)
 		{

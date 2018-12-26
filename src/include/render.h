@@ -10,35 +10,35 @@
 #define ANOTHER_LINE       false
 
 // Returns value of hidden lines.
-buff_t set_start_line(F_mtdt* Buff, Win_mtdt* Ui);
+idx_t set_start_line(Buff_t* Buff, Ui_t* Ui);
 
 // Scrolls chars. Used when the cursor is in static position.
-void scroll_line_horizontally(F_mtdt* Buff, Win_mtdt* Ui);
+void scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui);
 
 // Decides how to show it. Can scroll it or the cursor.
-void print_actual_line(F_mtdt* Buff, Win_mtdt* Ui);
+void print_actual_line(Buff_t* Buff, Ui_t* Ui);
 
 // Renders a text when there is smaller amount of lines than the window height.
-void fit_lines(F_mtdt* Buff, Win_mtdt* Ui);
+void fit_lines(Buff_t* Buff, Ui_t* Ui);
 
 // If there is more lines but they are scrolled to the start.
-void shrink_lines(F_mtdt* Buff, Win_mtdt* Ui);
+void shrink_lines(Buff_t* Buff, Ui_t* Ui);
 
 // Lines rendering starts at specified by user offset.
-void scroll_lines(F_mtdt* Buff, Win_mtdt* Ui);
+void scroll_lines(Buff_t* Buff, Ui_t* Ui);
 
 // Shows a text in the window.
-void display_text(F_mtdt* Buff, Win_mtdt* Ui);
+void display_text(Buff_t* Buff, Ui_t* Ui);
 
 static const struct
 {
-	buff_t (*set_start_line)(F_mtdt*, Win_mtdt*);
-	void   (*scroll_line_horizontally)(F_mtdt*, Win_mtdt*);
-	void   (*print_actual_line)(F_mtdt *, Win_mtdt*);
-	void   (*fit_lines)(F_mtdt*, Win_mtdt*);
-	void   (*shrink_lines)(F_mtdt*, Win_mtdt*);
-	void   (*scroll_lines)(F_mtdt*, Win_mtdt*);
-	void   (*display_text)(F_mtdt*, Win_mtdt*);
+	idx_t (*set_start_line)(Buff_t*, Ui_t*);
+	void  (*scroll_line_horizontally)(Buff_t*, Ui_t*);
+	void  (*print_actual_line)(Buff_t*, Ui_t*);
+	void  (*fit_lines)(Buff_t*, Ui_t*);
+	void  (*shrink_lines)(Buff_t*, Ui_t*);
+	void  (*scroll_lines)(Buff_t*, Ui_t*);
+	void  (*display_text)(Buff_t*, Ui_t*);
 }
 render =
 {

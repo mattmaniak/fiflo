@@ -36,7 +36,7 @@ noreturn void run(const char* arg)
 {
 	char pressed = '\0'; // Initializer.
 
-	F_mtdt Buff;
+	Buff_t Buff;
 	Buff = *buffer.init(&Buff);
 	Buff = *file.set_name(&Buff, arg);
 	Buff = *file.load(&Buff);

@@ -1,7 +1,7 @@
 #include "include/buffer.h"
 #include "include/memory.h"
 
-void chk_ptr(F_mtdt* Buff, void* ptr, const char* err_msg)
+void chk_ptr(Buff_t* Buff, void* ptr, const char* err_msg)
 {
 	if(ptr == NULL)
 	{
@@ -11,9 +11,9 @@ void chk_ptr(F_mtdt* Buff, void* ptr, const char* err_msg)
 	}
 }
 
-char* extend_line_mem(F_mtdt* Buff, buff_t line_i)
+char* extend_line_mem(Buff_t* Buff, idx_t line_i)
 {
-	buff_t memblock = MEMBLK;
+	idx_t memblock = MEMBLK;
 
 	if(Buff->line_len_i[line_i] == INIT_MEMBLK)
 	{
@@ -44,9 +44,9 @@ char* extend_line_mem(F_mtdt* Buff, buff_t line_i)
 	return Buff->text[line_i];
 }
 
-char* shrink_act_line_mem(F_mtdt* Buff)
+char* shrink_act_line_mem(Buff_t* Buff)
 {
-	buff_t memblock = INIT_MEMBLK;
+	idx_t memblock = INIT_MEMBLK;
 
 	/* These cases are executed only when the backspace is pressed. Works in the
  	same way as "extend_act_line_mem". */
@@ -72,9 +72,9 @@ char* shrink_act_line_mem(F_mtdt* Buff)
 	return ACT_LINE;
 }
 
-char* shrink_prev_line_mem(F_mtdt* Buff)
+char* shrink_prev_line_mem(Buff_t* Buff)
 {
-	buff_t memblock = INIT_MEMBLK;
+	idx_t memblock = INIT_MEMBLK;
 
 	if((PREV_LINE_LEN_I >= INIT_MEMBLK) && (PREV_LINE_LEN_I < MEMBLK))
 	{
@@ -97,7 +97,7 @@ char* shrink_prev_line_mem(F_mtdt* Buff)
 	return PREV_LINE;
 }
 
-F_mtdt* extend_lines_array_mem(F_mtdt* Buff)
+Buff_t* extend_lines_array_mem(Buff_t* Buff)
 {
 	// Enhance the array that contains pointers to lines.
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
@@ -120,7 +120,7 @@ F_mtdt* extend_lines_array_mem(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* shrink_lines_array_mem(F_mtdt* Buff)
+Buff_t* shrink_lines_array_mem(Buff_t* Buff)
 {
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 
@@ -134,13 +134,13 @@ F_mtdt* shrink_lines_array_mem(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* copy_lines_mem_forward(F_mtdt* Buff)
+Buff_t* copy_lines_mem_forward(Buff_t* Buff)
 {
 	const bool prev = 1;
 
-	for(buff_t line_i = Buff->lines_i; line_i > ACT_LINE_I; line_i--)
+	for(idx_t line_i = Buff->lines_i; line_i > ACT_LINE_I; line_i--)
 	{
-		buff_t memblock =
+		idx_t memblock =
 		((Buff->line_len_i[line_i - prev] / MEMBLK) * MEMBLK) + MEMBLK;
 
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
@@ -162,13 +162,13 @@ F_mtdt* copy_lines_mem_forward(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* copy_lines_mem_backward(F_mtdt* Buff)
+Buff_t* copy_lines_mem_backward(Buff_t* Buff)
 {
 	const bool next = 1;
 
-	for(buff_t line_i = ACT_LINE_I; line_i < Buff->lines_i; line_i++)
+	for(idx_t line_i = ACT_LINE_I; line_i < Buff->lines_i; line_i++)
 	{
-		buff_t memblock =
+		idx_t memblock =
 		((Buff->line_len_i[line_i + next] / MEMBLK) * MEMBLK) + MEMBLK;
 
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);

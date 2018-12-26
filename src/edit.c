@@ -4,7 +4,7 @@
 
 #include "include/memory.h"
 
-F_mtdt* delete_last_line(F_mtdt* Buff)
+Buff_t* delete_last_line(Buff_t* Buff)
 {
 	free(LAST_LINE);
 
@@ -14,9 +14,9 @@ F_mtdt* delete_last_line(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* delete_line(F_mtdt* Buff)
+Buff_t* delete_line(Buff_t* Buff)
 {
-	buff_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
+	idx_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
 
 	if(!FIRST_LINE)
 	{
@@ -54,10 +54,10 @@ F_mtdt* delete_line(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* shift_text_horizonally(F_mtdt* Buff, char direction)
+Buff_t* shift_text_horizonally(Buff_t* Buff, char direction)
 {
 	const bool prev = 1;
-	buff_t char_i;
+	idx_t char_i;
 
 	switch(direction)
 	{
@@ -77,7 +77,7 @@ F_mtdt* shift_text_horizonally(F_mtdt* Buff, char direction)
 	return Buff;
 }
 
-F_mtdt* move_lines_forward(F_mtdt* Buff)
+Buff_t* move_lines_forward(Buff_t* Buff)
 {
 	PREV_LINE_LEN_I -= Buff->cusr_x;
 
@@ -89,7 +89,7 @@ F_mtdt* move_lines_forward(F_mtdt* Buff)
 	}
 
 	// Move the right part (separated by the cursor) of the line to the next.
-	for(buff_t char_i = PREV_LINE_LEN_I;
+	for(idx_t char_i = PREV_LINE_LEN_I;
 	char_i < PREV_LINE_LEN_I + Buff->cusr_x; char_i++)
 	{
 		ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
@@ -104,7 +104,7 @@ F_mtdt* move_lines_forward(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* delete_last_empty_line(F_mtdt* Buff)
+Buff_t* delete_last_empty_line(Buff_t* Buff)
 {
 	free(ACT_LINE);
 
@@ -119,13 +119,13 @@ F_mtdt* delete_last_empty_line(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* delete_non_last_line(F_mtdt* Buff)
+Buff_t* delete_non_last_line(Buff_t* Buff)
 {
 	PREV_LINE_LEN_I--;
 	Buff->chars_i--;
 
 	// Append part of a next line to a previous one.
-	for(buff_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
+	for(idx_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
 	{
 		PREV_LINE[PREV_LINE_LEN_I] = ACT_LINE[char_i];
 
@@ -144,7 +144,7 @@ F_mtdt* delete_non_last_line(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* delete_char(F_mtdt* Buff)
+Buff_t* delete_char(Buff_t* Buff)
 {
 	if(!CURSOR_AT_LINE_START)
 	{

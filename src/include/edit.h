@@ -4,35 +4,35 @@
 // All the unseen magic that will happen when You insert the char.
 
 // As in the name.
-F_mtdt* delete_last_line(F_mtdt* Buff);
+Buff_t* delete_last_line(Buff_t* Buff);
 
 // Deletes the current line and decrements the lines index.
-F_mtdt* delete_line(F_mtdt* Buff);
+Buff_t* delete_line(Buff_t* Buff);
 
 // Moves the text when the cursor is moved left and char is pressed.
-F_mtdt* shift_text_horizonally(F_mtdt* Buff, char direction);
+Buff_t* shift_text_horizonally(Buff_t* Buff, char direction);
 
 // As in the name, but supports Y shift with the cursor scrolled horizontally.
-F_mtdt* move_lines_forward(F_mtdt* Buff);
+Buff_t* move_lines_forward(Buff_t* Buff);
 
 // Simply as in the name.
-F_mtdt* delete_last_empty_line(F_mtdt* Buff);
+Buff_t* delete_last_empty_line(Buff_t* Buff);
 
 // Also shifts lines from the bottom up.
-F_mtdt* delete_non_last_line(F_mtdt* Buff);
+Buff_t* delete_non_last_line(Buff_t* Buff);
 
 // Optionally shifts the text horizontally.
-F_mtdt* delete_char(F_mtdt* Buff);
+Buff_t* delete_char(Buff_t* Buff);
 
 static const struct
 {
-	F_mtdt* (*delete_last_line)(F_mtdt*);
-	F_mtdt* (*delete_line)(F_mtdt*);
-	F_mtdt* (*shift_text_horizonally)(F_mtdt* , char);
-	F_mtdt* (*move_lines_forward)(F_mtdt* );
-	F_mtdt* (*delete_last_empty_line)(F_mtdt* );
-	F_mtdt* (*delete_non_last_line)(F_mtdt* );
-	F_mtdt* (*delete_char)(F_mtdt* );
+	Buff_t* (*delete_last_line)(Buff_t*);
+	Buff_t* (*delete_line)(Buff_t*);
+	Buff_t* (*shift_text_horizonally)(Buff_t*, char);
+	Buff_t* (*move_lines_forward)(Buff_t*);
+	Buff_t* (*delete_last_empty_line)(Buff_t*);
+	Buff_t* (*delete_non_last_line)(Buff_t*);
+	Buff_t* (*delete_char)(Buff_t*);
 }
 edit =
 {

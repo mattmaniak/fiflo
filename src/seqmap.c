@@ -2,7 +2,7 @@
 #include "include/seqmap.h"
 #include "include/charmap.h"
 
-F_mtdt* recognize_sequence(F_mtdt* Buff, char sequence[8])
+Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8])
 {
 	const uint8_t seq_max = 3;
 
@@ -45,7 +45,7 @@ F_mtdt* recognize_sequence(F_mtdt* Buff, char sequence[8])
 	return Buff;
 }
 
-F_mtdt* cursor_left(F_mtdt* Buff)
+Buff_t* cursor_left(Buff_t* Buff)
 {
 	bool more_than_one_line = Buff->lines_i > 0;
 
@@ -62,7 +62,7 @@ F_mtdt* cursor_left(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* cursor_right(F_mtdt* Buff)
+Buff_t* cursor_right(Buff_t* Buff)
 {
 	if(CURSOR_X_SCROLLED)
 	{
@@ -81,7 +81,7 @@ F_mtdt* cursor_right(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* cursor_up(F_mtdt* Buff)
+Buff_t* cursor_up(Buff_t* Buff)
 {
 	if(!CURSOR_AT_TOP)
 	{
@@ -93,7 +93,7 @@ F_mtdt* cursor_up(F_mtdt* Buff)
 	return Buff;
 }
 
-F_mtdt* cursor_down(F_mtdt* Buff)
+Buff_t* cursor_down(Buff_t* Buff)
 {
 	bool cursor_at_prev_line_start = CURSOR_AT_LINE_START;
 

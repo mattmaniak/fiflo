@@ -4,7 +4,7 @@
 
 #include "include/render.h"
 
-term_t get_term_sz(F_mtdt* Buff, char axis)
+term_t get_term_sz(Buff_t* Buff, char axis)
 {
 	const int8_t  error       = -1;
 	const bool    line_height = 1;
@@ -43,7 +43,7 @@ term_t get_term_sz(F_mtdt* Buff, char axis)
 	return 1;
 }
 
-void flush(F_mtdt* Buff)
+void flush(Buff_t* Buff)
 {
 	// Restore to the left lower corner and clean the lowest line.
 	ANSI_RESTORE_CUR_POS();
@@ -59,11 +59,11 @@ void flush(F_mtdt* Buff)
 	fflush(stdout);
 }
 
-void upper_bar(F_mtdt* Buff, Win_mtdt* Ui)
+void upper_bar(Buff_t* Buff, Ui_t* Ui)
 {
 	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - ICON_LEN);
-	buff_t indicator_width =
-	(buff_t) (get_term_sz(Buff, 'X') - (2*  SPACE_SZ) - ICON_LEN - STATUS_MAX);
+	idx_t indicator_width =
+	(idx_t) (get_term_sz(Buff, 'X') - (2*  SPACE_SZ) - ICON_LEN - STATUS_MAX);
 
 	ANSI_INVERT();
 
@@ -109,7 +109,7 @@ void upper_bar(F_mtdt* Buff, Win_mtdt* Ui)
 	ANSI_RESET();
 }
 
-void lower_bar(F_mtdt* Buff)
+void lower_bar(Buff_t* Buff)
 {
 	term_t horizontal_fill = (term_t) (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
 	const char key_binding[4][STATUS_MAX] =
@@ -136,16 +136,16 @@ void lower_bar(F_mtdt* Buff)
 	ANSI_RESET();
 }
 
-void fill(F_mtdt* Buff, Win_mtdt* Ui)
+void fill(Buff_t* Buff, Ui_t* Ui)
 {
-	if((Buff->lines_i + INDEX) < (buff_t) Ui->text_y)
+	if((Buff->lines_i + INDEX) < (idx_t) Ui->text_y)
 	{
 		WRAP_LINE();
 		ANSI_INVERT();
 
 		// Fill the empty area below the text to position the lower bar.
-		for(buff_t line = Buff->lines_i + INDEX;
-		line < (buff_t) (Ui->text_y - LBAR_SZ); line++)
+		for(idx_t line = Buff->lines_i + INDEX;
+		line < (idx_t) (Ui->text_y - LBAR_SZ); line++)
 		{
 			// Just empty line num block but without the number.
 			printf("%*s", Ui->line_num_len - SPACE_SZ, " ");
@@ -157,9 +157,9 @@ void fill(F_mtdt* Buff, Win_mtdt* Ui)
 	// Else the lower bar will by positioned by the text.
 }
 
-void display(F_mtdt* Buff)
+void display(Buff_t* Buff)
 {
-	Win_mtdt Ui;
+	Ui_t Ui;
 
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
@@ -182,7 +182,7 @@ void display(F_mtdt* Buff)
 	set_cursor_pos(Buff, &Ui);
 }
 
-void print_line_num(buff_t line_i, term_t line_num_len, const bool act_line)
+void print_line_num(idx_t line_i, term_t line_num_len, const bool act_line)
 {
 	(!act_line) ? ANSI_INVERT() : 0; // Higlight a current line.
 
@@ -192,7 +192,7 @@ void print_line_num(buff_t line_i, term_t line_num_len, const bool act_line)
 	putchar(' '); // Whitespace adding.
 }
 
-void set_cursor_pos(F_mtdt* Buff, Win_mtdt* Ui)
+void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
 {
 	// Set by default to a filename edit.
 	term_t move_up    = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
