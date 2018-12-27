@@ -2,7 +2,7 @@
 
 #include "include/memory.h"
 
-Buff_t* init(Buff_t* Buff)
+static Buff_t* init(Buff_t* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
 	memory.chk_ptr(Buff, Buff->text, " malloc the array with lines");
@@ -26,14 +26,7 @@ Buff_t* init(Buff_t* Buff)
 	return Buff;
 }
 
-noreturn void throw_error(Buff_t* Buff, const char* err_msg)
-{
-	fprintf(stderr, "%s\n", err_msg);
-	free_all(Buff);
-	exit(1);
-}
-
-void free_all(Buff_t* Buff)
+static void free_all(Buff_t* Buff)
 {
 	for(idx_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
@@ -51,3 +44,17 @@ void free_all(Buff_t* Buff)
 		free(Buff->text);
 	}
 }
+
+static noreturn void throw_error(Buff_t* Buff, const char* err_msg)
+{
+	fprintf(stderr, "%s\n", err_msg);
+	free_all(Buff);
+	exit(1);
+}
+
+namespace_buffer buffer =
+{
+	init,
+	free_all,
+	throw_error
+};

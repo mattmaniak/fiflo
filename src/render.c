@@ -4,7 +4,7 @@
 
 #include "include/window.h"
 
-idx_t set_start_line(Buff_t* Buff, Ui_t* Ui)
+static idx_t set_start_line(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t scrolled_lines = 0;
 
@@ -16,7 +16,7 @@ idx_t set_start_line(Buff_t* Buff, Ui_t* Ui)
 	return scrolled_lines;
 }
 
-void scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
+static void scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
 
@@ -31,7 +31,7 @@ void scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
 	(CURSOR_Y_SCROLLED) ? WRAP_LINE() : 0;
 }
 
-void print_actual_line(Buff_t* Buff, Ui_t* Ui)
+static void print_actual_line(Buff_t* Buff, Ui_t* Ui)
 {
 	// There is small amount of chars. Horizontal scroll isn't required.
 	if(ACT_LINE_LEN_I < Ui->text_x)
@@ -55,47 +55,47 @@ void print_actual_line(Buff_t* Buff, Ui_t* Ui)
 	}
 }
 
-void fit_lines(Buff_t* Buff, Ui_t* Ui)
+static void fit_lines(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t line_i;
 
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
-		print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
+		window.print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui->text_x - LF_SZ, Buff->text[line_i]);
 
 		(Buff->line_len_i[line_i] >= Ui->text_x) ? WRAP_LINE() : 0;
 	}
-	print_line_num(ACT_LINE_I, Ui->line_num_len, LAST_RENDERED_LINE);
+	window.print_line_num(ACT_LINE_I, Ui->line_num_len, LAST_RENDERED_LINE);
 	print_actual_line(Buff, Ui);
 
 	if(CURSOR_Y_SCROLLED)
 	{
 		for(line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
 		{
-			print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
+			window.print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
 			printf("%.*s", Ui->text_x - LF_SZ, Buff->text[line_i]);
 
 			(Buff->line_len_i[line_i] >= Ui->text_x) ? WRAP_LINE() : 0;
 		}
-		print_line_num(Buff->lines_i, Ui->line_num_len, ANOTHER_LINE);
+		window.print_line_num(Buff->lines_i, Ui->line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui->text_x - LF_SZ, LAST_LINE);
 	}
 }
 
-void shrink_lines(Buff_t* Buff, Ui_t* Ui)
+static void shrink_lines(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t line_i;
 
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
-		print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
+		window.print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui->text_x - CUR_SZ, Buff->text[line_i]);
 
 		(Buff->line_len_i[line_i] >= Ui->text_x) ? WRAP_LINE() : 0;
 	}
-	print_line_num(ACT_LINE_I, Ui->line_num_len, LAST_RENDERED_LINE);
+	window.print_line_num(ACT_LINE_I, Ui->line_num_len, LAST_RENDERED_LINE);
 	print_actual_line(Buff, Ui);
 
 	// Next lines. If scrolled. Only beginning is shown.
@@ -103,12 +103,12 @@ void shrink_lines(Buff_t* Buff, Ui_t* Ui)
 
 	for(; line_i < (idx_t) (Ui->text_y - INDEX); line_i++)
 	{
-		print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
+		window.print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui->text_x - CUR_SZ, Buff->text[line_i]);
 
 		(Buff->line_len_i[line_i] >= Ui->text_x) ? WRAP_LINE() : 0;
 	}
-	print_line_num((idx_t) (Ui->text_y - INDEX), Ui->line_num_len, ANOTHER_LINE);
+	window.print_line_num((idx_t) (Ui->text_y - INDEX), Ui->line_num_len, ANOTHER_LINE);
 
 	if(Buff->line_len_i[Ui->text_y - INDEX] < Ui->text_x)
 	{
@@ -121,19 +121,19 @@ void shrink_lines(Buff_t* Buff, Ui_t* Ui)
 	}
 }
 
-void scroll_lines(Buff_t* Buff, Ui_t* Ui)
+static void scroll_lines(Buff_t* Buff, Ui_t* Ui)
 {
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(idx_t line_i = set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
 	{
-		print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
+		window.print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui->text_x, Buff->text[line_i]);
 
 		(Buff->line_len_i[line_i] > Ui->text_x) ? WRAP_LINE() : 0;
 	}
 
 	// Display the last line without the linefeed.
-	print_line_num(ACT_LINE_I, Ui->line_num_len, LAST_RENDERED_LINE);
+	window.print_line_num(ACT_LINE_I, Ui->line_num_len, LAST_RENDERED_LINE);
 
 	if(ACT_LINE_LEN_I < Ui->text_x)
 	{
@@ -157,7 +157,7 @@ void scroll_lines(Buff_t* Buff, Ui_t* Ui)
 	}
 }
 
-void display_text(Buff_t* Buff, Ui_t* Ui)
+static void display_text(Buff_t* Buff, Ui_t* Ui)
 {
 	if(Buff->lines_i < Ui->text_y)
 	{
@@ -172,3 +172,14 @@ void display_text(Buff_t* Buff, Ui_t* Ui)
 		scroll_lines(Buff, Ui);
 	}
 }
+
+namespace_render render =
+{
+	set_start_line,
+	scroll_line_horizontally,
+	print_actual_line,
+	fit_lines,
+	shrink_lines,
+	scroll_lines,
+	display_text
+};

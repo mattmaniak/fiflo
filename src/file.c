@@ -5,7 +5,7 @@
 #include "include/memory.h"
 #include "include/charmap.h"
 
-Buff_t* set_name(Buff_t* Buff, const char* arg)
+static Buff_t* set_name(Buff_t* Buff, const char* arg)
 {
 	const bool nul_sz   = 1;
 	const bool slash_sz = 1;
@@ -56,7 +56,7 @@ Buff_t* set_name(Buff_t* Buff, const char* arg)
 	return Buff;
 }
 
-Buff_t* live_edit_name(Buff_t* Buff, char key)
+static Buff_t* live_edit_name(Buff_t* Buff, char key)
 {
 	const bool index = 1;
 
@@ -80,7 +80,7 @@ Buff_t* live_edit_name(Buff_t* Buff, char key)
 	return Buff;
 }
 
-Buff_t* load(Buff_t* Buff)
+static Buff_t* load(Buff_t* Buff)
 {
 	const bool nul_sz = 1;
 	FILE* textfile = fopen(Buff->fname, "r");
@@ -113,7 +113,7 @@ Buff_t* load(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* save(Buff_t* Buff)
+static Buff_t* save(Buff_t* Buff)
 {
 	const int8_t not_created = -1;
 
@@ -148,3 +148,11 @@ Buff_t* save(Buff_t* Buff)
 	}
 	return Buff;
 }
+
+namespace_file file =
+{
+	set_name,
+	live_edit_name,
+	load,
+	save
+};

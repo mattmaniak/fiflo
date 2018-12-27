@@ -1,7 +1,7 @@
 #include "include/buffer.h"
 #include "include/memory.h"
 
-void chk_ptr(Buff_t* Buff, void* ptr, const char* err_msg)
+static void chk_ptr(Buff_t* Buff, void* ptr, const char* err_msg)
 {
 	if(ptr == NULL)
 	{
@@ -11,7 +11,7 @@ void chk_ptr(Buff_t* Buff, void* ptr, const char* err_msg)
 	}
 }
 
-char* extend_line_mem(Buff_t* Buff, idx_t line_i)
+static char* extend_line_mem(Buff_t* Buff, idx_t line_i)
 {
 	idx_t memblock = MEMBLK;
 
@@ -44,7 +44,7 @@ char* extend_line_mem(Buff_t* Buff, idx_t line_i)
 	return Buff->text[line_i];
 }
 
-char* shrink_act_line_mem(Buff_t* Buff)
+static char* shrink_act_line_mem(Buff_t* Buff)
 {
 	idx_t memblock = INIT_MEMBLK;
 
@@ -72,7 +72,7 @@ char* shrink_act_line_mem(Buff_t* Buff)
 	return ACT_LINE;
 }
 
-char* shrink_prev_line_mem(Buff_t* Buff)
+static char* shrink_prev_line_mem(Buff_t* Buff)
 {
 	idx_t memblock = INIT_MEMBLK;
 
@@ -97,7 +97,7 @@ char* shrink_prev_line_mem(Buff_t* Buff)
 	return PREV_LINE;
 }
 
-Buff_t* extend_lines_array_mem(Buff_t* Buff)
+static Buff_t* extend_lines_array_mem(Buff_t* Buff)
 {
 	// Enhance the array that contains pointers to lines.
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
@@ -120,7 +120,7 @@ Buff_t* extend_lines_array_mem(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* shrink_lines_array_mem(Buff_t* Buff)
+static Buff_t* shrink_lines_array_mem(Buff_t* Buff)
 {
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 
@@ -134,7 +134,7 @@ Buff_t* shrink_lines_array_mem(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* copy_lines_mem_forward(Buff_t* Buff)
+static Buff_t* copy_lines_mem_forward(Buff_t* Buff)
 {
 	const bool prev = 1;
 
@@ -162,7 +162,7 @@ Buff_t* copy_lines_mem_forward(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* copy_lines_mem_backward(Buff_t* Buff)
+static Buff_t* copy_lines_mem_backward(Buff_t* Buff)
 {
 	const bool next = 1;
 
@@ -189,3 +189,15 @@ Buff_t* copy_lines_mem_backward(Buff_t* Buff)
 	}
 	return Buff;
 }
+
+namespace_memory memory =
+{
+	chk_ptr,
+	extend_line_mem,
+	shrink_act_line_mem,
+	shrink_prev_line_mem,
+	extend_lines_array_mem,
+	shrink_lines_array_mem,
+	copy_lines_mem_forward,
+	copy_lines_mem_backward
+};

@@ -5,8 +5,10 @@
 #include "include/file.h"
 #include "include/ui.h"
 #include "include/window.h"
+#include "include/charmap.h"
+#include "include/seqmap.h"
 
-char getch(Buff_t* Buff)
+static char getch(Buff_t* Buff)
 {
 	const int error = -1;
 
@@ -55,7 +57,7 @@ char getch(Buff_t* Buff)
 	return key;
 }
 
-Buff_t* parse_key(Buff_t* Buff, char key)
+static Buff_t* parse_key(Buff_t* Buff, char key)
 {
 	enum           {seq_len = 8};
 	const bool     nul_sz = 1;
@@ -78,7 +80,7 @@ Buff_t* parse_key(Buff_t* Buff, char key)
 
 		key_sequence[char_i] = '\0';
 
-		Buff = recognize_sequence(Buff, key_sequence);
+		Buff = seqmap.recognize_sequence(Buff, key_sequence);
 		(!Buff->key_sequence) ? char_i = 0 : 0;
 	}
 	else if(Buff->live_fname_edit)
@@ -87,7 +89,13 @@ Buff_t* parse_key(Buff_t* Buff, char key)
 	}
 	else
 	{
-		Buff = key_action(Buff, key);
+		Buff = charmap.key_action(Buff, key);
 	}
 	return Buff;
 }
+
+namespace_keyboard keyboard =
+{
+	getch,
+	parse_key
+};

@@ -57,17 +57,17 @@ Buff_t;
 #define MEMBLK      128     // Must be >= 16 and dividable by 8.
 
 // Placeholders. Note that "_i" means "index".
-#define ACT_LINE_I        (Buff->lines_i - Buff->cusr_y)
-#define ACT_LINE          Buff->text[ACT_LINE_I]
-#define ACT_LINE_LEN_I    Buff->line_len_i[ACT_LINE_I]
-#define CURSOR_VERTICAL_I (ACT_LINE_LEN_I - Buff->cusr_x)
+#define ACT_LINE_I           (Buff->lines_i - Buff->cusr_y)
+#define ACT_LINE             Buff->text[ACT_LINE_I]
+#define ACT_LINE_LEN_I       Buff->line_len_i[ACT_LINE_I]
+#define CURSOR_VERTICAL_I    (ACT_LINE_LEN_I - Buff->cusr_x)
 
-#define PREV_LINE_I     (ACT_LINE_I - 1)
-#define PREV_LINE       Buff->text[PREV_LINE_I]
-#define PREV_LINE_LEN_I Buff->line_len_i[PREV_LINE_I]
+#define PREV_LINE_I          (ACT_LINE_I - 1)
+#define PREV_LINE            Buff->text[PREV_LINE_I]
+#define PREV_LINE_LEN_I      Buff->line_len_i[PREV_LINE_I]
 
-#define LAST_LINE       Buff->text[Buff->lines_i]
-#define LAST_LINE_LEN_I Buff->line_len_i[Buff->lines_i]
+#define LAST_LINE            Buff->text[Buff->lines_i]
+#define LAST_LINE_LEN_I      Buff->line_len_i[Buff->lines_i]
 
 #define BUFFER_NOT_FULL      (Buff->chars_i  <  BUFF_MAX)
 #define CURSOR_X_SCROLLED    (Buff->cusr_x   >  0)
@@ -78,25 +78,22 @@ Buff_t;
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
 // Initializes all Buff structure members.
-Buff_t* init(Buff_t* Buff);
+// Buff_t* init(Buff_t* Buff);
 
-//
-noreturn void throw_error(Buff_t* Buff, const char* err_msg);
+// Display a error message and exit.
+// noreturn void throw_error(Buff_t* Buff, const char* err_msg);
 
 // Frees everything and exits with status code.
-void free_all(Buff_t* Buff);
+// void free_all(Buff_t* Buff);
 
-static const struct
+typedef const struct
 {
 	Buff_t* (*init)(Buff_t*);
-	void    (*throw_error)(Buff_t* , const char*);
 	void    (*free_all)(Buff_t* );
+	void    (*throw_error)(Buff_t* , const char*);
 }
-buffer =
-{
-	init,
-	throw_error,
-	free_all
-};
+namespace_buffer;
+
+extern namespace_buffer buffer;
 
 #endif

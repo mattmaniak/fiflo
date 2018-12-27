@@ -4,7 +4,7 @@
 
 #include "include/memory.h"
 
-Buff_t* delete_last_line(Buff_t* Buff)
+static Buff_t* delete_last_line(Buff_t* Buff)
 {
 	free(LAST_LINE);
 
@@ -14,7 +14,7 @@ Buff_t* delete_last_line(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* delete_line(Buff_t* Buff)
+static Buff_t* delete_line(Buff_t* Buff)
 {
 	idx_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
 
@@ -54,7 +54,7 @@ Buff_t* delete_line(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* shift_text_horizonally(Buff_t* Buff, char direction)
+static Buff_t* shift_text_horizonally(Buff_t* Buff, char direction)
 {
 	const bool prev = 1;
 	idx_t char_i;
@@ -77,7 +77,7 @@ Buff_t* shift_text_horizonally(Buff_t* Buff, char direction)
 	return Buff;
 }
 
-Buff_t* move_lines_forward(Buff_t* Buff)
+static Buff_t* move_lines_forward(Buff_t* Buff)
 {
 	PREV_LINE_LEN_I -= Buff->cusr_x;
 
@@ -104,7 +104,7 @@ Buff_t* move_lines_forward(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* delete_last_empty_line(Buff_t* Buff)
+static Buff_t* delete_last_empty_line(Buff_t* Buff)
 {
 	free(ACT_LINE);
 
@@ -119,7 +119,7 @@ Buff_t* delete_last_empty_line(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* delete_non_last_line(Buff_t* Buff)
+static Buff_t* delete_non_last_line(Buff_t* Buff)
 {
 	PREV_LINE_LEN_I--;
 	Buff->chars_i--;
@@ -144,7 +144,7 @@ Buff_t* delete_non_last_line(Buff_t* Buff)
 	return Buff;
 }
 
-Buff_t* delete_char(Buff_t* Buff)
+static Buff_t* delete_char(Buff_t* Buff)
 {
 	if(!CURSOR_AT_LINE_START)
 	{
@@ -161,3 +161,14 @@ Buff_t* delete_char(Buff_t* Buff)
 	}
 	return Buff;
 }
+
+namespace_edit edit =
+{
+	delete_last_line,
+	delete_line,
+	shift_text_horizonally,
+	move_lines_forward,
+	delete_last_empty_line,
+	delete_non_last_line,
+	delete_char
+};

@@ -6,44 +6,27 @@
 #include "include/memory.h"
 #include "include/edit.h"
 
-Buff_t* key_action(Buff_t* Buff, char key)
+static Buff_t* linefeed(Buff_t* Buff)
 {
-	switch(key)
+	if(BUFFER_NOT_FULL)
 	{
-		default:
-		return printable_char(Buff, key);
+		Buff->lines_i++;
+		Buff = memory.extend_lines_array_mem(Buff);
 
-		case '\t':
-		for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
+		if(CURSOR_X_SCROLLED)
 		{
-			Buff = printable_char(Buff, ' ');
+			Buff = edit.move_lines_forward(Buff);
 		}
-		break;
-
-		case BACKSPACE:
-		return backspace(Buff);
-
-		case CTRL_Q:
-		buffer.free_all(Buff);
-		exit(0);
-
-		case CTRL_S:
-		return file.save(Buff);
-
-		case CTRL_BACKSLASH:
-		Buff->pane_toggled = !Buff->pane_toggled;
-		break;
-
-		case CTRL_D:
-		return delete_line(Buff);
-
-		case CTRL_O:
-		Buff->live_fname_edit = true;
+		else if(CURSOR_Y_SCROLLED) // Cursor is to the end of the line.
+		{
+			Buff = memory.copy_lines_mem_forward(Buff);
+		}
+		ACT_LINE[ACT_LINE_LEN_I] = '\0';
 	}
 	return Buff;
 }
 
-Buff_t* printable_char(Buff_t* Buff, char key)
+static Buff_t* printable_char(Buff_t* Buff, char key)
 {
 	const bool nul_sz = 1;
 
@@ -64,7 +47,7 @@ Buff_t* printable_char(Buff_t* Buff, char key)
 
 			if(CURSOR_X_SCROLLED)
 			{
-				Buff = shift_text_horizonally(Buff, 'r');
+				Buff = edit.shift_text_horizonally(Buff, 'r');
 			}
 			ACT_LINE[CURSOR_VERTICAL_I - nul_sz] = key;
 			ACT_LINE[ACT_LINE_LEN_I] = '\0';
@@ -93,27 +76,7 @@ Buff_t* printable_char(Buff_t* Buff, char key)
 	return Buff;
 }
 
-Buff_t* linefeed(Buff_t* Buff)
-{
-	if(BUFFER_NOT_FULL)
-	{
-		Buff->lines_i++;
-		Buff = memory.extend_lines_array_mem(Buff);
-
-		if(CURSOR_X_SCROLLED)
-		{
-			Buff = move_lines_forward(Buff);
-		}
-		else if(CURSOR_Y_SCROLLED) // Cursor is to the end of the line.
-		{
-			Buff = memory.copy_lines_mem_forward(Buff);
-		}
-		ACT_LINE[ACT_LINE_LEN_I] = '\0';
-	}
-	return Buff;
-}
-
-Buff_t* backspace(Buff_t* Buff)
+static Buff_t* backspace(Buff_t* Buff)
 {
 	if(!EMPTY_LINE)
 	{
@@ -128,3 +91,48 @@ Buff_t* backspace(Buff_t* Buff)
 
 	return Buff;
 }
+
+static Buff_t* key_action(Buff_t* Buff, char key)
+{
+	switch(key)
+	{
+		default:
+		return printable_char(Buff, key);
+
+		case '\t':
+		for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
+		{
+			Buff = printable_char(Buff, ' ');
+		}
+		break;
+
+		case BACKSPACE:
+		return backspace(Buff);
+
+		case CTRL_Q:
+		buffer.free_all(Buff);
+		exit(0);
+
+		case CTRL_S:
+		return file.save(Buff);
+
+		case CTRL_BACKSLASH:
+		Buff->pane_toggled = !Buff->pane_toggled;
+		break;
+
+		case CTRL_D:
+		return edit.delete_line(Buff);
+
+		case CTRL_O:
+		Buff->live_fname_edit = true;
+	}
+	return Buff;
+}
+
+namespace_charmap charmap =
+{
+	key_action,
+	printable_char,
+	linefeed,
+	backspace
+};

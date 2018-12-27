@@ -2,7 +2,76 @@
 #include "include/seqmap.h"
 #include "include/charmap.h"
 
-Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8])
+static Buff_t* cursor_left(Buff_t* Buff)
+{
+	bool more_than_one_line = Buff->lines_i > 0;
+
+	if(!CURSOR_AT_LINE_START)
+	{
+		Buff->cusr_x++;
+	}
+	else if(more_than_one_line && !CURSOR_AT_TOP)
+	{
+		// Set to the right ignoring the linefeed.
+		Buff->cusr_x = 1;
+		Buff->cusr_y++;
+	}
+	return Buff;
+}
+
+static Buff_t* cursor_right(Buff_t* Buff)
+{
+	if(CURSOR_X_SCROLLED)
+	{
+		Buff->cusr_x--;
+		if(!CURSOR_X_SCROLLED && CURSOR_Y_SCROLLED)
+		{
+			Buff->cusr_y--;
+			Buff->cusr_x = ACT_LINE_LEN_I;
+		}
+		// Last line doesn't contain linefeed so ignoring that isn't necessary.
+		else if(!CURSOR_X_SCROLLED && (Buff->cusr_y == 1))
+		{
+			Buff->cusr_y--;
+		}
+	}
+	return Buff;
+}
+
+static Buff_t* cursor_up(Buff_t* Buff)
+{
+	if(!CURSOR_AT_TOP)
+	{
+		/* Cursor at the left side: doesn't go at the end of a line. Always
+		at the beginning or ignore the linefeed. */
+		Buff->cusr_x = (CURSOR_AT_LINE_START) ? PREV_LINE_LEN_I : 1;
+		Buff->cusr_y++;
+	}
+	return Buff;
+}
+
+static Buff_t* cursor_down(Buff_t* Buff)
+{
+	bool cursor_at_prev_line_start = CURSOR_AT_LINE_START;
+
+	if(CURSOR_Y_SCROLLED)
+	{
+		Buff->cusr_y--;
+		if(cursor_at_prev_line_start)
+		{
+			/* Cursor at the left side: doesn't go at the end of a line. Always
+			at the beginning. */
+			Buff->cusr_x = ACT_LINE_LEN_I;
+		}
+		else
+		{
+			(CURSOR_Y_SCROLLED) ? Buff->cusr_x = 1 : 0; // Ignore the LF or no.
+		}
+	}
+	return Buff;
+}
+
+static Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8])
 {
 	const uint8_t seq_max = 3;
 
@@ -45,71 +114,11 @@ Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8])
 	return Buff;
 }
 
-Buff_t* cursor_left(Buff_t* Buff)
+namespace_seqmap seqmap =
 {
-	bool more_than_one_line = Buff->lines_i > 0;
-
-	if(!CURSOR_AT_LINE_START)
-	{
-		Buff->cusr_x++;
-	}
-	else if(more_than_one_line && !CURSOR_AT_TOP)
-	{
-		// Set to the right ignoring the linefeed.
-		Buff->cusr_x = 1;
-		Buff->cusr_y++;
-	}
-	return Buff;
-}
-
-Buff_t* cursor_right(Buff_t* Buff)
-{
-	if(CURSOR_X_SCROLLED)
-	{
-		Buff->cusr_x--;
-		if(!CURSOR_X_SCROLLED && CURSOR_Y_SCROLLED)
-		{
-			Buff->cusr_y--;
-			Buff->cusr_x = ACT_LINE_LEN_I;
-		}
-		// Last line doesn't contain linefeed so ignoring that isn't necessary.
-		else if(!CURSOR_X_SCROLLED && (Buff->cusr_y == 1))
-		{
-			Buff->cusr_y--;
-		}
-	}
-	return Buff;
-}
-
-Buff_t* cursor_up(Buff_t* Buff)
-{
-	if(!CURSOR_AT_TOP)
-	{
-		/* Cursor at the left side: doesn't go at the end of a line. Always
-		at the beginning or ignore the linefeed. */
-		Buff->cusr_x = (CURSOR_AT_LINE_START) ? PREV_LINE_LEN_I : 1;
-		Buff->cusr_y++;
-	}
-	return Buff;
-}
-
-Buff_t* cursor_down(Buff_t* Buff)
-{
-	bool cursor_at_prev_line_start = CURSOR_AT_LINE_START;
-
-	if(CURSOR_Y_SCROLLED)
-	{
-		Buff->cusr_y--;
-		if(cursor_at_prev_line_start)
-		{
-			/* Cursor at the left side: doesn't go at the end of a line. Always
-			at the beginning. */
-			Buff->cusr_x = ACT_LINE_LEN_I;
-		}
-		else
-		{
-			(CURSOR_Y_SCROLLED) ? Buff->cusr_x = 1 : 0; // Ignore the LF or no.
-		}
-	}
-	return Buff;
-}
+	cursor_left,
+	cursor_right,
+	cursor_up,
+	cursor_down,
+	recognize_sequence
+};

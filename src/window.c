@@ -4,7 +4,7 @@
 
 #include "include/render.h"
 
-term_t get_term_sz(Buff_t* Buff, char axis)
+static term_t get_term_sz(Buff_t* Buff, char axis)
 {
 	const int8_t  error       = -1;
 	const bool    line_height = 1;
@@ -43,7 +43,7 @@ term_t get_term_sz(Buff_t* Buff, char axis)
 	return 1;
 }
 
-void flush(Buff_t* Buff)
+static void flush(Buff_t* Buff)
 {
 	// Restore to the left lower corner and clean the lowest line.
 	ANSI_RESTORE_CUR_POS();
@@ -59,7 +59,7 @@ void flush(Buff_t* Buff)
 	fflush(stdout);
 }
 
-void upper_bar(Buff_t* Buff, Ui_t* Ui)
+static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 {
 	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - ICON_LEN);
 	idx_t indicator_width =
@@ -109,7 +109,7 @@ void upper_bar(Buff_t* Buff, Ui_t* Ui)
 	ANSI_RESET();
 }
 
-void lower_bar(Buff_t* Buff)
+static void lower_bar(Buff_t* Buff)
 {
 	term_t horizontal_fill = (term_t) (get_term_sz(Buff, 'X') - strlen(LBAR_STR));
 	const char key_binding[4][STATUS_MAX] =
@@ -136,7 +136,7 @@ void lower_bar(Buff_t* Buff)
 	ANSI_RESET();
 }
 
-void fill(Buff_t* Buff, Ui_t* Ui)
+static void fill(Buff_t* Buff, Ui_t* Ui)
 {
 	if((Buff->lines_i + INDEX) < (idx_t) Ui->text_y)
 	{
@@ -157,42 +157,7 @@ void fill(Buff_t* Buff, Ui_t* Ui)
 	// Else the lower bar will by positioned by the text.
 }
 
-void display(Buff_t* Buff)
-{
-	Ui_t Ui;
-
-	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
-
-	Ui.pane_h = TOGGLED_PANE_SZ;
-	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
-
-	Ui.line_num_len = (uint8_t) (strlen(Ui.line_num_str) + SPACE_SZ);
-	Ui.text_x       = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
-	Ui.text_y       = (term_t) (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
-
-	ANSI_RESET();
-
-	upper_bar(Buff, &Ui);
-
-	render.display_text(Buff, &Ui);
-	fill(Buff, &Ui);
-
-	lower_bar(Buff);
-
-	set_cursor_pos(Buff, &Ui);
-}
-
-void print_line_num(idx_t line_i, term_t line_num_len, const bool act_line)
-{
-	(!act_line) ? ANSI_INVERT() : 0; // Higlight a current line.
-
-	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
-
-	ANSI_RESET();
-	putchar(' '); // Whitespace adding.
-}
-
-void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
+static void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
 {
 	// Set by default to a filename edit.
 	term_t move_up    = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
@@ -228,3 +193,50 @@ void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
 	ANSI_CUR_RIGHT(move_right);
 	ANSI_CUR_UP(move_up);
 }
+
+static void display(Buff_t* Buff)
+{
+	Ui_t Ui;
+
+	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
+
+	Ui.pane_h = TOGGLED_PANE_SZ;
+	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
+
+	Ui.line_num_len = (uint8_t) (strlen(Ui.line_num_str) + SPACE_SZ);
+	Ui.text_x       = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
+	Ui.text_y       = (term_t) (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
+
+	ANSI_RESET();
+
+	upper_bar(Buff, &Ui);
+
+	render.display_text(Buff, &Ui);
+	fill(Buff, &Ui);
+
+	lower_bar(Buff);
+
+	set_cursor_pos(Buff, &Ui);
+}
+
+static void print_line_num(idx_t line_i, term_t line_num_len, const bool act_line)
+{
+	(!act_line) ? ANSI_INVERT() : 0; // Higlight a current line.
+
+	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
+
+	ANSI_RESET();
+	putchar(' '); // Whitespace adding.
+}
+
+namespace_window window =
+{
+	get_term_sz,
+	flush,
+	upper_bar,
+	lower_bar,
+	fill,
+	display,
+	print_line_num,
+	set_cursor_pos
+};
