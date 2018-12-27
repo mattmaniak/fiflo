@@ -1,8 +1,8 @@
-#include "include/buffer.h"
-#include "include/ascii.h"
-#include "include/edit.h"
+#include "buffer.h"
+#include "ascii.h"
+#include "edit.h"
 
-#include "include/memory.h"
+#include "memory.h"
 
 static Buff_t* delete_last_line(Buff_t* Buff)
 {

@@ -1,14 +1,13 @@
-#include "include/buffer.h"
-#include "include/ui.h"
-#include "include/window.h"
+#include "buffer.h"
+#include "window.h"
 
-#include "include/render.h"
+#include "render.h"
 
 static term_t get_term_sz(Buff_t* Buff, char axis)
 {
 	const int8_t  error       = -1;
 	const bool    line_height = 1;
-	const term_t  w_min       = STATUS_MAX + 16; // Generally works.
+	const term_t  w_min       = STATUS_MAX + 16; // Generally works but TODO.
 	const uint8_t h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
 	const term_t  sz_max      = USHRT_MAX;
 
@@ -204,8 +203,8 @@ static void display(Buff_t* Buff)
 	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
 	Ui.line_num_len = (uint8_t) (strlen(Ui.line_num_str) + SPACE_SZ);
-	Ui.text_x       = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
-	Ui.text_y       = (term_t) (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
+	Ui.text_x       = (term_t)  (get_term_sz(Buff, 'X') - Ui.line_num_len);
+	Ui.text_y       = (term_t)  (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();
 

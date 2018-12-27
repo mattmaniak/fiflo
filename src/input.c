@@ -1,12 +1,10 @@
-#include "include/ascii.h"
-#include "include/buffer.h"
-#include "include/keyboard.h"
+#include "ascii.h"
+#include "buffer.h"
+#include "input.h"
 
-#include "include/file.h"
-#include "include/ui.h"
-#include "include/window.h"
-#include "include/charmap.h"
-#include "include/seqmap.h"
+#include "file.h"
+#include "window.h"
+#include "keymap.h"
 
 static char getch(Buff_t* Buff)
 {
@@ -57,10 +55,53 @@ static char getch(Buff_t* Buff)
 	return key;
 }
 
+static Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8])
+{
+	const uint8_t seq_max = 3;
+
+	/* Notice that the structure of these sequences is: <ansi_esc_code> + '['
+	+ <some_unique_numbers_and_letters>. */
+	const char arrow_up[]    = "\x1b[A";
+	const char arrow_down[]  = "\x1b[B";
+	const char arrow_right[] = "\x1b[C";
+	const char arrow_left[]  = "\x1b[D";
+
+	if(!strcmp(sequence, arrow_up))
+	{
+		Buff = keymap.arrow_up(Buff);
+		Buff->key_sequence = false;
+	}
+	else if(!strcmp(sequence, arrow_down))
+	{
+		Buff = keymap.arrow_down(Buff);
+		Buff->key_sequence = false;
+	}
+	else if(!strcmp(sequence, arrow_right))
+	{
+		Buff = keymap.arrow_right(Buff);
+		Buff->key_sequence = false;
+	}
+	else if(!strcmp(sequence, arrow_left))
+	{
+		Buff = keymap.arrow_left(Buff);
+		Buff->key_sequence = false;
+	}
+	else if(strlen(sequence) > seq_max)
+	{
+		Buff->key_sequence = false;
+	}
+
+#ifdef SHOW_VALUES
+	printf("cusr_x %d, cusr_y %d.\n", Buff->cusr_x, Buff->cusr_y);
+#endif
+
+	return Buff;
+}
+
 static Buff_t* parse_key(Buff_t* Buff, char key)
 {
-	enum           {seq_len = 8};
 	const bool     nul_sz = 1;
+	enum           {seq_len = 8};
 	static char    key_sequence[seq_len];
 	static uint8_t char_i;
 
@@ -80,7 +121,7 @@ static Buff_t* parse_key(Buff_t* Buff, char key)
 
 		key_sequence[char_i] = '\0';
 
-		Buff = seqmap.recognize_sequence(Buff, key_sequence);
+		Buff = recognize_sequence(Buff, key_sequence);
 		(!Buff->key_sequence) ? char_i = 0 : 0;
 	}
 	else if(Buff->live_fname_edit)
@@ -89,13 +130,14 @@ static Buff_t* parse_key(Buff_t* Buff, char key)
 	}
 	else
 	{
-		Buff = charmap.key_action(Buff, key);
+		Buff = keymap.key_action(Buff, key);
 	}
 	return Buff;
 }
 
-namespace_keyboard keyboard =
+namespace_input input =
 {
 	getch,
+	recognize_sequence,
 	parse_key
 };

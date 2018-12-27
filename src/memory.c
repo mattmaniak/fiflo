@@ -1,5 +1,5 @@
-#include "include/buffer.h"
-#include "include/memory.h"
+#include "buffer.h"
+#include "memory.h"
 
 static void chk_ptr(Buff_t* Buff, void* ptr, const char* err_msg)
 {

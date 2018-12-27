@@ -1,6 +1,6 @@
-#include "include/buffer.h"
+#include "buffer.h"
 
-#include "include/memory.h"
+#include "memory.h"
 
 static Buff_t* init(Buff_t* Buff)
 {

@@ -15,7 +15,6 @@ VALGRIND_FLAGS = -v
 ARG_FOR_FIFLO =
 
 SRC_DIR = src
-INC_DIR = $(SRC_DIR)/include
 OBJ_DIR = obj
 BIN_DIR = bin
 MAN_DIR = man
@@ -45,7 +44,7 @@ endif
 # "$@" - alias to name on the left of ':', "$^" - on the right.
 # "$<" is a first item in the dependencies list.
 # "-c" generates the object file.
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/%.h
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 	@mkdir -p $(OBJ_DIR)
 	$(CC) -c -o $@ $< \
 	$(CFLAGS) \

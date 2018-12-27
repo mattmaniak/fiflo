@@ -1,5 +1,5 @@
-#ifndef CHARMAP_H
-#define CHARMAP_H
+#ifndef KEYMAP_H
+#define KEYMAP_H
 
 // Currently supported ASCII characters and their actions inside.
 
@@ -19,9 +19,16 @@ typedef const struct
 
 	// Removes a last char and optionally deletes the last line.
 	Buff_t* (*backspace)(Buff_t*);
-}
-namespace_charmap;
 
-extern namespace_charmap charmap;
+	// These ones moves the cursor.
+	Buff_t* (*arrow_left)(Buff_t*);
+	Buff_t* (*arrow_right)(Buff_t*);
+	Buff_t* (*arrow_up)(Buff_t*);
+	Buff_t* (*arrow_down)(Buff_t*);
+
+}
+namespace_keymap;
+
+extern namespace_keymap keymap;
 
 #endif

@@ -1,9 +1,9 @@
-#include "include/buffer.h"
-#include "include/ascii.h"
-#include "include/file.h"
+#include "buffer.h"
+#include "ascii.h"
+#include "file.h"
 
-#include "include/memory.h"
-#include "include/charmap.h"
+#include "memory.h"
+#include "keymap.h"
 
 static Buff_t* set_name(Buff_t* Buff, const char* arg)
 {
@@ -83,8 +83,8 @@ static Buff_t* live_edit_name(Buff_t* Buff, char key)
 static Buff_t* load(Buff_t* Buff)
 {
 	const bool nul_sz = 1;
-	FILE* textfile = fopen(Buff->fname, "r");
-	char ch;
+	FILE*      textfile = fopen(Buff->fname, "r");
+	char       ch;
 
 	if(textfile != NULL)
 	{
@@ -98,10 +98,10 @@ static Buff_t* load(Buff_t* Buff)
 		{
 			if(ch == '\t') // Temponary and ugly tab to two spaces conversion.
 			{
-				ch = ' ';
-				Buff = charmap.printable_char(Buff, ch);
+				ch   = ' ';
+				Buff = keymap.printable_char(Buff, ch);
 			}
-			Buff = charmap.printable_char(Buff, ch);
+			Buff = keymap.printable_char(Buff, ch);
 		}
 		fclose(textfile);
 		SET_STATUS("read the file");
@@ -115,16 +115,14 @@ static Buff_t* load(Buff_t* Buff)
 
 static Buff_t* save(Buff_t* Buff)
 {
-	const int8_t not_created = -1;
+	const int8_t denied = -1;
+	FILE*        textfile;
 
-	int status = access(Buff->fname, F_OK);
-	FILE* textfile;
-
-	if(status == not_created)
+	if(access(Buff->fname, F_OK) == denied)
 	{
 		// There is no file so create with -rw------- mode.
 		int create = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
-		(create == not_created) ? SET_STATUS("failed to create the file") : 0;
+		(create == denied) ? SET_STATUS("failed to create the file") : 0;
 	}
 	textfile = fopen(Buff->fname, "w");
 

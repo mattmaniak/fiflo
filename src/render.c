@@ -1,8 +1,7 @@
-#include "include/buffer.h"
-#include "include/ui.h"
-#include "include/render.h"
+#include "buffer.h"
+#include "window.h"
 
-#include "include/window.h"
+#include "render.h"
 
 static idx_t set_start_line(Buff_t* Buff, Ui_t* Ui)
 {

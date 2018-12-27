@@ -24,37 +24,37 @@ typedef uint32_t idx_t;
 #define STATUS_MAX      32
 #define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - INDEX)
 
-#pragma pack(push, 2)
-#pragma pack(push, 1)
 typedef struct
 {
 	// Modes.
-	bool     key_sequence;      // True if pressed key is ANSI escape code.
-	bool     live_fname_edit;   // As in the name.
-	bool     pane_toggled;      // As in the name.
+	bool     key_sequence;       // True if pressed key is ANSI escape code.
+	bool     live_fname_edit;    // As in the name.
+	bool     pane_toggled;       // As in the name.
+
+	char     padding_0;
 
 	// Filename.
-	char     fname[PATH_MAX];   // Full filename. Eg. /home/user/basename.
-	uint16_t fname_len_i;       // Strlen of the above array.
+	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
+	uint16_t fname_len_i;        // Strlen of the above array.
+
+	uint16_t padding_1;
 
 	// File's content and some indicators.
-	char**   text;              // Text buffer. Eg. text[lines_i][chars_i].
-	idx_t    chars_i;           // All chars index.
-	idx_t    lines_i;           // Lines index.
-	idx_t*   line_len_i;        // Chars in the current line (index).
+	char**   text;               // Text buffer. Eg. text[lines_i][chars_i].
+	idx_t    chars_i;            // All chars index.
+	idx_t    lines_i;            // Lines index.
+	idx_t*   line_len_i;         // Chars in the current line (index).
 
 	// Visual shit.
-	idx_t   cusr_x;             // User's cursor position in the reversed X.
-	idx_t   cusr_y;             // As above but Y-axis.
-	char    status[STATUS_MAX]; // Displayed message in the upper bar.
+	idx_t    cusr_x;             // User's cursor position in the reversed X.
+	idx_t    cusr_y;             // As above but Y-axis.
+	char     status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 Buff_t;
-#pragma pack(pop)
-#pragma pack(pop)
 
 #define ADDR_SZ     sizeof(Buff->text) // Bytes of the memory width.
-#define INIT_MEMBLK ADDR_SZ // Aligned initial memblk for a new line.
-#define MEMBLK      128     // Must be >= 16 and dividable by 8.
+#define INIT_MEMBLK ADDR_SZ            // Aligned initial memblk for a new line.
+#define MEMBLK      128                // Must be >= 16 and dividable by 8.
 
 // Placeholders. Note that "_i" means "index".
 #define ACT_LINE_I           (Buff->lines_i - Buff->cusr_y)

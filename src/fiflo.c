@@ -1,14 +1,12 @@
 #ifdef __linux__
 
-#include "include/buffer.h"
-#include "include/ascii.h"
-#include "include/fiflo.h"
+#include "buffer.h"
+#include "ascii.h"
+#include "fiflo.h"
 
-#include "include/file.h"
-#include "include/keyboard.h"
-#include "include/ui.h"
-#include "include/window.h"
-#include "include/memory.h"
+#include "file.h"
+#include "input.h"
+#include "window.h"
 
 void options(const char* arg)
 {
@@ -43,10 +41,10 @@ noreturn void run(const char* arg)
 
 	for(;;) // The main program loop.
 	{
-		Buff = *keyboard.parse_key(&Buff, pressed);
+		Buff = *input.parse_key(&Buff, pressed);
 		window.display(&Buff);
 
-		pressed = keyboard.getch(&Buff);
+		pressed = input.getch(&Buff);
 		window.flush(&Buff);
 	}
 }
@@ -63,14 +61,14 @@ int main(const int argc, const char** argv)
 	{
 		run("");
 	}
-	else if(strlen(argv[1]) <= ARG_MAX)
+	else if(strlen(argv[1]) <= PATH_MAX)
 	{
 		options(argv[1]);
 		run(argv[1]);
 	}
 	else
 	{
-		fprintf(stderr, "Maximum length of a parameter is %u\n", ARG_MAX);
+		fprintf(stderr, "Maximum length of a parameter is %u\n", PATH_MAX);
 		return 1;
 	}
 }
