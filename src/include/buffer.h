@@ -77,20 +77,19 @@ Buff_t;
 #define CURSOR_AT_LINE_START (Buff->cusr_x   == ACT_LINE_LEN_I)
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
-// Initializes all Buff structure members.
-// Buff_t* init(Buff_t* Buff);
-
-// Display a error message and exit.
-// noreturn void throw_error(Buff_t* Buff, const char* err_msg);
-
-// Frees everything and exits with status code.
-// void free_all(Buff_t* Buff);
-
+/* Note: They are not prototypes or pointers to these specific funtions. They
+are pointers to funtions with certain return type and parameters including it's
+types. For better readability they are named as their definitions. */
 typedef const struct
 {
-	Buff_t* (*init)(Buff_t*);
-	void    (*free_all)(Buff_t* );
-	void    (*throw_error)(Buff_t* , const char*);
+	// Initializes all Buff structure members.
+	Buff_t* (*init)(Buff_t* Buff);
+
+	// Display a error message and exit.
+	void (*free_all)(Buff_t*);
+
+	// Frees everything and exits with status code.
+	void (*throw_error)(Buff_t*, const char*);
 }
 namespace_buffer;
 
