@@ -1,19 +1,22 @@
-#ifndef RENDER_H
-#define RENDER_H
+#ifndef TEXTPRINT_H
+#define TEXTPRINT_H
 
 // Renders the text itself. Cares about scrolling.
 
 #define BOLD_LINE_NUM true
 #define THIN_LINE_NUM false
 
-#define LAST_RENDERED_LINE true
-#define ANOTHER_LINE       false
+#define CURRENT_LINE true
+#define ANOTHER_LINE false
 
 /* Note: They are not prototypes or pointers to these specific funtions. They
 are pointers to funtions with certain return type and parameters including it's
 types. For better readability they are named as their definitions. */
 typedef const struct
 {
+	// Prints and shrinks line that is non-actual.
+	void (*print_another_line)(Buff_t*, Ui_t*, idx_t);
+
 	// Returns value of hidden lines.
 	idx_t (*set_start_line)(Buff_t*, Ui_t*);
 
@@ -35,8 +38,8 @@ typedef const struct
 	// Shows a text in the window.
 	void (*display_text)(Buff_t*, Ui_t*);
 }
-namespace_render;
+namespace_textprint;
 
-extern namespace_render render;
+extern namespace_textprint textprint;
 
 #endif

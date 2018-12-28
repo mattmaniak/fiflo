@@ -1,10 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- every extern funtion with it's file prefix (force it?),
 - less includes,
-- noreturns,
-- namespaces, functions names,
-- alt+char handling,
+- functions names,
 - rendering rework,
 - simplify file.c,
 - all escapes and formatting control chars,

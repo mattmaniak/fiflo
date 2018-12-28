@@ -72,7 +72,7 @@ typedef const struct
 	void (*fill)(Buff_t*, Ui_t*);
 
 	// Stupid wrapper for above things.
-	void (*display)(Buff_t*);
+	void (*render)(Buff_t*);
 
 	// Prints the line number.
 	void (*print_line_num)(idx_t, term_t, const bool);

@@ -58,19 +58,19 @@ git checkout develop
 ### Debugging
 Link the AddressSanitizer. Causes slowdown and huge memory usage.
 ```
-make asan
+make address
 ```
 
 Link the MemorySanitizer (only with clang). Causes slowdown.
 ```
-make msan
+make memory
 ```
 
 Use the valgrind.
 ```
-make valgrind FIFLO_ARG=<parameter passed to the fiflo>
+valgrind -v ./fiflo [optional args]
 ```
-Note: FIFLO_ARG is optional.
+Note: fiflo must be compiled without ASan and MSan.
 
 ## FAQ
 Will you port it into the Windows?

@@ -57,7 +57,7 @@ static Buff_t* delete_line(Buff_t* Buff)
 static Buff_t* shift_text_horizonally(Buff_t* Buff, char direction)
 {
 	const bool prev = 1;
-	idx_t char_i;
+	idx_t      char_i;
 
 	switch(direction)
 	{

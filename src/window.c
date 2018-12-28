@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "window.h"
 
-#include "render.h"
+#include "textprint.h"
 
 static term_t get_term_sz(Buff_t* Buff, char axis)
 {
@@ -193,7 +193,7 @@ static void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
 	ANSI_CUR_UP(move_up);
 }
 
-static void display(Buff_t* Buff)
+static void render(Buff_t* Buff)
 {
 	Ui_t Ui;
 
@@ -210,7 +210,7 @@ static void display(Buff_t* Buff)
 
 	upper_bar(Buff, &Ui);
 
-	render.display_text(Buff, &Ui);
+	textprint.display_text(Buff, &Ui);
 	fill(Buff, &Ui);
 
 	lower_bar(Buff);
@@ -220,8 +220,10 @@ static void display(Buff_t* Buff)
 
 static void print_line_num(idx_t line_i, term_t line_num_len, const bool act_line)
 {
-	(!act_line) ? ANSI_INVERT() : 0; // Higlight a current line.
-
+	if(!act_line) // Higlight a current line.
+	{
+		ANSI_INVERT();
+	}
 	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
 
 	ANSI_RESET();
@@ -235,7 +237,7 @@ namespace_window window =
 	upper_bar,
 	lower_bar,
 	fill,
-	display,
+	render,
 	print_line_num,
 	set_cursor_pos
 };

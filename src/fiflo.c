@@ -32,9 +32,9 @@ void options(const char* arg)
 
 noreturn void run(const char* arg)
 {
-	char pressed = '\0'; // Initializer.
-
+	char   pressed = '\0'; // Initializer.
 	Buff_t Buff;
+
 	Buff = *buffer.init(&Buff);
 	Buff = *file.set_name(&Buff, arg);
 	Buff = *file.load(&Buff);
@@ -42,7 +42,7 @@ noreturn void run(const char* arg)
 	for(;;) // The main program loop.
 	{
 		Buff = *input.parse_key(&Buff, pressed);
-		window.display(&Buff);
+		window.render(&Buff);
 
 		pressed = input.getch(&Buff);
 		window.flush(&Buff);

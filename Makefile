@@ -57,16 +57,12 @@ $(TARGET): $(OBJ)
 	$(DEBUGFLAGS)
 
 # Debugging.
-asan: DEBUGFLAGS = $(ASAN_FLAGS)
-asan: $(TARGET)
+address: DEBUGFLAGS = $(ASAN_FLAGS)
+address: $(TARGET)
 
-msan: CC = clang
-msan: DEBUGFLAGS = $(MSAN_FLAGS)
-msan: $(TARGET)
-
-valgrind: $(TARGET)
-valgrind:
-	valgrind $(VALGRING_FLAGS) ./$(BIN_DIR)/$(TARGET) $(ARG_FOR_FIFLO)
+memory: CC = clang
+memory: DEBUGFLAGS = $(MSAN_FLAGS)
+memory: $(TARGET)
 
 # Fun with a filesystem.
 install: $(TARGET)

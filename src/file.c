@@ -115,14 +115,19 @@ static Buff_t* load(Buff_t* Buff)
 
 static Buff_t* save(Buff_t* Buff)
 {
-	const int8_t denied = -1;
-	FILE*        textfile;
+	const int error = -1;
+	int       file_descriptor;
+	FILE*     textfile;
 
-	if(access(Buff->fname, F_OK) == denied)
+	if(access(Buff->fname, F_OK) == error)
 	{
 		// There is no file so create with -rw------- mode.
-		int create = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
-		(create == denied) ? SET_STATUS("failed to create the file") : 0;
+		file_descriptor = open(Buff->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
+		if(file_descriptor == error)
+		{
+			SET_STATUS("failed to create the file");
+		}
+		close(file_descriptor);
 	}
 	textfile = fopen(Buff->fname, "w");
 
