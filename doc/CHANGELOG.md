@@ -8,7 +8,8 @@ files use git-show or git-log.
 
 ## Versions:
 ### v2.3.0 (WIP):
-- CONTRIBUTING.md.
+- 80th column indicator,
+- display git branch name.
 
 ### v2.2.2 (2018, December 22):
 - Repaired positions of line numbers when the line has same width as the

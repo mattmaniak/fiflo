@@ -25,6 +25,9 @@ typedef const struct
 
 	// Puts the whole text to the file.
 	Buff_t* (*save)(Buff_t*);
+
+	//
+	char* (*get_git_branch)(Buff_t*);
 }
 namespace_file;
 

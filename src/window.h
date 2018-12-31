@@ -12,10 +12,7 @@
 #define SLASH_SZ 1
 #define SPACE_SZ 1
 
-#define ICON     "|`` " // The upper and lower parts are the same, so it's half.
-#define ICON_LEN 4
-
-#define UBAR_SZ 2
+#define UBAR_SZ 3
 #define LBAR_SZ 1 // Must be equal 1, otherwise will break rendering a little.
 
 #define TOGGLED_PANE_SZ 5

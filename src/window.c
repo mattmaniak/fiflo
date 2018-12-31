@@ -5,7 +5,7 @@
 
 static term_t get_term_sz(Buff_t* Buff, char axis)
 {
-	const int8_t  error       = -1;
+	const bool    success     = 0;
 	const bool    line_height = 1;
 	const term_t  w_min       = STATUS_MAX + 16; // Generally works but TODO.
 	const uint8_t h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
@@ -15,7 +15,7 @@ static term_t get_term_sz(Buff_t* Buff, char axis)
 
 	/* TIOCGWINSZ request to the stdout descriptor. &term is required by that
 	specific device (stdout). */
-	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == error)
+	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) != success)
 	{
 		buffer.throw_error(Buff, "Can't get the terminal's size.");
 	}
@@ -60,9 +60,8 @@ static void flush(Buff_t* Buff)
 
 static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 {
-	term_t fname_max = (term_t) (get_term_sz(Buff, 'X') - ICON_LEN);
-	idx_t indicator_width =
-	(idx_t) (get_term_sz(Buff, 'X') - (2*  SPACE_SZ) - ICON_LEN - STATUS_MAX);
+	const char git_str[]   = "git |/: ";
+	const int  git_str_len = 8;
 
 	ANSI_INVERT();
 
@@ -70,20 +69,19 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 	the upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
-	printf("\r%s", ICON);
+	putchar('\r');
 
-	if(Buff->fname_len_i < fname_max)
+	if(Buff->fname_len_i < get_term_sz(Buff, 'X'))
 	{
 		// Whole filename will be displayed.
-		printf("%s%*s", Buff->fname, get_term_sz(Buff, 'X')
-		- ICON_LEN - Buff->fname_len_i, " ");
+		printf("%s%*s", Buff->fname, get_term_sz(Buff, 'X') - Buff->fname_len_i, " ");
 
 		WRAP_LINE();
 	}
 	else
 	{
 		for(term_t char_i = (term_t) (Buff->fname_len_i - get_term_sz(Buff, 'X')
-		+ CUR_SZ + ICON_LEN); char_i < Buff->fname_len_i; char_i++)
+		+ CUR_SZ); char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
 		}
@@ -91,20 +89,25 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 		WRAP_LINE();
 	}
 
+	printf("%s%s%*s\n", git_str, Buff->git_branch, get_term_sz(Buff, 'X')
+	- git_str_len - (int) strlen(Buff->git_branch),  " ");
+
 	// The lower part with the "chars in the current line" indicator.
-	printf("%s%.*s%*s", ICON, STATUS_MAX, Buff->status,
+	printf("%.*s%*s", STATUS_MAX, Buff->status,
 	(int) (STATUS_MAX - strlen(Buff->status)), " ");
 
-	if((ACT_LINE_LEN_I < Ui->text_x) || (CURSOR_VERTICAL_I < Ui->text_x))
+	if(Ui->text_x > 80) // TODO: SIMPLIFY.
 	{
-		printf("%*d^ ", indicator_width,
-		get_term_sz(Buff, 'X') - Ui->line_num_len - CUR_SZ);
+		printf("%*s%*s", 80 - STATUS_MAX + (2 * SPACE_SZ),
+		"80th column^", get_term_sz(Buff, 'X') - 80  - (2 * SPACE_SZ), " ");
 	}
 	else
 	{
-		printf("%*d^ ", indicator_width, CURSOR_VERTICAL_I);
+		printf("%*s", get_term_sz(Buff, 'X') - STATUS_MAX, " ");
 	}
 	WRAP_LINE();
+
+
 	ANSI_RESET();
 }
 
@@ -159,11 +162,13 @@ static void fill(Buff_t* Buff, Ui_t* Ui)
 static void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
 {
 	// Set by default to a filename edit.
+	term_t move_right = (term_t) (Buff->fname_len_i);
 	term_t move_up    = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
-	term_t move_right = (term_t) (ICON_LEN + Buff->fname_len_i);
 
-	(move_right >= get_term_sz(Buff, 'X')) ?
-	move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ) : 0;
+	if(move_right >= get_term_sz(Buff, 'X'))
+	{
+	move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ);
+	}
 
 	// Cursor is pushed right by the lower bar. Move it back.
 	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
@@ -187,7 +192,7 @@ static void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
 			move_right = (term_t) (Ui->line_num_len + CURSOR_VERTICAL_I);
 		}
 		move_up = (ACT_LINE_I < Ui->text_y) ?
-		(term_t) ((Ui->text_y - ACT_LINE_I - INDEX) + Ui->lbar_h) : Ui->lbar_h;
+		(term_t) (Ui->text_y - ACT_LINE_I - INDEX + Ui->lbar_h) : Ui->lbar_h;
 	}
 	ANSI_CUR_RIGHT(move_right);
 	ANSI_CUR_UP(move_up);
@@ -202,9 +207,9 @@ static void render(Buff_t* Buff)
 	Ui.pane_h = TOGGLED_PANE_SZ;
 	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
-	Ui.line_num_len = (uint8_t) (strlen(Ui.line_num_str) + SPACE_SZ);
-	Ui.text_x       = (term_t)  (get_term_sz(Buff, 'X') - Ui.line_num_len);
-	Ui.text_y       = (term_t)  (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
+	Ui.line_num_len = (term_t) (strlen(Ui.line_num_str) + SPACE_SZ);
+	Ui.text_x       = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
+	Ui.text_y       = (term_t) (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();
 

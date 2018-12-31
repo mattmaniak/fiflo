@@ -152,10 +152,47 @@ static Buff_t* save(Buff_t* Buff)
 	return Buff;
 }
 
+static char* get_git_branch(Buff_t* Buff) // TODO
+{
+/* fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set). */
+
+	const bool success = 0;
+	FILE*      pipe;
+
+	if(access("/usr/bin/git", F_OK) != success)
+	{
+		strncpy(Buff->git_branch, "VCS not installed", 256);
+		return Buff->git_branch;
+	}
+
+	pipe = popen("/usr/bin/git rev-parse --abbrev-ref HEAD", "r");
+	if(pipe == NULL)
+	{
+		strncpy(Buff->git_branch, "can't get a branch\n", 256);
+		return Buff->git_branch;
+	}
+
+	while(fgets(Buff->git_branch, 256 - 1, pipe) != NULL) // TODO: MAX_LEN
+
+	if(!strncmp(Buff->git_branch, "fatal: not a git repository", 23)) // TODO
+	{
+		strncpy(Buff->git_branch, "repo not found", 256);
+	}
+	pclose(pipe);
+
+	if(Buff->git_branch[strlen(Buff->git_branch) - 1] == '\n')
+	{
+		Buff->git_branch[strlen(Buff->git_branch) - 1] = '\0';
+	}
+	return Buff->git_branch;
+}
+
 namespace_file file =
 {
 	set_name,
 	live_edit_name,
 	load,
-	save
+	save,
+	get_git_branch
 };

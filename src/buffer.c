@@ -56,5 +56,5 @@ namespace_buffer buffer =
 {
 	init,
 	free_all,
-	throw_error
+	throw_error,
 };

@@ -1,5 +1,6 @@
 #ifndef BUFFER_H
 #define BUFFER_H
+#define _POSIX_C_SOURCE 2 // For popen.
 
 /* This file is included in every source file to provide the main structure
 that describes the buffer. */
@@ -31,7 +32,9 @@ typedef struct
 	bool     live_fname_edit;    // As in the name.
 	bool     pane_toggled;       // As in the name.
 
-	char     padding_0;
+	// Max size is 250.
+	char     git_branch[256];
+	bool     padding_0;
 
 	// Filename.
 	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
@@ -83,7 +86,7 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Initializes all Buff structure members.
-	Buff_t* (*init)(Buff_t* Buff);
+	Buff_t* (*init)(Buff_t*);
 
 	// Display a error message and exit.
 	void (*free_all)(Buff_t*);

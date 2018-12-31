@@ -22,10 +22,12 @@ void options(const char* arg)
 	}
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
-		printf("%s\n%s\n%s\n",
+		printf("%s\n%s\n%s\n%s\n%s\n",
+		"|``",
+		"|``",
 		"fiflo v2.3.0 (WIP)",
 		"(C) 2018 mattmaniak, MIT License",
-		"https://gitlab.com/mattmaniak/git");
+		"https://gitlab.com/mattmaniak/fiflo.git");
 		exit(0);
 	}
 }
@@ -41,6 +43,7 @@ noreturn void run(const char* arg)
 
 	for(;;) // The main program loop.
 	{
+		file.get_git_branch(&Buff);
 		Buff = *input.parse_key(&Buff, pressed);
 		window.render(&Buff);
 
