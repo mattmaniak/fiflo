@@ -26,7 +26,7 @@ void options(const char* arg)
 		"|``",
 		"|``",
 		"fiflo v2.3.0 (WIP)",
-		"(C) 2018 mattmaniak, MIT License",
+		"(C) 2018-2019 mattmaniak, MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
 		exit(0);
 	}

@@ -1,6 +1,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
-#define _POSIX_C_SOURCE 2 // For popen.
+
+#define _POSIX_C_SOURCE 2 // For popen, pclose.
 
 /* This file is included in every source file to provide the main structure
 that describes the buffer. */

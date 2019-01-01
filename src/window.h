@@ -18,7 +18,7 @@
 #define TOGGLED_PANE_SZ 5
 
 // Text that is shown on the lower bar. Also defines the minimal terminal width.
-#define LBAR_STR "CTRL^\\ - key bindings pane"
+#define LBAR_STR "CTRL^\\ - keyboard bindings"
 
 #define WRAP_LINE() putchar('\n')
 
