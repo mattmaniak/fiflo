@@ -23,6 +23,9 @@
 #define WRAP_LINE() putchar('\n')
 
 // ANSI escape codes.
+#define ANSI_RED()             printf("\x1b[%2", " m")
+#define ANSI_GREEN()           printf("\x1b[%2", " m")
+
 #define ANSI_RESET()           printf("\x1b[%s", "0m")
 #define ANSI_INVERT()          printf("\x1b[%s", "7m")
 #define ANSI_CLEAN_LINE()      printf("\x1b[%s", "2K")
@@ -44,6 +47,9 @@ typedef struct
 	term_t text_y;           // Vertical space for the text (lines).
 	term_t lbar_h;           // Lower bar height (lines).
 	term_t pane_h;           // As above but toggled.
+
+	term_t win_w;
+	term_t win_h;
 }
 Ui_t;
 #pragma pack(pop)
@@ -63,7 +69,7 @@ typedef const struct
 	void (*upper_bar)(Buff_t*, Ui_t*);
 
 	// Renders the lower bar that contains keyboard info.
-	void (*lower_bar)(Buff_t*);
+	void (*lower_bar)(Buff_t*, Ui_t* Ui);
 
 	// Vertical fill between the text and lower bar. If there isn't many lines.
 	void (*fill)(Buff_t*, Ui_t*);

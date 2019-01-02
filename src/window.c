@@ -60,8 +60,12 @@ static void flush(Buff_t* Buff)
 
 static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 {
-	const char git_str[]   = "git |/: ";
-	const int  git_str_len = 8;
+	const idx_t punch_card  = 80;
+	const char  git_str[]   = "git |\\ ";
+	const int   git_str_len = 7;
+	char        punch_card_str[16];
+
+	sprintf(punch_card_str, "%u", punch_card);
 
 	ANSI_INVERT();
 
@@ -71,16 +75,17 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 	is not necessary, eg. for errors messages. They can be shifted. */
 	printf("\r ");
 
-	if((Buff->fname_len_i + SPACE_SZ) < get_term_sz(Buff, 'X'))
+	if((Buff->fname_len_i + SPACE_SZ) < Ui->win_w)
 	{
 		// Whole filename will be displayed.
-		printf("%s%*s", Buff->fname, get_term_sz(Buff, 'X') - Buff->fname_len_i - SPACE_SZ, " ");
+		printf("%s%*s", Buff->fname, Ui->win_w - Buff->fname_len_i - SPACE_SZ,
+		" ");
 
 		WRAP_LINE();
 	}
 	else
 	{
-		for(term_t char_i = (term_t) (Buff->fname_len_i - get_term_sz(Buff, 'X')
+		for(term_t char_i = (term_t) (Buff->fname_len_i - Ui->win_w
 		+ CUR_SZ + SPACE_SZ); char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
@@ -89,30 +94,30 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 		WRAP_LINE();
 	}
 
-	printf(" %s%s%*s\n", git_str, Buff->git_branch, get_term_sz(Buff, 'X')
+	printf(" %s%s%*s\n", git_str, Buff->git_branch, Ui->win_w
 	- git_str_len - (int) strlen(Buff->git_branch) - SPACE_SZ,  " ");
 
 	// The lower part with the "chars in the current line" indicator.
 	printf(" %.*s%*s", STATUS_MAX, Buff->status,
 	(int) (STATUS_MAX - strlen(Buff->status) - SPACE_SZ), " ");
 
-	if(Ui->text_x > 80) // TODO: SIMPLIFY.
+	if(Ui->text_x > punch_card) // TODO: SIMPLIFY.
 	{
-		printf("%*s%*s", 80 - STATUS_MAX + (2 * SPACE_SZ),
-		"80th column^", get_term_sz(Buff, 'X') - 80  - (2 * SPACE_SZ), " ");
+		printf("%*s%d^%*s", punch_card - STATUS_MAX, " ",
+		punch_card, (int)
+		(Ui->win_w - punch_card  - SPACE_SZ - strlen(punch_card_str)), " ");
 	}
 	else
 	{
-		printf("%*s", get_term_sz(Buff, 'X') - STATUS_MAX, " ");
+		printf("%*s", Ui->win_w - STATUS_MAX, " ");
 	}
 	WRAP_LINE();
-
 	ANSI_RESET();
 }
 
-static void lower_bar(Buff_t* Buff)
+static void lower_bar(Buff_t* Buff, Ui_t* Ui)
 {
-	term_t horizontal_fill = (term_t) (get_term_sz(Buff, 'X') - strlen(LBAR_STR) - SPACE_SZ);
+	term_t horizontal_fill = (term_t) (Ui->win_w - strlen(LBAR_STR) - SPACE_SZ);
 	const char key_binding[4][STATUS_MAX] =
 	{
 		"CTRL^D - delete line",
@@ -128,7 +133,7 @@ static void lower_bar(Buff_t* Buff)
 		for(uint8_t y = 0; y < TOGGLED_PANE_SZ - LBAR_SZ; y++)
 		{
 			printf(" %s%*s", key_binding[y],
-			(int) (get_term_sz(Buff, 'X') - strlen(key_binding[y])), " ");
+			(int) (Ui->win_w - strlen(key_binding[y])), " ");
 
 			WRAP_LINE();
 		}
@@ -162,15 +167,15 @@ static void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
 {
 	// Set by default to a filename edit.
 	term_t move_right = (term_t) (Buff->fname_len_i + SPACE_SZ);
-	term_t move_up    = (term_t) (get_term_sz(Buff, 'Y') - LBAR_SZ);
+	term_t move_up    = (term_t) (Ui->win_h - LBAR_SZ);
 
-	if(move_right >= get_term_sz(Buff, 'X'))
+	if(move_right >= Ui->win_w)
 	{
-		move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ);
+		move_right = (term_t) (Ui->win_w - CUR_SZ);
 	}
 
 	// Cursor is pushed right by the lower bar. Move it back.
-	ANSI_CUR_LEFT(get_term_sz(Buff, 'X'));
+	ANSI_CUR_LEFT(Ui->win_w);
 	ANSI_SAVE_CUR_POS();
 
 	if(!Buff->live_fname_edit)
@@ -183,7 +188,7 @@ static void set_cursor_pos(Buff_t* Buff, Ui_t* Ui)
 		else if((ACT_LINE_LEN_I - Ui->text_x) >= Buff->cusr_x)
 		{
 			// Last Ui->text_x chars are seen. Current line is scrolled, not cursor.
-			move_right = (term_t) (get_term_sz(Buff, 'X') - CUR_SZ);
+			move_right = (term_t) (Ui->win_w - CUR_SZ);
 		}
 		else
 		{
@@ -203,12 +208,15 @@ static void render(Buff_t* Buff)
 
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
+	Ui.win_w = get_term_sz(Buff, 'X');
+	Ui.win_h = get_term_sz(Buff, 'Y');
+
 	Ui.pane_h = TOGGLED_PANE_SZ;
 	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
 	Ui.line_num_len = (term_t) (strlen(Ui.line_num_str) + (2 * SPACE_SZ));
-	Ui.text_x       = (term_t) (get_term_sz(Buff, 'X') - Ui.line_num_len);
-	Ui.text_y       = (term_t) (get_term_sz(Buff, 'Y') - UBAR_SZ - Ui.lbar_h);
+	Ui.text_x       = (term_t) (Ui.win_w - Ui.line_num_len);
+	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();
 
@@ -217,7 +225,7 @@ static void render(Buff_t* Buff)
 	textprint.display_text(Buff, &Ui);
 	fill(Buff, &Ui);
 
-	lower_bar(Buff);
+	lower_bar(Buff, &Ui);
 
 	set_cursor_pos(Buff, &Ui);
 }
@@ -231,7 +239,7 @@ static void print_line_num(idx_t line_i, term_t line_num_len, const bool act_lin
 	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
 
 	ANSI_RESET();
-	putchar(' '); // Whitespace adding.
+	putchar(' '); // Whitespace padding.
 }
 
 namespace_window window =
