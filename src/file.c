@@ -5,7 +5,7 @@
 #include "memory.h"
 #include "keymap.h"
 
-static Buff_t* set_name(Buff_t* Buff, const char* arg)
+static bool set_name(Buff_t* Buff, const char* arg)
 {
 	const bool nul_sz   = 1;
 	const bool slash_sz = 1;
@@ -17,28 +17,44 @@ static Buff_t* set_name(Buff_t* Buff, const char* arg)
 
 	if(arg_non_empty && arg_as_dir)
 	{
-		buffer.throw_error(Buff, "Can't open the directory as a file.");
+		// buffer.throw_error(Buff, "Can't open the directory as a file.");
+		fputs("Can't open the directory as a file.\n", stderr);
+		return false;
 	}
 
-	if(arg_as_abs_path)
+	if(arg_as_abs_path) // TODO
 	{
 		if((arg_len + nul_sz) > PATH_MAX)
 		{
-			buffer.throw_error(Buff, "Passed filename is too long.");
+			// buffer.throw_error(Buff, "Passed filename is too long.");
+			fputs("Passed filename is too long.\n", stderr);
+			return false;
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
 	else // Relative path or the basename.
 	{
 		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
-		memory.chk_ptr(Buff, cw_dir, "malloc for the current path");
+		if(cw_dir == NULL)
+		{
+			fputs("Can't alloc a memory for the directory.\n", stderr);
+			return false;
+		}
+		// memory.chk_ptr(Buff, cw_dir, "malloc for the current path");
 
 		cw_dir = getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz);
-		memory.chk_ptr(Buff, cw_dir, "get current path. Too long");
+		if(cw_dir == NULL)
+		{
+			fputs("Can't get the current directory. Maybe too long.\n", stderr);
+			return false;
+		}
+		// memory.chk_ptr(Buff, cw_dir, "get current path. Too long");
 
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
-			buffer.throw_error(Buff, "Current directory is too long.");
+			fputs("Current directory is too long.\n", stderr); // TODO.
+			return false;
+			// buffer.throw_error(Buff, "Current directory is too long.");
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
@@ -53,7 +69,8 @@ static Buff_t* set_name(Buff_t* Buff, const char* arg)
 		free(cw_dir);
 	}
 	Buff->fname_len_i = (uint16_t) strlen(Buff->fname);
-	return Buff;
+
+	return true;
 }
 
 static Buff_t* live_edit_name(Buff_t* Buff, char key)
@@ -80,7 +97,7 @@ static Buff_t* live_edit_name(Buff_t* Buff, char key)
 	return Buff;
 }
 
-static Buff_t* load(Buff_t* Buff)
+static bool load(Buff_t* Buff)
 {
 	const bool nul_sz = 1;
 	FILE*      textfile = fopen(Buff->fname, "r");
@@ -92,7 +109,7 @@ static Buff_t* load(Buff_t* Buff)
 		{
 			SET_STATUS("current directory set");
 			fclose(textfile);
-			return Buff;
+			return true;
 		}
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
@@ -110,7 +127,7 @@ static Buff_t* load(Buff_t* Buff)
 	{
 		SET_STATUS("the file will be created");
 	}
-	return Buff;
+	return true;
 }
 
 static Buff_t* save(Buff_t* Buff)

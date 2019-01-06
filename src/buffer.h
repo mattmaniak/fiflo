@@ -59,7 +59,7 @@ Buff_t;
 // Bytes of the memory width.
 #define ADDR_SZ     sizeof(Buff->text)
 #define INIT_MEMBLK (ADDR_SZ * sizeof(char)) // Aligned initial memblk.
-#define MEMBLK      (128 * sizeof(char))     // Must be >= 16 and dividable by 8.
+#define MEMBLK      (idx_t) (128 * sizeof(char)) // Must be >= 16 and dividable by 8.
 
 // Placeholders. Note that "_i" means "index".
 #define ACT_LINE_I           (Buff->lines_i - Buff->cusr_y)
@@ -88,7 +88,7 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Initializes all Buff structure members.
-	Buff_t* (*init)(Buff_t*);
+	bool (*init)(Buff_t*);
 
 	// Display a error message and exit.
 	void (*free_all)(Buff_t*);

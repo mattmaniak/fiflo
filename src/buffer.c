@@ -2,28 +2,44 @@
 
 #include "memory.h"
 
-static Buff_t* init(Buff_t* Buff)
+static bool init(Buff_t* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
-	memory.chk_ptr(Buff, Buff->text, " malloc the array with lines");
+	if(Buff->text == NULL)
+	{
+		fputs("Can't alloc a memory the array with lines.\n", stderr);
+		return false;
+	}
+	// memory.chk_ptr(Buff, Buff->text, " malloc the array with lines");
 
 	Buff->line_len_i = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
-	memory.chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length");
+	if(Buff->line_len_i == NULL)
+	{
+		fputs("Can't alloc a memory the array with lines length.\n", stderr);
+		return false;
+	}
 
-	Buff->chars_i = 0;
-	Buff->lines_i = 0;
-	Buff->cusr_x = 0;
-	Buff->cusr_y = 0;
+	// memory.chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length");
+
+	Buff->chars_i  = 0;
+	Buff->lines_i  = 0;
+	Buff->cusr_x   = 0;
+	Buff->cusr_y   = 0;
 	ACT_LINE_LEN_I = 0;
 
 	Buff->live_fname_edit = false;
-	Buff->key_sequence = false;
-	Buff->pane_toggled = false;
+	Buff->key_sequence    = false;
+	Buff->pane_toggled    = false;
 
 	ACT_LINE = malloc(ADDR_SZ);
-	memory.chk_ptr(Buff, ACT_LINE, "malloc the first line");
+	if(ACT_LINE == NULL)
+	{
+		fputs("Can't alloc a memory for the first line.\n", stderr);
+		return false;
+	}
+	// memory.chk_ptr(Buff, ACT_LINE, "malloc the first line");
 
-	return Buff;
+	return true;
 }
 
 static void free_all(Buff_t* Buff)
