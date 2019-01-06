@@ -10,7 +10,6 @@ static bool init(Buff_t* Buff)
 		fputs("Can't alloc a memory the array with lines.\n", stderr);
 		return false;
 	}
-	// memory.chk_ptr(Buff, Buff->text, " malloc the array with lines");
 
 	Buff->line_len_i = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 	if(Buff->line_len_i == NULL)
@@ -18,8 +17,6 @@ static bool init(Buff_t* Buff)
 		fputs("Can't alloc a memory the array with lines length.\n", stderr);
 		return false;
 	}
-
-	// memory.chk_ptr(Buff, Buff->line_len_i, "malloc the array with lines length");
 
 	Buff->chars_i  = 0;
 	Buff->lines_i  = 0;
@@ -37,8 +34,6 @@ static bool init(Buff_t* Buff)
 		fputs("Can't alloc a memory for the first line.\n", stderr);
 		return false;
 	}
-	// memory.chk_ptr(Buff, ACT_LINE, "malloc the first line");
-
 	return true;
 }
 

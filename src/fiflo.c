@@ -61,7 +61,10 @@ bool run(const char* arg)
 		}
 		window.render(&Buff);
 
-		pressed = input.getch(&Buff);
+		if((pressed = input.getch(&Buff)) == -1)
+		{
+			return false;
+		}
 		window.flush(&Buff);
 	}
 }
