@@ -37,14 +37,14 @@ noreturn void run(const char* arg)
 	char   pressed = '\0'; // Initializer.
 	Buff_t Buff;
 
-	Buff = *buffer.init(&Buff);
-	Buff = *file.set_name(&Buff, arg);
-	Buff = *file.load(&Buff);
+	buffer.init(&Buff);
+	file.set_name(&Buff, arg);
+	file.load(&Buff);
 
 	for(;;) // The main program loop.
 	{
 		file.get_git_branch(&Buff);
-		Buff = *input.parse_key(&Buff, pressed);
+		input.parse_key(&Buff, pressed);
 		window.render(&Buff);
 
 		pressed = input.getch(&Buff);

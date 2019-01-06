@@ -38,7 +38,6 @@
 
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
-#pragma pack(push, 1)
 typedef struct
 {
 	char   line_num_str[16]; // Place for string of the highest line number.
@@ -52,7 +51,6 @@ typedef struct
 	term_t win_h;
 }
 Ui_t;
-#pragma pack(pop)
 
 /* Note: They are not prototypes or pointers to these specific funtions. They
 are pointers to funtions with certain return type and parameters including it's

@@ -1,7 +1,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#define _POSIX_C_SOURCE 2 // For popen, pclose.
+#define _POSIX_C_SOURCE 2 // For popen, pclose. TODO FOR CLANG.
 
 /* This file is included in every source file to provide the main structure
 that describes the buffer. */
@@ -56,9 +56,10 @@ typedef struct
 }
 Buff_t;
 
-#define ADDR_SZ     sizeof(Buff->text) // Bytes of the memory width.
-#define INIT_MEMBLK ADDR_SZ            // Aligned initial memblk for a new line.
-#define MEMBLK      128                // Must be >= 16 and dividable by 8.
+// Bytes of the memory width.
+#define ADDR_SZ     sizeof(Buff->text)
+#define INIT_MEMBLK (ADDR_SZ * sizeof(char)) // Aligned initial memblk.
+#define MEMBLK      (128 * sizeof(char))     // Must be >= 16 and dividable by 8.
 
 // Placeholders. Note that "_i" means "index".
 #define ACT_LINE_I           (Buff->lines_i - Buff->cusr_y)

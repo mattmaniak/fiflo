@@ -1,5 +1,5 @@
 bin/
-*.flop
+*.fiflo
 obj/
 *.out
 *.save
