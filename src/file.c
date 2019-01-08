@@ -5,11 +5,11 @@
 #include "memory.h"
 #include "keymap.h"
 
-static bool set_name(Buff_t* Buff, const char* arg)
+static int set_name(Buff_t* Buff, const char* arg)
 {
 	const bool nul_sz   = 1;
 	const bool slash_sz = 1;
-	uint16_t   arg_len  = (uint16_t) strlen(arg);
+	size_t     arg_len  = strlen(arg);
 
 	bool arg_non_empty   = arg_len > 0;
 	bool arg_as_abs_path = arg[0]  == '/';
@@ -17,18 +17,16 @@ static bool set_name(Buff_t* Buff, const char* arg)
 
 	if(arg_non_empty && arg_as_dir)
 	{
-		// buffer.throw_error(Buff, "Can't open the directory as a file.");
 		fputs("Can't open the directory as a file.\n", stderr);
-		return false;
+		return -1;
 	}
 
 	if(arg_as_abs_path) // TODO
 	{
 		if((arg_len + nul_sz) > PATH_MAX)
 		{
-			// buffer.throw_error(Buff, "Passed filename is too long.");
 			fputs("Passed filename is too long.\n", stderr);
-			return false;
+			return -1;
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
@@ -38,23 +36,20 @@ static bool set_name(Buff_t* Buff, const char* arg)
 		if(cw_dir == NULL)
 		{
 			fputs("Can't alloc a memory for the directory.\n", stderr);
-			return false;
+			return -1;
 		}
-		// memory.chk_ptr(Buff, cw_dir, "malloc for the current path");
 
 		cw_dir = getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz);
 		if(cw_dir == NULL)
 		{
 			fputs("Can't get the current directory. Maybe too long.\n", stderr);
-			return false;
+			return -1;
 		}
-		// memory.chk_ptr(Buff, cw_dir, "get current path. Too long");
 
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
 			fputs("Current directory is too long.\n", stderr); // TODO.
-			return false;
-			// buffer.throw_error(Buff, "Current directory is too long.");
+			return -1;
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
@@ -68,12 +63,12 @@ static bool set_name(Buff_t* Buff, const char* arg)
 		}
 		free(cw_dir);
 	}
-	Buff->fname_len_i = (uint16_t) strlen(Buff->fname);
+	Buff->fname_len_i = strlen(Buff->fname);
 
-	return true;
+	return 0;
 }
 
-static Buff_t* live_edit_name(Buff_t* Buff, char key)
+static void live_edit_name(Buff_t* Buff, char key)
 {
 	const bool index = 1;
 
@@ -94,10 +89,9 @@ static Buff_t* live_edit_name(Buff_t* Buff, char key)
 		Buff->live_fname_edit = false;
 		SET_STATUS("filename edited");
 	}
-	return Buff;
 }
 
-static bool load(Buff_t* Buff)
+static int load(Buff_t* Buff)
 {
 	const bool nul_sz = 1;
 	FILE*      textfile = fopen(Buff->fname, "r");
@@ -109,16 +103,14 @@ static bool load(Buff_t* Buff)
 		{
 			SET_STATUS("current directory set");
 			fclose(textfile);
-			return true;
+			return 0;
 		}
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
-			if(ch == '\t') // Temponary and ugly tab to two spaces conversion.
+			if(keymap.printable_char(Buff, ch) == -1)
 			{
-				ch   = ' ';
-				Buff = keymap.printable_char(Buff, ch);
+				return -1;
 			}
-			Buff = keymap.printable_char(Buff, ch);
 		}
 		fclose(textfile);
 		SET_STATUS("read the file");
@@ -127,10 +119,10 @@ static bool load(Buff_t* Buff)
 	{
 		SET_STATUS("the file will be created");
 	}
-	return true;
+	return 0;
 }
 
-static Buff_t* save(Buff_t* Buff)
+static void save(Buff_t* Buff)
 {
 	const int error = -1;
 	int       file_descriptor;
@@ -166,28 +158,26 @@ static Buff_t* save(Buff_t* Buff)
 	{
 		SET_STATUS("can't write to the file");
 	}
-	return Buff;
 }
 
-static char* get_git_branch(Buff_t* Buff) // TODO
+static bool get_git_branch(Buff_t* Buff) // TODO
 {
 /* fatal: not a git repository (or any parent up to mount point /)
 Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set). */
 
-	const bool success = 0;
-	FILE*      pipe;
+	FILE* pipe;
 
-	if(access("/usr/bin/git", F_OK) != success)
+	if(access("/usr/bin/git", F_OK) == -1)
 	{
 		strncpy(Buff->git_branch, "VCS not installed", 256);
-		return Buff->git_branch;
+		return true;
 	}
 
 	pipe = popen("/usr/bin/git rev-parse --abbrev-ref HEAD", "r");
 	if(pipe == NULL)
 	{
 		strncpy(Buff->git_branch, "can't get a branch\n", 256);
-		return Buff->git_branch;
+		return true;
 	}
 
 	while(fgets(Buff->git_branch, 256 - 1, pipe) != NULL) // TODO: MAX_LEN
@@ -196,13 +186,17 @@ Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set). */
 	{
 		strncpy(Buff->git_branch, "repo not found", 256);
 	}
-	pclose(pipe);
+	if(pclose(pipe) == -1)
+	{
+		fputs("Can't...", stderr); // TODO
+		return false;
+	}
 
 	if(Buff->git_branch[strlen(Buff->git_branch) - 1] == '\n')
 	{
 		Buff->git_branch[strlen(Buff->git_branch) - 1] = '\0';
 	}
-	return Buff->git_branch;
+	return true;
 }
 
 namespace_file file =

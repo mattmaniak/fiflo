@@ -39,7 +39,7 @@ typedef struct
 
 	// Filename.
 	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
-	uint16_t fname_len_i;        // Strlen of the above array.
+	size_t   fname_len_i;        // Strlen of the above array.
 
 	uint16_t padding_1;
 
@@ -88,7 +88,7 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Initializes all Buff structure members.
-	bool (*init)(Buff_t*);
+	int (*init)(Buff_t*);
 
 	// Display a error message and exit.
 	void (*free_all)(Buff_t*);

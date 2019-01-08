@@ -8,7 +8,7 @@
 #include "input.h"
 #include "window.h"
 
-bool options(const char* arg)
+int options(const char* arg)
 {
 	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 	{
@@ -18,7 +18,7 @@ bool options(const char* arg)
 		"Options:      Description:",
 		"-h, --help    Show a program help.",
 		"-v, --version Display information about this version.");
-		return false;
+		return 0;
 	}
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
@@ -28,32 +28,35 @@ bool options(const char* arg)
 		"fiflo v3.0.0 (WIP)",
 		"(C) 2018-2019 mattmaniak, MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
-		return false;
+		return 0;
 	}
-	return true;
+	return run(arg);
 }
 
-bool run(const char* arg)
+int run(const char* arg)
 {
 	char   pressed = '\0'; // Initializer.
 	Buff_t Buff;
 
-	if(!buffer.init(&Buff))
+	if(buffer.init(&Buff) == -1)
 	{
-		return false;
+		return -1;
 	}
-	if(!file.set_name(&Buff, arg))
+	if(file.set_name(&Buff, arg) == -1)
 	{
-		return false;
+		return -1;
 	}
-	if(!file.load(&Buff))
+	if(file.load(&Buff) == -1)
 	{
-		return false;
+		return -1;
 	}
 
 	for(;;) // The main program loop.
 	{
-		file.get_git_branch(&Buff);
+		if(file.get_git_branch(&Buff))
+		{
+
+		}
 		if(input.parse_key(&Buff, pressed))
 		{
 			// buffer.free_all(&Buff);
@@ -61,11 +64,11 @@ bool run(const char* arg)
 		}
 		window.render(&Buff);
 
-		if((pressed = input.getch(&Buff)) == -1)
+		if((pressed = input.getch()) == -1)
 		{
 			return false;
 		}
-		window.flush(&Buff);
+		window.flush();
 	}
 }
 
@@ -81,19 +84,16 @@ int main(const int argc, const char** argv)
 	{
 		return run("");
 	}
-	else if(strlen(argv[1]) <= PATH_MAX)
+	else if(strlen(argv[1]) <= _POSIX_ARG_MAX)
 	{
-		if(!options(argv[1]))
-		{
-			return 0;
-		}
-		return run(argv[1]);
+		return options(argv[1]);
 	}
 	else
 	{
 		fprintf(stderr, "Maximum length of a parameter is %u\n", PATH_MAX);
 		return -1;
 	}
+	return 0;
 }
 
 #else

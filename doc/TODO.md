@@ -1,6 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
 - less includes,
+- no variables casting,
 - functions names,
 - rendering rework,
 - simplify file.c,

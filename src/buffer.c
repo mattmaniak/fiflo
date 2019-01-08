@@ -2,20 +2,20 @@
 
 #include "memory.h"
 
-static bool init(Buff_t* Buff)
+static int init(Buff_t* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
 	if(Buff->text == NULL)
 	{
-		fputs("Can't alloc a memory the array with lines.\n", stderr);
-		return false;
+		fprintf(stderr, "Can't alloc a memory the array with lines.\n");
+		return -1;
 	}
 
 	Buff->line_len_i = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 	if(Buff->line_len_i == NULL)
 	{
-		fputs("Can't alloc a memory the array with lines length.\n", stderr);
-		return false;
+		fprintf(stderr, "Can't alloc a memory the array with lines length.\n");
+		return -1;
 	}
 
 	Buff->chars_i  = 0;
@@ -31,10 +31,10 @@ static bool init(Buff_t* Buff)
 	ACT_LINE = malloc(ADDR_SZ);
 	if(ACT_LINE == NULL)
 	{
-		fputs("Can't alloc a memory for the first line.\n", stderr);
-		return false;
+		fprintf(stderr, "Can't alloc a memory for the first line.\n");
+		return -1;
 	}
-	return true;
+	return 0;
 }
 
 static void free_all(Buff_t* Buff)

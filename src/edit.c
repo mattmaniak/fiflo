@@ -4,17 +4,15 @@
 
 #include "memory.h"
 
-static Buff_t* delete_last_line(Buff_t* Buff)
+static int delete_last_line(Buff_t* Buff)
 {
 	free(LAST_LINE);
 
 	Buff->lines_i--;
-	Buff = memory.shrink_lines_array_mem(Buff);
-
-	return Buff;
+	return memory.shrink_lines_array_mem(Buff);
 }
 
-static Buff_t* delete_line(Buff_t* Buff)
+static int delete_line(Buff_t* Buff)
 {
 	idx_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
 
@@ -24,14 +22,22 @@ static Buff_t* delete_line(Buff_t* Buff)
 		{
 			Buff->cusr_x = (CURSOR_AT_LINE_START) ? next_line_len : 1;
 
-			Buff = memory.copy_lines_mem_backward(Buff);
-			Buff = delete_last_line(Buff);
-
+			if(memory.copy_lines_mem_backward(Buff) == -1)
+			{
+				return -1;
+			}
+			if(delete_last_line(Buff) == -1)
+			{
+				return -1;
+			}
 			Buff->cusr_y--;
 		}
 		else
 		{
-			Buff = delete_last_line(Buff);
+			if(delete_last_line(Buff) == -1)
+			{
+				return -1;
+			}
 
 			/* With the last line deletion there is a need to remove the
 			linefeed in the previous line. */
@@ -51,10 +57,10 @@ static Buff_t* delete_line(Buff_t* Buff)
 
 		Buff->cusr_x = 0;
 	}
-	return Buff;
+	return 0;
 }
 
-static Buff_t* shift_text_horizonally(Buff_t* Buff, char direction)
+static void shift_text_horizonally(Buff_t* Buff, char direction)
 {
 	const bool prev = 1;
 	idx_t      char_i;
@@ -62,29 +68,31 @@ static Buff_t* shift_text_horizonally(Buff_t* Buff, char direction)
 	switch(direction)
 	{
 		case 'l':
-			for(char_i = CURSOR_VERTICAL_I; char_i <= ACT_LINE_LEN_I; char_i++)
-			{
-				ACT_LINE[char_i - prev] = ACT_LINE[char_i];
-			}
-			break;
+		for(char_i = CURSOR_VERTICAL_I; char_i <= ACT_LINE_LEN_I; char_i++)
+		{
+			ACT_LINE[char_i - prev] = ACT_LINE[char_i];
+		}
+		break;
 
 		case 'r':
-			for(char_i = ACT_LINE_LEN_I; char_i >= CURSOR_VERTICAL_I; char_i--)
-			{
-				ACT_LINE[char_i] = ACT_LINE[char_i - prev];
-			}
+		for(char_i = ACT_LINE_LEN_I; char_i >= CURSOR_VERTICAL_I; char_i--)
+		{
+			ACT_LINE[char_i] = ACT_LINE[char_i - prev];
+		}
 	}
-	return Buff;
 }
 
-static Buff_t* move_lines_forward(Buff_t* Buff)
+static int move_lines_forward(Buff_t* Buff)
 {
 	PREV_LINE_LEN_I -= Buff->cusr_x;
 
 	// Move more lines vertically with the part of the current line.
 	if(CURSOR_Y_SCROLLED)
 	{
-		Buff = memory.copy_lines_mem_forward(Buff);
+		if(memory.copy_lines_mem_forward(Buff) == -1)
+		{
+			return -1;
+		}
 		ACT_LINE_LEN_I = 0;
 	}
 
@@ -94,32 +102,42 @@ static Buff_t* move_lines_forward(Buff_t* Buff)
 	{
 		ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
 		ACT_LINE_LEN_I++;
-		ACT_LINE = memory.extend_line_mem(Buff, ACT_LINE_I);
+		if(memory.extend_line_mem(Buff, ACT_LINE_I) == -1)
+		{
+			return -1;
+		}
 	}
 
 	// Now the length of the upper line will be shortened after copying.
 	PREV_LINE[PREV_LINE_LEN_I] = '\0';
-	PREV_LINE = memory.shrink_prev_line_mem(Buff);
-
-	return Buff;
+	if(memory.shrink_prev_line_mem(Buff) == -1)
+	{
+		return -1;
+	}
+	return 0;
 }
 
-static Buff_t* delete_last_empty_line(Buff_t* Buff)
+static int delete_last_empty_line(Buff_t* Buff)
 {
 	free(ACT_LINE);
 
 	Buff->lines_i--;
-	ACT_LINE = memory.shrink_act_line_mem(Buff);
+	if(memory.shrink_act_line_mem(Buff) == -1)
+	{
+		return -1;
+	}
 
 	ACT_LINE_LEN_I--;
 	Buff->chars_i--;
 
-	Buff = memory.shrink_lines_array_mem(Buff);
-
-	return Buff;
+	if(memory.shrink_lines_array_mem(Buff) == -1)
+	{
+		return -1;
+	}
+	return 0;
 }
 
-static Buff_t* delete_non_last_line(Buff_t* Buff)
+static int delete_non_last_line(Buff_t* Buff)
 {
 	PREV_LINE_LEN_I--;
 	Buff->chars_i--;
@@ -133,23 +151,34 @@ static Buff_t* delete_non_last_line(Buff_t* Buff)
 		{
 			PREV_LINE_LEN_I++;
 		}
-		PREV_LINE = memory.extend_line_mem(Buff, PREV_LINE_I);
+		if(memory.extend_line_mem(Buff, PREV_LINE_I) == -1)
+		{
+			return -1;
+		}
 	}
 	if(CURSOR_Y_SCROLLED)
 	{
-		Buff = memory.copy_lines_mem_backward(Buff);
+		if(memory.copy_lines_mem_backward(Buff) == -1)
+		{
+			return -1;
+		}
 	}
-	Buff = delete_last_line(Buff);
-
-	return Buff;
+	if(delete_last_line(Buff) == -1)
+	{
+		return -1;
+	}
+	return 0;
 }
 
-static Buff_t* delete_char(Buff_t* Buff)
+static int delete_char(Buff_t* Buff)
 {
 	if(!CURSOR_AT_LINE_START)
 	{
-		Buff = shift_text_horizonally(Buff, 'l');
-		ACT_LINE = memory.shrink_act_line_mem(Buff);
+		shift_text_horizonally(Buff, 'l');
+		if(memory.shrink_act_line_mem(Buff) == -1)
+		{
+			return -1;
+		}
 
 		ACT_LINE_LEN_I--;
 		Buff->chars_i--;
@@ -157,9 +186,12 @@ static Buff_t* delete_char(Buff_t* Buff)
 	// Deletes the non-empty line and copy chars to previous.
 	else if(!FIRST_LINE)
 	{
-		Buff = delete_non_last_line(Buff);
+		if(delete_non_last_line(Buff) == -1)
+		{
+			return -1;
+		}
 	}
-	return Buff;
+	return 0;
 }
 
 namespace_edit edit =

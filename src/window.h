@@ -29,10 +29,10 @@
 #define ANSI_RESET()           printf("\x1b[%s", "0m")
 #define ANSI_INVERT()          printf("\x1b[%s", "7m")
 #define ANSI_CLEAN_LINE()      printf("\x1b[%s", "2K")
-#define ANSI_CUR_UP(offset)    printf("\x1b[%uA", offset)
-#define ANSI_CUR_DOWN(offset)  printf("\x1b[%uB", offset)
-#define ANSI_CUR_RIGHT(offset) printf("\x1b[%uC", offset)
-#define ANSI_CUR_LEFT(offset)  printf("\x1b[%uD", offset)
+#define ANSI_CUR_UP(offset)    printf("\x1b[%dA", offset)
+#define ANSI_CUR_DOWN(offset)  printf("\x1b[%dB", offset)
+#define ANSI_CUR_RIGHT(offset) printf("\x1b[%dC", offset)
+#define ANSI_CUR_LEFT(offset)  printf("\x1b[%ldD", offset)
 #define ANSI_SAVE_CUR_POS()    printf("\x1b[%s", "s")
 #define ANSI_RESTORE_CUR_POS() printf("\x1b[%s", "u")
 
@@ -47,8 +47,8 @@ typedef struct
 	term_t lbar_h;           // Lower bar height (lines).
 	term_t pane_h;           // As above but toggled.
 
-	term_t win_w;
-	term_t win_h;
+	ssize_t win_w;
+	ssize_t win_h;
 }
 Ui_t;
 
@@ -58,16 +58,16 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Returns current terminal width and height and exits if is wrong.
-	term_t (*get_term_sz)(Buff_t*, char);
+	ssize_t (*get_terminal_size)(char);
 
 	// Clean the whole rendered window.
-	void (*flush)(Buff_t*);
+	void (*flush)(void);
 
 	// Renders the upper bar with a filename and indicators.
 	void (*upper_bar)(Buff_t*, Ui_t*);
 
 	// Renders the lower bar that contains keyboard info.
-	void (*lower_bar)(Buff_t*, Ui_t* Ui);
+	void (*lower_bar)(const bool, Ui_t*);
 
 	// Vertical fill between the text and lower bar. If there isn't many lines.
 	void (*fill)(Buff_t*, Ui_t*);
@@ -79,7 +79,7 @@ typedef const struct
 	void (*print_line_num)(idx_t, term_t, const bool);
 
 	// Sets the cursor position starting from the left bottom.
-	void (*set_cursor_pos)(Buff_t*, Ui_t*);
+	void (*set_cursor_position)(Buff_t*, Ui_t*);
 }
 namespace_window;
 

@@ -6,27 +6,36 @@
 #include "memory.h"
 #include "edit.h"
 
-static Buff_t* linefeed(Buff_t* Buff)
+static int linefeed(Buff_t* Buff)
 {
 	if(BUFFER_NOT_FULL)
 	{
 		Buff->lines_i++;
-		Buff = memory.extend_lines_array_mem(Buff);
+		if(memory.extend_lines_array_mem(Buff) == -1)
+		{
+			return -1;
+		}
 
 		if(CURSOR_X_SCROLLED)
 		{
-			Buff = edit.move_lines_forward(Buff);
+			if(edit.move_lines_forward(Buff) == -1)
+			{
+				return -1;
+			}
 		}
 		else if(CURSOR_Y_SCROLLED) // Cursor is to the end of the line.
 		{
-			Buff = memory.copy_lines_mem_forward(Buff);
+			if(memory.copy_lines_mem_forward(Buff) == -1)
+			{
+				return -1;
+			}
 		}
 		ACT_LINE[ACT_LINE_LEN_I] = '\0';
 	}
-	return Buff;
+	return 0;
 }
 
-static Buff_t* printable_char(Buff_t* Buff, char key)
+static int printable_char(Buff_t* Buff, char key)
 {
 	const bool nul_sz = 1;
 
@@ -43,11 +52,14 @@ static Buff_t* printable_char(Buff_t* Buff, char key)
 			Buff->chars_i++;
 			ACT_LINE_LEN_I++;
 
-			ACT_LINE = memory.extend_line_mem(Buff, ACT_LINE_I);
+			if(memory.extend_line_mem(Buff, ACT_LINE_I) == -1)
+			{
+				return -1;
+			}
 
 			if(CURSOR_X_SCROLLED)
 			{
-				Buff = edit.shift_text_horizonally(Buff, 'r');
+				edit.shift_text_horizonally(Buff, 'r');
 			}
 			ACT_LINE[CURSOR_VERTICAL_I - nul_sz] = key;
 			ACT_LINE[ACT_LINE_LEN_I] = '\0';
@@ -60,7 +72,10 @@ static Buff_t* printable_char(Buff_t* Buff, char key)
 			}
 			else if(key == '\n')
 			{
-				Buff = linefeed(Buff);
+				if(linefeed(Buff) == -1)
+				{
+					return -1;
+				}
 			}
 			(key != '\0') ? SET_STATUS("edited") : 0;
 		}
@@ -73,26 +88,32 @@ static Buff_t* printable_char(Buff_t* Buff, char key)
 	{
 		SET_STATUS("unsupported char(s)");
 	}
-	return Buff;
+	return 0;
 }
 
-static Buff_t* backspace(Buff_t* Buff)
+static int backspace(Buff_t* Buff)
 {
 	if(!EMPTY_LINE)
 	{
-		Buff = edit.delete_char(Buff);
+		if(edit.delete_char(Buff) == -1)
+		{
+			return -1;
+		}
 	}
 	else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
 	{
-		Buff = edit.delete_last_empty_line(Buff);
+		if(edit.delete_last_empty_line(Buff) == -1)
+		{
+			return -1;
+		}
 	}
 	ACT_LINE[ACT_LINE_LEN_I] = '\0'; // Linefeed to the terminator.
 	SET_STATUS("edited");
 
-	return Buff;
+	return 0;
 }
 
-static Buff_t* key_action(Buff_t* Buff, char key)
+static int key_action(Buff_t* Buff, char key)
 {
 	switch(key)
 	{
@@ -100,21 +121,18 @@ static Buff_t* key_action(Buff_t* Buff, char key)
 		return printable_char(Buff, key);
 
 		case '\t':
-		for(uint8_t tab_width = 0; tab_width < 2; tab_width++)
-		{
-			Buff = printable_char(Buff, ' ');
-		}
-		break;
+		return printable_char(Buff, ' ');
 
 		case BACKSPACE:
 		return backspace(Buff);
 
-		case CTRL_Q:
+		case CTRL_Q: // TODO: WITH RETURN?
 		buffer.free_all(Buff);
 		exit(0);
 
 		case CTRL_S:
-		return file.save(Buff);
+		file.save(Buff);
+		break;
 
 		case CTRL_BACKSLASH:
 		Buff->pane_toggled = !Buff->pane_toggled;
@@ -126,10 +144,10 @@ static Buff_t* key_action(Buff_t* Buff, char key)
 		case CTRL_O:
 		Buff->live_fname_edit = true;
 	}
-	return Buff;
+	return 0;
 }
 
-static Buff_t* arrow_left(Buff_t* Buff)
+static void arrow_left(Buff_t* Buff)
 {
 	bool more_than_one_line = Buff->lines_i > 0;
 
@@ -143,10 +161,9 @@ static Buff_t* arrow_left(Buff_t* Buff)
 		Buff->cusr_x = 1;
 		Buff->cusr_y++;
 	}
-	return Buff;
 }
 
-static Buff_t* arrow_right(Buff_t* Buff)
+static void arrow_right(Buff_t* Buff)
 {
 	if(CURSOR_X_SCROLLED)
 	{
@@ -162,10 +179,9 @@ static Buff_t* arrow_right(Buff_t* Buff)
 			Buff->cusr_y--;
 		}
 	}
-	return Buff;
 }
 
-static Buff_t* arrow_up(Buff_t* Buff)
+static void arrow_up(Buff_t* Buff)
 {
 	if(!CURSOR_AT_TOP)
 	{
@@ -174,10 +190,9 @@ static Buff_t* arrow_up(Buff_t* Buff)
 		Buff->cusr_x = (CURSOR_AT_LINE_START) ? PREV_LINE_LEN_I : 1;
 		Buff->cusr_y++;
 	}
-	return Buff;
 }
 
-static Buff_t* arrow_down(Buff_t* Buff)
+static void arrow_down(Buff_t* Buff)
 {
 	bool cursor_at_prev_line_start = CURSOR_AT_LINE_START;
 
@@ -195,7 +210,6 @@ static Buff_t* arrow_down(Buff_t* Buff)
 			(CURSOR_Y_SCROLLED) ? Buff->cusr_x = 1 : 0; // Ignore the LF or no.
 		}
 	}
-	return Buff;
 }
 
 namespace_keymap keymap =

@@ -138,15 +138,15 @@ static void scroll_lines(Buff_t* Buff, Ui_t* Ui)
 	if(ACT_LINE_LEN_I < Ui->text_x)
 	{
 		printf("%.*s",
-		(CURSOR_Y_SCROLLED) ? ACT_LINE_LEN_I - LF_SZ : ACT_LINE_LEN_I,
-		ACT_LINE);
+		       (CURSOR_Y_SCROLLED) ? ACT_LINE_LEN_I - LF_SZ : ACT_LINE_LEN_I,
+		       ACT_LINE);
 	}
 	// Chars won't fits in the horizontal space.
 	else if((ACT_LINE_LEN_I - Ui->text_x) >= Buff->cusr_x)
 	{
 		// Text will be scrolled. Not cursor.
 		for(idx_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
-		char_i < CURSOR_VERTICAL_I; char_i++)
+		    char_i < CURSOR_VERTICAL_I; char_i++)
 		{
 			putchar(ACT_LINE[char_i]);
 		}

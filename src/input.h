@@ -11,13 +11,13 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Reads one char wthout confirming by enter the key. Termios based.
-	char (*getch)(Buff_t*);
+	char (*getch)(void);
 
 	// Converts the given letter by the parse_key and chooses the cursror direction.
-	Buff_t* (*recognize_sequence)(Buff_t*, char[8]);
+	void (*recognize_sequence)(Buff_t*, char[8]);
 
 	// Saves the last pressed key to the temponary buffer and analyzes it.
-	Buff_t* (*parse_key)(Buff_t*, char);
+	int (*parse_key)(Buff_t*, char);
 }
 namespace_input;
 

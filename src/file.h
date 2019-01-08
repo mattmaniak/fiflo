@@ -3,7 +3,7 @@
 
 // File operations.
 
-#include <linux/limits.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/file.h>
@@ -15,19 +15,19 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Sets the filename. If basename is passed as arg actent path will be added.
-	bool (*set_name)(Buff_t*, const char*);
+	int (*set_name)(Buff_t*, const char*);
 
 	// When the CTRL^O is pressed, there is possibility to basically edit the fname.
-	Buff_t* (*live_edit_name)(Buff_t*, char);
+	void (*live_edit_name)(Buff_t*, char);
 
 	// Reads the file using "recognize_char".
-	bool (*load)(Buff_t*);
+	int (*load)(Buff_t*);
 
 	// Puts the whole text to the file.
-	Buff_t* (*save)(Buff_t*);
+	void (*save)(Buff_t*);
 
 	//
-	char* (*get_git_branch)(Buff_t*);
+	bool (*get_git_branch)(Buff_t*);
 }
 namespace_file;
 

@@ -6,10 +6,8 @@
 #include "window.h"
 #include "keymap.h"
 
-static char getch(Buff_t* Buff)
+static char getch(void)
 {
-	const int error = -1;
-
 	const unsigned int canonical_mode_on = ICANON;
 	const unsigned int echo_input        = ECHO;
 	const unsigned int enable_sigs       = ISIG;
@@ -21,9 +19,9 @@ static char getch(Buff_t* Buff)
 	char key;
 
 	// Get the state of the STDIN_FILENO.
-	if(tcgetattr(STDIN_FILENO, &old_term_params) == error)
+	if(tcgetattr(STDIN_FILENO, &old_term_params) == -1)
 	{
-		window.flush(Buff);
+		window.flush();
 		fputs("Stdin params error. Pipe isn't supported.\n", stderr);
 		return -1;
 	}
@@ -35,31 +33,31 @@ static char getch(Buff_t* Buff)
 
 	/* Immediately set the state of the STDIN_FILENO to the* new_term_params.
 	Use the new terminal I/O settings. */
-	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == error)
+	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == -1)
 	{
-		window.flush(Buff);
-		fputs("Can't set the terminal's raw mode.\n", stderr);
+		window.flush();
+		fprintf(stderr, "Can't set the terminal's raw mode.\n");
 		return -1;
 	}
 
 	if((key = (char) getchar()) < 0) // TODO: RESTORE TERM SETTINGS ON EXIT.
 	{
-		window.flush(Buff);
-		fputs("A negative char passed to the stdin.\n", stderr);
+		window.flush();
+		fprintf(stderr, "A negative char passed to the stdin.\n");
 		return -1;
 	}
 
 	// Immediately restore the state of the stdin (0) to the* new_term_params.
-	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == error)
+	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == -1)
 	{
-		window.flush(Buff);
-		fputs("Can't restore the terminal's normal mode.\n", stderr);
+		window.flush();
+		fprintf(stderr, "Can't restore the terminal's normal mode.\n");
 		return -1;
 	}
 	return key;
 }
 
-static Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8])
+static void recognize_sequence(Buff_t* Buff, char sequence[8])
 {
 	const uint8_t seq_max = 3;
 
@@ -72,22 +70,22 @@ static Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8])
 
 	if(!strcmp(sequence, arrow_up))
 	{
-		Buff = keymap.arrow_up(Buff);
+		keymap.arrow_up(Buff);
 		Buff->key_sequence = false;
 	}
 	else if(!strcmp(sequence, arrow_down))
 	{
-		Buff = keymap.arrow_down(Buff);
+		keymap.arrow_down(Buff);
 		Buff->key_sequence = false;
 	}
 	else if(!strcmp(sequence, arrow_right))
 	{
-		Buff = keymap.arrow_right(Buff);
+		keymap.arrow_right(Buff);
 		Buff->key_sequence = false;
 	}
 	else if(!strcmp(sequence, arrow_left))
 	{
-		Buff = keymap.arrow_left(Buff);
+		keymap.arrow_left(Buff);
 		Buff->key_sequence = false;
 	}
 	else if(strlen(sequence) > seq_max)
@@ -99,10 +97,9 @@ static Buff_t* recognize_sequence(Buff_t* Buff, char sequence[8])
 	printf("cusr_x %d, cusr_y %d.\n", Buff->cusr_x, Buff->cusr_y);
 #endif
 
-	return Buff;
 }
 
-static Buff_t* parse_key(Buff_t* Buff, char key)
+static int parse_key(Buff_t* Buff, char key)
 {
 	const bool     nul_sz = 1;
 	enum           {seq_len = 8};
@@ -125,18 +122,18 @@ static Buff_t* parse_key(Buff_t* Buff, char key)
 
 		key_sequence[char_i] = '\0';
 
-		Buff = recognize_sequence(Buff, key_sequence);
+		recognize_sequence(Buff, key_sequence);
 		(!Buff->key_sequence) ? char_i = 0 : 0;
 	}
 	else if(Buff->live_fname_edit)
 	{
-		Buff = file.live_edit_name(Buff, key);
+		file.live_edit_name(Buff, key);
 	}
 	else
 	{
-		Buff = keymap.key_action(Buff, key);
+		return keymap.key_action(Buff, key);
 	}
-	return Buff;
+	return 0;
 }
 
 namespace_input input =
