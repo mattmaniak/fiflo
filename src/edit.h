@@ -9,25 +9,25 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// As in the name.
-	int (*delete_last_line)(Buff_t*);
+	bool (*delete_last_line)(Buff_t*);
 
 	// Deletes the current line and decrements the lines index.
-	int (*delete_line)(Buff_t*);
+	bool (*delete_line)(Buff_t*);
 
 	// Moves the text when the cursor is moved left and char is pressed.
 	void (*shift_text_horizonally)(Buff_t*, char);
 
 	// As in the name, but supports Y shift with the cursor scrolled horizontally.
-	int (*move_lines_forward)(Buff_t*);
+	bool (*move_lines_forward)(Buff_t*);
 
 	// Simply as in the name.
-	int (*delete_last_empty_line)(Buff_t*);
+	bool (*delete_last_empty_line)(Buff_t*);
 
 	// Also shifts lines from the bottom up.
-	int (*delete_non_last_line)(Buff_t*);
+	bool (*delete_non_last_line)(Buff_t*);
 
 	// Optionally shifts the text horizontally.
-	int (*delete_char)(Buff_t*);
+	bool (*delete_char)(Buff_t*);
 }
 namespace_edit;
 

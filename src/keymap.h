@@ -9,16 +9,16 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Knows what to do next with pressed key or combination. Based on ASCII.
-	int (*key_action)(Buff_t*, char);
+	bool (*key_action)(Buff_t*, char);
 
 	// Adds char when the pressed key is a printable one.
-	int (*printable_char)(Buff_t*, char);
+	bool (*printable_char)(Buff_t*, char);
 
 	// Initialize the new line.
-	int (*linefeed)(Buff_t*);
+	bool (*linefeed)(Buff_t*);
 
 	// Removes a last char and optionally deletes the last line.
-	int (*backspace)(Buff_t*);
+	bool (*backspace)(Buff_t*);
 
 	// These ones moves the cursor.
 	void (*arrow_left)(Buff_t*);

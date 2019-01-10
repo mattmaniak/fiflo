@@ -5,10 +5,11 @@
 
 static void print_another_line(Buff_t* Buff, Ui_t* Ui, idx_t line_i)
 {
-	const bool cursor_or_linefeed_sz = 1;
+	const size_t cursor_or_linefeed_sz = 1;
 
 	window.print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
-	printf("%.*s", Ui->text_x - cursor_or_linefeed_sz, Buff->text[line_i]);
+	printf("%.*s", (int) (Ui->text_x - cursor_or_linefeed_sz),
+	       Buff->text[line_i]);
 
 	if(Buff->line_len_i[line_i] >= Ui->text_x)
 	{

@@ -10,10 +10,8 @@ that describes the buffer. */
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdnoreturn.h>
 #include <string.h>
 #include <limits.h>
-#include <linux/limits.h>
 
 // Needed to char/lines/chars_in_line values.
 typedef uint32_t idx_t;
@@ -88,13 +86,13 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Initializes all Buff structure members.
-	int (*init)(Buff_t*);
+	bool (*init)(Buff_t*);
 
 	// Display a error message and exit.
 	void (*free_all)(Buff_t*);
 
 	// Frees everything and exits with status code.
-	void (*throw_error)(Buff_t*, const char*);
+	// void (*throw_error)(Buff_t*, const char*);
 }
 namespace_buffer;
 

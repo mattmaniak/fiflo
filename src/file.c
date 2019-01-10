@@ -5,10 +5,10 @@
 #include "memory.h"
 #include "keymap.h"
 
-static int set_name(Buff_t* Buff, const char* arg)
+static bool set_name(Buff_t* Buff, const char* arg)
 {
-	const bool nul_sz   = 1;
-	const bool slash_sz = 1;
+	const size_t nul_sz   = 1;
+	const size_t slash_sz = 1;
 	size_t     arg_len  = strlen(arg);
 
 	bool arg_non_empty   = arg_len > 0;
@@ -18,7 +18,7 @@ static int set_name(Buff_t* Buff, const char* arg)
 	if(arg_non_empty && arg_as_dir)
 	{
 		fputs("Can't open the directory as a file.\n", stderr);
-		return -1;
+		return false;
 	}
 
 	if(arg_as_abs_path) // TODO
@@ -26,7 +26,7 @@ static int set_name(Buff_t* Buff, const char* arg)
 		if((arg_len + nul_sz) > PATH_MAX)
 		{
 			fputs("Passed filename is too long.\n", stderr);
-			return -1;
+			return false;
 		}
 		strncpy(Buff->fname, arg, PATH_MAX);
 	}
@@ -36,20 +36,20 @@ static int set_name(Buff_t* Buff, const char* arg)
 		if(cw_dir == NULL)
 		{
 			fputs("Can't alloc a memory for the directory.\n", stderr);
-			return -1;
+			return false;
 		}
 
 		cw_dir = getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz);
 		if(cw_dir == NULL)
 		{
 			fputs("Can't get the current directory. Maybe too long.\n", stderr);
-			return -1;
+			return false;
 		}
 
 		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
 		{
 			fputs("Current directory is too long.\n", stderr); // TODO.
-			return -1;
+			return false;
 		}
 		// Copy the path.
 		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
@@ -65,7 +65,7 @@ static int set_name(Buff_t* Buff, const char* arg)
 	}
 	Buff->fname_len_i = strlen(Buff->fname);
 
-	return 0;
+	return true;
 }
 
 static void live_edit_name(Buff_t* Buff, char key)
@@ -91,11 +91,11 @@ static void live_edit_name(Buff_t* Buff, char key)
 	}
 }
 
-static int load(Buff_t* Buff)
+static bool load(Buff_t* Buff)
 {
-	const bool nul_sz = 1;
-	FILE*      textfile = fopen(Buff->fname, "r");
-	char       ch;
+	const size_t nul_sz = 1;
+	FILE*        textfile = fopen(Buff->fname, "r");
+	char         ch;
 
 	if(textfile != NULL)
 	{
@@ -103,13 +103,13 @@ static int load(Buff_t* Buff)
 		{
 			SET_STATUS("current directory set");
 			fclose(textfile);
-			return 0;
+			return true;
 		}
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
-			if(keymap.printable_char(Buff, ch) == -1)
+			if(!keymap.printable_char(Buff, ch))
 			{
-				return -1;
+				return false;
 			}
 		}
 		fclose(textfile);
@@ -119,7 +119,7 @@ static int load(Buff_t* Buff)
 	{
 		SET_STATUS("the file will be created");
 	}
-	return 0;
+	return true;
 }
 
 static void save(Buff_t* Buff)

@@ -11,7 +11,7 @@ static void chk_ptr(Buff_t* Buff, void* ptr, const char* err_msg)
 	}
 }
 
-static int extend_line_mem(Buff_t* Buff, idx_t line_i)
+static bool extend_line(Buff_t* Buff, idx_t line_i)
 {
 	idx_t memblock = MEMBLK;
 
@@ -21,8 +21,8 @@ static int extend_line_mem(Buff_t* Buff, idx_t line_i)
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Extend_line_mem %d with mem of %d B.\n",
-		line_i + INDEX, memblock);
+		printf("Extend_line %d with mem of %d B.\n",
+		       line_i + INDEX, memblock);
 #endif
 
 	}
@@ -34,25 +34,25 @@ static int extend_line_mem(Buff_t* Buff, idx_t line_i)
 		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Extend_line_mem %d with mem of %d B.\n",
-		line_i + INDEX, memblock);
+		printf("Extend_line %d with mem of %d B.\n",
+		       line_i + INDEX, memblock);
 #endif
 
 	}
 	if(Buff->text[line_i] == NULL)
 	{
-		fputs("Can't extend a memory block for the line.\n", stderr);
-		return -1;
+		fprintf(stderr, "Can't extend a memory block for the line.\n");
+		return false;
 	}
-	return 0;
+	return true;
 }
 
-static int shrink_act_line_mem(Buff_t* Buff)
+static bool shrink_act_line(Buff_t* Buff)
 {
 	idx_t memblock = INIT_MEMBLK;
 
 	/* These cases are executed only when the backspace is pressed. Works in the
- 	same way as "extend_act_line_mem". */
+ 	same way as "extend_act_line". */
 	if((ACT_LINE_LEN_I >= INIT_MEMBLK) && (ACT_LINE_LEN_I < MEMBLK))
 	{
 		// Shrink to size of the MEMBLK.
@@ -67,17 +67,17 @@ static int shrink_act_line_mem(Buff_t* Buff)
 	if(ACT_LINE == NULL)
 	{
 		fprintf(stderr, "Can't shrink the memblock with the current line.\n");
-		return -1;
+		return false;
 	}
 
 #ifdef DEBUG_MEMORY
-	printf("Shrink_act_line_mem %d with mem of %d B.\n",
-	ACT_LINE_I + INDEX, memblock);
+	printf("Shrink_act_line %d with mem of %d B.\n",
+	       ACT_LINE_I + INDEX, memblock);
 #endif
-	return 0;
+	return true;
 }
 
-static int shrink_prev_line_mem(Buff_t* Buff)
+static bool shrink_prev_line(Buff_t* Buff)
 {
 	idx_t memblock = INIT_MEMBLK;
 
@@ -93,26 +93,26 @@ static int shrink_prev_line_mem(Buff_t* Buff)
 	PREV_LINE = realloc(PREV_LINE, memblock);
 
 #ifdef DEBUG_MEMORY
-	printf("Shrink_prev_line_mem %d with mem of %d B\n",
-	PREV_LINE_I + INDEX, memblock);
+	printf("Shrink_prev_line %d with mem of %d B\n",
+	       PREV_LINE_I + INDEX, memblock);
 #endif
 
 	if(PREV_LINE == NULL)
 	{
 		fprintf(stderr, "Can't shrink the memblock with the previous line.\n");
-		return -1;
+		return false;
 	}
-	return 0;
+	return true;
 }
 
-static int extend_lines_array_mem(Buff_t* Buff)
+static bool extend_lines_array(Buff_t* Buff)
 {
 	// Enhance the array that contains pointers to lines.
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 	if(Buff->text == NULL)
 	{
-		fputs("Can't extend the array with lines.\n", stderr);
-		return -1;
+		fprintf(stderr, "Can't extend the array with lines.\n");
+		return false;
 	}
 
 	// Enhance the array that contains lines length indicators.
@@ -121,7 +121,7 @@ static int extend_lines_array_mem(Buff_t* Buff)
 	if(Buff->line_len_i == NULL)
 	{
 		fprintf(stderr, "Can't extend the array with lines length.\n");
-		return -1;
+		return false;
 	}
 
 	// The new line is allocated with only 4 or 8 bytes bytes.
@@ -129,22 +129,22 @@ static int extend_lines_array_mem(Buff_t* Buff)
 	if(LAST_LINE == NULL)
 	{
 		fprintf(stderr, "Can't alloc a memory for the new line.\n");
-		return -1;
+		return false;
 	}
 
 	// Naturally the new line doesn't contains any chars - only terminator.
 	LAST_LINE_LEN_I = 0;
 
-	return 0;
+	return true;
 }
 
-static int shrink_lines_array_mem(Buff_t* Buff)
+static bool shrink_lines_array(Buff_t* Buff)
 {
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 	if(Buff->text == NULL)
 	{
 		fprintf(stderr, "Can't shrink the array with lines.\n");
-		return -1;
+		return false;
 	}
 
 	Buff->line_len_i = realloc(Buff->line_len_i,
@@ -152,14 +152,14 @@ static int shrink_lines_array_mem(Buff_t* Buff)
 	if(Buff->line_len_i == NULL)
 	{
 		fprintf(stderr, "Can't shrink the array with lines length.\n");
-		return -1;
+		return false;
 	}
-	return 0;
+	return true;
 }
 
-static int copy_lines_mem_forward(Buff_t* Buff)
+static bool copy_lines_forward(Buff_t* Buff)
 {
-	const bool prev = 1;
+	const unsigned int prev = 1;
 
 	for(idx_t line_i = Buff->lines_i; line_i > ACT_LINE_I; line_i--)
 	{
@@ -170,7 +170,7 @@ static int copy_lines_mem_forward(Buff_t* Buff)
 
 #ifdef DEBUG_MEMORY
 		printf("Copied line %d forward to %d with new mem of %d B.\n",
-		line_i + INDEX - prev, line_i + INDEX, memblock);
+		       line_i + INDEX - prev, line_i + INDEX, memblock);
 #endif
 
 		chk_ptr(Buff, Buff->text[line_i], "resize the line forward");
@@ -181,16 +181,16 @@ static int copy_lines_mem_forward(Buff_t* Buff)
 		if(Buff->text[line_i] == NULL)
 		{
 			fprintf(stderr, "Can't copy a line forward.\n");
-			return -1;
+			return false;
 		}
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i - prev];
 	}
-	return 0;
+	return true;
 }
 
-static int copy_lines_mem_backward(Buff_t* Buff)
+static bool copy_lines_backward(Buff_t* Buff)
 {
-	const bool next = 1;
+	const unsigned int next = 1;
 
 	for(idx_t line_i = ACT_LINE_I; line_i < Buff->lines_i; line_i++)
 	{
@@ -201,29 +201,29 @@ static int copy_lines_mem_backward(Buff_t* Buff)
 
 #ifdef DEBUG_MEMORY
 		printf("Copied line %d backward to %d with new mem of %d B.\n",
-		line_i + INDEX + next, line_i + INDEX, memblock);
+		       line_i + INDEX + next, line_i + INDEX, memblock);
 #endif
 
 		if(Buff->text[line_i] == NULL)
 		{
 			fprintf(stderr, "Can't copy a line backward.\n");
-			return -1;
+			return false;
 		}
 		strcpy(Buff->text[line_i], Buff->text[line_i + next]);
 
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];
 	}
-	return 0;
+	return true;
 }
 
 namespace_memory memory =
 {
 	chk_ptr,
-	extend_line_mem,
-	shrink_act_line_mem,
-	shrink_prev_line_mem,
-	extend_lines_array_mem,
-	shrink_lines_array_mem,
-	copy_lines_mem_forward,
-	copy_lines_mem_backward
+	extend_line,
+	shrink_act_line,
+	shrink_prev_line,
+	extend_lines_array,
+	shrink_lines_array,
+	copy_lines_forward,
+	copy_lines_backward
 };

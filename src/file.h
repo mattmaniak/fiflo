@@ -15,13 +15,13 @@ types. For better readability they are named as their definitions. */
 typedef const struct
 {
 	// Sets the filename. If basename is passed as arg actent path will be added.
-	int (*set_name)(Buff_t*, const char*);
+	bool (*set_name)(Buff_t*, const char*);
 
 	// When the CTRL^O is pressed, there is possibility to basically edit the fname.
 	void (*live_edit_name)(Buff_t*, char);
 
 	// Reads the file using "recognize_char".
-	int (*load)(Buff_t*);
+	bool (*load)(Buff_t*);
 
 	// Puts the whole text to the file.
 	void (*save)(Buff_t*);

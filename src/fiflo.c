@@ -8,7 +8,7 @@
 #include "input.h"
 #include "window.h"
 
-int options(const char* arg)
+bool options(const char* arg)
 {
 	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 	{
@@ -18,7 +18,7 @@ int options(const char* arg)
 		"Options:      Description:",
 		"-h, --help    Show a program help.",
 		"-v, --version Display information about this version.");
-		return 0;
+		return false;
 	}
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
 	{
@@ -28,71 +28,81 @@ int options(const char* arg)
 		"fiflo v3.0.0 (WIP)",
 		"(C) 2018-2019 mattmaniak, MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
-		return 0;
+		return false;
 	}
-	return run(arg);
+	return true;
 }
 
-int run(const char* arg)
+void run(const char* arg)
 {
 	char   pressed = '\0'; // Initializer.
 	Buff_t Buff;
 
-	if(buffer.init(&Buff) == -1)
+	if(!buffer.init(&Buff))
 	{
-		return -1;
+		goto free;
 	}
-	if(file.set_name(&Buff, arg) == -1)
+	if(!file.set_name(&Buff, arg))
 	{
-		return -1;
+		goto free;
 	}
-	if(file.load(&Buff) == -1)
+	if(!file.load(&Buff))
 	{
-		return -1;
+		goto free;
 	}
 
 	for(;;) // The main program loop.
 	{
-		if(file.get_git_branch(&Buff))
+		if(!file.get_git_branch(&Buff))
 		{
-
+			break;
 		}
-		if(input.parse_key(&Buff, pressed))
+		if(!input.parse_key(&Buff, pressed))
 		{
-			// buffer.free_all(&Buff);
-			// return false;
+			break;
 		}
-		window.render(&Buff);
-
+		if(!window.render(&Buff))
+		{
+			break;
+		}
 		if((pressed = input.getch()) == -1)
 		{
-			return false;
+			break;
 		}
 		window.flush();
 	}
+	free:
+	buffer.free_all(&Buff); // TODO: FREE.
 }
 
 int main(const int argc, const char** argv)
 {
 	if(argc > 2)
 	{
-		fputs("Only one additional arg can be passed.\n", stderr);
-		return -1;
+		fprintf(stderr, "Only one additional arg can be passed.\n");
+		goto exit;
 	}
 
 	if(argv[1] == NULL)	// Sets the default basename and starts.
 	{
-		return run("");
+		run("");
+		goto exit;
 	}
 	else if(strlen(argv[1]) <= _POSIX_ARG_MAX)
 	{
-		return options(argv[1]);
+		if(!options(argv[1]))
+		{
+			goto exit;
+		}
+		run(argv[1]);
+		goto exit;
 	}
 	else
 	{
 		fprintf(stderr, "Maximum length of a parameter is %u\n", PATH_MAX);
-		return -1;
+		goto exit;
 	}
+	exit:
 	return 0;
 }
 

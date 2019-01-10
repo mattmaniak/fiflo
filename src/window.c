@@ -202,14 +202,20 @@ static void set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 	ANSI_CUR_UP(move_up);
 }
 
-static void render(Buff_t* Buff)
+static bool render(Buff_t* Buff)
 {
 	Ui_t Ui;
 
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
-	Ui.win_w = get_terminal_size('X');
-	Ui.win_h = get_terminal_size('Y');
+	if((Ui.win_w = get_terminal_size('X')) == -1)
+	{
+		return false;
+	}
+	if((Ui.win_h = get_terminal_size('Y')) == -1)
+	{
+		return false;
+	}
 
 	Ui.pane_h = TOGGLED_PANE_SZ;
 	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
@@ -228,6 +234,8 @@ static void render(Buff_t* Buff)
 	lower_bar(Buff->pane_toggled, &Ui);
 
 	set_cursor_position(Buff, &Ui);
+
+	return true;
 }
 
 static void print_line_num(idx_t line_i, term_t line_num_len, const bool act_line)

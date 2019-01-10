@@ -2,20 +2,20 @@
 
 #include "memory.h"
 
-static int init(Buff_t* Buff)
+static bool init(Buff_t* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
 	if(Buff->text == NULL)
 	{
 		fprintf(stderr, "Can't alloc a memory the array with lines.\n");
-		return -1;
+		return false;
 	}
 
 	Buff->line_len_i = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
 	if(Buff->line_len_i == NULL)
 	{
 		fprintf(stderr, "Can't alloc a memory the array with lines length.\n");
-		return -1;
+		return false;
 	}
 
 	Buff->chars_i  = 0;
@@ -32,9 +32,9 @@ static int init(Buff_t* Buff)
 	if(ACT_LINE == NULL)
 	{
 		fprintf(stderr, "Can't alloc a memory for the first line.\n");
-		return -1;
+		return false;
 	}
-	return 0;
+	return true;
 }
 
 static void free_all(Buff_t* Buff)
@@ -56,16 +56,8 @@ static void free_all(Buff_t* Buff)
 	}
 }
 
-static noreturn void throw_error(Buff_t* Buff, const char* err_msg)
-{
-	fprintf(stderr, "%s\n", err_msg);
-	free_all(Buff);
-	exit(1);
-}
-
 namespace_buffer buffer =
 {
 	init,
-	free_all,
-	throw_error,
+	free_all
 };

@@ -6,38 +6,38 @@
 #include "memory.h"
 #include "edit.h"
 
-static int linefeed(Buff_t* Buff)
+static bool linefeed(Buff_t* Buff)
 {
 	if(BUFFER_NOT_FULL)
 	{
 		Buff->lines_i++;
-		if(memory.extend_lines_array_mem(Buff) == -1)
+		if(!memory.extend_lines_array(Buff))
 		{
-			return -1;
+			return false;
 		}
 
 		if(CURSOR_X_SCROLLED)
 		{
-			if(edit.move_lines_forward(Buff) == -1)
+			if(!edit.move_lines_forward(Buff))
 			{
-				return -1;
+				return false;
 			}
 		}
 		else if(CURSOR_Y_SCROLLED) // Cursor is to the end of the line.
 		{
-			if(memory.copy_lines_mem_forward(Buff) == -1)
+			if(!memory.copy_lines_forward(Buff))
 			{
-				return -1;
+				return false;
 			}
 		}
 		ACT_LINE[ACT_LINE_LEN_I] = '\0';
 	}
-	return 0;
+	return true;
 }
 
-static int printable_char(Buff_t* Buff, char key)
+static bool printable_char(Buff_t* Buff, char key)
 {
-	const bool nul_sz = 1;
+	const size_t nul_sz = 1;
 
 #ifndef ALL_KEYS
 	const bool in_keymap = (key == '\0') || (key == '\n') || (key >= 32);
@@ -52,9 +52,9 @@ static int printable_char(Buff_t* Buff, char key)
 			Buff->chars_i++;
 			ACT_LINE_LEN_I++;
 
-			if(memory.extend_line_mem(Buff, ACT_LINE_I) == -1)
+			if(!memory.extend_line(Buff, ACT_LINE_I))
 			{
-				return -1;
+				return false;
 			}
 
 			if(CURSOR_X_SCROLLED)
@@ -64,7 +64,7 @@ static int printable_char(Buff_t* Buff, char key)
 			ACT_LINE[CURSOR_VERTICAL_I - nul_sz] = key;
 			ACT_LINE[ACT_LINE_LEN_I] = '\0';
 
-			// Initializer handling.
+			// Initializing nul handling.
 			if((key == '\0') && !EMPTY_LINE)
 			{
 				Buff->chars_i--;
@@ -72,9 +72,9 @@ static int printable_char(Buff_t* Buff, char key)
 			}
 			else if(key == '\n')
 			{
-				if(linefeed(Buff) == -1)
+				if(!linefeed(Buff))
 				{
-					return -1;
+					return false;
 				}
 			}
 			(key != '\0') ? SET_STATUS("edited") : 0;
@@ -88,32 +88,32 @@ static int printable_char(Buff_t* Buff, char key)
 	{
 		SET_STATUS("unsupported char(s)");
 	}
-	return 0;
+	return true;
 }
 
-static int backspace(Buff_t* Buff)
+static bool backspace(Buff_t* Buff)
 {
 	if(!EMPTY_LINE)
 	{
-		if(edit.delete_char(Buff) == -1)
+		if(!edit.delete_char(Buff))
 		{
-			return -1;
+			return false;
 		}
 	}
 	else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
 	{
-		if(edit.delete_last_empty_line(Buff) == -1)
+		if(!edit.delete_last_empty_line(Buff))
 		{
-			return -1;
+			return false;
 		}
 	}
 	ACT_LINE[ACT_LINE_LEN_I] = '\0'; // Linefeed to the terminator.
 	SET_STATUS("edited");
 
-	return 0;
+	return true;
 }
 
-static int key_action(Buff_t* Buff, char key)
+static bool key_action(Buff_t* Buff, char key)
 {
 	switch(key)
 	{
@@ -126,9 +126,8 @@ static int key_action(Buff_t* Buff, char key)
 		case BACKSPACE:
 		return backspace(Buff);
 
-		case CTRL_Q: // TODO: WITH RETURN?
-		buffer.free_all(Buff);
-		exit(0);
+		case CTRL_Q:
+		return false;
 
 		case CTRL_S:
 		file.save(Buff);
@@ -144,12 +143,12 @@ static int key_action(Buff_t* Buff, char key)
 		case CTRL_O:
 		Buff->live_fname_edit = true;
 	}
-	return 0;
+	return true;
 }
 
 static void arrow_left(Buff_t* Buff)
 {
-	bool more_than_one_line = Buff->lines_i > 0;
+	bool more_than_one_line = (Buff->lines_i > 0);
 
 	if(!CURSOR_AT_LINE_START)
 	{
@@ -194,12 +193,12 @@ static void arrow_up(Buff_t* Buff)
 
 static void arrow_down(Buff_t* Buff)
 {
-	bool cursor_at_prev_line_start = CURSOR_AT_LINE_START;
+	bool cursor_at_previous_line_start = CURSOR_AT_LINE_START;
 
 	if(CURSOR_Y_SCROLLED)
 	{
 		Buff->cusr_y--;
-		if(cursor_at_prev_line_start)
+		if(cursor_at_previous_line_start)
 		{
 			/* Cursor at the left side: doesn't go at the end of a line. Always
 			at the beginning. */
@@ -207,7 +206,7 @@ static void arrow_down(Buff_t* Buff)
 		}
 		else
 		{
-			(CURSOR_Y_SCROLLED) ? Buff->cusr_x = 1 : 0; // Ignore the LF or no.
+			Buff->cusr_x = (CURSOR_Y_SCROLLED) ? 1 : 0; // Ignore the LF or not.
 		}
 	}
 }

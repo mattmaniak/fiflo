@@ -3,6 +3,7 @@
 - less includes,
 - no variables casting,
 - functions names,
+- linked list API (4.y.z),
 - rendering rework,
 - simplify file.c,
 - all escapes and formatting control chars,

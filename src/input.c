@@ -57,9 +57,9 @@ static char getch(void)
 	return key;
 }
 
-static void recognize_sequence(Buff_t* Buff, char sequence[8])
+static void recognize_sequence(Buff_t* Buff, char* sequence)
 {
-	const uint8_t seq_max = 3;
+	const size_t seq_max = 3;
 
 	/* Notice that the structure of these sequences is: <ansi_esc_code> + '['
 	+ <some_unique_numbers_and_letters>. */
@@ -99,12 +99,12 @@ static void recognize_sequence(Buff_t* Buff, char sequence[8])
 
 }
 
-static int parse_key(Buff_t* Buff, char key)
+static bool parse_key(Buff_t* Buff, char key)
 {
-	const bool     nul_sz = 1;
-	enum           {seq_len = 8};
-	static char    key_sequence[seq_len];
-	static uint8_t char_i;
+	const size_t nul_sz = 1;
+	enum          {seq_len = 8}; // TODO.
+	static char   key_sequence[seq_len];
+	static size_t char_i;
 
 	if((key == CTRL_LEFT_BRACKET) && (!Buff->live_fname_edit))
 	{
@@ -133,7 +133,7 @@ static int parse_key(Buff_t* Buff, char key)
 	{
 		return keymap.key_action(Buff, key);
 	}
-	return 0;
+	return true;
 }
 
 namespace_input input =

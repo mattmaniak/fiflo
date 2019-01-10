@@ -15,25 +15,25 @@ typedef const struct
 	void (*chk_ptr)(Buff_t*, void*, const char*);
 
 	// Allocs next memory block for chars in a line if needed.
-	int (*extend_line_mem)(Buff_t*, idx_t);
+	bool (*extend_line)(Buff_t*, idx_t);
 
 	// Works as the function above but shrinks memblocks.
-	int (*shrink_act_line_mem)(Buff_t*);
+	bool (*shrink_act_line)(Buff_t*);
 
 	// When the enter is hitted with shifted cursor, previous line will be shrinked.
-	int (*shrink_prev_line_mem)(Buff_t*);
+	bool (*shrink_prev_line)(Buff_t*);
 
 	// Allocs memory for the next line.
-	int (*extend_lines_array_mem)(Buff_t*);
+	bool (*extend_lines_array)(Buff_t*);
 
 	// With pointers that contains: lines and their lenghts.
-	int (*shrink_lines_array_mem)(Buff_t*);
+	bool (*shrink_lines_array)(Buff_t*);
 
 	// Shifts the lines down.
-	int (*copy_lines_mem_forward)(Buff_t*);
+	bool (*copy_lines_forward)(Buff_t*);
 
 	// Shifts the lines up.
-	int (*copy_lines_mem_backward)(Buff_t*);
+	bool (*copy_lines_backward)(Buff_t*);
 }
 namespace_memory;
 

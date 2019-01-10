@@ -14,10 +14,10 @@ typedef const struct
 	char (*getch)(void);
 
 	// Converts the given letter by the parse_key and chooses the cursror direction.
-	void (*recognize_sequence)(Buff_t*, char[8]);
+	void (*recognize_sequence)(Buff_t*, char*);
 
 	// Saves the last pressed key to the temponary buffer and analyzes it.
-	int (*parse_key)(Buff_t*, char);
+	bool (*parse_key)(Buff_t*, char);
 }
 namespace_input;
 
