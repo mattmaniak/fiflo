@@ -22,7 +22,7 @@ static char getch(void)
 	if(tcgetattr(STDIN_FILENO, &old_term_params) == -1)
 	{
 		window.flush();
-		fputs("Stdin params error. Pipe isn't supported.\n", stderr);
+		fprintf(stderr, "Stdin params error. Pipe isn't supported.\n");
 		return -1;
 	}
 	new_term_params = old_term_params;
@@ -101,7 +101,7 @@ static void recognize_sequence(Buff_t* Buff, char* sequence)
 
 static bool parse_key(Buff_t* Buff, char key)
 {
-	const size_t nul_sz = 1;
+	const size_t  nul_sz = 1;
 	enum          {seq_len = 8}; // TODO.
 	static char   key_sequence[seq_len];
 	static size_t char_i;
@@ -118,12 +118,17 @@ static bool parse_key(Buff_t* Buff, char key)
 	if(Buff->key_sequence)
 	{
 		key_sequence[char_i] = key;
-		(char_i < (seq_len - nul_sz)) ? char_i++ : 0;
-
+		if(char_i < (seq_len - nul_sz))
+		{
+			char_i++;
+		}
 		key_sequence[char_i] = '\0';
 
 		recognize_sequence(Buff, key_sequence);
-		(!Buff->key_sequence) ? char_i = 0 : 0;
+		if(!Buff->key_sequence)
+		{
+			char_i = 0;
+		}
 	}
 	else if(Buff->live_fname_edit)
 	{

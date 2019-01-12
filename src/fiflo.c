@@ -1,7 +1,6 @@
 #ifdef __linux__
 
 #include "buffer.h"
-#include "ascii.h"
 #include "fiflo.h"
 
 #include "file.h"
@@ -35,7 +34,7 @@ bool options(const char* arg)
 
 void run(const char* arg)
 {
-	char   pressed = '\0'; // Initializer.
+	char   pressed_key = '\0'; // Initializer.
 	Buff_t Buff;
 
 	if(!buffer.init(&Buff))
@@ -57,7 +56,7 @@ void run(const char* arg)
 		{
 			break;
 		}
-		if(!input.parse_key(&Buff, pressed))
+		if(!input.parse_key(&Buff, pressed_key))
 		{
 			break;
 		}
@@ -65,7 +64,7 @@ void run(const char* arg)
 		{
 			break;
 		}
-		if((pressed = input.getch()) == -1)
+		if((pressed_key = input.getch()) == -1)
 		{
 			break;
 		}
@@ -103,6 +102,7 @@ int main(const int argc, const char** argv)
 		goto exit;
 	}
 	exit:
+	fflush(NULL);
 	return 0;
 }
 

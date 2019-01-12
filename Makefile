@@ -2,7 +2,7 @@ TARGET = fiflo
 
 CC =
 CFLAGS = -std=c11 -Os
-DEBUGFLAGS =
+LDFLAGS =
 
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 -fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \
@@ -11,28 +11,25 @@ ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 MSAN_FLAGS = -fsanitize=memory -fPIE -pie -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins
 
-VALGRIND_FLAGS = -v
-ARG_FOR_FIFLO =
-
 SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 MAN_DIR = man
 
-INSTALL_DIR = /usr/bin
-MAN_INSTALL_DIR = /usr/share/man/man1
+INS_DIR = /usr/bin
+MAN_INS_DIR = /usr/share/man/man1
 
 # All in the ./obj depending on the ./src.
-OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
 
 # Check and set the Compilation driver.
-ifeq ($(INSTALL_DIR)/gcc, $(shell ls $(INSTALL_DIR)/gcc))
+ifeq ($(INS_DIR)/gcc, $(shell ls $(INS_DIR)/gcc))
 	CC = gcc
 	CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wno-long-long \
 	-Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wconversion \
 	-Winline -Wredundant-decls -Wnested-externs -Wcast-align -Wstrict-prototypes
 
-else ifeq ($(INSTALL_DIR)/clang, $(shell ls $(INSTALL_DIR)/clang))
+else ifeq ($(INS_DIR)/clang, $(shell ls $(INS_DIR)/clang))
 	CC = clang
 	CFLAGS += -Weverything
 
@@ -50,31 +47,31 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 	$(CFLAGS) \
 
 # Builds the binary by linking object files.
-$(TARGET): $(OBJ)
-	mkdir -p $(BIN_DIR)
+$(TARGET): $(OBJS)
+	@mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
 	$(CFLAGS) \
-	$(DEBUGFLAGS)
+	$(LDFLAGS)
 
 # Debugging.
-address: DEBUGFLAGS = $(ASAN_FLAGS)
+address: LDFLAGS += $(ASAN_FLAGS)
 address: $(TARGET)
 
 memory: CC = clang
-memory: DEBUGFLAGS = $(MSAN_FLAGS)
+memory: LDFLAGS += $(MSAN_FLAGS)
 memory: $(TARGET)
 
 # Fun with a filesystem.
 install: $(TARGET)
-	sudo cp $(BIN_DIR)/$(TARGET) $(INSTALL_DIR)/$(TARGET)
-	sudo $(RM) $(MAN_INSTALL_DIR)/$(TARGET).1
-	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INSTALL_DIR)/$(TARGET).1
-	sudo gzip $(MAN_INSTALL_DIR)/$(TARGET).1
+	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
+	sudo $(RM) $(MAN_INS_DIR)/$(TARGET).1
+	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)/$(TARGET).1
+	sudo gzip $(MAN_INS_DIR)/$(TARGET).1
 
 uninstall:
 	sudo $(RM) \
-	$(INSTALL_DIR)/$(TARGET) \
-	$(MAN_INSTALL_DIR)/$(TARGET).1.gz
+	$(INS_DIR)/$(TARGET) \
+	$(MAN_INS_DIR)/$(TARGET).1.gz
 
 .PHONY: clean
 

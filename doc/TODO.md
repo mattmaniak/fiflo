@@ -1,10 +1,10 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- clean edit.c and memory.c trash,
 - less includes,
 - no variables casting,
 - functions names,
-- linked list API (4.y.z),
-- rendering rework,
+- linked list API (v4.y.z),
 - simplify file.c,
 - all escapes and formatting control chars,
 - full text horizontal scroll,
@@ -16,7 +16,7 @@
 - fully adaptive cursor,
 - TAB key,
 - load only part of a file,
-- ~/.config/fiflo.conf file && colors,
+- ~/.config/fiflo.conf,
 - syntax highlighting,
 - search option,
 - hex mode,

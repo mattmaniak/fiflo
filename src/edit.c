@@ -53,8 +53,10 @@ static bool delete_line(Buff_t* Buff)
 		LAST_LINE[LAST_LINE_LEN_I] = '\0';
 
 		LAST_LINE = realloc(LAST_LINE, INIT_MEMBLK);
-		memory.chk_ptr(Buff, LAST_LINE, "malloc after the first line removal");
-
+		if(LAST_LINE == NULL)
+		{
+			fprintf(stderr, "Can't realloc a memory in the first line.\n");
+		}
 		Buff->cusr_x = 0;
 	}
 	return true;
@@ -62,8 +64,8 @@ static bool delete_line(Buff_t* Buff)
 
 static void shift_text_horizonally(Buff_t* Buff, char direction)
 {
-	const bool prev = 1;
-	idx_t      char_i;
+	const size_t prev = 1;
+	idx_t        char_i;
 
 	switch(direction)
 	{
@@ -98,7 +100,7 @@ static bool move_lines_forward(Buff_t* Buff)
 
 	// Move the right part (separated by the cursor) of the line to the next.
 	for(idx_t char_i = PREV_LINE_LEN_I;
-	char_i < PREV_LINE_LEN_I + Buff->cusr_x; char_i++)
+	    char_i < PREV_LINE_LEN_I + Buff->cusr_x; char_i++)
 	{
 		ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
 		ACT_LINE_LEN_I++;
@@ -139,23 +141,18 @@ static bool delete_last_empty_line(Buff_t* Buff)
 
 static bool delete_non_last_line(Buff_t* Buff)
 {
-	PREV_LINE_LEN_I--;
 	Buff->chars_i--;
+	PREV_LINE_LEN_I--;
+	PREV_LINE[PREV_LINE_LEN_I] = '\0';
 
-	// Append part of a next line to a previous one.
-	for(idx_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
+	PREV_LINE_LEN_I += ACT_LINE_LEN_I;
+	if(!memory.extend_line(Buff, PREV_LINE_I))
 	{
-		PREV_LINE[PREV_LINE_LEN_I] = ACT_LINE[char_i];
-
-		if(ACT_LINE[char_i] != '\0')
-		{
-			PREV_LINE_LEN_I++;
-		}
-		if(!memory.extend_line(Buff, PREV_LINE_I))
-		{
-			return false;
-		}
+		return false;
 	}
+	// Append part of a next line to a previous one.
+	strcat(PREV_LINE, ACT_LINE);
+
 	if(CURSOR_Y_SCROLLED)
 	{
 		if(!memory.copy_lines_backward(Buff))
@@ -179,7 +176,6 @@ static bool delete_char(Buff_t* Buff)
 		{
 			return false;
 		}
-
 		ACT_LINE_LEN_I--;
 		Buff->chars_i--;
 	}

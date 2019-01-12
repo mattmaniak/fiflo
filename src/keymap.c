@@ -77,7 +77,10 @@ static bool printable_char(Buff_t* Buff, char key)
 					return false;
 				}
 			}
-			(key != '\0') ? SET_STATUS("edited") : 0;
+			if(key != '\0')
+			{
+				SET_STATUS("edited");
+			}
 		}
 		else
 		{
@@ -115,13 +118,22 @@ static bool backspace(Buff_t* Buff)
 
 static bool key_action(Buff_t* Buff, char key)
 {
+	const char record_separator_fake_tab = 30;
+
 	switch(key)
 	{
 		default:
 		return printable_char(Buff, key);
 
 		case '\t':
-		return printable_char(Buff, ' ');
+		for(size_t tab = 0; tab < 4; tab++)
+		{
+			if(!printable_char(Buff, record_separator_fake_tab))
+			{
+				return false;
+			}
+		}
+		break;
 
 		case BACKSPACE:
 		return backspace(Buff);

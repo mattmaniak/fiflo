@@ -26,6 +26,14 @@ typedef uint32_t idx_t;
 
 typedef struct
 {
+	bool key_sequence;       // True if pressed key is ANSI escape code.
+	bool live_filename_edit; // As in the name.
+	bool pane_toggled;       // As in the name.
+}
+Modes_t;
+
+typedef struct
+{
 	// Modes.
 	bool     key_sequence;       // True if pressed key is ANSI escape code.
 	bool     live_fname_edit;    // As in the name.

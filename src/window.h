@@ -17,17 +17,19 @@
 
 #define TOGGLED_PANE_SZ 5
 
-// Text that is shown on the lower bar. Also defines the minimal terminal width.
-#define LBAR_STR "CTRL^\\ - keyboard bindings"
-
 #define WRAP_LINE() putchar('\n')
 
 // ANSI escape codes.
-#define ANSI_RED()             printf("\x1b[%2", " m")
-#define ANSI_GREEN()           printf("\x1b[%2", " m")
-
 #define ANSI_RESET()           printf("\x1b[%s", "0m")
+#define ANSI_BOLD()            printf("\x1b[%s", "1m")
+#define ANSI_UNDERSCORE()      printf("\x1b[%s", "4m")
 #define ANSI_INVERT()          printf("\x1b[%s", "7m")
+#define ANSI_RED()             printf("\x1b[%s", "31m")
+#define ANSI_GREEN()           printf("\x1b[%s", "32m")
+#define ANSI_YELLOW()          printf("\x1b[%s", "33m")
+#define ANSI_BLUE()            printf("\x1b[%s", "34m")
+#define ANSI_MAGENTA()         printf("\x1b[%s", "35m")
+#define ANSI_CYAN()            printf("\x1b[%s", "36m")
 #define ANSI_CLEAN_LINE()      printf("\x1b[%s", "2K")
 #define ANSI_CUR_UP(offset)    printf("\x1b[%dA", offset)
 #define ANSI_CUR_DOWN(offset)  printf("\x1b[%dB", offset)
@@ -41,7 +43,7 @@ typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 typedef struct
 {
 	char   line_num_str[16]; // Place for string of the highest line number.
-	term_t line_num_len;     // Dynamic width of the lines numbers.
+	size_t line_num_len;     // Dynamic width of the lines numbers.
 	term_t text_x;           // Horizontal space for the text (width: chars).
 	term_t text_y;           // Vertical space for the text (lines).
 	term_t lbar_h;           // Lower bar height (lines).
@@ -67,7 +69,7 @@ typedef const struct
 	void (*upper_bar)(Buff_t*, Ui_t*);
 
 	// Renders the lower bar that contains keyboard info.
-	void (*lower_bar)(const bool, Ui_t*);
+	void (*lower_bar)(const bool);
 
 	// Vertical fill between the text and lower bar. If there isn't many lines.
 	void (*fill)(Buff_t*, Ui_t*);

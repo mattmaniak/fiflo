@@ -34,8 +34,10 @@ static ssize_t get_terminal_size(char axis)
 
 	switch(axis)
 	{
-		case 'X': return terminal.ws_col;
-		case 'Y': return terminal.ws_row;
+		case 'X':
+		return terminal.ws_col;
+		case 'Y':
+		return terminal.ws_row;
 	}
 	return 0;
 }
@@ -52,20 +54,18 @@ static void flush(void)
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LINE();
 	}
-	fflush(stderr);
-	fflush(stdout);
+	fflush(NULL);
 }
 
 static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 {
 	const idx_t punch_card  = 80;
 	const char  git_str[]   = "git |\\ ";
-	const int   git_str_len = 7;
 	char        punch_card_str[16];
 
 	sprintf(punch_card_str, "%u", punch_card);
 
-	ANSI_INVERT();
+	ANSI_BOLD();
 
 	/* Sometimes the empty space of width Ui->line_num_len will rendered before
 	the upper bar. Adding the carriage return before it fixes the problems. Just
@@ -75,11 +75,7 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 
 	if((ssize_t) (Buff->fname_len_i + SPACE_SZ) < Ui->win_w)
 	{
-		// Whole filename will be displayed.
-		printf("%s%*s", Buff->fname, (int) (Ui->win_w - (int) Buff->fname_len_i
-		       - SPACE_SZ), " ");
-
-		WRAP_LINE();
+		puts(Buff->fname);
 	}
 	else
 	{
@@ -92,8 +88,7 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 		WRAP_LINE();
 	}
 
-	printf(" %s%s%*s\n", git_str, Buff->git_branch, (int) Ui->win_w
-	       - git_str_len - (int) strlen(Buff->git_branch) - SPACE_SZ,  " ");
+	printf(" %s%s\n", git_str, Buff->git_branch);
 
 	// The lower part with the "chars in the current line" indicator.
 	printf(" %.*s%*s", STATUS_MAX, Buff->status,
@@ -101,9 +96,19 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 
 	if(Ui->text_x > punch_card) // TODO: SIMPLIFY.
 	{
-		printf("%*s%d^%*s", punch_card - STATUS_MAX, " ", punch_card, (int)
-		       ((size_t) Ui->win_w - punch_card  - SPACE_SZ
-		       - strlen(punch_card_str)), " ");
+		printf("%*s", punch_card - STATUS_MAX, " ");
+
+		if((ACT_LINE_LEN_I > punch_card)
+		&& (ACT_LINE[ACT_LINE_LEN_I - 1] != '\n')) // TODO: LF AND RED COLOR.
+		{
+			ANSI_RED();
+		}
+		else
+		{
+			ANSI_GREEN();
+		}
+		printf("%d^", punch_card);
+		ANSI_RESET();
 	}
 	else
 	{
@@ -113,52 +118,41 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 	ANSI_RESET();
 }
 
-static void lower_bar(const bool pane_toggled, Ui_t* Ui)
+static void lower_bar(const bool pane_toggled)
 {
-	term_t horizontal_fill = (term_t) ((size_t) Ui->win_w - strlen(LBAR_STR)
-	- SPACE_SZ);
-
-	const char key_binding[4][STATUS_MAX] =
+	const char key_binding[8][STATUS_MAX] =
 	{
 		"CTRL^D - delete line",
 		"CTRL^O - save as",
 		"CTRL^Q - exit",
 		"CTRL^O - save",
+		"CTRL^\\ - keyboard bindings"
 	};
-	ANSI_INVERT();
+	ANSI_BOLD();
 	WRAP_LINE();
 
 	if(pane_toggled)
 	{
-		for(uint8_t y = 0; y < TOGGLED_PANE_SZ - LBAR_SZ; y++)
+		for(size_t y = 0; y < TOGGLED_PANE_SZ - LBAR_SZ; y++)
 		{
-			printf(" %s%*s", key_binding[y],
-			       (int) ((size_t) Ui->win_w - strlen(key_binding[y])), " ");
-
+			printf(" %s", key_binding[y]);
 			WRAP_LINE();
 		}
 	}
-	printf(" %s%*s", LBAR_STR, horizontal_fill, " ");
+	printf(" %s", key_binding[TOGGLED_PANE_SZ - LBAR_SZ]);
 	ANSI_RESET();
 }
 
 static void fill(Buff_t* Buff, Ui_t* Ui)
 {
+	// Fill the empty area below the text to position the lower bar.
 	if((Buff->lines_i + INDEX) < (idx_t) Ui->text_y)
 	{
-		WRAP_LINE();
-		ANSI_INVERT();
-
-		// Fill the empty area below the text to position the lower bar.
-		for(idx_t line = Buff->lines_i + INDEX;
+		for(idx_t line = Buff->lines_i;
 		    line < (idx_t) (Ui->text_y - LBAR_SZ); line++)
 		{
-			// Just empty line num block but without the number.
-			printf("%*s", Ui->line_num_len - SPACE_SZ, " ");
 			WRAP_LINE();
 		}
-		printf("%*s", Ui->line_num_len - SPACE_SZ, " ");
-		ANSI_RESET();
 	}
 	// Else the lower bar will by positioned by the text.
 }
@@ -221,17 +215,15 @@ static bool render(Buff_t* Buff)
 	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
 	Ui.line_num_len = (term_t) (strlen(Ui.line_num_str) + (2 * SPACE_SZ));
-	Ui.text_x       = (term_t) (Ui.win_w - Ui.line_num_len);
+	Ui.text_x       = (term_t) (Ui.win_w - (term_t) Ui.line_num_len);
 	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();
-
 	upper_bar(Buff, &Ui);
 
 	textprint.display_text(Buff, &Ui);
 	fill(Buff, &Ui);
-
-	lower_bar(Buff->pane_toggled, &Ui);
+	lower_bar(Buff->pane_toggled);
 
 	set_cursor_position(Buff, &Ui);
 
@@ -240,9 +232,11 @@ static bool render(Buff_t* Buff)
 
 static void print_line_num(idx_t line_i, term_t line_num_len, const bool act_line)
 {
-	if(!act_line) // Higlight a current line.
+	ANSI_BOLD();
+
+	if(act_line) // Higlight a current line.
 	{
-		ANSI_INVERT();
+		ANSI_UNDERSCORE();
 	}
 	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
 
