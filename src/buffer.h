@@ -1,8 +1,6 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#define _POSIX_C_SOURCE 2 // For popen, pclose. TODO FOR CLANG.
-
 /* This file is included in every source file to provide the main structure
 that describes the buffer. */
 
@@ -11,7 +9,9 @@ that describes the buffer. */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <limits.h>
+#include <linux/limits.h>
 
 // Needed to char/lines/chars_in_line values.
 typedef uint32_t idx_t;
@@ -24,7 +24,7 @@ typedef uint32_t idx_t;
 #define STATUS_MAX      32
 #define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - INDEX)
 
-typedef struct
+typedef struct // TODO
 {
 	bool key_sequence;       // True if pressed key is ANSI escape code.
 	bool live_filename_edit; // As in the name.
@@ -88,22 +88,10 @@ Buff_t;
 #define CURSOR_AT_LINE_START (Buff->cusr_x   == ACT_LINE_LEN_I)
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
-/* Note: They are not prototypes or pointers to these specific funtions. They
-are pointers to funtions with certain return type and parameters including it's
-types. For better readability they are named as their definitions. */
-typedef const struct
-{
-	// Initializes all Buff structure members.
-	bool (*init)(Buff_t*);
+// Initializes all Buff structure members.
+bool buffer_init(Buff_t* Buff);
 
-	// Display a error message and exit.
-	void (*free_all)(Buff_t*);
-
-	// Frees everything and exits with status code.
-	// void (*throw_error)(Buff_t*, const char*);
-}
-namespace_buffer;
-
-extern namespace_buffer buffer;
+// Display a error message and exit.
+void buffer_free(Buff_t* Buff);
 
 #endif

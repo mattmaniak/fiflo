@@ -1,13 +1,12 @@
 #include "buffer.h"
-#include "window.h"
-
+#include "ui.h"
 #include "textprint.h"
 
-static void print_another_line(Buff_t* Buff, Ui_t* Ui, idx_t line_i)
+void textprint_print_another_line(Buff_t* Buff, Ui_t* Ui, idx_t line_i)
 {
 	const size_t cursor_or_linefeed_sz = 1;
 
-	window.print_line_num(line_i, Ui->line_num_len, ANOTHER_LINE);
+	ui_print_line_number(line_i, Ui->line_num_len, ANOTHER_LINE);
 	printf("%.*s", (int) (Ui->text_x - cursor_or_linefeed_sz),
 	       Buff->text[line_i]);
 
@@ -17,7 +16,7 @@ static void print_another_line(Buff_t* Buff, Ui_t* Ui, idx_t line_i)
 	}
 }
 
-static idx_t set_start_line(Buff_t* Buff, Ui_t* Ui)
+idx_t textprint_set_start_line(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t scrolled_lines = 0;
 
@@ -29,7 +28,7 @@ static idx_t set_start_line(Buff_t* Buff, Ui_t* Ui)
 	return scrolled_lines;
 }
 
-static void scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
+void textprint_scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
 
@@ -47,7 +46,7 @@ static void scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
 	}
 }
 
-static void print_actual_line(Buff_t* Buff, Ui_t* Ui)
+void textprint_print_actual_line(Buff_t* Buff, Ui_t* Ui)
 {
 	// There is small amount of chars. Horizontal scroll isn't required.
 	if(ACT_LINE_LEN_I < Ui->text_x)
@@ -58,7 +57,7 @@ static void print_actual_line(Buff_t* Buff, Ui_t* Ui)
 	else if((ACT_LINE_LEN_I - Ui->text_x) >= Buff->cusr_x)
 	{
 		// Render only right part of the line.
-		scroll_line_horizontally(Buff, Ui);
+		textprint_scroll_line_horizontally(Buff, Ui);
 	}
 	else
 	{
@@ -73,29 +72,29 @@ static void print_actual_line(Buff_t* Buff, Ui_t* Ui)
 	}
 }
 
-static void fit_lines(Buff_t* Buff, Ui_t* Ui)
+void textprint_fit_lines(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t line_i;
 
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
-		print_another_line(Buff, Ui, line_i);
+		textprint_print_another_line(Buff, Ui, line_i);
 	}
-	window.print_line_num(ACT_LINE_I, Ui->line_num_len, CURRENT_LINE);
-	print_actual_line(Buff, Ui);
+	ui_print_line_number(ACT_LINE_I, Ui->line_num_len, CURRENT_LINE);
+	textprint_print_actual_line(Buff, Ui);
 
 	if(CURSOR_Y_SCROLLED)
 	{
 		for(line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
 		{
-			print_another_line(Buff, Ui, line_i);
+			textprint_print_another_line(Buff, Ui, line_i);
 		}
-		window.print_line_num(Buff->lines_i, Ui->line_num_len, ANOTHER_LINE);
+		ui_print_line_number(Buff->lines_i, Ui->line_num_len, ANOTHER_LINE);
 		printf("%.*s", Ui->text_x - LF_SZ, LAST_LINE);
 	}
 }
 
-static void shrink_lines(Buff_t* Buff, Ui_t* Ui)
+void textprint_shrink_lines(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t last_ln = (idx_t) Ui->text_y - INDEX;
 	idx_t line_i;
@@ -103,17 +102,17 @@ static void shrink_lines(Buff_t* Buff, Ui_t* Ui)
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
-		print_another_line(Buff, Ui, line_i);
+		textprint_print_another_line(Buff, Ui, line_i);
 	}
-	window.print_line_num(ACT_LINE_I, Ui->line_num_len, CURRENT_LINE);
-	print_actual_line(Buff, Ui);
+	ui_print_line_number(ACT_LINE_I, Ui->line_num_len, CURRENT_LINE);
+	textprint_print_actual_line(Buff, Ui);
 
 	// Next lines. If scrolled. Only beginning is shown.
 	for(line_i = ACT_LINE_I + INDEX; line_i < last_ln; line_i++)
 	{
-		print_another_line(Buff, Ui, line_i);
+		textprint_print_another_line(Buff, Ui, line_i);
 	}
-	window.print_line_num((last_ln), Ui->line_num_len, ANOTHER_LINE);
+	ui_print_line_number((last_ln), Ui->line_num_len, ANOTHER_LINE);
 
 	if(Buff->line_len_i[last_ln] < Ui->text_x)
 	{
@@ -125,16 +124,16 @@ static void shrink_lines(Buff_t* Buff, Ui_t* Ui)
 	}
 }
 
-static void scroll_lines(Buff_t* Buff, Ui_t* Ui)
+void textprint_scroll_lines(Buff_t* Buff, Ui_t* Ui)
 {
 	// Previous lines. If scrolled. Only beginning is shown.
-	for(idx_t line_i = set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
+	for(idx_t line_i = textprint_set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
 	{
-		print_another_line(Buff, Ui, line_i);
+		textprint_print_another_line(Buff, Ui, line_i);
 	}
 
 	// Display the last line without the linefeed.
-	window.print_line_num(ACT_LINE_I, Ui->line_num_len, CURRENT_LINE);
+	ui_print_line_number(ACT_LINE_I, Ui->line_num_len, CURRENT_LINE);
 
 	if(ACT_LINE_LEN_I < Ui->text_x)
 	{
@@ -159,30 +158,18 @@ static void scroll_lines(Buff_t* Buff, Ui_t* Ui)
 	}
 }
 
-static void display_text(Buff_t* Buff, Ui_t* Ui)
+void textprint_display_text(Buff_t* Buff, Ui_t* Ui)
 {
 	if(Buff->lines_i < Ui->text_y)
 	{
-		fit_lines(Buff, Ui);
+		textprint_fit_lines(Buff, Ui);
 	}
 	else if((ACT_LINE_I + INDEX) < Ui->text_y)
 	{
-		shrink_lines(Buff, Ui);
+		textprint_shrink_lines(Buff, Ui);
 	}
 	else
 	{
-		scroll_lines(Buff, Ui);
+		textprint_scroll_lines(Buff, Ui);
 	}
 }
-
-namespace_textprint textprint =
-{
-	print_another_line,
-	set_start_line,
-	scroll_line_horizontally,
-	print_actual_line,
-	fit_lines,
-	shrink_lines,
-	scroll_lines,
-	display_text
-};

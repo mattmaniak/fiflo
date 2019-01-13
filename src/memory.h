@@ -5,38 +5,27 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-/* Note: They are not prototypes or pointers to these specific funtions. They
-are pointers to funtions with certain return type and parameters including it's
-types. For better readability they are named as their definitions. */
-typedef const struct
-{
-	// Checks if passed pointer is NULL. If yes - frees memory and exits.
-	void (*chk_ptr)(Buff_t*, void*, const char*);
+// Allocs next memory block for chars in a line if needed.
+bool memory_extend_line(Buff_t* Buff, idx_t line_i);
 
-	// Allocs next memory block for chars in a line if needed.
-	bool (*extend_line)(Buff_t*, idx_t);
+// Works as the function above but shrinks memblocks.
+bool memory_shrink_act_line(Buff_t* Buff);
 
-	// Works as the function above but shrinks memblocks.
-	bool (*shrink_act_line)(Buff_t*);
+// When the enter is hitted with shifted cursor, previous line will be shrinked.
+bool memory_shrink_prev_line(Buff_t* Buff);
 
-	// When the enter is hitted with shifted cursor, previous line will be shrinked.
-	bool (*shrink_prev_line)(Buff_t*);
+// Allocs memory for the next line.
+bool memory_extend_lines_array(Buff_t* Buff);
 
-	// Allocs memory for the next line.
-	bool (*extend_lines_array)(Buff_t*);
+// With pointers that contains: lines and their lenghts.
+bool memory_shrink_lines_array(Buff_t* Buff);
 
-	// With pointers that contains: lines and their lenghts.
-	bool (*shrink_lines_array)(Buff_t*);
+// Shifts the lines down.
+bool memory_copy_lines_forward(Buff_t* Buff);
 
-	// Shifts the lines down.
-	bool (*copy_lines_forward)(Buff_t*);
-
-	// Shifts the lines up.
-	bool (*copy_lines_backward)(Buff_t*);
-}
-namespace_memory;
-
-extern namespace_memory memory;
+// Shifts the lines up.
+bool memory_copy_lines_backward(Buff_t* Buff);
 
 #endif

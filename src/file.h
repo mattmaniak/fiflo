@@ -3,34 +3,34 @@
 
 // File operations.
 
-#include <limits.h>
+#include <linux/limits.h>
+#include <pwd.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/file.h>
+#include <sys/types.h>
 #include <unistd.h>
+#include <fcntl.h>
 
-/* Note: They are not prototypes or pointers to these specific funtions. They
-are pointers to funtions with certain return type and parameters including it's
-types. For better readability they are named as their definitions. */
-typedef const struct
-{
-	// Sets the filename. If basename is passed as arg actent path will be added.
-	bool (*set_name)(Buff_t*, const char*);
+extern bool keys_printable_char(Buff_t* Buff, char key);
 
-	// When the CTRL^O is pressed, there is possibility to basically edit the fname.
-	void (*live_edit_name)(Buff_t*, char);
+// Sets the filename. If basename is passed as arg actent path will be added.
+bool file_set_name(Buff_t* Buff, const char* arg);
 
-	// Reads the file using "recognize_char".
-	bool (*load)(Buff_t*);
+// When the CTRL^O is pressed, there is possibility to basically edit the fname.
+void file_live_edit_name(Buff_t* Buff, char key);
 
-	// Puts the whole text to the file.
-	void (*save)(Buff_t*);
+// Reads the file using "input_recognize_char".
+bool file_load(Buff_t* Buff);
 
-	//
-	bool (*get_git_branch)(Buff_t*);
-}
-namespace_file;
+// Puts the whole text to the file.
+void file_save(Buff_t* Buff);
 
-extern namespace_file file;
+//
+bool file_load_editor_config(Conf_t* Conf);
+
+//
+bool file_get_git_branch(Buff_t* Buff);
 
 #endif

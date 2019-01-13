@@ -5,22 +5,23 @@
 #include <termios.h>
 #include <unistd.h>
 
-/* Note: They are not prototypes or pointers to these specific funtions. They
-are pointers to funtions with certain return type and parameters including it's
-types. For better readability they are named as their definitions. */
-typedef const struct
-{
-	// Reads one char wthout confirming by enter the key. Termios based.
-	char (*getch)(void);
+extern bool keys_key_action(Buff_t* Buff, char key);
+extern void keys_arrow_left(Buff_t* Buff);
+extern void keys_arrow_right(Buff_t* Buff);
+extern void keys_arrow_up(Buff_t* Buff);
+extern void keys_arrow_down(Buff_t* Buff);
 
-	// Converts the given letter by the parse_key and chooses the cursror direction.
-	void (*recognize_sequence)(Buff_t*, char*);
+extern void file_live_edit_name(Buff_t* Buff, char key);
 
-	// Saves the last pressed key to the temponary buffer and analyzes it.
-	bool (*parse_key)(Buff_t*, char);
-}
-namespace_input;
+extern void window_flush(void);
 
-extern namespace_input input;
+// Reads one char wthout confirming by enter the key. Termios based.
+char input_getch(void);
+
+// Converts the given letter by the parse_key and chooses the cursror direction.
+void input_recognize_sequence(Buff_t* Buff, char* sequence);
+
+// Saves the last pressed key to the temponary buffer and analyzes it.
+bool input_parse_key(Buff_t* Buff, char key);
 
 #endif

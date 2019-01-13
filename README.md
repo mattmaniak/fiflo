@@ -1,7 +1,4 @@
-# fiflo
-
-## Description
-User-friendly ASCII terminal-based text editor.
+# fiflo - nano-inspired text editor with CUA keyboard shortcuts
 
 ## Get it
 ### Requirements for the GNU/Linux:

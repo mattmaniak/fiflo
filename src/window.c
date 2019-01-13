@@ -1,14 +1,13 @@
 #include "buffer.h"
+#include "ui.h"
 #include "window.h"
 
-#include "textprint.h"
-
-static ssize_t get_terminal_size(char axis)
+size_t window_get_terminal_size(char axis)
 {
-	const bool    line_height = 1;
-	const ssize_t w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
-	const ssize_t h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
-	const ssize_t sz_max      = _POSIX_SSIZE_MAX;
+	const int    line_height = 1;
+	const size_t w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
+	const size_t h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
+	const size_t sz_max      = USHRT_MAX;
 
 	struct winsize terminal;
 
@@ -17,39 +16,40 @@ static ssize_t get_terminal_size(char axis)
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == -1)
 	{
 		fprintf(stderr, "Can't get the terminal's size.\n");
-		return -1;
+		return false;
 	}
 
 	// Terminal size check. TODO: MAX SIZE.
 	if((terminal.ws_col < w_min) || (terminal.ws_row < h_min))
 	{
 		fprintf(stderr, "Minimal terminal's size: %ldx%ld.\n", w_min, h_min);
-		return -1;
+		return false;
 	}
 	else if((terminal.ws_col > sz_max) || (terminal.ws_row > sz_max))
 	{
 		fprintf(stderr, "Maximum terminal's size: %ldx%ld.\n", sz_max, sz_max);
-		return -1;
+		return false;
 	}
 
 	switch(axis)
 	{
 		case 'X':
 		return terminal.ws_col;
+
 		case 'Y':
 		return terminal.ws_row;
 	}
-	return 0;
+	return false;
 }
 
-static void flush(void)
+void window_flush(void)
 {
 	// Restore to the left lower corner and clean the lowest line.
 	ANSI_RESTORE_CUR_POS();
 	ANSI_CLEAN_LINE();
 
 	// Then from move up and clean the next lines till the window ends.
-	for(term_t line = 1; line < get_terminal_size('Y'); line++)
+	for(term_t line = 1; line < window_get_terminal_size('Y'); line++) // TODO
 	{
 		ANSI_CUR_UP(1);
 		ANSI_CLEAN_LINE();
@@ -57,15 +57,13 @@ static void flush(void)
 	fflush(NULL);
 }
 
-static void upper_bar(Buff_t* Buff, Ui_t* Ui)
+void window_upper_bar(Buff_t* Buff, Ui_t* Ui)
 {
 	const idx_t punch_card  = 80;
 	const char  git_str[]   = "git |\\ ";
 	char        punch_card_str[16];
 
 	sprintf(punch_card_str, "%u", punch_card);
-
-	ANSI_BOLD();
 
 	/* Sometimes the empty space of width Ui->line_num_len will rendered before
 	the upper bar. Adding the carriage return before it fixes the problems. Just
@@ -118,7 +116,7 @@ static void upper_bar(Buff_t* Buff, Ui_t* Ui)
 	ANSI_RESET();
 }
 
-static void lower_bar(const bool pane_toggled)
+void window_lower_bar(const bool pane_toggled)
 {
 	const char key_binding[8][STATUS_MAX] =
 	{
@@ -126,9 +124,8 @@ static void lower_bar(const bool pane_toggled)
 		"CTRL^O - save as",
 		"CTRL^Q - exit",
 		"CTRL^O - save",
-		"CTRL^\\ - keyboard bindings"
+		"CTRL^\\ - keyboard shortcuts"
 	};
-	ANSI_BOLD();
 	WRAP_LINE();
 
 	if(pane_toggled)
@@ -143,7 +140,7 @@ static void lower_bar(const bool pane_toggled)
 	ANSI_RESET();
 }
 
-static void fill(Buff_t* Buff, Ui_t* Ui)
+void window_fill(Buff_t* Buff, Ui_t* Ui)
 {
 	// Fill the empty area below the text to position the lower bar.
 	if((Buff->lines_i + INDEX) < (idx_t) Ui->text_y)
@@ -157,7 +154,7 @@ static void fill(Buff_t* Buff, Ui_t* Ui)
 	// Else the lower bar will by positioned by the text.
 }
 
-static void set_cursor_position(Buff_t* Buff, Ui_t* Ui)
+void window_set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 {
 	// Set by default to a filename edit.
 	term_t move_right = (term_t) (Buff->fname_len_i + SPACE_SZ);
@@ -196,17 +193,17 @@ static void set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 	ANSI_CUR_UP(move_up);
 }
 
-static bool render(Buff_t* Buff)
+bool window_render(Buff_t* Buff)
 {
 	Ui_t Ui;
 
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
-	if((Ui.win_w = get_terminal_size('X')) == -1)
+	if(!(Ui.win_w = window_get_terminal_size('X')))
 	{
 		return false;
 	}
-	if((Ui.win_h = get_terminal_size('Y')) == -1)
+	if(!(Ui.win_h = window_get_terminal_size('Y')))
 	{
 		return false;
 	}
@@ -219,39 +216,14 @@ static bool render(Buff_t* Buff)
 	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();
-	upper_bar(Buff, &Ui);
+	window_upper_bar(Buff, &Ui);
 
-	textprint.display_text(Buff, &Ui);
-	fill(Buff, &Ui);
-	lower_bar(Buff->pane_toggled);
+	textprint_display_text(Buff, &Ui);
+	ANSI_RESET();
+	window_fill(Buff, &Ui);
+	window_lower_bar(Buff->pane_toggled);
 
-	set_cursor_position(Buff, &Ui);
+	window_set_cursor_position(Buff, &Ui);
 
 	return true;
 }
-
-static void print_line_num(idx_t line_i, term_t line_num_len, const bool act_line)
-{
-	ANSI_BOLD();
-
-	if(act_line) // Higlight a current line.
-	{
-		ANSI_UNDERSCORE();
-	}
-	printf("%*d", line_num_len - SPACE_SZ, ++line_i); // Increment the index.
-
-	ANSI_RESET();
-	putchar(' '); // Whitespace padding.
-}
-
-namespace_window window =
-{
-	get_terminal_size,
-	flush,
-	upper_bar,
-	lower_bar,
-	fill,
-	render,
-	print_line_num,
-	set_cursor_position
-};

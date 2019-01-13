@@ -1,8 +1,6 @@
 #include "buffer.h"
 
-#include "memory.h"
-
-static bool init(Buff_t* Buff)
+bool buffer_init(Buff_t* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
 	if(Buff->text == NULL)
@@ -37,7 +35,7 @@ static bool init(Buff_t* Buff)
 	return true;
 }
 
-static void free_all(Buff_t* Buff)
+void buffer_free(Buff_t* Buff)
 {
 	for(idx_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{
@@ -55,9 +53,3 @@ static void free_all(Buff_t* Buff)
 		free(Buff->text);
 	}
 }
-
-namespace_buffer buffer =
-{
-	init,
-	free_all
-};

@@ -1,11 +1,9 @@
 #include "buffer.h"
+#include "config.h"
 #include "ascii.h"
 #include "file.h"
 
-#include "memory.h"
-#include "keymap.h"
-
-static bool set_name(Buff_t* Buff, const char* arg)
+bool file_set_name(Buff_t* Buff, const char* arg)
 {
 	const size_t nul_sz   = 1;
 	const size_t slash_sz = 1;
@@ -68,7 +66,7 @@ static bool set_name(Buff_t* Buff, const char* arg)
 	return true;
 }
 
-static void live_edit_name(Buff_t* Buff, char key)
+void file_live_edit_name(Buff_t* Buff, char key)
 {
 	const bool index = 1;
 
@@ -91,7 +89,7 @@ static void live_edit_name(Buff_t* Buff, char key)
 	}
 }
 
-static bool load(Buff_t* Buff)
+bool file_load(Buff_t* Buff)
 {
 	const size_t nul_sz = 1;
 	FILE*        textfile = fopen(Buff->fname, "r");
@@ -107,7 +105,7 @@ static bool load(Buff_t* Buff)
 		}
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
-			if(!keymap.printable_char(Buff, ch))
+			if(!keys_printable_char(Buff, ch))
 			{
 				return false;
 			}
@@ -122,7 +120,7 @@ static bool load(Buff_t* Buff)
 	return true;
 }
 
-static void save(Buff_t* Buff)
+void file_save(Buff_t* Buff)
 {
 	const int error = -1;
 	int       file_descriptor;
@@ -160,7 +158,34 @@ static void save(Buff_t* Buff)
 	}
 }
 
-static bool get_git_branch(Buff_t* Buff) // TODO
+bool file_load_editor_config(Conf_t* Conf)
+{
+	struct passwd* account_info = getpwuid(getuid());
+	char           path[PATH_MAX]; // TODO: MAX SIZE.
+
+	if(account_info == NULL)
+	{
+		config_set_default(Conf);
+	}
+
+	strcpy(path, account_info->pw_dir);
+	strcat(path, "/.config/fiflo.conf");
+
+	if(access(path, F_OK) == -1)
+	{
+		config_set_default(Conf);
+	}
+
+	Conf->file = fopen(path, "r");
+	if(Conf->file != NULL)
+	{
+		config_set_custom(Conf);
+		fclose(Conf->file);
+	}
+	return true;
+}
+
+bool file_get_git_branch(Buff_t* Buff) // TODO
 {
 /* fatal: not a git repository (or any parent up to mount point /)
 Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set). */
@@ -198,12 +223,3 @@ Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set). */
 	}
 	return true;
 }
-
-namespace_file file =
-{
-	set_name,
-	live_edit_name,
-	load,
-	save,
-	get_git_branch
-};

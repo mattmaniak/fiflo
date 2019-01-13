@@ -1,17 +1,7 @@
 #include "buffer.h"
 #include "memory.h"
 
-static void chk_ptr(Buff_t* Buff, void* ptr, const char* err_msg)
-{
-	if(ptr == NULL)
-	{
-		fprintf(stderr, "Can't %s.\n", err_msg);
-		buffer.free_all(Buff);
-		exit(1);
-	}
-}
-
-static bool extend_line(Buff_t* Buff, idx_t line_i)
+bool memory_extend_line(Buff_t* Buff, idx_t line_i)
 {
 	idx_t memblock = MEMBLK;
 
@@ -47,7 +37,7 @@ static bool extend_line(Buff_t* Buff, idx_t line_i)
 	return true;
 }
 
-static bool shrink_act_line(Buff_t* Buff)
+bool memory_shrink_act_line(Buff_t* Buff)
 {
 	idx_t memblock = INIT_MEMBLK;
 
@@ -77,7 +67,7 @@ static bool shrink_act_line(Buff_t* Buff)
 	return true;
 }
 
-static bool shrink_prev_line(Buff_t* Buff)
+bool memory_shrink_prev_line(Buff_t* Buff)
 {
 	idx_t memblock = INIT_MEMBLK;
 
@@ -105,7 +95,7 @@ static bool shrink_prev_line(Buff_t* Buff)
 	return true;
 }
 
-static bool extend_lines_array(Buff_t* Buff)
+bool memory_extend_lines_array(Buff_t* Buff)
 {
 	// Enhance the array that contains pointers to lines.
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
@@ -138,7 +128,7 @@ static bool extend_lines_array(Buff_t* Buff)
 	return true;
 }
 
-static bool shrink_lines_array(Buff_t* Buff)
+bool memory_shrink_lines_array(Buff_t* Buff)
 {
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 	if(Buff->text == NULL)
@@ -157,7 +147,7 @@ static bool shrink_lines_array(Buff_t* Buff)
 	return true;
 }
 
-static bool copy_lines_forward(Buff_t* Buff)
+bool memory_copy_lines_forward(Buff_t* Buff)
 {
 	const unsigned int prev = 1;
 
@@ -173,22 +163,19 @@ static bool copy_lines_forward(Buff_t* Buff)
 		       line_i + INDEX - prev, line_i + INDEX, memblock);
 #endif
 
-		chk_ptr(Buff, Buff->text[line_i], "resize the line forward");
-
-		Buff->text[line_i] = strcpy(Buff->text[line_i],
-		                            Buff->text[line_i - prev]);
-
 		if(Buff->text[line_i] == NULL)
 		{
-			fprintf(stderr, "Can't copy a line forward.\n");
+			fprintf(stderr, "Can't resize the line forward.\n");
 			return false;
 		}
+
+		strcpy(Buff->text[line_i], Buff->text[line_i - prev]);
 		Buff->line_len_i[line_i] = Buff->line_len_i[line_i - prev];
 	}
 	return true;
 }
 
-static bool copy_lines_backward(Buff_t* Buff)
+bool memory_copy_lines_backward(Buff_t* Buff)
 {
 	const unsigned int next = 1;
 
@@ -215,15 +202,3 @@ static bool copy_lines_backward(Buff_t* Buff)
 	}
 	return true;
 }
-
-namespace_memory memory =
-{
-	chk_ptr,
-	extend_line,
-	shrink_act_line,
-	shrink_prev_line,
-	extend_lines_array,
-	shrink_lines_array,
-	copy_lines_forward,
-	copy_lines_backward
-};

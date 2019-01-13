@@ -1,11 +1,8 @@
 #ifdef __linux__
 
 #include "buffer.h"
+#include "config.h"
 #include "fiflo.h"
-
-#include "file.h"
-#include "input.h"
-#include "window.h"
 
 bool options(const char* arg)
 {
@@ -36,45 +33,50 @@ void run(const char* arg)
 {
 	char   pressed_key = '\0'; // Initializer.
 	Buff_t Buff;
+	Conf_t Conf;
 
-	if(!buffer.init(&Buff))
+	if(!buffer_init(&Buff))
 	{
 		goto free;
 	}
-	if(!file.set_name(&Buff, arg))
+	if(!file_set_name(&Buff, arg))
 	{
 		goto free;
 	}
-	if(!file.load(&Buff))
+	if(!file_load(&Buff))
+	{
+		goto free;
+	}
+	if(!file_load_editor_config(&Conf))
 	{
 		goto free;
 	}
 
 	for(;;) // The main program loop.
 	{
-		if(!file.get_git_branch(&Buff))
+		if(!file_get_git_branch(&Buff))
 		{
 			break;
 		}
-		if(!input.parse_key(&Buff, pressed_key))
+		if(!input_parse_key(&Buff, pressed_key))
 		{
 			break;
 		}
-		if(!window.render(&Buff))
+		if(!window_render(&Buff))
 		{
 			break;
 		}
-		if((pressed_key = input.getch()) == -1)
+		if((pressed_key = input_getch()) == -1)
 		{
 			break;
 		}
-		window.flush();
+		window_flush();
 	}
 	free:
-	buffer.free_all(&Buff); // TODO: FREE.
+	buffer_free(&Buff); // TODO: FREE.
 }
 
-int main(const int argc, const char** argv)
+int main(int argc, char** argv)
 {
 	if(argc > 2)
 	{
@@ -87,7 +89,7 @@ int main(const int argc, const char** argv)
 		run("");
 		goto exit;
 	}
-	else if(strlen(argv[1]) <= _POSIX_ARG_MAX)
+	else if(strlen(argv[1]) <= PATH_MAX)
 	{
 		if(!options(argv[1]))
 		{

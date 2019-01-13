@@ -11,7 +11,7 @@ files use git-show or git-log.
 - 80th column indicator,
 - display git branch name,
 - return-based API,
-- bold and transparent UI with some meaningful colors.
+- colorful transparent UI.
 
 ### v2.2.2 (2018, December 22):
 - Repaired positions of line numbers when the line has same width as the

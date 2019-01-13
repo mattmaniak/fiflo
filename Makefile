@@ -1,7 +1,7 @@
 TARGET = fiflo
 
 CC =
-CFLAGS = -std=c11 -Os
+CFLAGS = -std=gnu11 -Os
 LDFLAGS =
 
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
