@@ -33,7 +33,7 @@ void run(const char* arg)
 {
 	char   pressed_key = '\0'; // Initializer.
 	Buff_t Buff;
-	Conf_t Conf;
+	Conf_t Config;
 
 	if(!buffer_init(&Buff))
 	{
@@ -47,7 +47,7 @@ void run(const char* arg)
 	{
 		goto free;
 	}
-	if(!file_load_editor_config(&Conf))
+	if(!file_load_editor_config(&Config))
 	{
 		goto free;
 	}

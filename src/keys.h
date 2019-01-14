@@ -1,7 +1,7 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-// Currently supported ASCII characters and their actions inside.
+// Currently supported characters and their actions inside.
 
 extern bool memory_extend_line(Buff_t* Buff, idx_t line_i);
 extern bool memory_shrink_act_line(Buff_t* Buff);

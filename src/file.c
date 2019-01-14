@@ -7,7 +7,7 @@ bool file_set_name(Buff_t* Buff, const char* arg)
 {
 	const size_t nul_sz   = 1;
 	const size_t slash_sz = 1;
-	size_t     arg_len  = strlen(arg);
+	size_t       arg_len  = strlen(arg);
 
 	bool arg_non_empty   = arg_len > 0;
 	bool arg_as_abs_path = arg[0]  == '/';
@@ -158,14 +158,14 @@ void file_save(Buff_t* Buff)
 	}
 }
 
-bool file_load_editor_config(Conf_t* Conf)
+bool file_load_editor_config(Conf_t* Config)
 {
 	struct passwd* account_info = getpwuid(getuid());
 	char           path[PATH_MAX]; // TODO: MAX SIZE.
 
 	if(account_info == NULL)
 	{
-		config_set_default(Conf);
+		config_set_default(Config);
 	}
 
 	strcpy(path, account_info->pw_dir);
@@ -173,14 +173,14 @@ bool file_load_editor_config(Conf_t* Conf)
 
 	if(access(path, F_OK) == -1)
 	{
-		config_set_default(Conf);
+		config_set_default(Config);
 	}
 
-	Conf->file = fopen(path, "r");
-	if(Conf->file != NULL)
+	Config->file = fopen(path, "r");
+	if(Config->file != NULL)
 	{
-		config_set_custom(Conf);
-		fclose(Conf->file);
+		config_set_custom(Config);
+		fclose(Config->file);
 	}
 	return true;
 }

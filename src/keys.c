@@ -1,7 +1,6 @@
 #include "buffer.h"
 #include "config.h"
 #include "ascii.h"
-// #include "edit.h"
 #include "keys.h"
 
 bool keys_linefeed(Buff_t* Buff)

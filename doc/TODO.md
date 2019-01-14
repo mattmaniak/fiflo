@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- 256 colors mode,
 - clean edit.c and memory.c trash,
 - less includes,
 - no variables casting,

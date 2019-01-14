@@ -4,7 +4,7 @@
 
 size_t window_get_terminal_size(char axis)
 {
-	const int    line_height = 1;
+	const size_t line_height = 1;
 	const size_t w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
 	const size_t h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
 	const size_t sz_max      = USHRT_MAX;
@@ -60,7 +60,7 @@ void window_flush(void)
 void window_upper_bar(Buff_t* Buff, Ui_t* Ui)
 {
 	const idx_t punch_card  = 80;
-	const char  git_str[]   = "git |\\ ";
+	const char  git_str[]   = "|\\ git: ";
 	char        punch_card_str[16];
 
 	sprintf(punch_card_str, "%u", punch_card);
@@ -94,18 +94,13 @@ void window_upper_bar(Buff_t* Buff, Ui_t* Ui)
 
 	if(Ui->text_x > punch_card) // TODO: SIMPLIFY.
 	{
-		printf("%*s", punch_card - STATUS_MAX, " ");
+		printf("%*s", Ui->line_num_len + punch_card - STATUS_MAX - SPACE_SZ, " ");
 
-		if((ACT_LINE_LEN_I > punch_card)
-		&& (ACT_LINE[ACT_LINE_LEN_I - 1] != '\n')) // TODO: LF AND RED COLOR.
+		if((ACT_LINE_LEN_I > punch_card) && (ACT_LINE[punch_card] != '\n'))
 		{
 			ANSI_RED();
 		}
-		else
-		{
-			ANSI_GREEN();
-		}
-		printf("%d^", punch_card);
+		printf("^%d", punch_card);
 		ANSI_RESET();
 	}
 	else

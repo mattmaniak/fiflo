@@ -40,6 +40,23 @@
 #define ANSI_CYAN_BRIGHT()               printf("\x1b[96m")
 #define ANSI_WHITE_BRIGHT()              printf("\x1b[97m")
 
+#define RESET          "\x1b[0m"
+#define BOLD           "\x1b[1m"
+#define RED            "\x1b[31m"
+#define GREEN          "\x1b[32m"
+#define YELLOW         "\x1b[33m"
+#define BLUE           "\x1b[34m"
+#define MAGENTA        "\x1b[35m"
+#define CYAN           "\x1b[36m"
+#define WHITE          "\x1b[37m"
+#define RED_BRIGHT     "\x1b[91m"
+#define GREEN_BRIGHT   "\x1b[92m"
+#define YELLOW_BRIGHT  "\x1b[93m"
+#define BLUE_BRIGHT    "\x1b[94m"
+#define MAGENTA_BRIGHT "\x1b[95m"
+#define CYAN_BRIGHT    "\x1b[96m"
+#define WHITE_BRIGHT   "\x1b[97m"
+
 #define ANSI_RED_BACKGROUND()            printf("\x1b[41m")
 #define ANSI_GREEN_BACKGROUND()          printf("\x1b[42m")
 #define ANSI_YELLOW_BACKGROUND()         printf("\x1b[43m")
@@ -54,6 +71,21 @@
 #define ANSI_MAGENTA_BRIGHT_BACKGROUND() printf("\x1b[105m")
 #define ANSI_CYAN_BRIGHT_BACKGROUND()    printf("\x1b[106m")
 #define ANSI_WHITE_BRIGHT_BACKGROUND()   printf("\x1b[107m")
+
+#define RED_BACKGROUND            "\x1b[41m"
+#define GREEN_BACKGROUND          "\x1b[42m"
+#define YELLOW_BACKGROUND         "\x1b[43m"
+#define BLUE_BACKGROUND           "\x1b[44m"
+#define MAGENTA_BACKGROUND        "\x1b[45m"
+#define CYAN_BACKGROUND           "\x1b[46m"
+#define WHITE_BACKGROUND          "\x1b[47m"
+#define RED_BRIGHT_BACKGROUND     "\x1b[101m"
+#define GREEN_BRIGHT_BACKGROUND   "\x1b[102m"
+#define YELLOW_BRIGHT_BACKGROUND  "\x1b[103m"
+#define BLUE_BRIGHT_BACKGROUND    "\x1b[104m"
+#define MAGENTA_BRIGHT_BACKGROUND "\x1b[105m"
+#define CYAN_BRIGHT_BACKGROUND    "\x1b[106m"
+#define WHITE_BRIGHT_BACKGROUND   "\x1b[107m"
 
 #define ANSI_CLEAN_LINE()                printf("\x1b[2K")
 #define ANSI_CUR_UP(offset)              printf("\x1b[%dA", offset)
