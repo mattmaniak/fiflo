@@ -169,7 +169,7 @@ bool file_load_editor_config(Conf_t* Config)
 	}
 
 	strcpy(path, account_info->pw_dir);
-	strcat(path, "/.config/fiflo.conf");
+	strcat(path, "/.config/fiflorc");
 
 	if(access(path, F_OK) == -1)
 	{

@@ -32,7 +32,7 @@ typedef struct // TODO
 }
 Modes_t;
 
-typedef struct
+typedef struct // TODO: SPLIT AND PADDING
 {
 	// Modes.
 	bool     key_sequence;       // True if pressed key is ANSI escape code.

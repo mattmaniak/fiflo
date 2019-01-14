@@ -4,23 +4,24 @@
 
 void textprint_print_another_line(Buff_t* Buff, Ui_t* Ui, idx_t line_i)
 {
-	const size_t cursor_or_linefeed_sz = 1;
+	const unsigned int cursor_or_linefeed_sz = 1;
 
 	ui_print_line_number(line_i, Ui->line_num_len, ANOTHER_LINE);
-	printf("%.*s", (int) (Ui->text_x - cursor_or_linefeed_sz),
-	       Buff->text[line_i]);
+	printf("%.*s", Ui->text_x - cursor_or_linefeed_sz, Buff->text[line_i]);
 
 	if(Buff->line_len_i[line_i] >= Ui->text_x)
 	{
 		WRAP_LINE();
 	}
+	// unsigned int a = 3;
+	// printf("%*s", a, " ");
 }
 
 idx_t textprint_set_start_line(Buff_t* Buff, Ui_t* Ui)
 {
 	idx_t scrolled_lines = 0;
 
-	if(ACT_LINE_I >= Ui->text_y)
+	if(ACT_LINE_I >=  Ui->text_y)
 	{
 		// Amount of lines to hide in the magic upper area.
 		scrolled_lines = Buff->lines_i + INDEX - Ui->text_y - Buff->cusr_y;
@@ -96,7 +97,7 @@ void textprint_fit_lines(Buff_t* Buff, Ui_t* Ui)
 
 void textprint_shrink_lines(Buff_t* Buff, Ui_t* Ui)
 {
-	idx_t last_ln = (idx_t) Ui->text_y - INDEX;
+	idx_t last_ln = (idx_t) (Ui->text_y - INDEX);
 	idx_t line_i;
 
 	// Previous lines. If scrolled. Only beginning is shown.

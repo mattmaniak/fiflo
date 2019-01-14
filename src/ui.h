@@ -88,10 +88,10 @@
 #define WHITE_BRIGHT_BACKGROUND   "\x1b[107m"
 
 #define ANSI_CLEAN_LINE()                printf("\x1b[2K")
-#define ANSI_CUR_UP(offset)              printf("\x1b[%dA", offset)
-#define ANSI_CUR_DOWN(offset)            printf("\x1b[%dB", offset)
-#define ANSI_CUR_RIGHT(offset)           printf("\x1b[%dC", offset)
-#define ANSI_CUR_LEFT(offset)            printf("\x1b[%ldD", offset)
+#define ANSI_CUR_UP(offset)              printf("\x1b[%uA", offset)
+#define ANSI_CUR_DOWN(offset)            printf("\x1b[%uB", offset)
+#define ANSI_CUR_RIGHT(offset)           printf("\x1b[%uC", offset)
+#define ANSI_CUR_LEFT(offset)            printf("\x1b[%uD", offset)
 #define ANSI_SAVE_CUR_POS()              printf("\x1b[s")
 #define ANSI_RESTORE_CUR_POS()           printf("\x1b[u")
 
@@ -100,14 +100,14 @@ typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 typedef struct
 {
 	char   line_num_str[16]; // Place for string of the highest line number.
-	size_t line_num_len;     // Dynamic width of the lines numbers.
+	term_t line_num_len;     // Dynamic width of the lines numbers.
 	term_t text_x;           // Horizontal space for the text (width: chars).
 	term_t text_y;           // Vertical space for the text (lines).
 	term_t lbar_h;           // Lower bar height (lines).
 	term_t pane_h;           // As above but toggled.
 
-	size_t win_w;
-	size_t win_h;
+	term_t win_w;
+	term_t win_h;
 }
 Ui_t;
 

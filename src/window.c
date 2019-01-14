@@ -2,12 +2,12 @@
 #include "ui.h"
 #include "window.h"
 
-size_t window_get_terminal_size(char axis)
+term_t window_get_terminal_size(char axis)
 {
-	const size_t line_height = 1;
-	const size_t w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
-	const size_t h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
-	const size_t sz_max      = USHRT_MAX;
+	const int line_height = 1;
+	const int w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
+	const int h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
+	const int sz_max      = USHRT_MAX;
 
 	struct winsize terminal;
 
@@ -16,19 +16,19 @@ size_t window_get_terminal_size(char axis)
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == -1)
 	{
 		fprintf(stderr, "Can't get the terminal's size.\n");
-		return false;
+		return 0;
 	}
 
 	// Terminal size check. TODO: MAX SIZE.
 	if((terminal.ws_col < w_min) || (terminal.ws_row < h_min))
 	{
-		fprintf(stderr, "Minimal terminal's size: %ldx%ld.\n", w_min, h_min);
-		return false;
+		fprintf(stderr, "Minimal terminal's size: %ux%u.\n", w_min, h_min);
+		return 0;
 	}
 	else if((terminal.ws_col > sz_max) || (terminal.ws_row > sz_max))
 	{
-		fprintf(stderr, "Maximum terminal's size: %ldx%ld.\n", sz_max, sz_max);
-		return false;
+		fprintf(stderr, "Maximum terminal's size: %ux%u.\n", sz_max, sz_max);
+		return 0;
 	}
 
 	switch(axis)
@@ -39,7 +39,7 @@ size_t window_get_terminal_size(char axis)
 		case 'Y':
 		return terminal.ws_row;
 	}
-	return false;
+	return 0;
 }
 
 void window_flush(void)
@@ -71,7 +71,7 @@ void window_upper_bar(Buff_t* Buff, Ui_t* Ui)
 	is not necessary, eg. for errors messages. They can be shifted. */
 	printf("\r ");
 
-	if((ssize_t) (Buff->fname_len_i + SPACE_SZ) < Ui->win_w)
+	if((Buff->fname_len_i + SPACE_SZ) < Ui->win_w)
 	{
 		puts(Buff->fname);
 	}
@@ -90,7 +90,7 @@ void window_upper_bar(Buff_t* Buff, Ui_t* Ui)
 
 	// The lower part with the "chars in the current line" indicator.
 	printf(" %.*s%*s", STATUS_MAX, Buff->status,
-	       (int) (STATUS_MAX - strlen(Buff->status) - SPACE_SZ), " ");
+	       (STATUS_MAX - (term_t) strlen(Buff->status) - SPACE_SZ), " ");
 
 	if(Ui->text_x > punch_card) // TODO: SIMPLIFY.
 	{
@@ -105,7 +105,7 @@ void window_upper_bar(Buff_t* Buff, Ui_t* Ui)
 	}
 	else
 	{
-		printf("%*s", (int) (Ui->win_w - STATUS_MAX), " ");
+		printf("%*s", Ui->win_w - STATUS_MAX, " ");
 	}
 	WRAP_LINE();
 	ANSI_RESET();
@@ -207,7 +207,7 @@ bool window_render(Buff_t* Buff)
 	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
 	Ui.line_num_len = (term_t) (strlen(Ui.line_num_str) + (2 * SPACE_SZ));
-	Ui.text_x       = (term_t) (Ui.win_w - (term_t) Ui.line_num_len);
+	Ui.text_x       = (term_t) (Ui.win_w - Ui.line_num_len);
 	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();

@@ -2,8 +2,6 @@
 ## delete one if done:
 - 256 colors mode,
 - clean edit.c and memory.c trash,
-- less includes,
-- no variables casting,
 - functions names,
 - linked list API (v4.y.z),
 - simplify file.c,
@@ -17,7 +15,7 @@
 - fully adaptive cursor,
 - TAB key,
 - load only part of a file,
-- ~/.config/fiflo.conf,
+- ~/.config/fiflorc,
 - syntax highlighting,
 - search option,
 - hex mode,

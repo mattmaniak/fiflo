@@ -22,12 +22,13 @@
 
 typedef struct
 {
-	FILE* file;
-	char  color_bar[8];
-	char  color_text[8];
-	char  color_line_number[8];
-	char  color_current_line_number[8];
-	char  color_warning[8];
+	FILE*  file;
+	char   color_bar[8];
+	char   color_text[8];
+	char   color_line_number[8];
+	char   color_current_line_number[8];
+	char   color_warning[8];
+	// term_t punch_card;
 }
 Conf_t;
 

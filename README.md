@@ -29,21 +29,21 @@ Then it will be posibility to run it directly from disk.
 ./fiflo
 ```
 
+### Object files and the binary removal
+```
+make clean
+```
+
 ### Uninstallation
 ```
 sudo make uninstall
-```
-
-### Delete object files and the binary
-```
-make clean
 ```
 
 ## Development
 Dive into the "doc/" direcory.
 
 ### Additional tools:
-- clang >= 3.1,
+- MSan (clang >= 3.1),
 - valgrind.
 
 ### Get and check the development branch

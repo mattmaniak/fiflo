@@ -10,7 +10,7 @@
 extern void textprint_display_text(Buff_t* Buff, Ui_t* Ui);
 
 // Returns current terminal width and height and exits if is wrong.
-size_t window_get_terminal_size(char axis);
+term_t window_get_terminal_size(char axis);
 
 // Clean the whole rendered window.
 void window_flush(void);
