@@ -1,4 +1,5 @@
 #include "buffer.h"
+#include "config.h"
 #include "ui.h"
 #include "window.h"
 
@@ -57,84 +58,6 @@ void window_flush(void)
 	fflush(NULL);
 }
 
-void window_upper_bar(Buff_t* Buff, Ui_t* Ui)
-{
-	const idx_t punch_card  = 80;
-	const char  git_str[]   = "|\\ git: ";
-	char        punch_card_str[16];
-
-	sprintf(punch_card_str, "%u", punch_card);
-
-	/* Sometimes the empty space of width Ui->line_num_len will rendered before
-	the upper bar. Adding the carriage return before it fixes the problems. Just
-	handling with terminals' quirk modes. For any other output of the program CR
-	is not necessary, eg. for errors messages. They can be shifted. */
-	printf("\r ");
-
-	if((Buff->fname_len_i + SPACE_SZ) < Ui->win_w)
-	{
-		puts(Buff->fname);
-	}
-	else
-	{
-		for(term_t char_i = (term_t) (Buff->fname_len_i - (size_t) (Ui->win_w
-		    + CUR_SZ + SPACE_SZ)); char_i < Buff->fname_len_i; char_i++)
-		{
-			putchar(Buff->fname[char_i]);
-		}
-		putchar(' ');
-		WRAP_LINE();
-	}
-
-	printf(" %s%s\n", git_str, Buff->git_branch);
-
-	// The lower part with the "chars in the current line" indicator.
-	printf(" %.*s%*s", STATUS_MAX, Buff->status,
-	       (STATUS_MAX - (term_t) strlen(Buff->status) - SPACE_SZ), " ");
-
-	if(Ui->text_x > punch_card) // TODO: SIMPLIFY.
-	{
-		printf("%*s", Ui->line_num_len + punch_card - STATUS_MAX - SPACE_SZ, " ");
-
-		if((ACT_LINE_LEN_I > punch_card) && (ACT_LINE[punch_card] != '\n'))
-		{
-			ANSI_RED();
-		}
-		printf("^%d", punch_card);
-		ANSI_RESET();
-	}
-	else
-	{
-		printf("%*s", Ui->win_w - STATUS_MAX, " ");
-	}
-	WRAP_LINE();
-	ANSI_RESET();
-}
-
-void window_lower_bar(const bool pane_toggled)
-{
-	const char key_binding[8][STATUS_MAX] =
-	{
-		"CTRL^D - delete line",
-		"CTRL^O - save as",
-		"CTRL^Q - exit",
-		"CTRL^O - save",
-		"CTRL^\\ - keyboard shortcuts"
-	};
-	WRAP_LINE();
-
-	if(pane_toggled)
-	{
-		for(size_t y = 0; y < TOGGLED_PANE_SZ - LBAR_SZ; y++)
-		{
-			printf(" %s", key_binding[y]);
-			WRAP_LINE();
-		}
-	}
-	printf(" %s", key_binding[TOGGLED_PANE_SZ - LBAR_SZ]);
-	ANSI_RESET();
-}
-
 void window_fill(Buff_t* Buff, Ui_t* Ui)
 {
 	// Fill the empty area below the text to position the lower bar.
@@ -188,7 +111,7 @@ void window_set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 	ANSI_CUR_UP(move_up);
 }
 
-bool window_render(Buff_t* Buff)
+bool window_render(Buff_t* Buff, Conf_t* Config)
 {
 	Ui_t Ui;
 
@@ -211,12 +134,12 @@ bool window_render(Buff_t* Buff)
 	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
 	ANSI_RESET();
-	window_upper_bar(Buff, &Ui);
+	ui_upper_bar(Buff, &Ui, Config);
 
-	textprint_display_text(Buff, &Ui);
+	textprint_display_text(Buff, &Ui, Config);
 	ANSI_RESET();
 	window_fill(Buff, &Ui);
-	window_lower_bar(Buff->pane_toggled);
+	ui_lower_bar(Config, Buff->pane_toggled);
 
 	window_set_cursor_position(Buff, &Ui);
 

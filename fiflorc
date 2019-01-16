@@ -1,0 +1,22 @@
+# Example fiflo configuration file.
+# To make it work, copy it to the ~/.config/fiflorc
+#
+# Lines that starts with '#' or ' ' are ignored.
+#
+# Available options:
+# color-bar, color-current-line-number, color-line-number, color-text,
+# color-warning, color-git-logo
+# 
+# If You will use one selector multiple times, the last line with it will be
+# used.
+#
+# Values:
+# black, red, green, yellow, blue, magenta, cyan, white,
+# bright-black, bright-red, bright-green, bright-yellow, bright-blue,
+# bright-magenta, bright-cyan, bright-white
+#
+# All of them are foreground (text) colors.
+# Assignment sign is the equal sign without any spaces in it's neighbourhood. 
+#
+# Example
+# text-color=white

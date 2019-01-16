@@ -112,7 +112,13 @@ typedef struct
 Ui_t;
 
 // Prints the line number.
-void ui_print_line_number(idx_t line_i, term_t line_num_len,
+void ui_print_line_number(Conf_t* Config, idx_t line_i, term_t line_num_len,
                           const bool current_line);
+
+// Renders the upper bar with a filename and indicators.
+void ui_upper_bar(Buff_t* Buff, Ui_t* Ui, Conf_t* Config);
+
+// Renders the lower bar that contains keyboard info.
+void ui_lower_bar(Conf_t* Config, const bool pane_toggled);
 
 #endif

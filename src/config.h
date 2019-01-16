@@ -5,37 +5,62 @@
 #include <stdio.h>
 #include <string.h>
 
-#define RED            "\x1b[31m"
-#define GREEN          "\x1b[32m"
-#define YELLOW         "\x1b[33m"
-#define BLUE           "\x1b[34m"
-#define MAGENTA        "\x1b[35m"
-#define CYAN           "\x1b[36m"
-#define WHITE          "\x1b[37m"
-#define RED_BRIGHT     "\x1b[91m"
-#define GREEN_BRIGHT   "\x1b[92m"
-#define YELLOW_BRIGHT  "\x1b[93m"
-#define BLUE_BRIGHT    "\x1b[94m"
-#define MAGENTA_BRIGHT "\x1b[95m"
-#define CYAN_BRIGHT    "\x1b[96m"
-#define WHITE_BRIGHT   "\x1b[97m"
+typedef enum
+{
+	BLACK          = 30,
+	RED            = 31,
+	GREEN          = 32,
+	YELLOW         = 33,
+	BLUE           = 34,
+	MAGENTA        = 35,
+	CYAN           = 36,
+	WHITE          = 37,
+	BRIGHT_BLACK   = 90,
+	BRIGHT_RED     = 91,
+	BRIGHT_GREEN   = 92,
+	BRIGHT_YELLOW  = 93,
+	BRIGHT_BLUE    = 94,
+	BRIGHT_MAGENTA = 95,
+	BRIGHT_CYAN    = 96,
+	BRIGHT_WHITE   = 97
+}
+Colors_t;
 
 typedef struct
 {
-	FILE*  file;
-	char   color_bar[8];
-	char   color_text[8];
-	char   color_line_number[8];
-	char   color_current_line_number[8];
-	char   color_warning[8];
-	// term_t punch_card;
+	char selector[32];
+	int  value;
+}
+Opt_t;
+
+typedef struct
+{
+	FILE* file;
+	Opt_t Color_bar;
+	Opt_t Color_current_line_number;
+	Opt_t Color_line_number;
+	Opt_t Color_text;
+	Opt_t Color_warning;
+	Opt_t Color_git_logo;
 }
 Conf_t;
+
+//
+void config_init_selectors(Conf_t* Config);
+
+// Check if selector_in_file == expected_selector.
+void config_parse_selector(Conf_t* Config, char* selector, int value);
+
+// Convert a word into an ASCII escape code.
+int config_encode_color(Conf_t* Config, char* color_name);
 
 //
 void config_set_default(Conf_t* Conf);
 
 //
-bool config_set_custom(Conf_t* Conf);
+void config_set_custom(Conf_t* Conf);
+
+//
+void config_set_color(Opt_t* Option);
 
 #endif

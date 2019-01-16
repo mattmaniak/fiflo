@@ -10,7 +10,8 @@
 #define ANOTHER_LINE false
 
 // Prints and shrinks line that is non-actual.
-void textprint_print_another_line(Buff_t* Buff, Ui_t* Ui, idx_t line_i);
+void textprint_print_another_line(Buff_t* Buff, Ui_t* Ui, Conf_t* Config,
+                                  idx_t line_i);
 
 // Returns value of hidden lines.
 idx_t textprint_set_start_line(Buff_t* Buff, Ui_t* Ui);
@@ -22,15 +23,15 @@ void textprint_scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui);
 void textprint_print_actual_line(Buff_t* Buff, Ui_t* Ui);
 
 // Renders a text when there is smaller amount of lines than the window height.
-void textprint_fit_lines(Buff_t* Buff, Ui_t* Ui);
+void textprint_fit_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config);
 
 // If there is more lines but they are scrolled to the start.
-void textprint_shrink_lines(Buff_t* Buff, Ui_t* Ui);
+void textprint_shrink_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config);
 
 // Lines rendering starts at specified by user offset.
-void textprint_scroll_lines(Buff_t* Buff, Ui_t* Ui);
+void textprint_scroll_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config);
 
 // Shows a text in the window.
-void textprint_display_text(Buff_t* Buff, Ui_t* Ui);
+void textprint_display_text(Buff_t* Buff, Ui_t* Ui, Conf_t* Config);
 
 #endif

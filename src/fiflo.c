@@ -62,7 +62,7 @@ void run(const char* arg)
 		{
 			break;
 		}
-		if(!window_render(&Buff))
+		if(!window_render(&Buff, &Config))
 		{
 			break;
 		}

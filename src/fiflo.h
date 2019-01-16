@@ -15,7 +15,7 @@ extern void file_save(Buff_t* Buff);
 extern bool file_load_editor_config(Conf_t* Conf);
 extern bool file_get_git_branch(Buff_t* Buff);
 
-extern bool window_render(Buff_t* Buff);
+extern bool window_render(Buff_t* Buff, Conf_t* Config);
 extern void window_flush(void);
 
 // Program parameters, eg. "--help".

@@ -1,6 +1,5 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- 256 colors mode,
 - clean edit.c and memory.c trash,
 - functions names,
 - linked list API (v4.y.z),
@@ -8,14 +7,14 @@
 - all escapes and formatting control chars,
 - full text horizontal scroll,
 - pre-allocation of a memory, eg. next 16 lines,
-- git branch indicator,
+- git branch indicator - error handling and displaying,
 - scroll with eg. 10 lines ahead,
 - cut/copy/paste,
 - more advanced scroll (eg. full words),
 - fully adaptive cursor,
 - TAB key,
 - load only part of a file,
-- ~/.config/fiflorc,
+- ~/.config/fiflorc - manual,
 - syntax highlighting,
 - search option,
 - hex mode,
