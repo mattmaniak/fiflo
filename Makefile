@@ -18,6 +18,7 @@ MAN_DIR = man
 
 INS_DIR = /usr/bin
 MAN_INS_DIR = /usr/share/man/man1
+CONF_DIR = ~/.config
 
 # All in the ./obj depending on the ./src.
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
@@ -58,6 +59,7 @@ address: LDFLAGS += $(ASAN_FLAGS)
 address: $(TARGET)
 
 memory: CC = clang
+memory: CFLAGS = -Weverything
 memory: LDFLAGS += $(MSAN_FLAGS)
 memory: $(TARGET)
 
@@ -67,11 +69,13 @@ install: $(TARGET)
 	sudo $(RM) $(MAN_INS_DIR)/$(TARGET).1
 	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)/$(TARGET).1
 	sudo gzip $(MAN_INS_DIR)/$(TARGET).1
+	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
 
 uninstall:
 	sudo $(RM) \
 	$(INS_DIR)/$(TARGET) \
-	$(MAN_INS_DIR)/$(TARGET).1.gz
+	$(MAN_INS_DIR)/$(TARGET).1.gz \
+	$(CONF_DIR)/$(TARGET)rc
 
 .PHONY: clean
 

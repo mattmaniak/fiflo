@@ -3,20 +3,22 @@
 #
 # Lines that starts with '#' or ' ' are ignored.
 #
-# Available options:
-# color-bar, color-current-line-number, color-line-number, color-text,
-# color-warning, color-git-logo
-# 
 # If You will use one selector multiple times, the last line with it will be
 # used.
 #
-# Values:
+# Values
 # black, red, green, yellow, blue, magenta, cyan, white,
 # bright-black, bright-red, bright-green, bright-yellow, bright-blue,
 # bright-magenta, bright-cyan, bright-white
 #
 # All of them are foreground (text) colors.
-# Assignment sign is the equal sign without any spaces in it's neighbourhood. 
+# Assignment sign is the equal sign with 1 space character on each side: " = ".
 #
-# Example
-# text-color=white
+# Initial configuration
+# Changes nothing because the program has it implemented independently.
+color-bar = white
+color-git-logo = bright-red
+color-line-number = bright-magenta
+color-line-number-current = white
+color-text = white
+color-warning = red

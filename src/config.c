@@ -3,8 +3,8 @@
 void config_init_selectors(Conf_t* Config)
 {
 	strcpy(Config->Color_bar.selector, "color-bar");
-	strcpy(Config->Color_current_line_number.selector,
-	       "color-current-line-number");
+	strcpy(Config->Color_line_number_current.selector,
+	       "color-line-number-current");
 
 	strcpy(Config->Color_line_number.selector, "color-line-number");
 	strcpy(Config->Color_text.selector, "color-text");
@@ -18,9 +18,9 @@ void config_parse_selector(Conf_t* Config, char* selector, int value)
 	{
 		Config->Color_bar.value = value;
 	}
-	else if(!strcmp(Config->Color_current_line_number.selector, selector))
+	else if(!strcmp(Config->Color_line_number_current.selector, selector))
 	{
-		Config->Color_current_line_number.value = value;
+		Config->Color_line_number_current.value = value;
 	}
 	else if(!strcmp(Config->Color_line_number.selector, selector))
 	{
@@ -118,32 +118,33 @@ int config_encode_color(Conf_t* Config, char* color_name)
 void config_set_default(Conf_t* Config)
 {
 	Config->Color_bar.value                 = WHITE;
-	Config->Color_text.value                = WHITE;
-	Config->Color_line_number.value         = BRIGHT_MAGENTA;
-	Config->Color_current_line_number.value = WHITE;
-	Config->Color_warning.value             = RED;
 	Config->Color_git_logo.value            = BRIGHT_RED;
+	Config->Color_line_number.value         = BRIGHT_MAGENTA;
+	Config->Color_line_number_current.value = WHITE;
+	Config->Color_text.value                = WHITE;
+	Config->Color_warning.value             = RED;
 }
 
 void config_set_custom(Conf_t* Config)
 {
 	int  value = 0;
-	char line[64];
-	char selector[32];
-	char color_name[16];
+	char line[128];
+	char selector[48];
+	char color_name[32];
 
 	config_init_selectors(Config);
 
-	while(fgets(line, 64, Config->file) != NULL)
+	while(fgets(line, 80, Config->file) != NULL)
 	{
 		if((line[0] == '#') || (line[0] == ' '))
 		{
 			continue;
 		}
-		// Splits around the '='.
-		strncpy(selector, strtok(line, "="), 32);
-		strncpy(color_name, strtok(NULL, "="), 16);
+		// Splits around the " = ".
+		strncpy(selector, strtok(line, " = "), 48);
+		strncpy(color_name, strtok(NULL, " = "), 32);
 
+		// TODO: HANDLE COMMENTS.
 		value = config_encode_color(Config, color_name);
 		config_parse_selector(Config, selector, value);
 	}

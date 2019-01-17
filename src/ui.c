@@ -11,7 +11,7 @@ void ui_print_line_number(Conf_t* Config, idx_t line_i, term_t line_num_len,
 
 	if(current_line) // Higlight a current line.
 	{
-		config_set_color(&Config->Color_current_line_number);
+		config_set_color(&Config->Color_line_number_current);
 		ANSI_WHITE();
 	}
 	printf("%*u", line_num_len - (2 * SPACE_SZ), ++line_i);
@@ -34,7 +34,7 @@ void ui_upper_bar(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
 	printf("\r ");
-	config_set_color(&Config->Color_text);
+	config_set_color(&Config->Color_bar);
 
 	if((Buff->fname_len_i + SPACE_SZ) < Ui->win_w)
 	{
@@ -55,7 +55,7 @@ void ui_upper_bar(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 	printf(" %s", git_str);
 	ANSI_RESET();
 
-	config_set_color(&Config->Color_text);
+	config_set_color(&Config->Color_bar);
 	printf("%s\n", Buff->git_branch);
 
 	// The lower part with the "chars in the current line" indicator.
