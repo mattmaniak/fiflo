@@ -6,7 +6,6 @@ void ui__print_line_number(Buff_t* Buff, Conf_t* Config, idx_t line_i,
                            term_t line_num_len)
 {
 	config__set_color(NULL);; // Reset a text color.
-	putchar(' ');
 	config__set_color(&Config->Color_line_number);
 
 	if(line_i == ACT_LINE_I)
@@ -33,34 +32,34 @@ void ui__upper_bar(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 	the upper bar. Adding the carriage return before it fixes the problems. Just
 	handling with terminals' quirk modes. For any other output of the program CR
 	is not necessary, eg. for errors messages. They can be shifted. */
-	printf("\r ");
+	putchar('\r');
 	config__set_color(&Config->Color_bar);
 
-	if((Buff->fname_len_i + SPACE_SZ) < Ui->win_w)
+	if(Buff->fname_len_i < Ui->win_w)
 	{
 		puts(Buff->fname);
 	}
 	else
 	{
+		// TODO
 		for(term_t char_i = (term_t) (Buff->fname_len_i - (size_t) (Ui->win_w
-		    + CUR_SZ + SPACE_SZ)); char_i < Buff->fname_len_i; char_i++)
+		    + CUR_SZ)); char_i < Buff->fname_len_i; char_i++)
 		{
 			putchar(Buff->fname[char_i]);
 		}
-		putchar(' ');
 		WRAP_LINE();
 	}
 
 	config__set_color(&Config->Color_git_logo);
-	printf(" %s", git_str);
+	printf("%s", git_str);
 	config__set_color(NULL);;
 
 	config__set_color(&Config->Color_bar);
 	printf("%s\n", Buff->git_branch);
 
 	// The lower part with the "chars in the current line" indicator.
-	printf(" %.*s%*s", STATUS_MAX, Buff->status,
-	       (STATUS_MAX - (term_t) strlen(Buff->status) - SPACE_SZ), " ");
+	printf("%.*s%*s", STATUS_MAX, Buff->status,
+	       (STATUS_MAX - (term_t) strlen(Buff->status)), " ");
 
 	if(Ui->text_x > punch_card_width) // TODO: SIMPLIFY.
 	{
@@ -101,10 +100,10 @@ void ui__lower_bar(Conf_t* Config, const bool pane_toggled)
 	{
 		for(size_t y = 0; y < TOGGLED_PANE_SZ - LBAR_SZ; y++)
 		{
-			printf(" %s", key_binding[y]);
+			printf("%s", key_binding[y]);
 			WRAP_LINE();
 		}
 	}
-	printf(" %s", key_binding[TOGGLED_PANE_SZ - LBAR_SZ]);
+	printf("%s", key_binding[TOGGLED_PANE_SZ - LBAR_SZ]);
 	config__set_color(NULL);;
 }

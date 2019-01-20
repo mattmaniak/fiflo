@@ -5,10 +5,10 @@
 
 term_t window__get_terminal_size(char axis)
 {
-	const int line_height = 1;
-	const int w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
-	const int h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
-	const int sz_max      = USHRT_MAX;
+	const unsigned int line_height = 1;
+	const int          w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
+	const int          h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
+	const int          sz_max      = USHRT_MAX;
 
 	struct winsize terminal;
 
@@ -50,7 +50,7 @@ void window__flush(void)
 	ANSI_CLEAN_WHOLE_LINE();
 
 	// Then from move up and clean the next lines till the window ends.
-	for(term_t line = 1; line < window__get_terminal_size('Y'); line++) // TODO
+	for(term_t line = LBAR_SZ; line < window__get_terminal_size('Y'); line++) // TODO
 	{
 		ANSI_CURSOR_UP(1);
 		ANSI_CLEAN_WHOLE_LINE();
@@ -75,7 +75,7 @@ void window__fill(Buff_t* Buff, Ui_t* Ui)
 void window__set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 {
 	// Set by default to a filename edit.
-	term_t move_right = (term_t) (Buff->fname_len_i + SPACE_SZ);
+	term_t move_right = (term_t) (Buff->fname_len_i);
 	term_t move_up    = (term_t) (Ui->win_h - LBAR_SZ);
 
 	if(move_right >= Ui->win_w)
@@ -129,7 +129,7 @@ bool window__render(Buff_t* Buff, Conf_t* Config)
 	Ui.pane_h = TOGGLED_PANE_SZ;
 	Ui.lbar_h = (Buff->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
-	Ui.line_num_len = (term_t) (strlen(Ui.line_num_str) + (2 * SPACE_SZ));
+	Ui.line_num_len = (term_t) (strlen(Ui.line_num_str) + SPACE_SZ);
 	Ui.text_x       = (term_t) (Ui.win_w - Ui.line_num_len);
 	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 

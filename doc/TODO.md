@@ -1,9 +1,8 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- clean edit.c and memory.c trash,
 - functions names,
 - linked list API (v4.y.z),
-- simplify file.c,
+- simplify file.c and config.c,
 - all escapes and formatting control chars,
 - full text horizontal scroll,
 - pre-allocation of a memory, eg. next 16 lines,

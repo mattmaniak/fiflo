@@ -2,12 +2,27 @@
 #include "ascii.h"
 #include "edit.h"
 
-bool edit__delete_last_line(Buff_t* Buff)
+bool edit__delete_char(Buff_t* Buff)
 {
-	free(LAST_LINE);
-
-	Buff->lines_i--;
-	return memory__shrink_lines_array(Buff);
+	if(!CURSOR_AT_LINE_START)
+	{
+		edit__shift_text_horizonally(Buff, 'l');
+		if(!memory__shrink_act_line(Buff))
+		{
+			return false;
+		}
+		ACT_LINE_LEN_I--;
+		Buff->chars_i--;
+	}
+	// Deletes the non-empty line and copy chars to previous.
+	else if(!FIRST_LINE)
+	{
+		if(!edit__move_lines_backward(Buff))
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 bool edit__delete_line(Buff_t* Buff)
@@ -117,27 +132,7 @@ bool edit__move_lines_forward(Buff_t* Buff)
 	return true;
 }
 
-bool edit__delete_last_empty_line(Buff_t* Buff)
-{
-	free(ACT_LINE);
-
-	Buff->lines_i--;
-	if(!memory__shrink_act_line(Buff))
-	{
-		return false;
-	}
-
-	ACT_LINE_LEN_I--;
-	Buff->chars_i--;
-
-	if(!memory__shrink_lines_array(Buff))
-	{
-		return false;
-	}
-	return true;
-}
-
-bool edit__delete_non_last_line(Buff_t* Buff)
+bool edit__move_lines_backward(Buff_t* Buff)
 {
 	Buff->chars_i--;
 	PREV_LINE_LEN_I--;
@@ -165,25 +160,30 @@ bool edit__delete_non_last_line(Buff_t* Buff)
 	return true;
 }
 
-bool edit__delete_char(Buff_t* Buff)
+bool edit__delete_last_empty_line(Buff_t* Buff)
 {
-	if(!CURSOR_AT_LINE_START)
+	free(ACT_LINE);
+
+	Buff->lines_i--;
+	if(!memory__shrink_act_line(Buff))
 	{
-		edit__shift_text_horizonally(Buff, 'l');
-		if(!memory__shrink_act_line(Buff))
-		{
-			return false;
-		}
-		ACT_LINE_LEN_I--;
-		Buff->chars_i--;
+		return false;
 	}
-	// Deletes the non-empty line and copy chars to previous.
-	else if(!FIRST_LINE)
+
+	ACT_LINE_LEN_I--;
+	Buff->chars_i--;
+
+	if(!memory__shrink_lines_array(Buff))
 	{
-		if(!edit__delete_non_last_line(Buff))
-		{
-			return false;
-		}
+		return false;
 	}
 	return true;
+}
+
+bool edit__delete_last_line(Buff_t* Buff)
+{
+	free(LAST_LINE);
+
+	Buff->lines_i--;
+	return memory__shrink_lines_array(Buff);
 }
