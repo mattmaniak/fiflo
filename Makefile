@@ -51,17 +51,23 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 $(TARGET): $(OBJS)
 	@mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
-	$(CFLAGS) \
-	$(LDFLAGS)
+	$(CFLAGS) $(LDFLAGS)
+	@echo " "
+	@echo "Compilation successful."
 
 # Debugging.
 address: LDFLAGS += $(ASAN_FLAGS)
 address: $(TARGET)
+address:
+	@echo "AddressSanitizer linked successfuly."
 
+# TODO
 memory: CC = clang
 memory: CFLAGS = -Weverything
 memory: LDFLAGS += $(MSAN_FLAGS)
 memory: $(TARGET)
+memory:
+	@echo "MemorySanitizer linked successfuly."
 
 # Fun with a filesystem.
 install: $(TARGET)
@@ -81,3 +87,5 @@ uninstall:
 
 clean:
 	$(RM) -r $(OBJ_DIR) $(BIN_DIR)
+	@echo " "
+	@echo "Compilation trash removed."

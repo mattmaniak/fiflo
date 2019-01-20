@@ -18,7 +18,7 @@ as described but only with: master, develop, hotifx branches.
 - only snake_case is allowed,
 - visually align: defines, types, names, assignments etc,
 - single line should not exceed 80 chars printable chars,
-- e,g "function_name" in the file asdf.c should be named "asdf_function_name","
+- e,g function "f_name" in the file asdf.c should be named "asdf__f_name","
 - insert short TODOs near thing to fix as uppercase comments,
 - write documentation comments,
 - keep docs up-to-date with the code in stable releases,

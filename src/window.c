@@ -3,7 +3,7 @@
 #include "ui.h"
 #include "window.h"
 
-term_t window_get_terminal_size(char axis)
+term_t window__get_terminal_size(char axis)
 {
 	const int line_height = 1;
 	const int w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
@@ -43,22 +43,22 @@ term_t window_get_terminal_size(char axis)
 	return 0;
 }
 
-void window_flush(void)
+void window__flush(void)
 {
 	// Restore to the left lower corner and clean the lowest line.
-	ANSI_RESTORE_CUR_POS();
-	ANSI_CLEAN_LINE();
+	ANSI_RESTORE_CURSOR_POSITION();
+	ANSI_CLEAN_WHOLE_LINE();
 
 	// Then from move up and clean the next lines till the window ends.
-	for(term_t line = 1; line < window_get_terminal_size('Y'); line++) // TODO
+	for(term_t line = 1; line < window__get_terminal_size('Y'); line++) // TODO
 	{
-		ANSI_CUR_UP(1);
-		ANSI_CLEAN_LINE();
+		ANSI_CURSOR_UP(1);
+		ANSI_CLEAN_WHOLE_LINE();
 	}
 	fflush(NULL);
 }
 
-void window_fill(Buff_t* Buff, Ui_t* Ui)
+void window__fill(Buff_t* Buff, Ui_t* Ui)
 {
 	// Fill the empty area below the text to position the lower bar.
 	if((Buff->lines_i + INDEX) < (idx_t) Ui->text_y)
@@ -72,7 +72,7 @@ void window_fill(Buff_t* Buff, Ui_t* Ui)
 	// Else the lower bar will by positioned by the text.
 }
 
-void window_set_cursor_position(Buff_t* Buff, Ui_t* Ui)
+void window__set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 {
 	// Set by default to a filename edit.
 	term_t move_right = (term_t) (Buff->fname_len_i + SPACE_SZ);
@@ -84,8 +84,8 @@ void window_set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 	}
 
 	// Cursor is pushed right by the lower bar. Move it back.
-	ANSI_CUR_LEFT(Ui->win_w);
-	ANSI_SAVE_CUR_POS();
+	ANSI_CURSOR_LEFT(Ui->win_w);
+	ANSI_SAVE_CURSOR_POSITION();
 
 	if(!Buff->live_fname_edit)
 	{
@@ -107,21 +107,21 @@ void window_set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 		move_up = (ACT_LINE_I < Ui->text_y) ?
 		(term_t) (Ui->text_y - ACT_LINE_I - INDEX + Ui->lbar_h) : Ui->lbar_h;
 	}
-	ANSI_CUR_RIGHT(move_right);
-	ANSI_CUR_UP(move_up);
+	ANSI_CURSOR_RIGHT(move_right);
+	ANSI_CURSOR_UP(move_up);
 }
 
-bool window_render(Buff_t* Buff, Conf_t* Config)
+bool window__render(Buff_t* Buff, Conf_t* Config)
 {
 	Ui_t Ui;
 
 	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
 
-	if(!(Ui.win_w = window_get_terminal_size('X')))
+	if(!(Ui.win_w = window__get_terminal_size('X')))
 	{
 		return false;
 	}
-	if(!(Ui.win_h = window_get_terminal_size('Y')))
+	if(!(Ui.win_h = window__get_terminal_size('Y')))
 	{
 		return false;
 	}
@@ -133,15 +133,16 @@ bool window_render(Buff_t* Buff, Conf_t* Config)
 	Ui.text_x       = (term_t) (Ui.win_w - Ui.line_num_len);
 	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
-	ANSI_RESET();
-	ui_upper_bar(Buff, &Ui, Config);
+	config__set_color(NULL);
+	ui__upper_bar(Buff, &Ui, Config);
 
-	textprint_display_text(Buff, &Ui, Config);
-	ANSI_RESET();
-	window_fill(Buff, &Ui);
-	ui_lower_bar(Config, Buff->pane_toggled);
+	print__display_text(Buff, &Ui, Config);
+	config__set_color(NULL);
 
-	window_set_cursor_position(Buff, &Ui);
+	window__fill(Buff, &Ui);
+	ui__lower_bar(Config, Buff->pane_toggled);
+
+	window__set_cursor_position(Buff, &Ui);
 
 	return true;
 }

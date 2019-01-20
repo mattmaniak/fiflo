@@ -3,7 +3,7 @@
 #include "ascii.h"
 #include "file.h"
 
-bool file_set_name(Buff_t* Buff, const char* arg)
+bool file__set_name(Buff_t* Buff, const char* arg)
 {
 	const size_t nul_sz   = 1;
 	const size_t slash_sz = 1;
@@ -66,7 +66,7 @@ bool file_set_name(Buff_t* Buff, const char* arg)
 	return true;
 }
 
-void file_live_edit_name(Buff_t* Buff, char key)
+void file__live_edit_name(Buff_t* Buff, char key)
 {
 	const bool index = 1;
 
@@ -89,7 +89,7 @@ void file_live_edit_name(Buff_t* Buff, char key)
 	}
 }
 
-bool file_load(Buff_t* Buff)
+bool file__load(Buff_t* Buff)
 {
 	const size_t nul_sz = 1;
 	FILE*        textfile = fopen(Buff->fname, "r");
@@ -105,7 +105,7 @@ bool file_load(Buff_t* Buff)
 		}
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
-			if(!keys_printable_char(Buff, ch))
+			if(!keys__printable_char(Buff, ch))
 			{
 				return false;
 			}
@@ -120,7 +120,7 @@ bool file_load(Buff_t* Buff)
 	return true;
 }
 
-void file_save(Buff_t* Buff)
+void file__save(Buff_t* Buff)
 {
 	const int error = -1;
 	int       file_descriptor;
@@ -158,14 +158,14 @@ void file_save(Buff_t* Buff)
 	}
 }
 
-bool file_load_editor_config(Conf_t* Config)
+bool file__load_editor_config(Conf_t* Config)
 {
 	struct passwd* account_info = getpwuid(getuid());
 	char           path[PATH_MAX]; // TODO: MAX SIZE.
 
 	if(account_info == NULL)
 	{
-		config_set_default(Config);
+		config__set_default(Config);
 	}
 
 	strcpy(path, account_info->pw_dir);
@@ -173,19 +173,19 @@ bool file_load_editor_config(Conf_t* Config)
 
 	if(access(path, F_OK) == -1)
 	{
-		config_set_default(Config);
+		config__set_default(Config);
 	}
 
 	Config->file = fopen(path, "r");
 	if(Config->file != NULL)
 	{
-		config_set_custom(Config);
+		config__set_custom(Config);
 		fclose(Config->file);
 	}
 	return true;
 }
 
-bool file_get_git_branch(Buff_t* Buff) // TODO
+bool file__get_git_branch(Buff_t* Buff) // TODO
 {
 /* fatal: not a git repository (or any parent up to mount point /)
 Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set). */

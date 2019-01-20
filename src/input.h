@@ -5,15 +5,15 @@
 #include <termios.h>
 #include <unistd.h>
 
-extern bool keys_key_action(Buff_t* Buff, char key);
-extern void keys_arrow_left(Buff_t* Buff);
-extern void keys_arrow_right(Buff_t* Buff);
-extern void keys_arrow_up(Buff_t* Buff);
-extern void keys_arrow_down(Buff_t* Buff);
+extern bool keys__key_action(Buff_t* Buff, char key);
+extern void keys__arrow_left(Buff_t* Buff);
+extern void keys__arrow_right(Buff_t* Buff);
+extern void keys__arrow_up(Buff_t* Buff);
+extern void keys__arrow_down(Buff_t* Buff);
 
-extern void file_live_edit_name(Buff_t* Buff, char key);
+extern void file__live_edit_name(Buff_t* Buff, char key);
 
-extern void window_flush(void);
+extern void window__flush(void);
 
 // Reads one char wthout confirming by enter the key. Termios based.
 char input_getch(void);

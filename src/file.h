@@ -13,24 +13,24 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-extern bool keys_printable_char(Buff_t* Buff, char key);
+extern bool keys__printable_char(Buff_t* Buff, char key);
 
 // Sets the filename. If basename is passed as arg actent path will be added.
-bool file_set_name(Buff_t* Buff, const char* arg);
+bool file__set_name(Buff_t* Buff, const char* arg);
 
 // When the CTRL^O is pressed, there is possibility to basically edit the fname.
-void file_live_edit_name(Buff_t* Buff, char key);
+void file__live_edit_name(Buff_t* Buff, char key);
 
 // Reads the file using "input_recognize_char".
-bool file_load(Buff_t* Buff);
+bool file__load(Buff_t* Buff);
 
 // Puts the whole text to the file.
-void file_save(Buff_t* Buff);
+void file__save(Buff_t* Buff);
 
 //
-bool file_load_editor_config(Conf_t* Conf);
+bool file__load_editor_config(Conf_t* Conf);
 
 //
-bool file_get_git_branch(Buff_t* Buff);
+bool file__get_git_branch(Buff_t* Buff);
 
 #endif

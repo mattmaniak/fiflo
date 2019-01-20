@@ -3,26 +3,26 @@
 #include "ascii.h"
 #include "keys.h"
 
-bool keys_linefeed(Buff_t* Buff)
+bool keys__linefeed(Buff_t* Buff)
 {
 	if(BUFFER_NOT_FULL)
 	{
 		Buff->lines_i++;
-		if(!memory_extend_lines_array(Buff))
+		if(!memory__extend_lines_array(Buff))
 		{
 			return false;
 		}
 
 		if(CURSOR_X_SCROLLED)
 		{
-			if(!edit_move_lines_forward(Buff))
+			if(!edit__move_lines_forward(Buff))
 			{
 				return false;
 			}
 		}
 		else if(CURSOR_Y_SCROLLED) // Cursor is to the end of the line.
 		{
-			if(!memory_copy_lines_forward(Buff))
+			if(!memory__copy_lines_forward(Buff))
 			{
 				return false;
 			}
@@ -32,7 +32,7 @@ bool keys_linefeed(Buff_t* Buff)
 	return true;
 }
 
-bool keys_printable_char(Buff_t* Buff, char key)
+bool keys__printable_char(Buff_t* Buff, char key)
 {
 	const size_t nul_sz = 1;
 
@@ -49,14 +49,14 @@ bool keys_printable_char(Buff_t* Buff, char key)
 			Buff->chars_i++;
 			ACT_LINE_LEN_I++;
 
-			if(!memory_extend_line(Buff, ACT_LINE_I))
+			if(!memory__extend_line(Buff, ACT_LINE_I))
 			{
 				return false;
 			}
 
 			if(CURSOR_X_SCROLLED)
 			{
-				edit_shift_text_horizonally(Buff, 'r');
+				edit__shift_text_horizonally(Buff, 'r');
 			}
 			ACT_LINE[CURSOR_VERTICAL_I - nul_sz] = key;
 			ACT_LINE[ACT_LINE_LEN_I] = '\0';
@@ -69,7 +69,7 @@ bool keys_printable_char(Buff_t* Buff, char key)
 			}
 			else if(key == '\n')
 			{
-				if(!keys_linefeed(Buff))
+				if(!keys__linefeed(Buff))
 				{
 					return false;
 				}
@@ -91,18 +91,18 @@ bool keys_printable_char(Buff_t* Buff, char key)
 	return true;
 }
 
-bool keys_backspace(Buff_t* Buff)
+bool keys__backspace(Buff_t* Buff)
 {
 	if(!EMPTY_LINE)
 	{
-		if(!edit_delete_char(Buff))
+		if(!edit__delete_char(Buff))
 		{
 			return false;
 		}
 	}
 	else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
 	{
-		if(!edit_delete_last_empty_line(Buff))
+		if(!edit__delete_last_empty_line(Buff))
 		{
 			return false;
 		}
@@ -113,19 +113,19 @@ bool keys_backspace(Buff_t* Buff)
 	return true;
 }
 
-bool keys_key_action(Buff_t* Buff, char key)
+bool keys__key_action(Buff_t* Buff, char key)
 {
 	const char record_separator_fake_tab = 30;
 
 	switch(key)
 	{
 		default:
-		return keys_printable_char(Buff, key);
+		return keys__printable_char(Buff, key);
 
 		case '\t':
 		for(size_t tab = 0; tab < 4; tab++)
 		{
-			if(!keys_printable_char(Buff, record_separator_fake_tab))
+			if(!keys__printable_char(Buff, record_separator_fake_tab))
 			{
 				return false;
 			}
@@ -133,13 +133,13 @@ bool keys_key_action(Buff_t* Buff, char key)
 		break;
 
 		case BACKSPACE:
-		return keys_backspace(Buff);
+		return keys__backspace(Buff);
 
 		case CTRL_Q:
 		return false;
 
 		case CTRL_S:
-		file_save(Buff);
+		file__save(Buff);
 		break;
 
 		case CTRL_BACKSLASH:
@@ -147,7 +147,7 @@ bool keys_key_action(Buff_t* Buff, char key)
 		break;
 
 		case CTRL_D:
-		return edit_delete_line(Buff);
+		return edit__delete_line(Buff);
 
 		case CTRL_O:
 		Buff->live_fname_edit = true;
@@ -155,7 +155,7 @@ bool keys_key_action(Buff_t* Buff, char key)
 	return true;
 }
 
-void keys_arrow_left(Buff_t* Buff)
+void keys__arrow_left(Buff_t* Buff)
 {
 	bool more_than_one_line = (Buff->lines_i > 0);
 
@@ -165,13 +165,13 @@ void keys_arrow_left(Buff_t* Buff)
 	}
 	else if(more_than_one_line && !CURSOR_AT_TOP)
 	{
-		// Set to the right ignoring the keys_linefeed.
+		// Set to the right ignoring the keys__linefeed.
 		Buff->cusr_x = 1;
 		Buff->cusr_y++;
 	}
 }
 
-void keys_arrow_right(Buff_t* Buff)
+void keys__arrow_right(Buff_t* Buff)
 {
 	if(CURSOR_X_SCROLLED)
 	{
@@ -181,7 +181,7 @@ void keys_arrow_right(Buff_t* Buff)
 			Buff->cusr_y--;
 			Buff->cusr_x = ACT_LINE_LEN_I;
 		}
-		// Last line doesn't contain keys_linefeed so ignoring that isn't necessary.
+		// Last line doesn't contain keys__linefeed so ignoring that isn't necessary.
 		else if(!CURSOR_X_SCROLLED && (Buff->cusr_y == 1))
 		{
 			Buff->cusr_y--;
@@ -189,18 +189,18 @@ void keys_arrow_right(Buff_t* Buff)
 	}
 }
 
-void keys_arrow_up(Buff_t* Buff)
+void keys__arrow_up(Buff_t* Buff)
 {
 	if(!CURSOR_AT_TOP)
 	{
 		/* Cursor at the left side: doesn't go at the end of a line. Always
-		at the beginning or ignore the keys_linefeed. */
+		at the beginning or ignore the keys__linefeed. */
 		Buff->cusr_x = (CURSOR_AT_LINE_START) ? PREV_LINE_LEN_I : 1;
 		Buff->cusr_y++;
 	}
 }
 
-void keys_arrow_down(Buff_t* Buff)
+void keys__arrow_down(Buff_t* Buff)
 {
 	bool cursor_at_previous_line_start = CURSOR_AT_LINE_START;
 

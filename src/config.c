@@ -1,6 +1,6 @@
 #include "config.h"
 
-void config_init_selectors(Conf_t* Config)
+void config__init_selectors(Conf_t* Config)
 {
 	strcpy(Config->Color_bar.selector, "color-bar");
 	strcpy(Config->Color_line_number_current.selector,
@@ -12,7 +12,7 @@ void config_init_selectors(Conf_t* Config)
 	strcpy(Config->Color_git_logo.selector, "color-git-logo");
 }
 
-void config_parse_selector(Conf_t* Config, char* selector, int value)
+void config__parse_selector(Conf_t* Config, char* selector, int value)
 {
 	if(!strcmp(Config->Color_bar.selector, selector))
 	{
@@ -40,7 +40,7 @@ void config_parse_selector(Conf_t* Config, char* selector, int value)
 	}
 }
 
-int config_encode_color(Conf_t* Config, char* color_name)
+int config__encode_color(Conf_t* Config, char* color_name)
 {
 	Colors_t value = WHITE;
 
@@ -110,12 +110,12 @@ int config_encode_color(Conf_t* Config, char* color_name)
 	}
 	else
 	{
-		config_set_default(Config);
+		config__set_default(Config);
 	}
 	return value;
 }
 
-void config_set_default(Conf_t* Config)
+void config__set_default(Conf_t* Config)
 {
 	Config->Color_bar.value                 = WHITE;
 	Config->Color_git_logo.value            = BRIGHT_RED;
@@ -125,14 +125,14 @@ void config_set_default(Conf_t* Config)
 	Config->Color_warning.value             = RED;
 }
 
-void config_set_custom(Conf_t* Config)
+void config__set_custom(Conf_t* Config)
 {
 	int  value = 0;
 	char line[128];
 	char selector[48];
 	char color_name[32];
 
-	config_init_selectors(Config);
+	config__init_selectors(Config);
 
 	while(fgets(line, 80, Config->file) != NULL)
 	{
@@ -145,16 +145,24 @@ void config_set_custom(Conf_t* Config)
 		strncpy(color_name, strtok(NULL, " = "), 32);
 
 		// TODO: HANDLE COMMENTS.
-		value = config_encode_color(Config, color_name);
-		config_parse_selector(Config, selector, value);
+		value = config__encode_color(Config, color_name);
+		config__parse_selector(Config, selector, value);
 	}
 	if(value == 0) // If the whole file is commented out.
 	{
-		config_set_default(Config);
+		config__set_default(Config);
 	}
 }
 
-void config_set_color(Opt_t* Option)
+void config__set_color(Opt_t* Option)
 {
-	printf("\x1b[%dm", Option->value);
+
+	if(Option == NULL)
+	{
+		printf("\x1b[0m"); // Reset colors and others to default.
+	}
+	else
+	{
+		printf("\x1b[%dm", Option->value);
+	}
 }

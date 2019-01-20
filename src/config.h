@@ -46,21 +46,21 @@ typedef struct
 Conf_t;
 
 //
-void config_init_selectors(Conf_t* Config);
+void config__init_selectors(Conf_t* Config);
 
 // Check if selector_in_file == expected_selector.
-void config_parse_selector(Conf_t* Config, char* selector, int value);
+void config__parse_selector(Conf_t* Config, char* selector, int value);
 
 // Convert a word into an ASCII escape code.
-int config_encode_color(Conf_t* Config, char* color_name);
+int config__encode_color(Conf_t* Config, char* color_name);
 
 //
-void config_set_default(Conf_t* Conf);
+void config__set_default(Conf_t* Conf);
 
 //
-void config_set_custom(Conf_t* Conf);
+void config__set_custom(Conf_t* Conf);
 
 //
-void config_set_color(Opt_t* Option);
+void config__set_color(Opt_t* Option);
 
 #endif

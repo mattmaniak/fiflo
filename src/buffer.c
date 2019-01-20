@@ -1,6 +1,6 @@
 #include "buffer.h"
 
-bool buffer_init(Buff_t* Buff)
+bool buffer__init(Buff_t* Buff)
 {
 	Buff->text = malloc(ADDR_SZ);
 	if(Buff->text == NULL)
@@ -23,7 +23,7 @@ bool buffer_init(Buff_t* Buff)
 	ACT_LINE_LEN_I = 0;
 
 	Buff->live_fname_edit = false;
-	Buff->key_sequence    = false;
+	Buff->chars_sequence  = false;
 	Buff->pane_toggled    = false;
 
 	ACT_LINE = malloc(ADDR_SZ);
@@ -35,7 +35,7 @@ bool buffer_init(Buff_t* Buff)
 	return true;
 }
 
-void buffer_free(Buff_t* Buff)
+void buffer__free(Buff_t* Buff)
 {
 	for(idx_t line_i = 0; line_i <= Buff->lines_i; line_i++)
 	{

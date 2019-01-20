@@ -4,7 +4,7 @@
 #include "config.h"
 #include "fiflo.h"
 
-bool options(const char* arg)
+bool fiflo__options(const char* arg)
 {
 	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 	{
@@ -29,32 +29,32 @@ bool options(const char* arg)
 	return true;
 }
 
-void run(const char* arg)
+void fiflo__run(const char* arg)
 {
 	char   pressed_key = '\0'; // Initializer.
 	Buff_t Buff;
 	Conf_t Config;
 
-	if(!buffer_init(&Buff))
+	if(!buffer__init(&Buff))
 	{
 		goto free;
 	}
-	if(!file_set_name(&Buff, arg))
+	if(!file__set_name(&Buff, arg))
 	{
 		goto free;
 	}
-	if(!file_load(&Buff))
+	if(!file__load(&Buff))
 	{
 		goto free;
 	}
-	if(!file_load_editor_config(&Config))
+	if(!file__load_editor_config(&Config))
 	{
 		goto free;
 	}
 
 	for(;;) // The main program loop.
 	{
-		if(!file_get_git_branch(&Buff))
+		if(!file__get_git_branch(&Buff))
 		{
 			break;
 		}
@@ -62,7 +62,7 @@ void run(const char* arg)
 		{
 			break;
 		}
-		if(!window_render(&Buff, &Config))
+		if(!window__render(&Buff, &Config))
 		{
 			break;
 		}
@@ -70,10 +70,10 @@ void run(const char* arg)
 		{
 			break;
 		}
-		window_flush();
+		window__flush();
 	}
 	free:
-	buffer_free(&Buff); // TODO: FREE.
+	buffer__free(&Buff); // TODO: FREE.
 }
 
 int main(int argc, char** argv)
@@ -86,16 +86,16 @@ int main(int argc, char** argv)
 
 	if(argv[1] == NULL)	// Sets the default basename and starts.
 	{
-		run("");
+		fiflo__run("");
 		goto exit;
 	}
 	else if(strlen(argv[1]) <= PATH_MAX)
 	{
-		if(!options(argv[1]))
+		if(!fiflo__options(argv[1]))
 		{
 			goto exit;
 		}
-		run(argv[1]);
+		fiflo__run(argv[1]);
 		goto exit;
 	}
 	else

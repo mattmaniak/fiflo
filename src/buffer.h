@@ -26,7 +26,7 @@ typedef uint32_t idx_t;
 
 typedef struct // TODO
 {
-	bool key_sequence;       // True if pressed key is ANSI escape code.
+	bool chars_sequence;     // True if pressed key is ANSI escape code.
 	bool live_filename_edit; // As in the name.
 	bool pane_toggled;       // As in the name.
 }
@@ -35,7 +35,7 @@ Modes_t;
 typedef struct // TODO: SPLIT AND PADDING
 {
 	// Modes.
-	bool     key_sequence;       // True if pressed key is ANSI escape code.
+	bool     chars_sequence;     // True if pressed key is ANSI escape code.
 	bool     live_fname_edit;    // As in the name.
 	bool     pane_toggled;       // As in the name.
 
@@ -89,9 +89,9 @@ Buff_t;
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
 // Initializes all Buff structure members.
-bool buffer_init(Buff_t* Buff);
+bool buffer__init(Buff_t* Buff);
 
 // Display a error message and exit.
-void buffer_free(Buff_t* Buff);
+void buffer__free(Buff_t* Buff);
 
 #endif

@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "memory.h"
 
-bool memory_extend_line(Buff_t* Buff, idx_t line_i)
+bool memory__extend_line(Buff_t* Buff, idx_t line_i)
 {
 	idx_t memblock = MEMBLK;
 
@@ -37,7 +37,7 @@ bool memory_extend_line(Buff_t* Buff, idx_t line_i)
 	return true;
 }
 
-bool memory_shrink_act_line(Buff_t* Buff)
+bool memory__shrink_act_line(Buff_t* Buff)
 {
 	idx_t memblock = INIT_MEMBLK;
 
@@ -67,7 +67,7 @@ bool memory_shrink_act_line(Buff_t* Buff)
 	return true;
 }
 
-bool memory_shrink_prev_line(Buff_t* Buff)
+bool memory__shrink_prev_line(Buff_t* Buff)
 {
 	idx_t memblock = INIT_MEMBLK;
 
@@ -95,7 +95,7 @@ bool memory_shrink_prev_line(Buff_t* Buff)
 	return true;
 }
 
-bool memory_extend_lines_array(Buff_t* Buff)
+bool memory__extend_lines_array(Buff_t* Buff)
 {
 	// Enhance the array that contains pointers to lines.
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
@@ -128,7 +128,7 @@ bool memory_extend_lines_array(Buff_t* Buff)
 	return true;
 }
 
-bool memory_shrink_lines_array(Buff_t* Buff)
+bool memory__shrink_lines_array(Buff_t* Buff)
 {
 	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
 	if(Buff->text == NULL)
@@ -147,7 +147,7 @@ bool memory_shrink_lines_array(Buff_t* Buff)
 	return true;
 }
 
-bool memory_copy_lines_forward(Buff_t* Buff)
+bool memory__copy_lines_forward(Buff_t* Buff)
 {
 	const unsigned int prev = 1;
 
@@ -175,7 +175,7 @@ bool memory_copy_lines_forward(Buff_t* Buff)
 	return true;
 }
 
-bool memory_copy_lines_backward(Buff_t* Buff)
+bool memory__copy_lines_backward(Buff_t* Buff)
 {
 	const unsigned int next = 1;
 
