@@ -74,8 +74,9 @@ install: $(TARGET)
 	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
 	sudo $(RM) $(MAN_INS_DIR)/$(TARGET).1
 	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)/$(TARGET).1
-	sudo gzip $(MAN_INS_DIR)/$(TARGET).1
-	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
+#	sudo gzip $(MAN_INS_DIR)/$(TARGET).1
+#	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
+#	DEBUG
 
 uninstall:
 	sudo $(RM) \

@@ -9,9 +9,11 @@ files use git-show or git-log.
 ## Versions:
 ### v3.0.0 (WIP):
 - 80th column indicator,
-- display git branch name,
+- git branch name display,
 - return-based API,
-- colorful transparent UI.
+- transparent UI with some colors,
+- fiflorc file - basic configuration,
+- TAB key.
 
 ### v2.2.2 (2018, December 22):
 - Repaired positions of line numbers when the line has same width as the

@@ -36,8 +36,9 @@ bool keys__printable_char(Buff_t* Buff, char key)
 {
 	const size_t nul_sz = 1;
 
-#ifndef ALL_KEYS
-	const bool in_keymap = (key == '\0') || (key == '\n') || (key >= 32);
+#ifndef DEBUG_KEYS
+	const bool in_keymap = (key == '\0') || (key == '\t') || (key == '\n')
+	                       || (key >= 32);
 #else
 	const bool in_keymap = true;
 #endif
@@ -93,29 +94,45 @@ bool keys__printable_char(Buff_t* Buff, char key)
 
 bool keys__backspace(Buff_t* Buff)
 {
-	if(!EMPTY_LINE)
-	{
-		if(!edit__delete_char(Buff))
-		{
-			return false;
-		}
-	}
-	else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
-	{
-		if(!edit__delete_last_empty_line(Buff))
-		{
-			return false;
-		}
-	}
-	ACT_LINE[ACT_LINE_LEN_I] = '\0'; // Linefeed to the terminator.
-	SET_STATUS("edited");
+	idx_t ch = ACT_LINE_LEN_I;
 
+	for(idx_t tab = 0; tab < 4; tab++) // Tab loop. TODO
+	{
+		if(!EMPTY_LINE)
+		{
+			if(!edit__delete_char(Buff))
+			{
+				return false;
+			}
+		}
+		else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
+		{
+			if(!edit__delete_last_empty_line(Buff))
+			{
+				return false;
+			}
+			break; // Ignore the tab loop when removing a line.
+		}
+		ACT_LINE[ACT_LINE_LEN_I] = '\0'; // Linefeed to the terminator.
+
+		if(ch > 0)
+		{
+			ch--;
+		}
+		printf("lolo %d\n", ch);
+
+		SET_STATUS("edited");
+		if((!EMPTY_LINE && (ACT_LINE[ch - 1] != '\t')) || (ACT_LINE[0] != '\t'))
+		{
+			break;
+		}
+	}
 	return true;
 }
 
 bool keys__key_action(Buff_t* Buff, char key)
 {
-	const char record_separator_fake_tab = 30;
+	// const char record_separator_fake_tab = 30;
 
 	switch(key)
 	{
@@ -125,7 +142,7 @@ bool keys__key_action(Buff_t* Buff, char key)
 		case '\t':
 		for(size_t tab = 0; tab < 4; tab++)
 		{
-			if(!keys__printable_char(Buff, record_separator_fake_tab))
+			if(!keys__printable_char(Buff, '\t'))
 			{
 				return false;
 			}

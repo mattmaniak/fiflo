@@ -3,17 +3,20 @@
 
 // Renders the text itself. Cares about scrolling.
 
-// Prints and shrinks line that is non-actual.
-void print__another_line(Buff_t* Buff, Ui_t* Ui, Conf_t* Config, idx_t line_i);
+// Converts stupidly-implemented tabs into some renderable spaces.
+void print__line_with_tabs(void);
 
 // Returns value of hidden lines.
 idx_t print__set_start_line(Buff_t* Buff, Ui_t* Ui);
 
-// Scrolls chars. Used when the cursor is in static position.
-void print__scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui);
-
 // Decides how to show it. Can scroll it or the cursor.
 void print__actual_line(Buff_t* Buff, Ui_t* Ui);
+
+// Prints and shrinks line that is non-actual.
+void print__another_line(Buff_t* Buff, Ui_t* Ui, Conf_t* Config, idx_t line_i);
+
+// Scrolls chars. Used when the cursor is in static position.
+void print__scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui);
 
 // Renders a text when there is smaller amount of lines than the window height.
 void print__fit_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config);

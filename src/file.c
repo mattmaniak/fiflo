@@ -30,36 +30,36 @@ bool file__set_name(Buff_t* Buff, const char* arg)
 	}
 	else // Relative path or the basename.
 	{
-		char* cw_dir = malloc(PATH_MAX - NAME_MAX - slash_sz);
-		if(cw_dir == NULL)
+		char* cwdir = malloc(PATH_MAX - NAME_MAX - slash_sz);
+		if(cwdir == NULL)
 		{
 			fputs("Can't alloc a memory for the directory.\n", stderr);
 			return false;
 		}
 
-		cw_dir = getcwd(cw_dir, PATH_MAX - NAME_MAX - slash_sz);
-		if(cw_dir == NULL)
+		cwdir = getcwd(cwdir, PATH_MAX - NAME_MAX - slash_sz);
+		if(cwdir == NULL)
 		{
 			fputs("Can't get the current directory. Maybe too long.\n", stderr);
 			return false;
 		}
 
-		if((strlen(cw_dir) + arg_len) >= PATH_MAX)
+		if((strlen(cwdir) + arg_len) >= PATH_MAX)
 		{
 			fputs("Current directory is too long.\n", stderr); // TODO.
 			return false;
 		}
 		// Copy the path.
-		strncpy(Buff->fname, cw_dir, PATH_MAX - NAME_MAX - slash_sz);
+		strncpy(Buff->fname, cwdir, PATH_MAX - NAME_MAX - slash_sz);
 
-		Buff->fname[strlen(cw_dir)] = '/'; // Add the slash between.
+		Buff->fname[strlen(cwdir)] = '/'; // Add the slash between.
 
 		// Append the basename.
 		for(uint16_t char_i = 0; char_i < arg_len; char_i++)
 		{
-			Buff->fname[strlen(cw_dir) + char_i + slash_sz] = arg[char_i];
+			Buff->fname[strlen(cwdir) + char_i + slash_sz] = arg[char_i];
 		}
-		free(cw_dir);
+		free(cwdir);
 	}
 	Buff->fname_len_i = strlen(Buff->fname);
 
@@ -105,6 +105,16 @@ bool file__load(Buff_t* Buff)
 		}
 		while((ch = (char) fgetc(textfile)) != EOF)
 		{
+			if(ch == '\t') // TODO: TAB_INSERT.
+			{
+				for(idx_t char_i = 0; char_i < (4 - 1); char_i++)
+				{
+					if(!keys__printable_char(Buff, ch))
+					{
+						return false;
+					}
+				}
+			}
 			if(!keys__printable_char(Buff, ch))
 			{
 				return false;
@@ -146,6 +156,13 @@ void file__save(Buff_t* Buff)
 			MSan because of there is more memory allocated than is needed. */
 			for(idx_t char_i = 0; char_i < Buff->line_len_i[line_i]; char_i++)
 			{
+				if((Buff->text[line_i][char_i] == '\t')
+				|| (Buff->text[line_i][char_i + 1] == '\t')
+				|| (Buff->text[line_i][char_i + 2] == '\t')
+				|| (Buff->text[line_i][char_i + 3] == '\t'))
+				{
+					char_i += (4 - 1);
+				}
 				putc(Buff->text[line_i][char_i], textfile);
 			}
 		}
@@ -160,14 +177,14 @@ void file__save(Buff_t* Buff)
 
 bool file__load_editor_config(Conf_t* Config)
 {
-	struct passwd* account_info = getpwuid(getuid());
+	struct passwd* account_info;
 	char           path[PATH_MAX]; // TODO: MAX SIZE.
 
+	account_info  = getpwuid(getuid());
 	if(account_info == NULL)
 	{
 		config__set_default(Config);
 	}
-
 	strcpy(path, account_info->pw_dir);
 	strcat(path, "/.config/fiflorc");
 
@@ -187,39 +204,56 @@ bool file__load_editor_config(Conf_t* Config)
 
 bool file__get_git_branch(Buff_t* Buff) // TODO
 {
-/* fatal: not a git repository (or any parent up to mount point /)
-Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set). */
+	const char git_head_path[] = "/.git/HEAD";
+	// char       path[PATH_MAX]; // TODO: MAX SIZE.
+	FILE*      git_head_file;
 
-	FILE* pipe;
-
-	if(access("/usr/bin/git", F_OK) == -1)
+	char* cwdir = malloc(PATH_MAX - NAME_MAX - 1);
+	if(cwdir == NULL)
 	{
-		strncpy(Buff->git_branch, "VCS not installed", 256);
-		return true;
+		fputs("Can't alloc a memory for the directory.\n", stderr);
+		return false;
 	}
-
-	pipe = popen("/usr/bin/git rev-parse --abbrev-ref HEAD", "r");
-	if(pipe == NULL)
+	cwdir = getcwd(cwdir, PATH_MAX - NAME_MAX - 1);
+	if(cwdir == NULL)
 	{
-		strncpy(Buff->git_branch, "can't get a branch\n", 256);
-		return true;
-	}
-
-	while(fgets(Buff->git_branch, 256 - 1, pipe) != NULL) // TODO: MAX_LEN
-
-	if(!strncmp(Buff->git_branch, "fatal: not a git repository", 23)) // TODO
-	{
-		strncpy(Buff->git_branch, "repo not found", 256);
-	}
-	if(pclose(pipe) == -1)
-	{
-		fputs("Can't...", stderr); // TODO
+		fputs("Can't get the current directory. Maybe too long.\n", stderr);
 		return false;
 	}
 
+	// strcpy(cwdir, account_info->pw_dir);
+	strcat(cwdir, git_head_path);
+
+	// puts(cwdir);
+
+	if(access(cwdir, F_OK) == -1)
+	{
+		strcpy(Buff->git_branch, "[branch not found]");
+		return true;
+	}
+
+	git_head_file = fopen(cwdir, "r");
+	if(git_head_file == NULL)
+	{
+		fprintf(stderr, "Can't open the \"%s\" to get a Git branch.\n",
+		        git_head_path);
+		return false;
+	}
+	free(cwdir);
+
+	// Ignore the passed string in the file, to get the branch after the slash.
+	if(fseek(git_head_file, (long) strlen("ref: refs/heads/"), 0) == -1)
+	{
+		fprintf(stderr, "Can't locate the branch in the \"%s\" file\n.",
+		        git_head_path);
+		return false;
+	}
+	while(fgets(Buff->git_branch, NAME_MAX + 1, git_head_file) != NULL) // TODO: MAX_LEN
+
 	if(Buff->git_branch[strlen(Buff->git_branch) - 1] == '\n')
 	{
-		Buff->git_branch[strlen(Buff->git_branch) - 1] = '\0';
+		Buff->git_branch[strlen(Buff->git_branch) - 1] = '\0'; // LF removal.
 	}
+	fclose(git_head_file);
 	return true;
 }

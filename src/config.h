@@ -26,6 +26,9 @@ typedef enum
 }
 Colors_t;
 
+#define BRIGHT_RED 91
+#define RESET 0
+
 typedef struct
 {
 	char selector[32];
@@ -36,12 +39,13 @@ Opt_t;
 typedef struct
 {
 	FILE* file;
-	Opt_t Color_bar;
+	// Opt_t Color_bar;
 	Opt_t Color_git_logo;
-	Opt_t Color_line_number;
+	// Opt_t Color_line_number;
 	Opt_t Color_line_number_current;
 	Opt_t Color_text;
 	Opt_t Color_warning;
+	Opt_t Tab_width;
 }
 Conf_t;
 

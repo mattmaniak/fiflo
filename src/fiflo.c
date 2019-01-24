@@ -73,7 +73,7 @@ void fiflo__run(const char* arg)
 		window__flush();
 	}
 	free:
-	buffer__free(&Buff); // TODO: FREE.
+	buffer__free(&Buff);
 }
 
 int main(int argc, char** argv)

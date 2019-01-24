@@ -13,7 +13,12 @@
 #define SLASH_SZ 1
 #define SPACE_SZ 1
 
-#define UBAR_SZ 3
+#define GIT_LOGO        "|\\ git "
+#define GIT_LOGO_LENGTH 7
+
+#define DOTS_LENGTH 3
+
+#define UBAR_SZ 2
 #define LBAR_SZ 1 // Must be equal 1, otherwise will break rendering a little.
 
 #define TOGGLED_PANE_SZ 5
@@ -41,9 +46,9 @@ void ui__print_line_number(Buff_t* Buff, Conf_t* Config, idx_t line_i,
                            term_t line_num_len);
 
 // Renders the upper bar with a filename and indicators.
-void ui__upper_bar(Buff_t* Buff, Ui_t* Ui, Conf_t* Config);
+void ui__upper_bar(Buff_t* Buff, Conf_t* Config, Ui_t* Ui);
 
 // Renders the lower bar that contains keyboard info.
-void ui__lower_bar(Conf_t* Config, const bool pane_toggled);
+void ui__lower_bar(Buff_t*, Conf_t* Config, Ui_t* Ui);
 
 #endif

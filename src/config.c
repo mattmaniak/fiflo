@@ -2,11 +2,11 @@
 
 void config__init_selectors(Conf_t* Config)
 {
-	strcpy(Config->Color_bar.selector, "color-bar");
+	// strcpy(Config->Color_bar.selector, "color-bar");
 	strcpy(Config->Color_line_number_current.selector,
 	       "color-line-number-current");
 
-	strcpy(Config->Color_line_number.selector, "color-line-number");
+	// strcpy(Config->Color_line_number.selector, "color-line-number");
 	strcpy(Config->Color_text.selector, "color-text");
 	strcpy(Config->Color_warning.selector, "color-warning");
 	strcpy(Config->Color_git_logo.selector, "color-git-logo");
@@ -14,18 +14,18 @@ void config__init_selectors(Conf_t* Config)
 
 void config__parse_selector(Conf_t* Config, char* selector, int value)
 {
-	if(!strcmp(Config->Color_bar.selector, selector))
-	{
-		Config->Color_bar.value = value;
-	}
-	else if(!strcmp(Config->Color_line_number_current.selector, selector))
+	// if(!strcmp(Config->Color_bar.selector, selector))
+	// {
+	// 	Config->Color_bar.value = value;
+	// }
+	if(!strcmp(Config->Color_line_number_current.selector, selector))
 	{
 		Config->Color_line_number_current.value = value;
 	}
-	else if(!strcmp(Config->Color_line_number.selector, selector))
-	{
-		Config->Color_line_number.value = value;
-	}
+	// else if(!strcmp(Config->Color_line_number.selector, selector))
+	// {
+	// 	Config->Color_line_number.value = value;
+	// }
 	else if(!strcmp(Config->Color_text.selector, selector))
 	{
 		Config->Color_text.value = value;
@@ -117,12 +117,13 @@ int config__encode_color(Conf_t* Config, char* color_name)
 
 void config__set_default(Conf_t* Config)
 {
-	Config->Color_bar.value                 = WHITE;
+	// Config->Color_bar.value                 = WHITE;
 	Config->Color_git_logo.value            = BRIGHT_RED;
-	Config->Color_line_number.value         = BRIGHT_MAGENTA;
-	Config->Color_line_number_current.value = WHITE;
+	// Config->Color_line_number.value         = BRIGHT_MAGENTA;
+	Config->Color_line_number_current.value = BRIGHT_MAGENTA;
 	Config->Color_text.value                = WHITE;
 	Config->Color_warning.value             = RED;
+	Config->Tab_width.value                 = 4;
 }
 
 void config__set_custom(Conf_t* Config)
@@ -156,13 +157,12 @@ void config__set_custom(Conf_t* Config)
 
 void config__set_color(Opt_t* Option)
 {
-
 	if(Option == NULL)
 	{
 		printf("\x1b[0m"); // Reset colors and others to default.
 	}
 	else
 	{
-		printf("\x1b[%dm", Option->value);
+		printf("\x1b[%um", Option->value);
 	}
 }

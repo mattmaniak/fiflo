@@ -3,17 +3,9 @@
 #include "ui.h"
 #include "print.h"
 
-void print__another_line(Buff_t* Buff, Ui_t* Ui, Conf_t* Config, idx_t line_i)
+void print__line_with_tabs(void)
 {
-	const unsigned int cursor_or_linefeed_sz = 1;
 
-	ui__print_line_number(Buff, Config, line_i, Ui->line_num_len);
-	printf("%.*s", Ui->text_x - cursor_or_linefeed_sz, Buff->text[line_i]);
-
-	if(Buff->line_len_i[line_i] >= Ui->text_x)
-	{
-		WRAP_LINE();
-	}
 }
 
 idx_t print__set_start_line(Buff_t* Buff, Ui_t* Ui)
@@ -28,30 +20,23 @@ idx_t print__set_start_line(Buff_t* Buff, Ui_t* Ui)
 	return scrolled_lines;
 }
 
-void print__scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
-{
-	idx_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
-
-	// Text will be scrolled. Not cursor.
-	for(; char_i < CURSOR_VERTICAL_I; char_i++)
-	{
-		putchar(ACT_LINE[char_i]);
-	}
-	/* Sometimes is needed because the "fill" function renders the smallest
-	amount of linefeeds. In other cases the linefeed is provided by the char in
-	a line. */
-	if(CURSOR_Y_SCROLLED)
-	{
-		WRAP_LINE();
-	}
-}
-
 void print__actual_line(Buff_t* Buff, Ui_t* Ui)
 {
 	// There is small amount of chars. Horizontal scroll isn't required.
 	if(ACT_LINE_LEN_I < Ui->text_x)
 	{
-		printf("%s", ACT_LINE);
+		for(idx_t ch = 0; ch < ACT_LINE_LEN_I; ch++)
+		{
+			if(ACT_LINE[ch] == '\t')
+			{
+				putchar(' ');
+			}
+			else
+			{
+				putchar(ACT_LINE[ch]);
+			}
+		}
+		// printf("%s", ACT_LINE);
 	}
 	// Chars won't fits in the horizontal space.
 	else if((ACT_LINE_LEN_I - Ui->text_x) >= Buff->cusr_x)
@@ -62,7 +47,18 @@ void print__actual_line(Buff_t* Buff, Ui_t* Ui)
 	else
 	{
 		// Render only left part of the line. Cursor can scrolled.
-		printf("%.*s", Ui->text_x - CUR_SZ, ACT_LINE);
+		for(idx_t ch = 0; ch < ACT_LINE_LEN_I; ch++)
+		{
+			if(ACT_LINE[ch] == '\t')
+			{
+				putchar(' ');
+			}
+			else
+			{
+				putchar(ACT_LINE[ch]);
+			}
+		}
+		// printf("%.*s", Ui->text_x - CUR_SZ, ACT_LINE);
 
 		// For proper rendering.
 		if(((ACT_LINE_I + INDEX) < Ui->text_y) && (ACT_LINE_I != Buff->lines_i))
@@ -72,9 +68,59 @@ void print__actual_line(Buff_t* Buff, Ui_t* Ui)
 	}
 }
 
+void print__another_line(Buff_t* Buff, Ui_t* Ui, Conf_t* Config, idx_t line_i)
+{
+	// const unsigned int cursor_or_linefeed_sz = 1;
+
+	ui__print_line_number(Buff, Config, line_i, Ui->line_num_len);
+
+	for(idx_t ch = 0; ch < Buff->line_len_i[line_i]; ch++)
+	{
+		if(Buff->text[line_i][ch] == '\t')
+		{
+			putchar(' ');
+		}
+		else
+		{
+			putchar(Buff->text[line_i][ch]);
+		}
+	}
+	// printf("%.*s", Ui->text_x - cursor_or_linefeed_sz, Buff->text[line_i]);
+
+	if(Buff->line_len_i[line_i] >= Ui->text_x)
+	{
+		WRAP_LINE();
+	}
+}
+
+void print__scroll_line_horizontally(Buff_t* Buff, Ui_t* Ui)
+{
+	// Text will be scrolled. Not cursor.
+	for(idx_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
+	    char_i < CURSOR_VERTICAL_I; char_i++)
+	{
+		if(ACT_LINE[char_i] == '\t')
+		{
+			putchar(' ');
+		}
+		else
+		{
+			putchar(ACT_LINE[char_i]);
+		}
+	}
+	/* Sometimes is needed because the "fill" function renders the smallest
+	amount of linefeeds. In other cases the linefeed is provided by the char in
+	a line. */
+	if(CURSOR_Y_SCROLLED)
+	{
+		WRAP_LINE();
+	}
+}
+
 void print__fit_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 {
-	idx_t line_i;
+	const idx_t actual_line_size = 1;
+	idx_t       line_i;
 
 	for(line_i = 0; line_i < ACT_LINE_I; line_i++)
 	{
@@ -85,7 +131,7 @@ void print__fit_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 
 	if(CURSOR_Y_SCROLLED)
 	{
-		for(line_i = ACT_LINE_I + INDEX; line_i < Buff->lines_i; line_i++)
+		for(line_i += actual_line_size; line_i < Buff->lines_i; line_i++)
 		{
 			print__another_line(Buff, Ui, Config, line_i);
 		}
@@ -96,7 +142,7 @@ void print__fit_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 
 void print__shrink_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 {
-	idx_t last_ln = (idx_t) (Ui->text_y - INDEX);
+	idx_t last_ln = (idx_t) Ui->text_y - INDEX;
 	idx_t line_i;
 
 	// Previous lines. If scrolled. Only beginning is shown.
@@ -116,16 +162,40 @@ void print__shrink_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 
 	if(Buff->line_len_i[last_ln] < Ui->text_x)
 	{
-		printf("%.*s", Buff->line_len_i[last_ln] - LF_SZ, Buff->text[last_ln]);
+		for(idx_t ch = 0; ch < (Buff->line_len_i[last_ln] - LF_SZ); ch++)
+		{
+			if(Buff->text[last_ln][ch] == '\t')
+			{
+				putchar(' ');
+			}
+			else
+			{
+				putchar(Buff->text[last_ln][ch]);
+			}
+		}
+		// printf("%.*s", Buff->line_len_i[last_ln] - LF_SZ, Buff->text[last_ln]);
 	}
 	else
 	{
+		for(idx_t ch = 0; ch < (idx_t) (Ui->text_x - LF_SZ); ch++)
+		{
+			if(Buff->text[last_ln][ch] == '\t')
+			{
+				putchar(' ');
+			}
+			else
+			{
+				putchar(Buff->text[last_ln][ch]);
+			}
+		}
 		printf("%.*s", Ui->text_x - LF_SZ, Buff->text[last_ln]);
 	}
 }
 
 void print__scroll_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 {
+	idx_t chars_end_offset = ACT_LINE_LEN_I;
+
 	// Previous lines. If scrolled. Only beginning is shown.
 	for(idx_t line_i = print__set_start_line(Buff, Ui); line_i < ACT_LINE_I; line_i++)
 	{
@@ -137,9 +207,27 @@ void print__scroll_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 
 	if(ACT_LINE_LEN_I < Ui->text_x)
 	{
-		printf("%.*s",
-		       (CURSOR_Y_SCROLLED) ? ACT_LINE_LEN_I - LF_SZ : ACT_LINE_LEN_I,
-		       ACT_LINE);
+		// printf("%.*s",
+		//        (CURSOR_Y_SCROLLED) ? ACT_LINE_LEN_I - LF_SZ : ACT_LINE_LEN_I,
+		//        ACT_LINE);
+
+		if((ACT_LINE_LEN_I > 0) && (ACT_LINE[ACT_LINE_LEN_I - 1] == '\n'))
+		{
+			chars_end_offset--;
+		}
+
+		for(idx_t char_i = 0; char_i < chars_end_offset; char_i++)
+		{
+			if(ACT_LINE[char_i] == '\t')
+			{
+				putchar(' ');
+			}
+			else
+			{
+				putchar(ACT_LINE[char_i]);
+			}
+			// printf("exec %d\n", char_i);
+		}
 	}
 	// Chars won't fits in the horizontal space.
 	else if((ACT_LINE_LEN_I - Ui->text_x) >= Buff->cusr_x)
@@ -148,7 +236,15 @@ void print__scroll_lines(Buff_t* Buff, Ui_t* Ui, Conf_t* Config)
 		for(idx_t char_i = CURSOR_VERTICAL_I + CUR_SZ - Ui->text_x;
 		    char_i < CURSOR_VERTICAL_I; char_i++)
 		{
-			putchar(ACT_LINE[char_i]);
+			if(ACT_LINE[char_i] == '\t')
+			{
+				putchar(' ');
+			}
+			else
+			{
+				putchar(ACT_LINE[char_i]);
+			}
+			// putchar(ACT_LINE[char_i]);
 		}
 	}
 	else

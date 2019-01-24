@@ -6,7 +6,7 @@
 term_t window__get_terminal_size(char axis)
 {
 	const unsigned int line_height = 1;
-	const int          w_min       = STATUS_MAX + (2 * SPACE_SZ); // Generally works but TODO.
+	const int          w_min       = STATUS_MAX + SPACE_SZ; // Generally works but TODO.
 	const int          h_min       = UBAR_SZ + line_height + TOGGLED_PANE_SZ;
 	const int          sz_max      = USHRT_MAX;
 
@@ -134,13 +134,13 @@ bool window__render(Buff_t* Buff, Conf_t* Config)
 	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
 	config__set_color(NULL);
-	ui__upper_bar(Buff, &Ui, Config);
+	ui__upper_bar(Buff, Config, &Ui);
 
 	print__display_text(Buff, &Ui, Config);
 	config__set_color(NULL);
 
 	window__fill(Buff, &Ui);
-	ui__lower_bar(Config, Buff->pane_toggled);
+	ui__lower_bar(Buff, Config, &Ui);
 
 	window__set_cursor_position(Buff, &Ui);
 
