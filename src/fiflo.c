@@ -66,7 +66,7 @@ void fiflo__run(const char* arg)
 		{
 			break;
 		}
-		if((pressed_key = input_getch()) == -1)
+		if((pressed_key = input_getch()) == ERROR)
 		{
 			break;
 		}

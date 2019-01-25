@@ -27,7 +27,7 @@ bool keys__linefeed(Buff_t* Buff)
 				return false;
 			}
 		}
-		ACT_LINE[ACT_LINE_LEN_I] = '\0';
+		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0';
 	}
 	return true;
 }
@@ -48,9 +48,9 @@ bool keys__printable_char(Buff_t* Buff, char key)
 		if(BUFFER_NOT_FULL)
 		{
 			Buff->chars_i++;
-			ACT_LINE_LEN_I++;
+			CURRENT_LINE_LENGTH_IDX++;
 
-			if(!memory__extend_line(Buff, ACT_LINE_I))
+			if(!memory__extend_line(Buff, CURRENT_LINE_IDX))
 			{
 				return false;
 			}
@@ -59,14 +59,14 @@ bool keys__printable_char(Buff_t* Buff, char key)
 			{
 				edit__shift_text_horizonally(Buff, 'r');
 			}
-			ACT_LINE[CURSOR_VERTICAL_I - nul_sz] = key;
-			ACT_LINE[ACT_LINE_LEN_I] = '\0';
+			CURRENT_LINE[CURSOR_X_POSITION - nul_sz] = key;
+			CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0';
 
 			// Initializing nul handling.
 			if((key == '\0') && !EMPTY_LINE)
 			{
 				Buff->chars_i--;
-				ACT_LINE_LEN_I--;
+				CURRENT_LINE_LENGTH_IDX--;
 			}
 			else if(key == '\n')
 			{
@@ -94,7 +94,7 @@ bool keys__printable_char(Buff_t* Buff, char key)
 
 bool keys__backspace(Buff_t* Buff)
 {
-	idx_t ch = ACT_LINE_LEN_I;
+	idx_t ch = CURRENT_LINE_LENGTH_IDX;
 
 	for(idx_t tab = 0; tab < 4; tab++) // Tab loop. TODO
 	{
@@ -113,7 +113,7 @@ bool keys__backspace(Buff_t* Buff)
 			}
 			break; // Ignore the tab loop when removing a line.
 		}
-		ACT_LINE[ACT_LINE_LEN_I] = '\0'; // Linefeed to the terminator.
+		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0'; // Linefeed to the terminator.
 
 		if(ch > 0)
 		{
@@ -122,7 +122,7 @@ bool keys__backspace(Buff_t* Buff)
 		printf("lolo %d\n", ch);
 
 		SET_STATUS("edited");
-		if((!EMPTY_LINE && (ACT_LINE[ch - 1] != '\t')) || (ACT_LINE[0] != '\t'))
+		if((!EMPTY_LINE && (CURRENT_LINE[ch - 1] != '\t')) || (CURRENT_LINE[0] != '\t'))
 		{
 			break;
 		}
@@ -196,7 +196,7 @@ void keys__arrow_right(Buff_t* Buff)
 		if(!CURSOR_X_SCROLLED && CURSOR_Y_SCROLLED)
 		{
 			Buff->cusr_y--;
-			Buff->cusr_x = ACT_LINE_LEN_I;
+			Buff->cusr_x = CURRENT_LINE_LENGTH_IDX;
 		}
 		// Last line doesn't contain keys__linefeed so ignoring that isn't necessary.
 		else if(!CURSOR_X_SCROLLED && (Buff->cusr_y == 1))
@@ -212,7 +212,7 @@ void keys__arrow_up(Buff_t* Buff)
 	{
 		/* Cursor at the left side: doesn't go at the end of a line. Always
 		at the beginning or ignore the keys__linefeed. */
-		Buff->cusr_x = (CURSOR_AT_LINE_START) ? PREV_LINE_LEN_I : 1;
+		Buff->cusr_x = (CURSOR_AT_LINE_START) ? PREVIOUS_LINE_LENGTH_IDX : 1;
 		Buff->cusr_y++;
 	}
 }
@@ -228,7 +228,7 @@ void keys__arrow_down(Buff_t* Buff)
 		{
 			/* Cursor at the left side: doesn't go at the end of a line. Always
 			at the beginning. */
-			Buff->cusr_x = ACT_LINE_LEN_I;
+			Buff->cusr_x = CURRENT_LINE_LENGTH_IDX;
 		}
 		else
 		{

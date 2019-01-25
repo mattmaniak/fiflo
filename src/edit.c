@@ -11,7 +11,7 @@ bool edit__delete_char(Buff_t* Buff)
 		{
 			return false;
 		}
-		ACT_LINE_LEN_I--;
+		CURRENT_LINE_LENGTH_IDX--;
 		Buff->chars_i--;
 	}
 	// Deletes the non-empty line and copy chars to previous.
@@ -27,13 +27,14 @@ bool edit__delete_char(Buff_t* Buff)
 
 bool edit__delete_line(Buff_t* Buff)
 {
-	idx_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
+	idx_t next_line_idx = CURRENT_LINE_IDX + 1;
+	idx_t next_line_len = Buff->line_len_i[next_line_idx];
 
 	if(!FIRST_LINE)
 	{
 		if(CURSOR_Y_SCROLLED)
 		{
-			Buff->cusr_x = (CURSOR_AT_LINE_START) ? next_line_len : 1;
+			Buff->cusr_x = (CURSOR_AT_LINE_START) ? next_line_len : LF_SZ;
 
 			if(!memory__copy_lines_backward(Buff))
 			{
@@ -54,18 +55,18 @@ bool edit__delete_line(Buff_t* Buff)
 
 			/* With the last line deletion there is a need to remove the
 			linefeed in the previous line. */
-			LAST_LINE_LEN_I--;
-			LAST_LINE[LAST_LINE_LEN_I] = '\0';
+			LAST_LINE_LENGTH_IDX--;
+			LAST_LINE[LAST_LINE_LENGTH_IDX] = '\0';
 
 			Buff->cusr_x = 0;
 		}
 	}
 	else
 	{
-		LAST_LINE_LEN_I = 0;
-		LAST_LINE[LAST_LINE_LEN_I] = '\0';
+		LAST_LINE_LENGTH_IDX = 0;
+		LAST_LINE[LAST_LINE_LENGTH_IDX] = '\0';
 
-		LAST_LINE = realloc(LAST_LINE, INIT_MEMBLK);
+		LAST_LINE = realloc(LAST_LINE, INITIAL_MEMBLOCK);
 		if(LAST_LINE == NULL)
 		{
 			fprintf(stderr, "Can't realloc a memory in the first line.\n");
@@ -83,23 +84,23 @@ void edit__shift_text_horizonally(Buff_t* Buff, char direction)
 	switch(direction)
 	{
 		case 'l':
-		for(char_i = CURSOR_VERTICAL_I; char_i <= ACT_LINE_LEN_I; char_i++)
+		for(char_i = CURSOR_X_POSITION; char_i <= CURRENT_LINE_LENGTH_IDX; char_i++)
 		{
-			ACT_LINE[char_i - prev] = ACT_LINE[char_i];
+			CURRENT_LINE[char_i - prev] = CURRENT_LINE[char_i];
 		}
 		break;
 
 		case 'r':
-		for(char_i = ACT_LINE_LEN_I; char_i >= CURSOR_VERTICAL_I; char_i--)
+		for(char_i = CURRENT_LINE_LENGTH_IDX; char_i >= CURSOR_X_POSITION; char_i--)
 		{
-			ACT_LINE[char_i] = ACT_LINE[char_i - prev];
+			CURRENT_LINE[char_i] = CURRENT_LINE[char_i - prev];
 		}
 	}
 }
 
 bool edit__move_lines_forward(Buff_t* Buff)
 {
-	PREV_LINE_LEN_I -= Buff->cusr_x;
+	PREVIOUS_LINE_LENGTH_IDX -= Buff->cusr_x;
 
 	// Move more lines vertically with the part of the current line.
 	if(CURSOR_Y_SCROLLED)
@@ -108,23 +109,23 @@ bool edit__move_lines_forward(Buff_t* Buff)
 		{
 			return false;
 		}
-		ACT_LINE_LEN_I = 0;
+		CURRENT_LINE_LENGTH_IDX = 0;
 	}
 
 	// Move the right part (separated by the cursor) of the line to the next.
-	for(idx_t char_i = PREV_LINE_LEN_I;
-	    char_i < PREV_LINE_LEN_I + Buff->cusr_x; char_i++)
+	for(idx_t char_i = PREVIOUS_LINE_LENGTH_IDX;
+	    char_i < PREVIOUS_LINE_LENGTH_IDX + Buff->cusr_x; char_i++)
 	{
-		ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
-		ACT_LINE_LEN_I++;
-		if(!memory__extend_line(Buff, ACT_LINE_I))
+		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = PREVIOUS_LINE[char_i];
+		CURRENT_LINE_LENGTH_IDX++;
+		if(!memory__extend_line(Buff, CURRENT_LINE_IDX))
 		{
 			return false;
 		}
 	}
 
 	// Now the length of the upper line will be shortened after copying.
-	PREV_LINE[PREV_LINE_LEN_I] = '\0';
+	PREVIOUS_LINE[PREVIOUS_LINE_LENGTH_IDX] = '\0';
 	if(!memory__shrink_prev_line(Buff))
 	{
 		return false;
@@ -135,16 +136,16 @@ bool edit__move_lines_forward(Buff_t* Buff)
 bool edit__move_lines_backward(Buff_t* Buff)
 {
 	Buff->chars_i--;
-	PREV_LINE_LEN_I--;
-	PREV_LINE[PREV_LINE_LEN_I] = '\0';
+	PREVIOUS_LINE_LENGTH_IDX--;
+	PREVIOUS_LINE[PREVIOUS_LINE_LENGTH_IDX] = '\0';
 
-	PREV_LINE_LEN_I += ACT_LINE_LEN_I;
-	if(!memory__extend_line(Buff, PREV_LINE_I))
+	PREVIOUS_LINE_LENGTH_IDX += CURRENT_LINE_LENGTH_IDX;
+	if(!memory__extend_line(Buff, PREVIOUS_LINE_IDX))
 	{
 		return false;
 	}
 	// Append part of a next line to a previous one.
-	strcat(PREV_LINE, ACT_LINE);
+	strcat(PREVIOUS_LINE, CURRENT_LINE);
 
 	if(CURSOR_Y_SCROLLED)
 	{
@@ -162,7 +163,7 @@ bool edit__move_lines_backward(Buff_t* Buff)
 
 bool edit__delete_last_empty_line(Buff_t* Buff)
 {
-	free(ACT_LINE);
+	free(CURRENT_LINE);
 
 	Buff->lines_i--;
 	if(!memory__shrink_act_line(Buff))
@@ -170,7 +171,7 @@ bool edit__delete_last_empty_line(Buff_t* Buff)
 		return false;
 	}
 
-	ACT_LINE_LEN_I--;
+	CURRENT_LINE_LENGTH_IDX--;
 	Buff->chars_i--;
 
 	if(!memory__shrink_lines_array(Buff))

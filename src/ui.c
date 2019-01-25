@@ -5,7 +5,7 @@
 void ui__print_line_number(Buff_t* Buff, Conf_t* Config, idx_t line_i,
                            term_t line_num_len)
 {
-	if(line_i == ACT_LINE_I)
+	if(line_i == CURRENT_LINE_IDX)
 	{
 		config__set_color(&Config->Color_line_number_current);
 	}
@@ -97,13 +97,13 @@ void ui__lower_bar(Buff_t* Buff, Conf_t* Config, Ui_t* Ui)
 		       " ");
 
 
-		if(ACT_LINE_LEN_I >= Ui->text_x) // Scrolling.
+		if(CURRENT_LINE_LENGTH_IDX >= Ui->text_x) // Scrolling.
 		{
-			punch_card_width += ACT_LINE_LEN_I + INDEX - Ui->text_x;
+			punch_card_width += CURRENT_LINE_LENGTH_IDX + IDX - Ui->text_x;
 		}
 
-		if((ACT_LINE_LEN_I > punch_card_width)
-		&& (ACT_LINE[punch_card_width] != '\n'))
+		if((CURRENT_LINE_LENGTH_IDX > punch_card_width)
+		&& (CURRENT_LINE[punch_card_width] != '\n'))
 		{
 			config__set_color(&Config->Color_warning);
 		}

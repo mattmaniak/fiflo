@@ -16,13 +16,17 @@ that describes the buffer. */
 // Needed to char/lines/chars_in_line values.
 typedef uint32_t idx_t;
 
-#define INDEX 1
+#define IDX    1
+#define NUL_SZ 1
+#define LF_SZ  1
+
+#define ERROR -1
 
 // Max amount of chars: (16 MB - 1). Newline is also the char.
-#define BUFF_MAX (UINT_MAX / 256)
+#define CHARS_MAX (UINT_MAX / 256)
 
 #define STATUS_MAX      32
-#define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - INDEX)
+#define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - IDX) // TODO.
 
 typedef struct // TODO
 {
@@ -63,29 +67,29 @@ typedef struct // TODO: SPLIT AND PADDING
 Buff_t;
 
 // Bytes of the memory width.
-#define ADDR_SZ     sizeof(Buff->text)
-#define INIT_MEMBLK (ADDR_SZ * sizeof(char)) // Aligned initial memblk.
-#define MEMBLK      (idx_t) (128 * sizeof(char)) // Must be >= 16 and dividable by 8.
+#define ADDRESS_SZ     sizeof(Buff->text)
+#define INITIAL_MEMBLOCK (ADDRESS_SZ * sizeof(char)) // Aligned initial memblk.
+#define MEMBLOCK      (idx_t) (128 * sizeof(char)) // Must be >= 16 and dividable by 8.
 
 // Placeholders. Note that "_i" means "index".
-#define ACT_LINE_I           (Buff->lines_i - Buff->cusr_y)
-#define ACT_LINE             Buff->text[ACT_LINE_I]
-#define ACT_LINE_LEN_I       Buff->line_len_i[ACT_LINE_I]
-#define CURSOR_VERTICAL_I    (ACT_LINE_LEN_I - Buff->cusr_x)
+#define CURRENT_LINE_IDX        (Buff->lines_i - Buff->cusr_y)
+#define CURRENT_LINE            Buff->text[CURRENT_LINE_IDX]
+#define CURRENT_LINE_LENGTH_IDX Buff->line_len_i[CURRENT_LINE_IDX]
+#define CURSOR_X_POSITION       (CURRENT_LINE_LENGTH_IDX - Buff->cusr_x)
 
-#define PREV_LINE_I          (ACT_LINE_I - 1)
-#define PREV_LINE            Buff->text[PREV_LINE_I]
-#define PREV_LINE_LEN_I      Buff->line_len_i[PREV_LINE_I]
+#define PREVIOUS_LINE_IDX        (CURRENT_LINE_IDX - 1)
+#define PREVIOUS_LINE            Buff->text[PREVIOUS_LINE_IDX]
+#define PREVIOUS_LINE_LENGTH_IDX Buff->line_len_i[PREVIOUS_LINE_IDX]
 
 #define LAST_LINE            Buff->text[Buff->lines_i]
-#define LAST_LINE_LEN_I      Buff->line_len_i[Buff->lines_i]
+#define LAST_LINE_LENGTH_IDX Buff->line_len_i[Buff->lines_i]
 
-#define BUFFER_NOT_FULL      (Buff->chars_i  <  BUFF_MAX)
+#define BUFFER_NOT_FULL      (Buff->chars_i  <  CHARS_MAX)
 #define CURSOR_X_SCROLLED    (Buff->cusr_x   >  0)
 #define CURSOR_Y_SCROLLED    (Buff->cusr_y   >  0)
-#define EMPTY_LINE           (ACT_LINE_LEN_I == 0)
-#define FIRST_LINE           (ACT_LINE_I     == 0)
-#define CURSOR_AT_LINE_START (Buff->cusr_x   == ACT_LINE_LEN_I)
+#define EMPTY_LINE           (CURRENT_LINE_LENGTH_IDX == 0)
+#define FIRST_LINE           (CURRENT_LINE_IDX     == 0)
+#define CURSOR_AT_LINE_START (Buff->cusr_x   == CURRENT_LINE_LENGTH_IDX)
 #define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
 
 // Initializes all Buff structure members.

@@ -132,7 +132,7 @@ bool file__load(Buff_t* Buff)
 
 void file__save(Buff_t* Buff)
 {
-	const int error = -1;
+	const int error = ERROR;
 	int       file_descriptor;
 	FILE*     textfile;
 
@@ -188,7 +188,7 @@ bool file__load_editor_config(Conf_t* Config)
 	strcpy(path, account_info->pw_dir);
 	strcat(path, "/.config/fiflorc");
 
-	if(access(path, F_OK) == -1)
+	if(access(path, F_OK) == ERROR)
 	{
 		config__set_default(Config);
 	}
@@ -226,7 +226,7 @@ bool file__get_git_branch(Buff_t* Buff) // TODO
 
 	// puts(cwdir);
 
-	if(access(cwdir, F_OK) == -1)
+	if(access(cwdir, F_OK) == ERROR)
 	{
 		strcpy(Buff->git_branch, "[branch not found]");
 		return true;
@@ -242,7 +242,7 @@ bool file__get_git_branch(Buff_t* Buff) // TODO
 	free(cwdir);
 
 	// Ignore the passed string in the file, to get the branch after the slash.
-	if(fseek(git_head_file, (long) strlen("ref: refs/heads/"), 0) == -1)
+	if(fseek(git_head_file, (long) strlen("ref: refs/heads/"), 0) == ERROR)
 	{
 		fprintf(stderr, "Can't locate the branch in the \"%s\" file\n.",
 		        git_head_path);

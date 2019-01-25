@@ -14,7 +14,7 @@ term_t window__get_terminal_size(char axis)
 
 	/* TIOCGWINSZ request to the stdout descriptor. &term is required by that
 	specific device (stdout). */
-	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == -1)
+	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == ERROR)
 	{
 		fprintf(stderr, "Can't get the terminal's size.\n");
 		return 0;
@@ -61,7 +61,7 @@ void window__flush(void)
 void window__fill(Buff_t* Buff, Ui_t* Ui)
 {
 	// Fill the empty area below the text to position the lower bar.
-	if((Buff->lines_i + INDEX) < (idx_t) Ui->text_y)
+	if((Buff->lines_i + IDX) < (idx_t) Ui->text_y)
 	{
 		for(idx_t line = Buff->lines_i;
 		    line < (idx_t) (Ui->text_y - LBAR_SZ); line++)
@@ -89,12 +89,12 @@ void window__set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 
 	if(!Buff->live_fname_edit)
 	{
-		if(ACT_LINE_LEN_I < Ui->text_x)
+		if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
 		{
 			// No horizontal scrolling.
-			move_right = (term_t) (Ui->line_num_len + CURSOR_VERTICAL_I);
+			move_right = (term_t) (Ui->line_num_len + CURSOR_X_POSITION);
 		}
-		else if((ACT_LINE_LEN_I - Ui->text_x) >= Buff->cusr_x)
+		else if((CURRENT_LINE_LENGTH_IDX - Ui->text_x) >= Buff->cusr_x)
 		{
 			// Last Ui->text_x chars are seen. Current line is scrolled, not cursor.
 			move_right = (term_t) (Ui->win_w - CUR_SZ);
@@ -102,10 +102,10 @@ void window__set_cursor_position(Buff_t* Buff, Ui_t* Ui)
 		else
 		{
 			// Text is scrolled horizontally to the start. Cursor can be moved.
-			move_right = (term_t) (Ui->line_num_len + CURSOR_VERTICAL_I);
+			move_right = (term_t) (Ui->line_num_len + CURSOR_X_POSITION);
 		}
-		move_up = (ACT_LINE_I < Ui->text_y) ?
-		(term_t) (Ui->text_y - ACT_LINE_I - INDEX + Ui->lbar_h) : Ui->lbar_h;
+		move_up = (CURRENT_LINE_IDX < Ui->text_y) ?
+		(term_t) (Ui->text_y - CURRENT_LINE_IDX - IDX + Ui->lbar_h) : Ui->lbar_h;
 	}
 	ANSI_CURSOR_RIGHT(move_right);
 	ANSI_CURSOR_UP(move_up);
@@ -115,7 +115,7 @@ bool window__render(Buff_t* Buff, Conf_t* Config)
 {
 	Ui_t Ui;
 
-	sprintf(Ui.line_num_str, "%u", Buff->lines_i + INDEX);
+	sprintf(Ui.line_num_str, "%u", Buff->lines_i + IDX);
 
 	if(!(Ui.win_w = window__get_terminal_size('X')))
 	{

@@ -2,14 +2,14 @@
 
 bool buffer__init(Buff_t* Buff)
 {
-	Buff->text = malloc(ADDR_SZ);
+	Buff->text = malloc(ADDRESS_SZ);
 	if(Buff->text == NULL)
 	{
 		fprintf(stderr, "Can't alloc a memory the array with lines.\n");
 		return false;
 	}
 
-	Buff->line_len_i = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
+	Buff->line_len_i = malloc(((sizeof(idx_t) / ADDRESS_SZ) * ADDRESS_SZ) + ADDRESS_SZ);
 	if(Buff->line_len_i == NULL)
 	{
 		fprintf(stderr, "Can't alloc a memory the array with lines length.\n");
@@ -20,14 +20,14 @@ bool buffer__init(Buff_t* Buff)
 	Buff->lines_i  = 0;
 	Buff->cusr_x   = 0;
 	Buff->cusr_y   = 0;
-	ACT_LINE_LEN_I = 0;
+	CURRENT_LINE_LENGTH_IDX = 0;
 
 	Buff->live_fname_edit = false;
 	Buff->chars_sequence  = false;
 	Buff->pane_toggled    = false;
 
-	ACT_LINE = malloc(ADDR_SZ);
-	if(ACT_LINE == NULL)
+	CURRENT_LINE = malloc(ADDRESS_SZ);
+	if(CURRENT_LINE == NULL)
 	{
 		fprintf(stderr, "Can't alloc a memory for the first line.\n");
 		return false;
