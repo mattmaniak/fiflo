@@ -39,7 +39,7 @@ void fiflo__run(const char* arg)
 	{
 		goto free;
 	}
-	if(!file__load_editor_config(&Config))
+	if(!file__load_config(&Config))
 	{
 		goto free;
 	}
@@ -58,7 +58,7 @@ void fiflo__run(const char* arg)
 		{
 			break;
 		}
-		if(!input_parse_key(&Buffer, &Config, pressed_key))
+		if(!input__parse_key(&Buffer, &Config, pressed_key))
 		{
 			break;
 		}
@@ -66,7 +66,7 @@ void fiflo__run(const char* arg)
 		{
 			break;
 		}
-		if((pressed_key = input_getch()) == ERROR)
+		if((pressed_key = input__getch()) == ERROR)
 		{
 			break;
 		}

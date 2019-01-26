@@ -153,7 +153,7 @@ void file__convert_to_tab(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
 		{
 			break; // No tab, so don't convert anything.
 		}
-		else if(tab_idx == (idx_t) Config->Tab_width.value - at_least_one_tab)
+		else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
 		{
 			*char_idx += (idx_t) Config->Tab_width.value - at_least_one_tab;
 		}
@@ -199,7 +199,7 @@ void file__save(Buff_t* Buffer, Conf_t* Config)
 	}
 }
 
-bool file__load_editor_config(Conf_t* Config)
+bool file__load_config(Conf_t* Config)
 {
 	struct passwd* Account_info;
 	char           path[PATH_MAX]; // TODO: MAX SIZE.

@@ -86,18 +86,18 @@ Buff_t;
 #define LAST_LINE            Buffer->text[Buffer->lines_idx]
 #define LAST_LINE_LENGTH_IDX Buffer->lines_length_idx[Buffer->lines_idx]
 
-#define BUFFER_NOT_FULL      (Buffer->chars_idx  <  CHARS_MAX)
-#define CURSOR_X_SCROLLED    (Buffer->cursor_rev_x   >  0)
-#define CURSOR_Y_SCROLLED    (Buffer->cursor_rev_y   >  0)
+#define BUFFER_NOT_FULL      (Buffer->chars_idx        < CHARS_MAX)
+#define CURSOR_X_SCROLLED    (Buffer->cursor_rev_x     > 0)
+#define CURSOR_Y_SCROLLED    (Buffer->cursor_rev_y     > 0)
 #define EMPTY_LINE           (CURRENT_LINE_LENGTH_IDX == 0)
-#define FIRST_LINE           (CURRENT_LINE_IDX     == 0)
-#define CURSOR_AT_LINE_START (Buffer->cursor_rev_x   == CURRENT_LINE_LENGTH_IDX)
-#define CURSOR_AT_TOP        (Buffer->cursor_rev_y   == Buffer->lines_idx)
+#define FIRST_LINE           (CURRENT_LINE_IDX        == 0)
+#define CURSOR_AT_LINE_START (Buffer->cursor_rev_x    == CURRENT_LINE_LENGTH_IDX)
+#define CURSOR_AT_TOP        (Buffer->cursor_rev_y    == Buffer->lines_idx)
 
 // Initializes all Buffer structure members.
-bool buffer__init(Buff_t* Buffer);
+bool buffer__init(Buff_t*);
 
 // Display a error message and exit.
-void buffer__free(Buff_t* Buffer);
+void buffer__free(Buff_t*);
 
 #endif

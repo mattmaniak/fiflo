@@ -16,7 +16,7 @@
 #define ANSI_CURSOR_RIGHT(offset) printf("\x1b[%uC", offset)
 #define ANSI_CURSOR_LEFT(offset)  printf("\x1b[%uD", offset)
 
-extern void print__display_text(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config);
+extern void print__display_text(Buff_t*, Ui_t*, Conf_t*);
 
 // Returns current terminal width and height and exits if is wrong.
 term_t window__get_terminal_sz(char axis);
@@ -25,12 +25,12 @@ term_t window__get_terminal_sz(char axis);
 void window__flush(void);
 
 // Vertical fill between the text and lower bar. If there isn't many lines.
-void window__fill(Buff_t* Buffer, Ui_t* Ui);
+void window__fill(Buff_t*, Ui_t*);
 
 // Stupid wrapper for above things.
-bool window__render(Buff_t* Buffer, Conf_t* Config);
+bool window__render(Buff_t*, Conf_t*);
 
 // Sets the a cursor position starting from the left bottom.
-void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui);
+void window__set_cursor_pos(Buff_t*, Ui_t*);
 
 #endif

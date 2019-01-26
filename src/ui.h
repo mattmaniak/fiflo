@@ -42,13 +42,12 @@ typedef struct
 Ui_t;
 
 // Prints the line number.
-void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, idx_t line_i,
-                           term_t line_num_len);
+void ui__print_line_number(Buff_t*, Conf_t*, idx_t, term_t);
 
 // Renders the upper bar with a filename and indicators.
-void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui);
+void ui__upper_bar(Buff_t*, Conf_t*, Ui_t*);
 
 // Renders the lower bar that contains keyboard info.
-void ui__lower_bar(Buff_t*, Conf_t* Config, Ui_t* Ui);
+void ui__lower_bar(Buff_t*, Conf_t*, Ui_t*);
 
 #endif

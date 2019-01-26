@@ -3,7 +3,7 @@
 #include "config.h"
 #include "input.h"
 
-char input_getch(void)
+char input__getch(void)
 {
 	const unsigned int canonical_mode_on = ICANON;
 	const unsigned int echo_input        = ECHO;
@@ -54,7 +54,7 @@ char input_getch(void)
 	return key;
 }
 
-void input_recognize_sequence(Buff_t* Buffer, char* sequence)
+void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 {
 	const size_t seq_max = 3;
 
@@ -77,12 +77,12 @@ void input_recognize_sequence(Buff_t* Buffer, char* sequence)
 	}
 	else if(!strcmp(sequence, arrow_right))
 	{
-		keys__arrow_right(Buffer);
+		keys__arrow_right(Buffer, Config);
 		Buffer->chars_sequence = false;
 	}
 	else if(!strcmp(sequence, arrow_left))
 	{
-		keys__arrow_left(Buffer);
+		keys__arrow_left(Buffer, Config);
 		Buffer->chars_sequence = false;
 	}
 	else if(strlen(sequence) > seq_max)
@@ -91,13 +91,13 @@ void input_recognize_sequence(Buff_t* Buffer, char* sequence)
 	}
 
 #ifdef DEBUG_INPUT
-	printf("cursor_rev_x %d, cursor_rev_y %d.\n", Buffer->cursor_rev_x,
+	printf("cursor_rev_x %u, cursor_rev_y %u.\n", Buffer->cursor_rev_x,
 	       Buffer->cursor_rev_y);
 #endif
 
 }
 
-bool input_parse_key(Buff_t* Buffer, Conf_t* Config, char key)
+bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 {
 	const idx_t  nul_sz = 1;
 	enum         {seq_len = 8}; // TODO.
@@ -123,7 +123,7 @@ bool input_parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 		}
 		chars_sequence[char_i] = '\0';
 
-		input_recognize_sequence(Buffer, chars_sequence);
+		input__recognize_sequence(Buffer, Config, chars_sequence);
 		if(!Buffer->chars_sequence)
 		{
 			char_i = 0;

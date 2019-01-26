@@ -92,11 +92,11 @@ bool keys__printable_char(Buff_t* Buffer, char key)
 	return true;
 }
 
-bool keys__backspace(Buff_t* Buffer)
+bool keys__backspace(Buff_t* Buffer, Conf_t* Config) // TODO: OVERFLOW WITH TABS
 {
-	idx_t ch = CURRENT_LINE_LENGTH_IDX;
+	idx_t char_idx = CURRENT_LINE_LENGTH_IDX;
 
-	for(idx_t tab = 0; tab < 4; tab++) // Tab loop. TODO
+	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
 	{
 		if(!EMPTY_LINE)
 		{
@@ -115,15 +115,14 @@ bool keys__backspace(Buff_t* Buffer)
 		}
 		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0'; // Linefeed to the '\0'.
 
-		if(ch > 0)
+		if(char_idx > 0)
 		{
-			ch--;
+			char_idx--;
 		}
-		printf("lolo %d\n", ch);
 
 		SET_STATUS("edited");
-		if((!EMPTY_LINE && (CURRENT_LINE[ch - 1] != '\t'))
-		|| (CURRENT_LINE[0] != '\t'))
+		if((!EMPTY_LINE && (CURRENT_LINE[char_idx - NUL_SZ] != '\t'))
+		   || (CURRENT_LINE[0] != '\t'))
 		{
 			break;
 		}
@@ -151,7 +150,7 @@ bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
 		break;
 
 		case BACKSPACE:
-		return keys__backspace(Buffer);
+		return keys__backspace(Buffer, Config);
 
 		case CTRL_Q:
 		return false;
@@ -173,13 +172,27 @@ bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
 	return true;
 }
 
-void keys__arrow_left(Buff_t* Buffer)
+void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
 {
 	bool more_than_one_line = (Buffer->lines_idx > 0);
 
 	if(!CURSOR_AT_LINE_START)
 	{
-		Buffer->cursor_rev_x++;
+		// Skip the e.g "\t\t\t\t" as the one tab.
+		for(idx_t tab_idx = 1; tab_idx < (idx_t) Config->Tab_width.value;
+		    tab_idx++)
+		{
+			if(CURRENT_LINE[CURSOR_X_POS - tab_idx] != '\t')
+			{
+				Buffer->cursor_rev_x++;
+				break; // No tab, so don't convert anything.
+			}
+			else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
+			{
+				Buffer->cursor_rev_x += (idx_t) Config->Tab_width.value;
+			}
+		}
+
 	}
 	else if(more_than_one_line && !CURSOR_AT_TOP)
 	{
@@ -189,11 +202,24 @@ void keys__arrow_left(Buff_t* Buffer)
 	}
 }
 
-void keys__arrow_right(Buff_t* Buffer)
+void keys__arrow_right(Buff_t* Buffer, Conf_t* Config)
 {
 	if(CURSOR_X_SCROLLED)
 	{
-		Buffer->cursor_rev_x--;
+		// Skip the e.g "\t\t\t\t" as the one tab.
+		for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value;
+		    tab_idx++)
+		{
+			if(CURRENT_LINE[CURSOR_X_POS + tab_idx] != '\t')
+			{
+				Buffer->cursor_rev_x--;
+				break; // No tab, so don't convert anything.
+			}
+			else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
+			{
+				Buffer->cursor_rev_x -= (idx_t) Config->Tab_width.value;
+			}
+		}
 		if(!CURSOR_X_SCROLLED && CURSOR_Y_SCROLLED)
 		{
 			Buffer->cursor_rev_y--;
