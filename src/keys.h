@@ -3,40 +3,40 @@
 
 // Currently supported characters and their actions inside.
 
-extern bool memory__extend_line(Buff_t* Buff, idx_t line_i);
-extern bool memory__shrink_act_line(Buff_t* Buff);
-extern bool memory__shrink_prev_line(Buff_t* Buff);
-extern bool memory__extend_lines_array(Buff_t* Buff);
-extern bool memory__shrink_lines_array(Buff_t* Buff);
-extern bool memory__copy_lines_forward(Buff_t* Buff);
-extern bool memory__copy_lines_backward(Buff_t* Buff);
+extern bool memory__extend_line(Buff_t* Buffer, idx_t line_i);
+extern bool memory__shrink_act_line(Buff_t* Buffer);
+extern bool memory__shrink_prev_line(Buff_t* Buffer);
+extern bool memory__extend_lines_array(Buff_t* Buffer);
+extern bool memory__shrink_lines_array(Buff_t* Buffer);
+extern bool memory__copy_lines_forward(Buff_t* Buffer);
+extern bool memory__copy_lines_backward(Buff_t* Buffer);
 
-extern bool edit__delete_last_line(Buff_t* Buff);
-extern bool edit__delete_line(Buff_t* Buff);
-extern void edit__shift_text_horizonally(Buff_t* Buff, char direction);
-extern bool edit__move_lines_forward(Buff_t* Buff);
-extern bool edit__delete_last_empty_line(Buff_t* Buff);
-extern bool edit__delete_non_last_line(Buff_t* Buff);
-extern bool edit__delete_char(Buff_t* Buff);
+extern bool edit__delete_last_line(Buff_t* Buffer);
+extern bool edit__delete_line(Buff_t* Buffer);
+extern void edit__shift_text_horizonally(Buff_t* Buffer, char direction);
+extern bool edit__move_lines_forward(Buff_t* Buffer);
+extern bool edit__delete_last_empty_line(Buff_t* Buffer);
+extern bool edit__delete_non_last_line(Buff_t* Buffer);
+extern bool edit__delete_char(Buff_t* Buffer);
 
-extern void file__save(Buff_t* Buff);
+extern void file__save(Buff_t* Buffer, Conf_t* Config);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
-bool keys__key_action(Buff_t* Buff, char key);
+bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key);
 
 // Adds char when the pressed key is a printable one.
-bool keys__printable_char(Buff_t* Buff, char key);
+bool keys__printable_char(Buff_t* Buffer, char key);
 
 // Initialize the new line.
-bool keys__linefeed(Buff_t* Buff);
+bool keys__linefeed(Buff_t* Buffer);
 
 // Removes a last char and optionally deletes the last line.
-bool keys__backspace(Buff_t* Buff);
+bool keys__backspace(Buff_t* Buffer);
 
 // These ones moves the cursor.
-void keys__arrow_left(Buff_t* Buff);
-void keys__arrow_right(Buff_t* Buff);
-void keys__arrow_up(Buff_t* Buff);
-void keys__arrow_down(Buff_t* Buff);
+void keys__arrow_left(Buff_t* Buffer);
+void keys__arrow_right(Buff_t* Buffer);
+void keys__arrow_up(Buff_t* Buffer);
+void keys__arrow_down(Buff_t* Buffer);
 
 #endif

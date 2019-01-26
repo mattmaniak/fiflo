@@ -1,5 +1,6 @@
 #include "ascii.h"
 #include "buffer.h"
+#include "config.h"
 #include "input.h"
 
 char input_getch(void)
@@ -53,7 +54,7 @@ char input_getch(void)
 	return key;
 }
 
-void input_recognize_sequence(Buff_t* Buff, char* sequence)
+void input_recognize_sequence(Buff_t* Buffer, char* sequence)
 {
 	const size_t seq_max = 3;
 
@@ -66,53 +67,54 @@ void input_recognize_sequence(Buff_t* Buff, char* sequence)
 
 	if(!strcmp(sequence, arrow_up))
 	{
-		keys__arrow_up(Buff);
-		Buff->chars_sequence = false;
+		keys__arrow_up(Buffer);
+		Buffer->chars_sequence = false;
 	}
 	else if(!strcmp(sequence, arrow_down))
 	{
-		keys__arrow_down(Buff);
-		Buff->chars_sequence = false;
+		keys__arrow_down(Buffer);
+		Buffer->chars_sequence = false;
 	}
 	else if(!strcmp(sequence, arrow_right))
 	{
-		keys__arrow_right(Buff);
-		Buff->chars_sequence = false;
+		keys__arrow_right(Buffer);
+		Buffer->chars_sequence = false;
 	}
 	else if(!strcmp(sequence, arrow_left))
 	{
-		keys__arrow_left(Buff);
-		Buff->chars_sequence = false;
+		keys__arrow_left(Buffer);
+		Buffer->chars_sequence = false;
 	}
 	else if(strlen(sequence) > seq_max)
 	{
-		Buff->chars_sequence = false;
+		Buffer->chars_sequence = false;
 	}
 
 #ifdef DEBUG_INPUT
-	printf("cusr_x %d, cusr_y %d.\n", Buff->cusr_x, Buff->cusr_y);
+	printf("cursor_rev_x %d, cursor_rev_y %d.\n", Buffer->cursor_rev_x,
+	       Buffer->cursor_rev_y);
 #endif
 
 }
 
-bool input_parse_key(Buff_t* Buff, char key)
+bool input_parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 {
-	const size_t  nul_sz = 1;
-	enum          {seq_len = 8}; // TODO.
-	static char   chars_sequence[seq_len];
-	static size_t char_i;
+	const idx_t  nul_sz = 1;
+	enum         {seq_len = 8}; // TODO.
+	static char  chars_sequence[seq_len];
+	static idx_t char_i;
 
-	if((key == CTRL_LEFT_BRACKET) && (!Buff->live_fname_edit))
+	if((key == CTRL_LEFT_BRACKET) && (!Buffer->live_fname_edit))
 	{
-		Buff->chars_sequence = true;
+		Buffer->chars_sequence = true;
 
 #ifdef DEBUG_INPUT
-		Buff->chars_sequence = false;
+		Buffer->chars_sequence = false;
 #endif
 
 		char_i = 0;
 	}
-	if(Buff->chars_sequence)
+	if(Buffer->chars_sequence)
 	{
 		chars_sequence[char_i] = key;
 		if(char_i < (seq_len - nul_sz))
@@ -121,19 +123,19 @@ bool input_parse_key(Buff_t* Buff, char key)
 		}
 		chars_sequence[char_i] = '\0';
 
-		input_recognize_sequence(Buff, chars_sequence);
-		if(!Buff->chars_sequence)
+		input_recognize_sequence(Buffer, chars_sequence);
+		if(!Buffer->chars_sequence)
 		{
 			char_i = 0;
 		}
 	}
-	else if(Buff->live_fname_edit)
+	else if(Buffer->live_fname_edit)
 	{
-		file__live_edit_name(Buff, key);
+		file__live_edit_name(Buffer, key);
 	}
 	else
 	{
-		return keys__key_action(Buff, key);
+		return keys__key_action(Buffer, Config, key);
 	}
 	return true;
 }

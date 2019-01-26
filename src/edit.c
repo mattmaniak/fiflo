@@ -2,22 +2,22 @@
 #include "ascii.h"
 #include "edit.h"
 
-bool edit__delete_char(Buff_t* Buff)
+bool edit__delete_char(Buff_t* Buffer)
 {
 	if(!CURSOR_AT_LINE_START)
 	{
-		edit__shift_text_horizonally(Buff, 'l');
-		if(!memory__shrink_act_line(Buff))
+		edit__shift_text_horizonally(Buffer, 'l');
+		if(!memory__shrink_act_line(Buffer))
 		{
 			return false;
 		}
 		CURRENT_LINE_LENGTH_IDX--;
-		Buff->chars_i--;
+		Buffer->chars_idx--;
 	}
 	// Deletes the non-empty line and copy chars to previous.
 	else if(!FIRST_LINE)
 	{
-		if(!edit__move_lines_backward(Buff))
+		if(!edit__move_lines_backward(Buffer))
 		{
 			return false;
 		}
@@ -25,30 +25,32 @@ bool edit__delete_char(Buff_t* Buff)
 	return true;
 }
 
-bool edit__delete_line(Buff_t* Buff)
+bool edit__delete_line(Buff_t* Buffer)
 {
-	idx_t next_line_idx = CURRENT_LINE_IDX + 1;
-	idx_t next_line_len = Buff->line_len_i[next_line_idx];
+	idx_t next_idx      = 1;
+	idx_t next_line_idx = CURRENT_LINE_IDX + next_idx;
+	idx_t next_line_len = Buffer->lines_length_idx[next_line_idx];
 
 	if(!FIRST_LINE)
 	{
 		if(CURSOR_Y_SCROLLED)
 		{
-			Buff->cusr_x = (CURSOR_AT_LINE_START) ? next_line_len : LF_SZ;
+			Buffer->cursor_rev_x = (CURSOR_AT_LINE_START)
+			                       ? next_line_len : LF_SZ;
 
-			if(!memory__copy_lines_backward(Buff))
+			if(!memory__copy_lines_backward(Buffer))
 			{
 				return false;
 			}
-			if(!edit__delete_last_line(Buff))
+			if(!edit__delete_last_line(Buffer))
 			{
 				return false;
 			}
-			Buff->cusr_y--;
+			Buffer->cursor_rev_y--;
 		}
 		else
 		{
-			if(!edit__delete_last_line(Buff))
+			if(!edit__delete_last_line(Buffer))
 			{
 				return false;
 			}
@@ -58,7 +60,7 @@ bool edit__delete_line(Buff_t* Buff)
 			LAST_LINE_LENGTH_IDX--;
 			LAST_LINE[LAST_LINE_LENGTH_IDX] = '\0';
 
-			Buff->cusr_x = 0;
+			Buffer->cursor_rev_x = 0;
 		}
 	}
 	else
@@ -71,41 +73,43 @@ bool edit__delete_line(Buff_t* Buff)
 		{
 			fprintf(stderr, "Can't realloc a memory in the first line.\n");
 		}
-		Buff->cusr_x = 0;
+		Buffer->cursor_rev_x = 0;
 	}
 	return true;
 }
 
-void edit__shift_text_horizonally(Buff_t* Buff, char direction)
+void edit__shift_text_horizonally(Buff_t* Buffer, char direction)
 {
 	const size_t prev = 1;
-	idx_t        char_i;
+	idx_t        char_idx;
 
 	switch(direction)
 	{
 		case 'l':
-		for(char_i = CURSOR_X_POSITION; char_i <= CURRENT_LINE_LENGTH_IDX; char_i++)
+		for(char_idx = CURSOR_X_POS; char_idx <= CURRENT_LINE_LENGTH_IDX;
+		    char_idx++)
 		{
-			CURRENT_LINE[char_i - prev] = CURRENT_LINE[char_i];
+			CURRENT_LINE[char_idx - prev] = CURRENT_LINE[char_idx];
 		}
 		break;
 
 		case 'r':
-		for(char_i = CURRENT_LINE_LENGTH_IDX; char_i >= CURSOR_X_POSITION; char_i--)
+		for(char_idx = CURRENT_LINE_LENGTH_IDX; char_idx >= CURSOR_X_POS;
+		    char_idx--)
 		{
-			CURRENT_LINE[char_i] = CURRENT_LINE[char_i - prev];
+			CURRENT_LINE[char_idx] = CURRENT_LINE[char_idx - prev];
 		}
 	}
 }
 
-bool edit__move_lines_forward(Buff_t* Buff)
+bool edit__move_lines_forward(Buff_t* Buffer)
 {
-	PREVIOUS_LINE_LENGTH_IDX -= Buff->cusr_x;
+	PREVIOUS_LINE_LENGTH_IDX -= Buffer->cursor_rev_x;
 
 	// Move more lines vertically with the part of the current line.
 	if(CURSOR_Y_SCROLLED)
 	{
-		if(!memory__copy_lines_forward(Buff))
+		if(!memory__copy_lines_forward(Buffer))
 		{
 			return false;
 		}
@@ -114,11 +118,11 @@ bool edit__move_lines_forward(Buff_t* Buff)
 
 	// Move the right part (separated by the cursor) of the line to the next.
 	for(idx_t char_i = PREVIOUS_LINE_LENGTH_IDX;
-	    char_i < PREVIOUS_LINE_LENGTH_IDX + Buff->cusr_x; char_i++)
+	    char_i < PREVIOUS_LINE_LENGTH_IDX + Buffer->cursor_rev_x; char_i++)
 	{
 		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = PREVIOUS_LINE[char_i];
 		CURRENT_LINE_LENGTH_IDX++;
-		if(!memory__extend_line(Buff, CURRENT_LINE_IDX))
+		if(!memory__extend_line(Buffer, CURRENT_LINE_IDX))
 		{
 			return false;
 		}
@@ -126,21 +130,21 @@ bool edit__move_lines_forward(Buff_t* Buff)
 
 	// Now the length of the upper line will be shortened after copying.
 	PREVIOUS_LINE[PREVIOUS_LINE_LENGTH_IDX] = '\0';
-	if(!memory__shrink_prev_line(Buff))
+	if(!memory__shrink_prev_line(Buffer))
 	{
 		return false;
 	}
 	return true;
 }
 
-bool edit__move_lines_backward(Buff_t* Buff)
+bool edit__move_lines_backward(Buff_t* Buffer)
 {
-	Buff->chars_i--;
+	Buffer->chars_idx--;
 	PREVIOUS_LINE_LENGTH_IDX--;
 	PREVIOUS_LINE[PREVIOUS_LINE_LENGTH_IDX] = '\0';
 
 	PREVIOUS_LINE_LENGTH_IDX += CURRENT_LINE_LENGTH_IDX;
-	if(!memory__extend_line(Buff, PREVIOUS_LINE_IDX))
+	if(!memory__extend_line(Buffer, PREVIOUS_LINE_IDX))
 	{
 		return false;
 	}
@@ -149,42 +153,42 @@ bool edit__move_lines_backward(Buff_t* Buff)
 
 	if(CURSOR_Y_SCROLLED)
 	{
-		if(!memory__copy_lines_backward(Buff))
+		if(!memory__copy_lines_backward(Buffer))
 		{
 			return false;
 		}
 	}
-	if(!edit__delete_last_line(Buff))
+	if(!edit__delete_last_line(Buffer))
 	{
 		return false;
 	}
 	return true;
 }
 
-bool edit__delete_last_empty_line(Buff_t* Buff)
+bool edit__delete_last_empty_line(Buff_t* Buffer)
 {
 	free(CURRENT_LINE);
 
-	Buff->lines_i--;
-	if(!memory__shrink_act_line(Buff))
+	Buffer->lines_idx--;
+	if(!memory__shrink_act_line(Buffer))
 	{
 		return false;
 	}
 
 	CURRENT_LINE_LENGTH_IDX--;
-	Buff->chars_i--;
+	Buffer->chars_idx--;
 
-	if(!memory__shrink_lines_array(Buff))
+	if(!memory__shrink_lines_array(Buffer))
 	{
 		return false;
 	}
 	return true;
 }
 
-bool edit__delete_last_line(Buff_t* Buff)
+bool edit__delete_last_line(Buff_t* Buffer)
 {
 	free(LAST_LINE);
 
-	Buff->lines_i--;
-	return memory__shrink_lines_array(Buff);
+	Buffer->lines_idx--;
+	return memory__shrink_lines_array(Buffer);
 }

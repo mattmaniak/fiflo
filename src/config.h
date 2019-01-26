@@ -38,7 +38,7 @@ Opt_t;
 
 typedef struct
 {
-	FILE* file;
+	FILE* File;
 	// Opt_t Color_bar;
 	Opt_t Color_git_logo;
 	// Opt_t Color_line_number;

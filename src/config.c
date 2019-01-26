@@ -7,9 +7,10 @@ void config__init_selectors(Conf_t* Config)
 	       "color-line-number-current");
 
 	// strcpy(Config->Color_line_number.selector, "color-line-number");
-	strcpy(Config->Color_text.selector, "color-text");
-	strcpy(Config->Color_warning.selector, "color-warning");
+	strcpy(Config->Color_text.selector,     "color-text");
+	strcpy(Config->Color_warning.selector,  "color-warning");
 	strcpy(Config->Color_git_logo.selector, "color-git-logo");
+	strcpy(Config->Tab_width.selector,      "tab-width");
 }
 
 void config__parse_selector(Conf_t* Config, char* selector, int value)
@@ -37,6 +38,10 @@ void config__parse_selector(Conf_t* Config, char* selector, int value)
 	else if(!strcmp(Config->Color_git_logo.selector, selector))
 	{
 		Config->Color_git_logo.value = value;
+	}
+	else if(!strcmp(Config->Tab_width.selector, selector))
+	{
+		Config->Tab_width.value = value;
 	}
 }
 
@@ -135,7 +140,7 @@ void config__set_custom(Conf_t* Config)
 
 	config__init_selectors(Config);
 
-	while(fgets(line, 80, Config->file) != NULL)
+	while(fgets(line, 80, Config->File) != NULL)
 	{
 		if((line[0] == '#') || (line[0] == ' '))
 		{

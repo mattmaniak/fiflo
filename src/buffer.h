@@ -13,7 +13,7 @@ that describes the buffer. */
 #include <limits.h>
 #include <linux/limits.h>
 
-// Needed to char/lines/chars_in_line values.
+// Needed to char/lines/chars_idxn_line values.
 typedef uint32_t idx_t;
 
 #define IDX    1
@@ -26,7 +26,7 @@ typedef uint32_t idx_t;
 #define CHARS_MAX (UINT_MAX / 256)
 
 #define STATUS_MAX      32
-#define SET_STATUS(msg) strncpy(Buff->status, msg, STATUS_MAX - IDX) // TODO.
+#define SET_STATUS(msg) strncpy(Buffer->status, msg, STATUS_MAX - IDX) // TODO.
 
 typedef struct // TODO
 {
@@ -49,53 +49,55 @@ typedef struct // TODO: SPLIT AND PADDING
 
 	// Filename.
 	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
-	size_t   fname_len_i;        // Strlen of the above array.
+	size_t   fname_length;       // Strlen of the above array.
 
 	uint16_t padding_1;
 
 	// File's content and some indicators.
-	char**   text;               // Text buffer. Eg. text[lines_i][chars_i].
-	idx_t    chars_i;            // All chars index.
-	idx_t    lines_i;            // Lines index.
-	idx_t*   line_len_i;         // Chars in the current line (index).
+	char**   text;               // Text buffer. Eg. text[lines_idx][chars_idx].
+	idx_t    chars_idx;          // All chars index.
+	idx_t    lines_idx;          // Lines index.
+	idx_t*   lines_length_idx;   // Chars in the current line (index).
 
 	// Visual shit.
-	idx_t    cusr_x;             // User's cursor position in the reversed X.
-	idx_t    cusr_y;             // As above but Y-axis.
+	idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
+	idx_t    cursor_rev_y;       // As above but Y-axis.
 	char     status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 Buff_t;
 
 // Bytes of the memory width.
-#define ADDRESS_SZ     sizeof(Buff->text)
+#define ADDRESS_SZ       sizeof(Buffer->text)
 #define INITIAL_MEMBLOCK (ADDRESS_SZ * sizeof(char)) // Aligned initial memblk.
-#define MEMBLOCK      (idx_t) (128 * sizeof(char)) // Must be >= 16 and dividable by 8.
 
-// Placeholders. Note that "_i" means "index".
-#define CURRENT_LINE_IDX        (Buff->lines_i - Buff->cusr_y)
-#define CURRENT_LINE            Buff->text[CURRENT_LINE_IDX]
-#define CURRENT_LINE_LENGTH_IDX Buff->line_len_i[CURRENT_LINE_IDX]
-#define CURSOR_X_POSITION       (CURRENT_LINE_LENGTH_IDX - Buff->cusr_x)
+// Must be >= 16 and dividable by 8.
+#define MEMBLOCK         (idx_t) (128 * sizeof(char))
+
+// Some placeholders.
+#define CURRENT_LINE_IDX        (Buffer->lines_idx - Buffer->cursor_rev_y)
+#define CURRENT_LINE            Buffer->text[CURRENT_LINE_IDX]
+#define CURRENT_LINE_LENGTH_IDX Buffer->lines_length_idx[CURRENT_LINE_IDX]
+#define CURSOR_X_POS            (CURRENT_LINE_LENGTH_IDX - Buffer->cursor_rev_x)
 
 #define PREVIOUS_LINE_IDX        (CURRENT_LINE_IDX - 1)
-#define PREVIOUS_LINE            Buff->text[PREVIOUS_LINE_IDX]
-#define PREVIOUS_LINE_LENGTH_IDX Buff->line_len_i[PREVIOUS_LINE_IDX]
+#define PREVIOUS_LINE            Buffer->text[PREVIOUS_LINE_IDX]
+#define PREVIOUS_LINE_LENGTH_IDX Buffer->lines_length_idx[PREVIOUS_LINE_IDX]
 
-#define LAST_LINE            Buff->text[Buff->lines_i]
-#define LAST_LINE_LENGTH_IDX Buff->line_len_i[Buff->lines_i]
+#define LAST_LINE            Buffer->text[Buffer->lines_idx]
+#define LAST_LINE_LENGTH_IDX Buffer->lines_length_idx[Buffer->lines_idx]
 
-#define BUFFER_NOT_FULL      (Buff->chars_i  <  CHARS_MAX)
-#define CURSOR_X_SCROLLED    (Buff->cusr_x   >  0)
-#define CURSOR_Y_SCROLLED    (Buff->cusr_y   >  0)
+#define BUFFER_NOT_FULL      (Buffer->chars_idx  <  CHARS_MAX)
+#define CURSOR_X_SCROLLED    (Buffer->cursor_rev_x   >  0)
+#define CURSOR_Y_SCROLLED    (Buffer->cursor_rev_y   >  0)
 #define EMPTY_LINE           (CURRENT_LINE_LENGTH_IDX == 0)
 #define FIRST_LINE           (CURRENT_LINE_IDX     == 0)
-#define CURSOR_AT_LINE_START (Buff->cusr_x   == CURRENT_LINE_LENGTH_IDX)
-#define CURSOR_AT_TOP        (Buff->cusr_y   == Buff->lines_i)
+#define CURSOR_AT_LINE_START (Buffer->cursor_rev_x   == CURRENT_LINE_LENGTH_IDX)
+#define CURSOR_AT_TOP        (Buffer->cursor_rev_y   == Buffer->lines_idx)
 
-// Initializes all Buff structure members.
-bool buffer__init(Buff_t* Buff);
+// Initializes all Buffer structure members.
+bool buffer__init(Buff_t* Buffer);
 
 // Display a error message and exit.
-void buffer__free(Buff_t* Buff);
+void buffer__free(Buff_t* Buffer);
 
 #endif

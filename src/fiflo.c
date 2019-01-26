@@ -32,18 +32,10 @@ bool fiflo__options(const char* arg)
 void fiflo__run(const char* arg)
 {
 	char   pressed_key = '\0'; // Initializer.
-	Buff_t Buff;
+	Buff_t Buffer;
 	Conf_t Config;
 
-	if(!buffer__init(&Buff))
-	{
-		goto free;
-	}
-	if(!file__set_name(&Buff, arg))
-	{
-		goto free;
-	}
-	if(!file__load(&Buff))
+	if(!buffer__init(&Buffer))
 	{
 		goto free;
 	}
@@ -51,18 +43,26 @@ void fiflo__run(const char* arg)
 	{
 		goto free;
 	}
+	if(!file__set_name(&Buffer, arg))
+	{
+		goto free;
+	}
+	if(!file__load(&Buffer, &Config))
+	{
+		goto free;
+	}
 
 	for(;;) // The main program loop.
 	{
-		if(!file__get_git_branch(&Buff))
+		if(!file__get_git_branch(&Buffer))
 		{
 			break;
 		}
-		if(!input_parse_key(&Buff, pressed_key))
+		if(!input_parse_key(&Buffer, &Config, pressed_key))
 		{
 			break;
 		}
-		if(!window__render(&Buff, &Config))
+		if(!window__render(&Buffer, &Config))
 		{
 			break;
 		}
@@ -73,7 +73,7 @@ void fiflo__run(const char* arg)
 		window__flush();
 	}
 	free:
-	buffer__free(&Buff);
+	buffer__free(&Buffer);
 }
 
 int main(int argc, char** argv)
