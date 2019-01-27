@@ -92,12 +92,21 @@ bool keys__printable_char(Buff_t* Buffer, char key)
 	return true;
 }
 
-bool keys__backspace(Buff_t* Buffer, Conf_t* Config) // TODO: OVERFLOW WITH TABS
+bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 {
-	idx_t char_idx = CURRENT_LINE_LENGTH_IDX;
+	idx_t char_idx            = CURRENT_LINE_LENGTH_IDX;
+	idx_t remembered_line_idx = CURRENT_LINE_IDX;
 
 	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
 	{
+		/* Prevents deleting [tab_width] lines at once with max. scrolled cursor
+ 		in X. */
+		if(remembered_line_idx != CURRENT_LINE_IDX)
+		{
+			printf("BREAK");
+			break;
+		}
+
 		if(!EMPTY_LINE)
 		{
 			if(!edit__delete_char(Buffer))
@@ -111,35 +120,37 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config) // TODO: OVERFLOW WITH TABS
 			{
 				return false;
 			}
-			break; // Ignore the tab loop when removing a line.
+			// break; // Ignore the tab loop when removing a line.
 		}
 		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0'; // Linefeed to the '\0'.
 
+		// TODO: LOCAL VARIABLE? BACKSPACE WITH CHARS AT RIGHT.
 		if(char_idx > 0)
 		{
 			char_idx--;
 		}
 
-		SET_STATUS("edited");
-		if((!EMPTY_LINE && (CURRENT_LINE[char_idx - NUL_SZ] != '\t'))
-		   || (CURRENT_LINE[0] != '\t'))
+		if((char_idx == 0) || (CURRENT_LINE[char_idx - NUL_SZ] != '\t'))
 		{
 			break;
 		}
 	}
+	SET_STATUS("edited");
+
 	return true;
 }
 
 bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
 {
-	// const char record_separator_fake_tab = 30;
-
 	switch(key)
 	{
 		default:
 		return keys__printable_char(Buffer, key);
 
 		case '\t':
+		/* When the TAB key is pressed, it will insert e.g. 4 '\t' into the
+		buffer. They will be converted during the rendering, loading and saving
+		the file. */
 		for(int char_idx = 0; char_idx < Config->Tab_width.value; char_idx++)
 		{
 			if(!keys__printable_char(Buffer, '\t'))
@@ -174,7 +185,7 @@ bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
 
 void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
 {
-	bool more_than_one_line = (Buffer->lines_idx > 0);
+	bool more_than_one_line = Buffer->lines_idx > 0;
 
 	if(!CURSOR_AT_LINE_START)
 	{
@@ -185,7 +196,7 @@ void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
 			if(CURRENT_LINE[CURSOR_X_POS - tab_idx] != '\t')
 			{
 				Buffer->cursor_rev_x++;
-				break; // No tab, so don't convert anything.
+				break; // No tab, so don't overskip anything.
 			}
 			else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
 			{
@@ -213,7 +224,7 @@ void keys__arrow_right(Buff_t* Buffer, Conf_t* Config)
 			if(CURRENT_LINE[CURSOR_X_POS + tab_idx] != '\t')
 			{
 				Buffer->cursor_rev_x--;
-				break; // No tab, so don't convert anything.
+				break; // No tab, so don't overskip anything.
 			}
 			else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
 			{
@@ -261,7 +272,8 @@ void keys__arrow_down(Buff_t* Buffer)
 		}
 		else
 		{
-			Buffer->cursor_rev_x = (CURSOR_Y_SCROLLED) ? 1 : 0; // Ignore the LF or not.
+			// Ignore the LF or not.
+			Buffer->cursor_rev_x = (CURSOR_Y_SCROLLED) ? 1 : 0;
 		}
 	}
 }

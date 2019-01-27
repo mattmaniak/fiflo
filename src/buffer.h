@@ -54,12 +54,13 @@ typedef struct // TODO: SPLIT AND PADDING
 	uint16_t padding_1;
 
 	// File's content and some indicators.
-	char**   text;               // Text buffer. Eg. text[lines_idx][chars_idx].
+	char**   text;               // Text buffer. E.g. text[lines_idx][chars_idx].
 	idx_t    chars_idx;          // All chars index.
 	idx_t    lines_idx;          // Lines index.
 	idx_t*   lines_length_idx;   // Chars in the current line (index).
 
 	// Visual shit.
+	idx_t    preffered_cursor_rev_x; // E.g. end of the line offset when scrolling through the first chars.
 	idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
 	idx_t    cursor_rev_y;       // As above but Y-axis.
 	char     status[STATUS_MAX]; // Displayed message in the upper bar.

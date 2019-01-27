@@ -5,26 +5,25 @@
 
 bool file__set_name(Buff_t* Buffer, const char* arg)
 {
-	const size_t nul_sz   = 1;
 	const size_t slash_sz = 1;
 	size_t       arg_len  = strlen(arg);
 
 	bool arg_non_empty   = arg_len > 0;
 	bool arg_as_abs_path = arg[0]  == '/';
-	bool arg_as_dir      = (arg[arg_len - nul_sz] == '/')
-	                        && (arg[arg_len] == '\0');
+	bool arg_as_dir      = (arg[arg_len - NUL_SZ] == '/')
+	                       && (arg[arg_len] == '\0');
 
 	if(arg_non_empty && arg_as_dir)
 	{
-		fputs("Can't open the directory as a file.\n", stderr);
+		fprintf(stderr, "Can't open the directory as a file.\n");
 		return false;
 	}
 
 	if(arg_as_abs_path) // TODO
 	{
-		if((arg_len + nul_sz) > PATH_MAX)
+		if(arg_len >= PATH_MAX)
 		{
-			fputs("Passed filename is too long.\n", stderr);
+			fprintf(stderr, "Passed filename is too long.\n");
 			return false;
 		}
 		strncpy(Buffer->fname, arg, PATH_MAX);
@@ -34,20 +33,20 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
 		char* cwdir = malloc(PATH_MAX - NAME_MAX - slash_sz);
 		if(cwdir == NULL)
 		{
-			fputs("Can't alloc a memory for the directory.\n", stderr);
+			fprintf(stderr, "Can't alloc a memory for the directory.\n");
 			return false;
 		}
 
 		cwdir = getcwd(cwdir, PATH_MAX - NAME_MAX - slash_sz);
 		if(cwdir == NULL)
 		{
-			fputs("Can't get the current directory. Maybe too long.\n", stderr);
+			fprintf(stderr, "Can't get the current directory. Too long.\n");
 			return false;
 		}
 
 		if((strlen(cwdir) + arg_len) >= PATH_MAX)
 		{
-			fputs("Current directory is too long.\n", stderr); // TODO.
+			fprintf(stderr, "Current directory is too long.\n"); // TODO.
 			return false;
 		}
 		// Copy the path.
@@ -109,13 +108,12 @@ bool file__convert_from_tab(Buff_t* Buffer, Conf_t* Config, char ch)
 
 bool file__load(Buff_t* Buffer, Conf_t* Config)
 {
-	const size_t nul_sz = 1;
-	FILE*        Textfile = fopen(Buffer->fname, "r");
-	char         ch;
+	FILE* Textfile = fopen(Buffer->fname, "r");
+	char  ch;
 
 	if(Textfile != NULL)
 	{
-		if(Buffer->fname[Buffer->fname_length - nul_sz] == '/')
+		if(Buffer->fname[Buffer->fname_length - NUL_SZ] == '/')
 		{
 			SET_STATUS("current directory set");
 			fclose(Textfile);
@@ -143,7 +141,7 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
 }
 
 void file__convert_to_tab(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
-                          idx_t* char_idx)
+                          idx_t* char_idx) // TODO: RETURN INSTEAD OF PTR.
 {
 	const idx_t at_least_one_tab = 1;
 
@@ -167,7 +165,7 @@ void file__save(Buff_t* Buffer, Conf_t* Config)
 
 	if(access(Buffer->fname, F_OK) == ERROR)
 	{
-		// There is no file so create with -rw------- mode.
+		// There is no file so create it with the -rw------- mode.
 		fd = open(Buffer->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if(fd == ERROR)
 		{

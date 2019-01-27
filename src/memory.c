@@ -11,13 +11,13 @@ bool memory__extend_line(Buff_t* Buffer, idx_t line_idx)
 		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Extend_line %d with mem of %d B.\n",
+		printf("Extend_line %u with mem of %u B.\n",
 		       line_idx + IDX, memblock);
 #endif
 
 	}
 	else if((Buffer->lines_length_idx[line_idx] > INITIAL_MEMBLOCK)
-	&& (Buffer->lines_length_idx[line_idx] % MEMBLOCK == 0))
+	        && (Buffer->lines_length_idx[line_idx] % MEMBLOCK == 0))
 	{
 		// There are more chars so append the new memblock.
 		memblock = ((Buffer->lines_length_idx[line_idx] / MEMBLOCK) * MEMBLOCK)
@@ -26,7 +26,7 @@ bool memory__extend_line(Buff_t* Buffer, idx_t line_idx)
 		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Extend_line %d with mem of %d B.\n",
+		printf("Extend_line %u with mem of %u B.\n",
 		       line_idx + IDX, memblock);
 #endif
 
@@ -39,14 +39,14 @@ bool memory__extend_line(Buff_t* Buffer, idx_t line_idx)
 	return true;
 }
 
-bool memory__shrink_act_line(Buff_t* Buffer)
+bool memory__shrink_current_line(Buff_t* Buffer)
 {
 	idx_t memblock = INITIAL_MEMBLOCK;
 
 	/* These cases are executed only when the backspace is pressed. Works in the
- 	same way as "extend_act_line". */
+ 	same way as "extend_current_line". */
 	if((CURRENT_LINE_LENGTH_IDX >= INITIAL_MEMBLOCK)
-	&& (CURRENT_LINE_LENGTH_IDX < MEMBLOCK))
+	   && (CURRENT_LINE_LENGTH_IDX < MEMBLOCK))
 	{
 		// Shrink to size of the MEMBLOCK.
 		memblock = MEMBLOCK;
@@ -64,7 +64,7 @@ bool memory__shrink_act_line(Buff_t* Buffer)
 	}
 
 #ifdef DEBUG_MEMORY
-	printf("Shrink_act_line %d with mem of %d B.\n",
+	printf("Shrink_current_line %u with mem of %u B.\n",
 	       CURRENT_LINE_IDX + IDX, memblock);
 #endif
 	return true;
@@ -75,7 +75,7 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
 	idx_t memblock = INITIAL_MEMBLOCK;
 
 	if((PREVIOUS_LINE_LENGTH_IDX >= INITIAL_MEMBLOCK)
-	&& (PREVIOUS_LINE_LENGTH_IDX < MEMBLOCK))
+	   && (PREVIOUS_LINE_LENGTH_IDX < MEMBLOCK))
 	{
 		memblock = MEMBLOCK;
 	}
@@ -88,7 +88,7 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
 	PREVIOUS_LINE = realloc(PREVIOUS_LINE, memblock);
 
 #ifdef DEBUG_MEMORY
-	printf("Shrink_prev_line %d with mem of %d B\n",
+	printf("Shrink_prev_line %u with mem of %u B\n",
 	       PREVIOUS_LINE_IDX + IDX, memblock);
 #endif
 
@@ -114,7 +114,7 @@ bool memory__extend_lines_array(Buff_t* Buffer)
 
 	// Enhance the array that contains lines length indicators.
 	Buffer->lines_length_idx = realloc(Buffer->lines_length_idx,
-	                           (Buffer->lines_idx + IDX) * ADDRESS_SZ);
+	                                   (Buffer->lines_idx + IDX) * ADDRESS_SZ);
 
 	if(Buffer->lines_length_idx == NULL)
 	{
@@ -148,7 +148,7 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
 	}
 
 	Buffer->lines_length_idx = realloc(Buffer->lines_length_idx,
-	                           (Buffer->lines_idx + IDX) * ADDRESS_SZ);
+	                                   (Buffer->lines_idx + IDX) * ADDRESS_SZ);
 
 	if(Buffer->lines_length_idx == NULL)
 	{
@@ -160,7 +160,7 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
 
 bool memory__copy_lines_forward(Buff_t* Buffer)
 {
-	const unsigned int prev = 1;
+	const idx_t prev = 1;
 
 	for(idx_t line_idx = Buffer->lines_idx; line_idx > CURRENT_LINE_IDX;
 	    line_idx--)
@@ -171,7 +171,7 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
 		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Copied line %d forward to %d with new mem of %d B.\n",
+		printf("Copied line %u forward to %u with new mem of %u B.\n",
 		       line_idx + IDX - prev, line_idx + IDX, memblock);
 #endif
 
@@ -191,7 +191,7 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
 
 bool memory__copy_lines_backward(Buff_t* Buffer)
 {
-	const unsigned int next = 1;
+	const idx_t next = 1;
 
 	for(idx_t line_idx = CURRENT_LINE_IDX; line_idx < Buffer->lines_idx;
 	    line_idx++)
@@ -202,7 +202,7 @@ bool memory__copy_lines_backward(Buff_t* Buffer)
 		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Copied line %d backward to %d with new mem of %d B.\n",
+		printf("Copied line %u backward to %u with new mem of %u B.\n",
 		       line_idx + IDX + next, line_idx + IDX, memblock);
 #endif
 

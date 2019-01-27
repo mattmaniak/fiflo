@@ -8,6 +8,7 @@ files use git-show or git-log.
 
 ## Versions:
 ### v3.0.0 (WIP):
+- logo removed from the UI,
 - 80th column indicator,
 - git branch name display,
 - return-based API,

@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- tab with gap,
 - whitespace highlighting,
 - improve live filename edit,
 - check code coverage,
