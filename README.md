@@ -1,40 +1,48 @@
-# fiflo - nano-inspired text editor with CUA keyboard shortcuts
+# fiflo
+Terminal-based text editor with Common User Access keyboard shortcuts.
 
-## Get it
-### Requirements for the GNU/Linux:
+## Use
+### Check the requirements for the GNU/Linux:
 - git,
 - make,
 - gcc >= 4.6 or clang >= 3.1,
-- gzip (only for an installation).
+- gzip (only for the installation),
+- sudo (e.g. if You're running the bare Debian on root...)
 
-### Quick guide to run it
+### Clone on a desktop, compile and run.
 ```
-git clone https://gitlab.com/mattmaniak/fiflo.git
-cd fiflo
-make
+git clone https://gitlab.com/mattmaniak/fiflo.git &&
+cd fiflo &&
+make &&
 bin/fiflo
 ```
 
-Also You can try the latest unstable snapshot
-```
-git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
-```
-
-### Installation
+### Install
 ```
 sudo make install
 ```
-Then it will be posibility to run it directly from disk.
+
+Then use it directly from a disk...
 ```
 ./fiflo
 ```
 
-### Object files and the binary removal
+or better read the  manual...
+```
+man fiflo
+```
+
+and it's configuration guide.
+```
+man fiflorc
+```
+
+### Optional cleanup - remove "bin" and "obj" directories after the compilation.
 ```
 make clean
 ```
 
-### Uninstallation
+### Uninstall, what You have installed.
 ```
 sudo make uninstall
 ```
@@ -42,13 +50,14 @@ sudo make uninstall
 ## Development
 Dive into the "doc/" direcory.
 
-### Additional tools:
-- MSan (clang >= 3.1),
+### Recommended tools for debugging:
+- AddressSanitizer (included in gcc and clang),
+- MemorySanitizer (clang >= 3.1 only),
 - valgrind.
 
-### Get and check the development branch
+### Get and set the development branch
 ```
-git clone https://gitlab.com/mattmaniak/fiflo.git -b develop
+git clone https://gitlab.com/mattmaniak/fiflo.git -b develop &&
 git checkout develop
 ```
 

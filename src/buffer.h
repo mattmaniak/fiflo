@@ -68,8 +68,8 @@ typedef struct // TODO: SPLIT AND PADDING
 Buff_t;
 
 // Bytes of the memory width.
-#define ADDRESS_SZ       sizeof(Buffer->text)
-#define INITIAL_MEMBLOCK (ADDRESS_SZ * sizeof(char)) // Aligned initial memblk.
+#define ADDR_SZ          sizeof(Buffer->text)
+#define INITIAL_MEMBLOCK (ADDR_SZ * sizeof(char)) // Aligned initial memblk.
 
 // Must be >= 16 and dividable by 8.
 #define MEMBLOCK         (idx_t) (128 * sizeof(char))

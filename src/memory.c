@@ -67,6 +67,7 @@ bool memory__shrink_current_line(Buff_t* Buffer)
 	printf("Shrink_current_line %u with mem of %u B.\n",
 	       CURRENT_LINE_IDX + IDX, memblock);
 #endif
+
 	return true;
 }
 
@@ -103,8 +104,7 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
 bool memory__extend_lines_array(Buff_t* Buffer)
 {
 	// Enhance the array that contains pointers to lines.
-	Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX)
-	                       * ADDRESS_SZ);
+	Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX) * ADDR_SZ);
 
 	if(Buffer->text == NULL)
 	{
@@ -113,8 +113,8 @@ bool memory__extend_lines_array(Buff_t* Buffer)
 	}
 
 	// Enhance the array that contains lines length indicators.
-	Buffer->lines_length_idx = realloc(Buffer->lines_length_idx,
-	                                   (Buffer->lines_idx + IDX) * ADDRESS_SZ);
+	Buffer->lines_length_idx = realloc(Buffer->lines_length_idx, ADDR_SZ *
+	                                   (Buffer->lines_idx + IDX));
 
 	if(Buffer->lines_length_idx == NULL)
 	{
@@ -138,8 +138,7 @@ bool memory__extend_lines_array(Buff_t* Buffer)
 
 bool memory__shrink_lines_array(Buff_t* Buffer)
 {
-	Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX)
-	                       * ADDRESS_SZ);
+	Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX) * ADDR_SZ);
 
 	if(Buffer->text == NULL)
 	{
@@ -147,8 +146,8 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
 		return false;
 	}
 
-	Buffer->lines_length_idx = realloc(Buffer->lines_length_idx,
-	                                   (Buffer->lines_idx + IDX) * ADDRESS_SZ);
+	Buffer->lines_length_idx = realloc(Buffer->lines_length_idx, ADDR_SZ *
+	                                   (Buffer->lines_idx + IDX));
 
 	if(Buffer->lines_length_idx == NULL)
 	{

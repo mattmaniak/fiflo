@@ -19,6 +19,8 @@ extern bool edit__delete_last_empty_line(Buff_t*);
 extern bool edit__delete_non_last_line(Buff_t*);
 extern bool edit__delete_char(Buff_t*);
 
+void window__flush(void);
+
 extern void file__save(Buff_t*, Conf_t*);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.

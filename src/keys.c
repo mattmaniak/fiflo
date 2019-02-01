@@ -34,13 +34,12 @@ bool keys__linefeed(Buff_t* Buffer)
 
 bool keys__printable_char(Buff_t* Buffer, char key)
 {
-	const size_t nul_sz = 1;
 
-#ifndef DEBUG_KEYS
+#ifdef DEBUG_KEYS
+	const bool in_keymap = true;
+#else
 	const bool in_keymap = (key == '\0') || (key == '\t') || (key == '\n')
 	                       || (key >= 32);
-#else
-	const bool in_keymap = true;
 #endif
 
 	if(in_keymap)
@@ -59,7 +58,7 @@ bool keys__printable_char(Buff_t* Buffer, char key)
 			{
 				edit__shift_text_horizonally(Buffer, 'r');
 			}
-			CURRENT_LINE[CURSOR_X_POS - nul_sz] = key;
+			CURRENT_LINE[CURSOR_X_POS - NUL_SZ] = key;
 			CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0';
 
 			// Initializing nul handling.

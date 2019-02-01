@@ -18,8 +18,7 @@ extern bool file__get_git_branch(Buff_t*);
 extern bool window__render(Buff_t*, Conf_t*);
 extern void window__flush(void);
 
-// Program parameters, eg. "--help".
-bool fiflo__options(const char*);
+extern bool options__parse_and_print(const char*);
 
 // Some initializers and the main program loop.
 void fiflo__run(const char*);
