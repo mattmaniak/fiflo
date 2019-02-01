@@ -3,7 +3,7 @@ Every .c file and it's role.
 
 ## Files:
 - buffer.c - initialization and deleting the main buffer which holds the text
-and it's metadata,
+and it's metadata, a lot of semantic macros,
 
 - config.c - fiflorc parser and values setter,
 
@@ -25,4 +25,4 @@ and it's metadata,
 
 - ui.c - user interface components like bars.
 
-- window.c - rendering the window.
+- window.c - window rendering and flushing.

@@ -93,19 +93,10 @@ bool keys__printable_char(Buff_t* Buffer, char key)
 
 bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 {
-	idx_t char_idx            = CURRENT_LINE_LENGTH_IDX;
 	idx_t remembered_line_idx = CURRENT_LINE_IDX;
 
 	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
 	{
-		/* Prevents deleting [tab_width] lines at once with max. scrolled cursor
- 		in X. */
-		if(remembered_line_idx != CURRENT_LINE_IDX)
-		{
-			printf("BREAK");
-			break;
-		}
-
 		if(!EMPTY_LINE)
 		{
 			if(!edit__delete_char(Buffer))
@@ -123,16 +114,35 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 		}
 		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0'; // Linefeed to the '\0'.
 
-		// TODO: LOCAL VARIABLE? BACKSPACE WITH CHARS AT RIGHT.
-		if(char_idx > 0)
+		// Tab as the last char.
+		if((CURRENT_LINE_LENGTH_IDX > 0)
+		   && (CURRENT_LINE[CURRENT_LINE_LENGTH_IDX - NUL_SZ] != '\t')
+		   && Buffer->cursor_rev_x == 0)
 		{
-			char_idx--;
-		}
-
-		if((char_idx == 0) || (CURRENT_LINE[char_idx - NUL_SZ] != '\t'))
-		{
+			puts("BREAK_1");
 			break;
 		}
+		// Scenario when there is the tab and some text further.
+		else if((CURRENT_LINE_LENGTH_IDX > 2) // TODO.
+		        && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t')
+		        && Buffer->cursor_rev_x > 0)
+		{
+			if(CURRENT_LINE_LENGTH_IDX == 1)
+			{
+				break;
+			}
+			puts("BREAK_2");
+			break;
+		}
+
+		/* Prevents deleting [tab_width] lines at once with max. scrolled cursor
+ 		in X. */
+		if(remembered_line_idx != CURRENT_LINE_IDX)
+		{
+			puts("BREAK_3");
+			break;
+		}
+		puts("LOLO");
 	}
 	SET_STATUS("edited");
 

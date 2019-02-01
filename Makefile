@@ -88,5 +88,3 @@ uninstall:
 
 clean:
 	$(RM) -r $(OBJ_DIR) $(BIN_DIR)
-	@echo " "
-	@echo "Compilation trash removed."
