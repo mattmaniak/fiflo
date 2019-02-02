@@ -78,6 +78,9 @@ install: $(TARGET)
 #	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
 #	DEBUG
 
+install_debug: address
+	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
+
 uninstall:
 	sudo $(RM) \
 	$(INS_DIR)/$(TARGET) \

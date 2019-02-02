@@ -18,7 +18,7 @@ bool options__parse_and_print(const char* arg)
 		"|``",
 		"|``",
 		"fiflo v3.0.0 (WIP)",
-		"(C) 2018-2019 mattmaniak, MIT License",
+		"(C) 2018-2019 mattmaniak under the MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
 		return false;
 	}

@@ -78,6 +78,11 @@ valgrind -v ./fiflo [optional args]
 ```
 Note: fiflo must be compiled without ASan and MSan.
 
+### Install only the binary with ASan linked
+```
+sudo make install_debug
+```
+
 ## FAQ
 Will you port it into the Windows?
 - No.

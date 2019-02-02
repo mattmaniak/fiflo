@@ -110,11 +110,10 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 			{
 				return false;
 			}
-			// break; // Ignore the tab loop when removing a line.
 		}
 		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0'; // Linefeed to the '\0'.
 
-		// Tab as the last char.
+		// Some text and the tab(s) at the end.
 		if((CURRENT_LINE_LENGTH_IDX > 0)
 		   && (CURRENT_LINE[CURRENT_LINE_LENGTH_IDX - NUL_SZ] != '\t')
 		   && Buffer->cursor_rev_x == 0)
@@ -123,16 +122,13 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 			break;
 		}
 		// Scenario when there is the tab and some text further.
-		else if((CURRENT_LINE_LENGTH_IDX > 2) // TODO.
-		        && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t')
-		        && Buffer->cursor_rev_x > 0)
+		else if(CURSOR_X_POS > 0) // TODO.
 		{
-			if(CURRENT_LINE_LENGTH_IDX == 1)
+			if(CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t')
 			{
+				puts("BREAK_2");
 				break;
 			}
-			puts("BREAK_2");
-			break;
 		}
 
 		/* Prevents deleting [tab_width] lines at once with max. scrolled cursor
