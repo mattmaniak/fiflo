@@ -22,6 +22,8 @@ bool edit__delete_char(Buff_t* Buffer)
 			return false;
 		}
 	}
+	CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0'; // Linefeed to the '\0'.
+
 	return true;
 }
 

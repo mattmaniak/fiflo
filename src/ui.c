@@ -44,11 +44,11 @@ void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 	}
 	else
 	{
-		printf("%.*s... ",
-		       (int) (Ui->win_w - GIT_LOGO_LENGTH - DOTS_LENGTH),
-		       Buffer->git_branch);
-
-		printf("%s", Buffer->status);
+		printf("%.*s... %*s",
+		       Ui->win_w - GIT_LOGO_LENGTH - SPACE_SZ - DOTS_LENGTH
+		       - STATUS_MAX,
+		       Buffer->git_branch,
+		       STATUS_MAX,  Buffer->status);
 	}
 	WRAP_LINE();
 	config__set_color(NULL);;

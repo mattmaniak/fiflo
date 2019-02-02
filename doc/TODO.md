@@ -1,6 +1,7 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
-- tab with gap,
+- colorized status,
+- tab with a gap,
 - whitespace highlighting,
 - improve live filename edit,
 - check code coverage,
@@ -14,7 +15,6 @@
 - cut/copy/paste,
 - more advanced scroll (eg. full words),
 - fully adaptive cursor,
-- TAB key,
 - load only part of a file,
 - ~/.config/fiflorc - manual,
 - syntax highlighting,

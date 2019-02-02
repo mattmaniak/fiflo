@@ -80,7 +80,7 @@ Note: fiflo must be compiled without ASan and MSan.
 
 ### Install only the binary with ASan linked
 ```
-sudo make install_debug
+sudo make install_address
 ```
 
 ## FAQ
