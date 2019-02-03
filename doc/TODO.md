@@ -19,4 +19,5 @@
 - syntax highlighting,
 - search option,
 - hex mode,
-- usr/share/doc/fiflo.
+- usr/share/doc/fiflo,
+- cursor at the begging by default.

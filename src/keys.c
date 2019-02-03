@@ -20,7 +20,7 @@ bool keys__linefeed(Buff_t* Buffer)
 				return false;
 			}
 		}
-		else if(CURSOR_Y_SCROLLED) // Cursor is to the end of the line.
+		else if(CURSOR_Y_SCROLLED)
 		{
 			if(!memory__copy_lines_forward(Buffer))
 			{
@@ -61,7 +61,7 @@ bool keys__printable_char(Buff_t* Buffer, char key)
 			CURRENT_LINE[CURSOR_X - NUL_SZ] = key;
 			CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0';
 
-			// Initializing nul handling.
+			// Initializing nul handler.
 			if((key == '\0') && !EMPTY_LINE)
 			{
 				Buffer->chars_idx--;
@@ -98,7 +98,7 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 
 	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
 	{
-		// Prevent removind char and 3 tabs from that e.g.: "\t\t\tX".
+		// Prevent removind char and 3 tabs from that e.g.: "\t\t\t\t".
 		if((CURSOR_X > 1) && (CURRENT_LINE[CURSOR_X - prev - NUL_SZ] == '\t')
 		   && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
 		{
@@ -129,8 +129,16 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 			puts("BREAK_1");
 			break;
 		}
+		/* Prevent removing the line when the first char in the line has to be
+		removed. */
+		else if((CURSOR_X == 0) && (CURRENT_LINE[CURSOR_X] != '\t'))
+		{
+			puts("BREAK_2.5");
+			break;
+		}
+
 		// Scenario when there is the tab and some text further.
-		else if((CURSOR_X > 0) // TODO: LINE DELETION.
+		else if((CURSOR_X > 0)
 		        && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
 		        && (Buffer->cursor_rev_x > 0))
 		{
@@ -262,9 +270,9 @@ void keys__arrow_up(Buff_t* Buffer)
 	if(!CURSOR_AT_TOP)
 	{
 		/* Cursor at the left side: doesn't go at the end of a line. Always
-		at the beginning or ignore the keys__linefeed. */
+		at the beginning or ignore the linefeed. */
 		Buffer->cursor_rev_x = (CURSOR_AT_LINE_START)
-		                       ? PREVIOUS_LINE_LENGTH_IDX : 1;
+		                       ? PREVIOUS_LINE_LENGTH_IDX : LF_SZ;
 		Buffer->cursor_rev_y++;
 	}
 }
@@ -285,7 +293,7 @@ void keys__arrow_down(Buff_t* Buffer)
 		else
 		{
 			// Ignore the LF or not.
-			Buffer->cursor_rev_x = (CURSOR_Y_SCROLLED) ? 1 : 0;
+			Buffer->cursor_rev_x = (CURSOR_Y_SCROLLED) ? LF_SZ : 0;
 		}
 	}
 }

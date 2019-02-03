@@ -57,7 +57,7 @@ int config__encode_color(Conf_t*, char*);
 void config__set_default(Conf_t*);
 
 //
-void config__set_custom(Conf_t*);
+void config__load_custom(Conf_t*);
 
 //
 void config__set_color(Opt_t*);

@@ -8,8 +8,8 @@
 # Default configuration below.
 # Changes nothing because the editor has it implemented independently.
 
-color-line-number = magenta
-color-line-number-current = bright-magenta
+color-line-number = bright-magenta
+color-line-number-current = white
 color-text = green
 color-ui = white
 color-warning = red

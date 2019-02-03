@@ -123,7 +123,7 @@ void config__set_default(Conf_t* Config)
 	Config->Tab_width.value                 = 4;
 }
 
-void config__set_custom(Conf_t* Config)
+void config__load_custom(Conf_t* Config)
 {
 	int  parsed_value = 0;
 	char line[128];

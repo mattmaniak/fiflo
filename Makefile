@@ -1,7 +1,7 @@
 TARGET = fiflo
 
 CC =
-CFLAGS = -std=gnu11 -Os
+CFLAGS = -std=c11 -Os
 LDFLAGS =
 
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
@@ -52,6 +52,7 @@ $(TARGET): $(OBJS)
 	@mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
 	$(CFLAGS) $(LDFLAGS)
+
 	@echo " "
 	@echo "Compilation successful."
 
@@ -71,24 +72,39 @@ memory:
 
 # Fun with a filesystem.
 install: $(TARGET)
+	@echo " "
 	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
+
 	sudo $(RM) $(MAN_INS_DIR)1/$(TARGET).1.gz
 	sudo $(RM) $(MAN_INS_DIR)5/$(TARGET)rc.5.gz
+
 	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)1/$(TARGET).1
 	sudo cp $(MAN_DIR)/$(TARGET)rc.5 $(MAN_INS_DIR)5/$(TARGET)rc.5
+
 	sudo gzip $(MAN_INS_DIR)1/$(TARGET).1
 	sudo gzip $(MAN_INS_DIR)5/$(TARGET)rc.5
+
 	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
 
+	@echo " "
+	@echo "Fiflo installation finished."
+
 install_address: address
+	@echo " "
 	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
+
+	@echo " "
+	@echo "Fiflo binary only installation with ASan finished."
 
 uninstall:
 	sudo $(RM) \
 	$(INS_DIR)/$(TARGET) \
-	$(MAN_INS_DIR)/$(TARGET).1.gz \
-	$(MAN_INS_DIR)/$(TARGET)rc.5.gz \
+	$(MAN_INS_DIR)1/$(TARGET).1.gz \
+	$(MAN_INS_DIR)5/$(TARGET)rc.5.gz \
 	$(CONF_DIR)/$(TARGET)rc
+
+	@echo " "
+	@echo "Fiflo uninstallation finished."
 
 .PHONY: clean
 

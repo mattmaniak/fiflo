@@ -84,13 +84,17 @@ void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, char key)
 	}
 	else if(key == enter)
 	{
-		SET_STATUS("saved as");
-
-		strncpy(Buffer->orig_fname, Buffer->fname, PATH_MAX);
 
 		Buffer->live_fname_edit = false;
 		file__save(Buffer, Config);
 
+		SET_STATUS("filename edited and saved as");
+
+		if(!strcmp(Buffer->fname, Buffer->orig_fname))
+		{
+			SET_STATUS("saved as");
+		}
+		strncpy(Buffer->orig_fname, Buffer->fname, PATH_MAX);
 	}
 	else if(key == escape)
 	{
@@ -104,9 +108,9 @@ void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, char key)
 
 bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, char ch)
 {
-	printf("tab %u\n", Config->Tab_width.value);
-
-	if(ch == '\t') // TODO: TAB_INSERT.
+	/* Converts in-file '\t' in to sequence of e.g. "\t\t\t\t" if the tab width
+	is set to 4. */
+	if(ch == '\t')
 	{
 		for(idx_t char_idx = 0;
 		    char_idx < (idx_t) (Config->Tab_width.value - AT_LEAST_ONE_TAB);
@@ -158,6 +162,7 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
 void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
                                idx_t* char_idx) // TODO: RETURN INSTEAD OF PTR.
 {
+	// Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
 	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
 	{
 		if(Buffer->text[line_idx][*char_idx + tab_idx] != '\t')
@@ -174,20 +179,7 @@ void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
 
 void file__save(Buff_t* Buffer, Conf_t* Config)
 {
-	FILE* Textfile;
-	int   fd;
-
-	if(access(Buffer->fname, F_OK) == ERROR)
-	{
-		// There is no file so create it with the -rw------- mode.
-		fd = open(Buffer->fname, O_CREAT | O_EXCL | O_WRONLY, 0600);
-		if(fd == ERROR)
-		{
-			SET_STATUS("failed to create the file");
-		}
-		close(fd);
-	}
-	Textfile = fopen(Buffer->fname, "w");
+	FILE* Textfile = fopen(Buffer->fname, "w");
 
 	if(Textfile != NULL)
 	{
@@ -229,7 +221,7 @@ bool file__load_config(Conf_t* Config)
 	Config->File = fopen(path, "r");
 	if(Config->File != NULL)
 	{
-		config__set_custom(Config);
+		config__load_custom(Config);
 		fclose(Config->File);
 	}
 	return true;

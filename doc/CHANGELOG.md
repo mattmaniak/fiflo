@@ -8,15 +8,16 @@ files use git-show or git-log.
 
 ## Versions:
 ### v3.0.0 (WIP):
-- logo removed from the UI,
+- logo removed from the upper bar,
 - 80th column indicator,
 - git branch name display,
 - return-based API,
 - transparent UI with some colors,
 - fiflorc file - basic configuration,
-- basic tab key support wuthout a gap,
+- basic tab key support without a gap,
 - abort and restore the filename before the live edit,
-- also save after pressing enter during live filename edit.
+- also save after pressing enter during live filename edit,
+- creates the new file with -rw-rw-r-- permissions instead of -rw-------.
 
 ### v2.2.2 (2018, December 22):
 - Repaired positions of line numbers when the line has same width as the
