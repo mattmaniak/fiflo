@@ -80,7 +80,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui)
 
 	if(move_right >= Ui->win_w)
 	{
-		move_right = (term_t) (Ui->win_w - CUR_SZ);
+		move_right = (term_t) (Ui->win_w - CURSOR_SZ);
 	}
 
 	// Cursor is pushed right by the lower bar. Move it back.
@@ -92,18 +92,18 @@ void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui)
 		if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
 		{
 			// No horizontal scrolling.
-			move_right = (term_t) (Ui->line_num_len + CURSOR_X_POS);
+			move_right = (term_t) (Ui->line_num_len + CURSOR_X);
 		}
 		else if((CURRENT_LINE_LENGTH_IDX - Ui->text_x) >= Buffer->cursor_rev_x)
 		{
 			/* Last Ui->text_x chars are seen. Current line is scrolled,
 			not cursor. */
-			move_right = (term_t) (Ui->win_w - CUR_SZ);
+			move_right = (term_t) (Ui->win_w - CURSOR_SZ);
 		}
 		else
 		{
 			// Text is scrolled horizontally to the start. Cursor can be moved.
-			move_right = (term_t) (Ui->line_num_len + CURSOR_X_POS);
+			move_right = (term_t) (Ui->line_num_len + CURSOR_X);
 		}
 		move_up = (CURRENT_LINE_IDX < Ui->text_y) ?
 		(term_t) (Ui->text_y - CURRENT_LINE_IDX - IDX + Ui->lbar_h) : Ui->lbar_h;

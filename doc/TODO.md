@@ -1,9 +1,9 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- lines rendering fix (sometimes shows to many chars),
 - colorized status,
 - tab with a gap,
 - whitespace highlighting,
-- improve live filename edit,
 - check code coverage,
 - more semantic functions names,
 - linked list API (v4.y.z),

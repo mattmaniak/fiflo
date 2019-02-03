@@ -1,5 +1,5 @@
 #include "buffer.h"
-#include "ascii.h"
+#include "shortcuts.h"
 #include "edit.h"
 
 bool edit__delete_char(Buff_t* Buffer)
@@ -88,7 +88,7 @@ void edit__shift_text_horizonally(Buff_t* Buffer, char direction)
 	switch(direction)
 	{
 		case 'l':
-		for(char_idx = CURSOR_X_POS; char_idx <= CURRENT_LINE_LENGTH_IDX;
+		for(char_idx = CURSOR_X; char_idx <= CURRENT_LINE_LENGTH_IDX;
 		    char_idx++)
 		{
 			CURRENT_LINE[char_idx - prev] = CURRENT_LINE[char_idx];
@@ -96,7 +96,7 @@ void edit__shift_text_horizonally(Buff_t* Buffer, char direction)
 		break;
 
 		case 'r':
-		for(char_idx = CURRENT_LINE_LENGTH_IDX; char_idx >= CURSOR_X_POS;
+		for(char_idx = CURRENT_LINE_LENGTH_IDX; char_idx >= CURSOR_X;
 		    char_idx--)
 		{
 			CURRENT_LINE[char_idx] = CURRENT_LINE[char_idx - prev];

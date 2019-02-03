@@ -1,5 +1,5 @@
-#ifndef ASCII_H
-#define ASCII_H
+#ifndef SHORTCUTS_H
+#define SHORTCUTS_H
 
 // Ancient ASCII control characters that can be used as keyboard shortcuts.
 

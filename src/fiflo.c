@@ -27,6 +27,7 @@ void fiflo__run(const char* arg)
 	{
 		goto free;
 	}
+	strncpy(Buffer.orig_fname, Buffer.fname, PATH_MAX);
 
 	for(;;) // The main program loop.
 	{

@@ -9,7 +9,7 @@ void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, idx_t line_i,
 	{
 		config__set_color(&Config->Color_line_number_current);
 	}
-	printf("%*u ", line_num_len - SPACE_SZ, ++line_i);
+	printf("%*u ", --line_num_len, ++line_i);
 	config__set_color(NULL);;
 }
 
@@ -22,7 +22,7 @@ void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 	else
 	{
 		// The filename is too long to show - scroll it.
-		for(size_t char_i = Buffer->fname_length - Ui->win_w + CUR_SZ;
+		for(size_t char_i = Buffer->fname_length - Ui->win_w + CURSOR_SZ;
 		    char_i < Buffer->fname_length; char_i++)
 		{
 			putchar(Buffer->fname[char_i]);

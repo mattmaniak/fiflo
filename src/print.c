@@ -39,7 +39,6 @@ void print__actual_line(Buff_t* Buffer, Ui_t* Ui) // TODO: SIMPLIFY.
 	{
 		print__line_with_tabs(Buffer, CURRENT_LINE_IDX, 0,
 		                      CURRENT_LINE_LENGTH_IDX);
-		// printf("DEBUG");
 	}
 	// Chars won't fits in the horizontal space.
 	else if((CURRENT_LINE_LENGTH_IDX - Ui->text_x) >= Buffer->cursor_rev_x)
@@ -100,8 +99,7 @@ void print__scroll_line_horizontally(Buff_t* Buffer, Ui_t* Ui)
 {
 	// Text will be scrolled. Not cursor.
 	print__line_with_tabs(Buffer, CURRENT_LINE_IDX,
-	                      CURSOR_X_POS + CUR_SZ - Ui->text_x,
-                          CURSOR_X_POS);
+	                      CURSOR_X + CURSOR_SZ - Ui->text_x, CURSOR_X);
 
 	/* Sometimes is needed because the "fill" function renders the smallest
 	amount of linefeeds. In other cases the linefeed is provided by the char in
@@ -114,7 +112,7 @@ void print__scroll_line_horizontally(Buff_t* Buffer, Ui_t* Ui)
 
 void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 {
-	const idx_t actual_line_size = 1;
+	const idx_t current_line_sz = 1;
 	idx_t       line_i;
 
 	for(line_i = 0; line_i < CURRENT_LINE_IDX; line_i++)
@@ -126,7 +124,7 @@ void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 
 	if(CURSOR_Y_SCROLLED)
 	{
-		for(line_i += actual_line_size; line_i < Buffer->lines_idx; line_i++)
+		for(line_i += current_line_sz; line_i < Buffer->lines_idx; line_i++)
 		{
 			print__another_line(Buffer, Ui, Config, line_i);
 		}
@@ -175,7 +173,7 @@ void print__shrink_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	else
 	{
 		print__line_with_tabs(Buffer, last_line_idx, 0,
-		                      (idx_t )Ui->text_x - LF_SZ);
+		                      (idx_t) Ui->text_x - LF_SZ);
 	}
 }
 
@@ -208,8 +206,8 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	{
 		// Text will be scrolled. Not cursor.
 		print__line_with_tabs(Buffer, CURRENT_LINE_IDX,
-		                      CURSOR_X_POS + CUR_SZ - Ui->text_x,
-		                      CURSOR_X_POS);
+		                      CURSOR_X + CURSOR_SZ - Ui->text_x,
+		                      CURSOR_X);
 	}
 	else
 	{

@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#define AT_LEAST_ONE_TAB 1
+
 extern bool keys__printable_char(Buff_t*, char);
 
 // Sets the filename. If basename is passed as arg actent path will be added.
@@ -22,13 +24,13 @@ bool file__set_name(Buff_t*, const char*);
 void file__live_edit_name(Buff_t*, char);
 
 // If there is tab char in a file, load e.g. 4 tabs to a memory.
-bool file__convert_from_tab(Buff_t*, Conf_t*, char);
+bool file__convert_tab_from_file(Buff_t*, Conf_t*, char);
 
 // Reads the file using "input_recognize_char".
 bool file__load(Buff_t*, Conf_t*);
 
 // Converts in-fiflo tabs [e.g. "\t\t\t\t"] to the original '\t'.
-void file__convert_to_tab(Buff_t*, Conf_t*, idx_t, idx_t*);
+void file__convert_tab_to_file(Buff_t*, Conf_t*, idx_t, idx_t*);
 
 // Puts the whole text to the file.
 void file__save(Buff_t*, Conf_t*);

@@ -13,12 +13,15 @@ that describes the buffer. */
 #include <limits.h>
 #include <linux/limits.h>
 
-// Needed to char/lines/chars_idxn_line values.
+// Just the type for indexes.
 typedef uint32_t idx_t;
 
-#define IDX    1
-#define NUL_SZ 1
-#define LF_SZ  1
+#define IDX       1
+#define NUL_SZ    1
+#define LF_SZ     1
+#define CURSOR_SZ 1
+#define SPACE_SZ  1
+#define SLASH_SZ  1
 
 #define ERROR -1
 
@@ -49,6 +52,7 @@ typedef struct // TODO: SPLIT AND PADDING
 
 	// Filename.
 	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
+	char     orig_fname[PATH_MAX];
 	size_t   fname_length;       // Strlen of the above array.
 
 	uint16_t padding_1;
@@ -78,7 +82,7 @@ Buff_t;
 #define CURRENT_LINE_IDX        (Buffer->lines_idx - Buffer->cursor_rev_y)
 #define CURRENT_LINE            Buffer->text[CURRENT_LINE_IDX]
 #define CURRENT_LINE_LENGTH_IDX Buffer->lines_length_idx[CURRENT_LINE_IDX]
-#define CURSOR_X_POS            (CURRENT_LINE_LENGTH_IDX - Buffer->cursor_rev_x)
+#define CURSOR_X            (CURRENT_LINE_LENGTH_IDX - Buffer->cursor_rev_x)
 
 #define PREVIOUS_LINE_IDX        (CURRENT_LINE_IDX - 1)
 #define PREVIOUS_LINE            Buffer->text[PREVIOUS_LINE_IDX]

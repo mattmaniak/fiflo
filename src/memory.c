@@ -89,13 +89,13 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
 	PREVIOUS_LINE = realloc(PREVIOUS_LINE, memblock);
 
 #ifdef DEBUG_MEMORY
-	printf("Shrink_prev_line %u with mem of %u B\n",
+	printf("Shrink_PREV_line %u with mem of %u B\n",
 	       PREVIOUS_LINE_IDX + IDX, memblock);
 #endif
 
 	if(PREVIOUS_LINE == NULL)
 	{
-		fprintf(stderr, "Can't shrink the memblock with the previous line.\n");
+		fprintf(stderr, "Can't shrink the memblock with the PREVious line.\n");
 		return false;
 	}
 	return true;
@@ -159,19 +159,17 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
 
 bool memory__copy_lines_forward(Buff_t* Buffer)
 {
-	const idx_t prev = 1;
-
 	for(idx_t line_idx = Buffer->lines_idx; line_idx > CURRENT_LINE_IDX;
 	    line_idx--)
 	{
-		idx_t memblock = ((Buffer->lines_length_idx[line_idx - prev] / MEMBLOCK)
+		idx_t memblock = ((Buffer->lines_length_idx[line_idx - PREV] / MEMBLOCK)
 		                 * MEMBLOCK) + MEMBLOCK;
 
 		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
 		printf("Copied line %u forward to %u with new mem of %u B.\n",
-		       line_idx + IDX - prev, line_idx + IDX, memblock);
+		       line_idx + IDX - PREV, line_idx + IDX, memblock);
 #endif
 
 		if(Buffer->text[line_idx] == NULL)
@@ -180,29 +178,27 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
 			return false;
 		}
 
-		strcpy(Buffer->text[line_idx], Buffer->text[line_idx - prev]);
+		strcpy(Buffer->text[line_idx], Buffer->text[line_idx - PREV]);
 
 		Buffer->lines_length_idx[line_idx] =
-		Buffer->lines_length_idx[line_idx - prev];
+		Buffer->lines_length_idx[line_idx - PREV];
 	}
 	return true;
 }
 
 bool memory__copy_lines_backward(Buff_t* Buffer)
 {
-	const idx_t next = 1;
-
 	for(idx_t line_idx = CURRENT_LINE_IDX; line_idx < Buffer->lines_idx;
 	    line_idx++)
 	{
-		idx_t memblock = ((Buffer->lines_length_idx[line_idx + next] / MEMBLOCK)
+		idx_t memblock = ((Buffer->lines_length_idx[line_idx + NEXT] / MEMBLOCK)
 		                 * MEMBLOCK) + MEMBLOCK;
 
 		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
 		printf("Copied line %u backward to %u with new mem of %u B.\n",
-		       line_idx + IDX + next, line_idx + IDX, memblock);
+		       line_idx + IDX + NEXT, line_idx + IDX, memblock);
 #endif
 
 		if(Buffer->text[line_idx] == NULL)
@@ -210,10 +206,10 @@ bool memory__copy_lines_backward(Buff_t* Buffer)
 			fprintf(stderr, "Can't copy a line backward.\n");
 			return false;
 		}
-		strcpy(Buffer->text[line_idx], Buffer->text[line_idx + next]);
+		strcpy(Buffer->text[line_idx], Buffer->text[line_idx + NEXT]);
 
 		Buffer->lines_length_idx[line_idx] =
-		Buffer->lines_length_idx[line_idx + next];
+		Buffer->lines_length_idx[line_idx + NEXT];
 	}
 	return true;
 }

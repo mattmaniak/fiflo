@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define NEXT 1
+#define PREV 1
+
 // Allocs next memory block for chars in a line if needed.
 bool memory__extend_line(Buff_t*, idx_t);
 

@@ -8,11 +8,6 @@
 #include <sys/types.h>
 
 // Some semantic macros.
-#define CUR_SZ   1
-#define LF_SZ    1
-#define SLASH_SZ 1
-#define SPACE_SZ 1
-
 #define GIT_LOGO        "|\\ git "
 #define GIT_LOGO_LENGTH 7
 

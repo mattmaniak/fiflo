@@ -1,6 +1,6 @@
 #include "buffer.h"
 #include "config.h"
-#include "ascii.h"
+#include "shortcuts.h"
 #include "keys.h"
 
 bool keys__linefeed(Buff_t* Buffer)
@@ -58,7 +58,7 @@ bool keys__printable_char(Buff_t* Buffer, char key)
 			{
 				edit__shift_text_horizonally(Buffer, 'r');
 			}
-			CURRENT_LINE[CURSOR_X_POS - NUL_SZ] = key;
+			CURRENT_LINE[CURSOR_X - NUL_SZ] = key;
 			CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0';
 
 			// Initializing nul handling.
@@ -99,9 +99,8 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
 	{
 		// Prevent removind char and 3 tabs from that e.g.: "\t\t\tX".
-		if((CURSOR_X_POS > 1)
-		   && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ - prev] == '\t')
-		   && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t'))
+		if((CURSOR_X > 1) && (CURRENT_LINE[CURSOR_X - NUL_SZ - prev] == '\t')
+		   && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
 		{
 			tab_idx = (idx_t) Config->Tab_width.value - IDX;
 			puts("BREAK_0");
@@ -131,8 +130,8 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 			break;
 		}
 		// Scenario when there is the tab and some text further.
-		else if((CURSOR_X_POS > 0)
-		        && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t')
+		else if((CURSOR_X > 0)
+		        && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
 		        && (Buffer->cursor_rev_x > 0))
 		{
 			puts("BREAK_2");
@@ -206,7 +205,7 @@ void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
 		for(idx_t tab_idx = 1; tab_idx < (idx_t) Config->Tab_width.value;
 		    tab_idx++)
 		{
-			if(CURRENT_LINE[CURSOR_X_POS - tab_idx] != '\t')
+			if(CURRENT_LINE[CURSOR_X - tab_idx] != '\t')
 			{
 				Buffer->cursor_rev_x++;
 				break; // No tab, so don't overskip anything.
@@ -234,7 +233,7 @@ void keys__arrow_right(Buff_t* Buffer, Conf_t* Config)
 		for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value;
 		    tab_idx++)
 		{
-			if(CURRENT_LINE[CURSOR_X_POS + tab_idx] != '\t')
+			if(CURRENT_LINE[CURSOR_X + tab_idx] != '\t')
 			{
 				Buffer->cursor_rev_x--;
 				break; // No tab, so don't overskip anything.

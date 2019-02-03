@@ -1,6 +1,6 @@
-#include "ascii.h"
 #include "buffer.h"
 #include "config.h"
+#include "shortcuts.h"
 #include "input.h"
 
 char input__getch(void)
