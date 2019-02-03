@@ -46,24 +46,12 @@ void print__actual_line(Buff_t* Buffer, Ui_t* Ui) // TODO: SIMPLIFY.
 		// Render only right part of the line.
 		print__scroll_line_horizontally(Buffer, Ui);
 	}
-	else
+	else // Shrink the line.
 	{
-		// Render only left part of the line. Cursor can scrolled.
-		if(Buffer->lines_length_idx[Buffer->lines_idx] < Ui->text_x)
-		{
-			print__line_with_tabs(Buffer, CURRENT_LINE_IDX, 0,
-			                      CURRENT_LINE_LENGTH_IDX);
-		}
-		else
-		{
-			print__line_with_tabs(Buffer, CURRENT_LINE_IDX, 0,
-			                      (idx_t) Ui->text_x - LF_SZ);
-		}
+		print__line_with_tabs(Buffer, CURRENT_LINE_IDX, 0,
+		                      (idx_t) Ui->text_x - LF_SZ);
 
-		// print__line_with_tabs(Buffer, CURRENT_LINE_IDX, 0,
-		//                       CURRENT_LINE_LENGTH_IDX);
 
-		// For proper rendering.
 		if(((CURRENT_LINE_IDX + IDX) < Ui->text_y)
 		   && (CURRENT_LINE_IDX != Buffer->lines_idx))
 		{
@@ -86,8 +74,6 @@ void print__another_line(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config,
 	{
 		print__line_with_tabs(Buffer, line_idx, 0, (idx_t) Ui->text_x - LF_SZ);
 	}
-	// print__line_with_tabs(Buffer, line_idx, 0,
-	//                       Buffer->lines_length_idx[line_idx]);
 
 	if(Buffer->lines_length_idx[line_idx] >= Ui->text_x)
 	{
@@ -101,9 +87,9 @@ void print__scroll_line_horizontally(Buff_t* Buffer, Ui_t* Ui)
 	print__line_with_tabs(Buffer, CURRENT_LINE_IDX,
 	                      CURSOR_X + CURSOR_SZ - Ui->text_x, CURSOR_X);
 
-	/* Sometimes is needed because the "fill" function renders the smallest
-	amount of linefeeds. In other cases the linefeed is provided by the char in
-	a line. */
+	/* Sometimes is needed because the "window__fill" function renders the
+	smallest required amount of linefeeds. In other cases the linefeed is
+	provided by the char in a line. */
 	if(CURSOR_Y_SCROLLED)
 	{
 		WRAP_LINE();
@@ -113,20 +99,21 @@ void print__scroll_line_horizontally(Buff_t* Buffer, Ui_t* Ui)
 void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 {
 	const idx_t current_line_sz = 1;
-	idx_t       line_i;
+	idx_t       line_idx;
 
-	for(line_i = 0; line_i < CURRENT_LINE_IDX; line_i++)
+	for(line_idx = 0; line_idx < CURRENT_LINE_IDX; line_idx++)
 	{
-		print__another_line(Buffer, Ui, Config, line_i);
+		print__another_line(Buffer, Ui, Config, line_idx);
 	}
 	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_len);
 	print__actual_line(Buffer, Ui);
 
 	if(CURSOR_Y_SCROLLED)
 	{
-		for(line_i += current_line_sz; line_i < Buffer->lines_idx; line_i++)
+		for(line_idx += current_line_sz; line_idx < Buffer->lines_idx;
+		    line_idx++)
 		{
-			print__another_line(Buffer, Ui, Config, line_i);
+			print__another_line(Buffer, Ui, Config, line_idx);
 		}
 		ui__print_line_number(Buffer, Config, Buffer->lines_idx,
 		                      Ui->line_num_len);
@@ -214,7 +201,6 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 		// Render only left part of the line. Cursor can scrolled.
 		print__line_with_tabs(Buffer, CURRENT_LINE_IDX, 0,
 		                      (idx_t) Ui->text_x - LF_SZ);
-		// printf("%.*s", Ui->text_x - LF_SZ, CURRENT_LINE);
 	}
 }
 

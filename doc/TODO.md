@@ -1,5 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
+- more variables for the better readability,
 - lines rendering fix (sometimes shows to many chars),
 - colorized status,
 - tab with a gap,

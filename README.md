@@ -5,7 +5,7 @@ Terminal-based text editor with Common User Access keyboard shortcuts.
 ### Check the requirements for the GNU/Linux:
 - git,
 - make,
-- gcc >= 4.6 or clang >= 3.1,
+- gcc >= 4.9 or clang >= 3.6,
 - gzip (only for the installation),
 - sudo (e.g. if You're running the bare Debian on root...)
 
@@ -37,7 +37,7 @@ and it's configuration guide.
 man fiflorc
 ```
 
-### Optional cleanup - remove "bin" and "obj" directories after the compilation.
+### Optional cleanup - remove "bin"/ and "obj/" after the compilation.
 ```
 make clean
 ```
@@ -51,8 +51,8 @@ sudo make uninstall
 Dive into the "doc/" direcory.
 
 ### Recommended tools for debugging:
-- AddressSanitizer (included in gcc and clang),
-- MemorySanitizer (clang >= 3.1 only),
+- AddressSanitizer (both gcc and clang),
+- MemorySanitizer (clang only),
 - valgrind.
 
 ### Get and set the development branch
@@ -78,7 +78,7 @@ valgrind -v ./fiflo [optional args]
 ```
 Note: fiflo must be compiled without ASan and MSan.
 
-### Install only the binary with ASan linked
+### Install only the binary with the ASan linked
 ```
 sudo make install_address
 ```

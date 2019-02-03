@@ -105,9 +105,9 @@ bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, char ch)
 
 	if(ch == '\t') // TODO: TAB_INSERT.
 	{
-		for(idx_t char_idxdx = 0;
-		    char_idxdx < (idx_t) (Config->Tab_width.value - AT_LEAST_ONE_TAB);
-		    char_idxdx++)
+		for(idx_t char_idx = 0;
+		    char_idx < (idx_t) (Config->Tab_width.value - AT_LEAST_ONE_TAB);
+		    char_idx++)
 		{
 			if(!keys__printable_char(Buffer, ch))
 			{
@@ -153,18 +153,18 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
 }
 
 void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
-                               idx_t* char_idxdx) // TODO: RETURN INSTEAD OF PTR.
+                               idx_t* char_idx) // TODO: RETURN INSTEAD OF PTR.
 {
 	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
 	{
-		if(Buffer->text[line_idx][*char_idxdx + tab_idx] != '\t')
+		if(Buffer->text[line_idx][*char_idx + tab_idx] != '\t')
 		{
 			break; // No tab, so don't convert anything.
 		}
 		else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
 		{
 			// Some in-memory tabs converted
-			*char_idxdx += (idx_t) Config->Tab_width.value - AT_LEAST_ONE_TAB;
+			*char_idx += (idx_t) Config->Tab_width.value - AT_LEAST_ONE_TAB;
 		}
 	}
 }
@@ -192,11 +192,11 @@ void file__save(Buff_t* Buffer, Conf_t* Config)
 		{
 			/* Using fputs or fprintf causes use-of-uninitialized-value using
 			MSan because of there is more memory allocated than is needed. */
-			for(idx_t char_idxdx = 0;
-			    char_idxdx < Buffer->lines_length_idx[line_idx]; char_idxdx++)
+			for(idx_t char_idx = 0;
+			    char_idx < Buffer->lines_length_idx[line_idx]; char_idx++)
 			{
-				file__convert_tab_to_file(Buffer, Config, line_idx, &char_idxdx);
-				putc(Buffer->text[line_idx][char_idxdx], Textfile);
+				file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
+				putc(Buffer->text[line_idx][char_idx], Textfile);
 			}
 		}
 		fclose(Textfile);
