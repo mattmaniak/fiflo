@@ -65,10 +65,10 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
 	return true;
 }
 
-void file__live_edit_name(Buff_t* Buffer, char key)
+void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, char key)
 {
 	const char enter  = '\n';
-	const char escape = '\x1b';
+	const char escape = '\033';
 
 	if((key >= 32) && (key != BACKSPACE)
 	&& ((Buffer->fname_length + IDX) < PATH_MAX))
@@ -84,10 +84,13 @@ void file__live_edit_name(Buff_t* Buffer, char key)
 	}
 	else if(key == enter)
 	{
+		SET_STATUS("saved as");
+
 		strncpy(Buffer->orig_fname, Buffer->fname, PATH_MAX);
 
 		Buffer->live_fname_edit = false;
-		SET_STATUS("filename changed");
+		file__save(Buffer, Config);
+
 	}
 	else if(key == escape)
 	{
@@ -214,10 +217,7 @@ bool file__load_config(Conf_t* Config)
 	char          path[PATH_MAX]; // TODO: MAX SIZE.
 
 	Account_info = *getpwuid(getuid());
-	// if(&Account_info == NULL)
-	// {
-	// 	config__set_default(Config);
-	// }
+
 	strcpy(path, Account_info.pw_dir);
 	strcat(path, "/.config/fiflorc");
 

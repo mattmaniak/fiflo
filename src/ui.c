@@ -5,16 +5,23 @@
 void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, idx_t line_i,
                            term_t line_num_len)
 {
+	config__set_color(&Config->Color_line_number);
+
 	if(line_i == CURRENT_LINE_IDX)
 	{
 		config__set_color(&Config->Color_line_number_current);
 	}
 	printf("%*u ", --line_num_len, ++line_i);
-	config__set_color(NULL);;
+	config__set_color(NULL);
+
+	// And naturally a line after that.
+	config__set_color(&Config->Color_text);
 }
 
 void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 {
+	config__set_color(&Config->Color_ui);
+
 	if(Buffer->fname_length < Ui->win_w)
 	{
 		puts(Buffer->fname);
@@ -29,9 +36,7 @@ void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 		}
 		WRAP_LINE();
 	}
-	config__set_color(&Config->Color_git_logo);
 	printf("%s", GIT_LOGO);
-	config__set_color(NULL);;
 
 	if((term_t) strlen(Buffer->git_branch)
 	   <= (Ui->win_w - GIT_LOGO_LENGTH - STATUS_MAX - SPACE_SZ))
@@ -51,7 +56,7 @@ void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 		       STATUS_MAX,  Buffer->status);
 	}
 	WRAP_LINE();
-	config__set_color(NULL);;
+	// config__set_color(NULL);;
 }
 
 void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
@@ -72,7 +77,9 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 
 	WRAP_LINE();
 
-	config__set_color(NULL);
+	config__set_color(NULL); // Resets the last line color.
+	config__set_color(&Config->Color_ui);
+
 	if(Buffer->pane_toggled)
 	{
 		for(size_t y = 0; y < (TOGGLED_PANE_SZ - LBAR_SZ); y++)
@@ -104,7 +111,7 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 			config__set_color(&Config->Color_warning);
 		}
 		printf("%d^", punch_card_width);
-		config__set_color(NULL);;
+		// config__set_color(NULL);
 	}
 	else // No place for the punch card indicator.
 	{

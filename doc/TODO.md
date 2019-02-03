@@ -1,7 +1,6 @@
 # fiflo - TODOs and ideas
 ## delete one if done:
 - more variables for the better readability,
-- lines rendering fix (sometimes shows to many chars),
 - colorized status,
 - tab with a gap,
 - whitespace highlighting,
@@ -17,7 +16,6 @@
 - more advanced scroll (eg. full words),
 - fully adaptive cursor,
 - load only part of a file,
-- ~/.config/fiflorc - manual,
 - syntax highlighting,
 - search option,
 - hex mode,

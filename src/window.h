@@ -8,13 +8,13 @@
 #include <unistd.h>
 
 // ANSI escape codes for a terminal control.
-#define ANSI_CLEAN_WHOLE_LINE()   printf("\x1b[2K")
-#define ANSI_SAVE_CURSOR_POS()    printf("\x1b[s")
-#define ANSI_RESTORE_CURSOR_POS() printf("\x1b[u")
-#define ANSI_CURSOR_UP(offset)    printf("\x1b[%uA", offset)
-#define ANSI_CURSOR_DOWN(offset)  printf("\x1b[%uB", offset)
-#define ANSI_CURSOR_RIGHT(offset) printf("\x1b[%uC", offset)
-#define ANSI_CURSOR_LEFT(offset)  printf("\x1b[%uD", offset)
+#define ANSI_CLEAN_WHOLE_LINE()   printf("\033[2K")
+#define ANSI_SAVE_CURSOR_POS()    printf("\033[s")
+#define ANSI_RESTORE_CURSOR_POS() printf("\033[u")
+#define ANSI_CURSOR_UP(offset)    printf("\033[%uA", offset)
+#define ANSI_CURSOR_DOWN(offset)  printf("\033[%uB", offset)
+#define ANSI_CURSOR_RIGHT(offset) printf("\033[%uC", offset)
+#define ANSI_CURSOR_LEFT(offset)  printf("\033[%uD", offset)
 
 extern void print__display_text(Buff_t*, Ui_t*, Conf_t*);
 

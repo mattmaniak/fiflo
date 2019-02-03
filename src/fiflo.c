@@ -6,7 +6,7 @@
 
 void fiflo__run(const char* arg)
 {
-	char pressed_key = '\0'; // Initializer only.
+	char pressed_key = '\0'; // This assignment as the initializer only.
 
 	Buff_t Buffer;
 	Conf_t Config;

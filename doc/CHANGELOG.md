@@ -15,7 +15,8 @@ files use git-show or git-log.
 - transparent UI with some colors,
 - fiflorc file - basic configuration,
 - basic tab key support wuthout a gap,
-- abort and restore the filename before the live edit.
+- abort and restore the filename before the live edit,
+- also save after pressing enter during live filename edit.
 
 ### v2.2.2 (2018, December 22):
 - Repaired positions of line numbers when the line has same width as the

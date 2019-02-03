@@ -134,11 +134,8 @@ bool window__render(Buff_t* Buffer, Conf_t* Config)
 	Ui.text_x       = (term_t) (Ui.win_w - Ui.line_num_len);
 	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
-	config__set_color(NULL);
 	ui__upper_bar(Buffer, Config, &Ui);
-
 	print__display_text(Buffer, &Ui, Config);
-	config__set_color(NULL);
 
 	window__fill(Buffer, &Ui);
 	ui__lower_bar(Buffer, Config, &Ui);

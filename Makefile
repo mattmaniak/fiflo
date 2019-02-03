@@ -17,7 +17,7 @@ BIN_DIR = bin
 MAN_DIR = man
 
 INS_DIR = /usr/bin
-MAN_INS_DIR = /usr/share/man/man1
+MAN_INS_DIR = /usr/share/man/man
 CONF_DIR = ~/.config
 
 # All in the ./obj depending on the ./src.
@@ -72,11 +72,13 @@ memory:
 # Fun with a filesystem.
 install: $(TARGET)
 	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
-	sudo $(RM) $(MAN_INS_DIR)/$(TARGET).1
-	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)/$(TARGET).1
-#	sudo gzip $(MAN_INS_DIR)/$(TARGET).1
-#	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
-#	DEBUG
+	sudo $(RM) $(MAN_INS_DIR)1/$(TARGET).1.gz
+	sudo $(RM) $(MAN_INS_DIR)5/$(TARGET)rc.5.gz
+	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)1/$(TARGET).1
+	sudo cp $(MAN_DIR)/$(TARGET)rc.5 $(MAN_INS_DIR)5/$(TARGET)rc.5
+	sudo gzip $(MAN_INS_DIR)1/$(TARGET).1
+	sudo gzip $(MAN_INS_DIR)5/$(TARGET)rc.5
+	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
 
 install_address: address
 	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
@@ -85,6 +87,7 @@ uninstall:
 	sudo $(RM) \
 	$(INS_DIR)/$(TARGET) \
 	$(MAN_INS_DIR)/$(TARGET).1.gz \
+	$(MAN_INS_DIR)/$(TARGET)rc.5.gz \
 	$(CONF_DIR)/$(TARGET)rc
 
 .PHONY: clean

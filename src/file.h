@@ -21,7 +21,7 @@ extern bool keys__printable_char(Buff_t*, char);
 bool file__set_name(Buff_t*, const char*);
 
 // When the CTRL^O is pressed, there is possibility to basically edit the fname.
-void file__live_edit_name(Buff_t*, char);
+void file__live_edit_name(Buff_t*, Conf_t*, char);
 
 // If there is tab char in a file, load e.g. 4 tabs to a memory.
 bool file__convert_tab_from_file(Buff_t*, Conf_t*, char);

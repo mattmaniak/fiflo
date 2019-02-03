@@ -2,31 +2,30 @@
 
 void config__init_selectors(Conf_t* Config)
 {
-	// strcpy(Config->Color_bar.selector, "color-bar");
 	strcpy(Config->Color_line_number_current.selector,
 	       "color-line-number-current");
 
-	// strcpy(Config->Color_line_number.selector, "color-line-number");
-	strcpy(Config->Color_text.selector,     "color-text");
-	strcpy(Config->Color_warning.selector,  "color-warning");
-	strcpy(Config->Color_git_logo.selector, "color-git-logo");
-	strcpy(Config->Tab_width.selector,      "tab-width");
+	strcpy(Config->Color_line_number.selector, "color-line-number");
+	strcpy(Config->Color_ui.selector,          "color-ui");
+	strcpy(Config->Color_text.selector,        "color-text");
+	strcpy(Config->Color_warning.selector,     "color-warning");
+	strcpy(Config->Tab_width.selector,         "tab-width");
 }
 
 void config__parse_selector(Conf_t* Config, char* selector, int value)
 {
-	// if(!strcmp(Config->Color_bar.selector, selector))
-	// {
-	// 	Config->Color_bar.value = value;
-	// }
+	if(!strcmp(Config->Color_ui.selector, selector))
+	{
+		Config->Color_ui.value = value;
+	}
 	if(!strcmp(Config->Color_line_number_current.selector, selector))
 	{
 		Config->Color_line_number_current.value = value;
 	}
-	// else if(!strcmp(Config->Color_line_number.selector, selector))
-	// {
-	// 	Config->Color_line_number.value = value;
-	// }
+	else if(!strcmp(Config->Color_line_number.selector, selector))
+	{
+		Config->Color_line_number.value = value;
+	}
 	else if(!strcmp(Config->Color_text.selector, selector))
 	{
 		Config->Color_text.value = value;
@@ -34,10 +33,6 @@ void config__parse_selector(Conf_t* Config, char* selector, int value)
 	else if(!strcmp(Config->Color_warning.selector, selector))
 	{
 		Config->Color_warning.value = value;
-	}
-	else if(!strcmp(Config->Color_git_logo.selector, selector))
-	{
-		Config->Color_git_logo.value = value;
 	}
 	else if(!strcmp(Config->Tab_width.selector, selector))
 	{
@@ -47,13 +42,9 @@ void config__parse_selector(Conf_t* Config, char* selector, int value)
 
 int config__encode_color(Conf_t* Config, char* color_name)
 {
-	Colors_t value = WHITE;
+	Colors_t value = WHITE; // The default one.
 
-	if(!strcmp(color_name, "black\n"))
-	{
-		value = BLACK;
-	}
-	else if(!strcmp(color_name, "red\n"))
+	if(!strcmp(color_name, "red\n"))
 	{
 		value = RED;
 	}
@@ -80,10 +71,6 @@ int config__encode_color(Conf_t* Config, char* color_name)
 	else if(!strcmp(color_name, "white\n"))
 	{
 		value = WHITE;
-	}
-	else if(!strcmp(color_name, "bright-black\n"))
-	{
-		value = BRIGHT_BLACK;
 	}
 	else if(!strcmp(color_name, "bright-red\n"))
 	{
@@ -113,6 +100,12 @@ int config__encode_color(Conf_t* Config, char* color_name)
 	{
 		value = BRIGHT_WHITE;
 	}
+	else if(!strcmp(color_name, "2\n") || !strcmp(color_name, "4\n")
+	        || !strcmp(color_name, "8\n"))
+	{
+		color_name[strlen(color_name) - 1] = '\0';
+		value = atoi(color_name);
+	}
 	else
 	{
 		config__set_default(Config);
@@ -122,39 +115,37 @@ int config__encode_color(Conf_t* Config, char* color_name)
 
 void config__set_default(Conf_t* Config)
 {
-	// Config->Color_bar.value                 = WHITE;
-	Config->Color_git_logo.value            = BRIGHT_RED;
-	// Config->Color_line_number.value         = BRIGHT_MAGENTA;
-	Config->Color_line_number_current.value = BRIGHT_MAGENTA;
-	Config->Color_text.value                = WHITE;
+	Config->Color_ui.value                  = WHITE;
+	Config->Color_line_number.value         = BRIGHT_MAGENTA;
+	Config->Color_line_number_current.value = WHITE;
+	Config->Color_text.value                = GREEN;
 	Config->Color_warning.value             = RED;
 	Config->Tab_width.value                 = 4;
 }
 
 void config__set_custom(Conf_t* Config)
 {
-	int  value = 0;
+	int  parsed_value = 0;
 	char line[128];
 	char selector[48];
-	char color_name[32];
+	char value[32];
 
 	config__init_selectors(Config);
 
 	while(fgets(line, 80, Config->File) != NULL)
 	{
-		if((line[0] == '#') || (line[0] == ' '))
+		if((line[0] == '#') || (line[0] <= 32))
 		{
 			continue;
 		}
 		// Splits around the " = ".
 		strncpy(selector, strtok(line, " = "), 48);
-		strncpy(color_name, strtok(NULL, " = "), 32);
+		strncpy(value, strtok(NULL, " = "), 32);
 
-		// TODO: HANDLE COMMENTS.
-		value = config__encode_color(Config, color_name);
-		config__parse_selector(Config, selector, value);
+		parsed_value = config__encode_color(Config, value);
+		config__parse_selector(Config, selector, parsed_value);
 	}
-	if(value == 0) // If the whole file is commented out.
+	if(parsed_value == 0) // If the whole file is commented out.
 	{
 		config__set_default(Config);
 	}
@@ -164,10 +155,10 @@ void config__set_color(Opt_t* Option)
 {
 	if(Option == NULL)
 	{
-		printf("\x1b[0m"); // Reset colors and others to default.
+		printf("\033[0m"); // Reset colors and others to default.
 	}
 	else
 	{
-		printf("\x1b[%um", Option->value);
+		printf("\033[%um", Option->value);
 	}
 }

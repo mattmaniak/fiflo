@@ -15,7 +15,7 @@ char input__getch(void)
 
 	char key;
 
-	// Get the state of the STDIN_FILENO.
+	// Get the state of the standard input.
 	if(tcgetattr(STDIN_FILENO, &old_term_params) == ERROR)
 	{
 		window__flush();
@@ -28,19 +28,19 @@ char input__getch(void)
 	new_term_params.c_iflag &= ~(enable_xon);
 	new_term_params.c_lflag &= ~(canonical_mode_on | echo_input | enable_sigs);
 
-	/* Immediately set the state of the STDIN_FILENO to the* new_term_params.
-	Use the new terminal I/O settings. */
+	/* Immediately set the state of the stdin to the *new_term_params. Use the
+	new terminal I/O settings. */
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == ERROR)
 	{
 		window__flush();
-		fprintf(stderr, "Can't set the terminal's raw mode.\n");
+		fprintf(stderr, "Can't set the terminal's raw mode. Type \"reset\".\n");
 		return ERROR;
 	}
 
 	if((key = (char) getchar()) < 0) // TODO: RESTORE TERM SETTINGS ON EXIT.
 	{
 		window__flush();
-		fprintf(stderr, "A negative char passed to the stdin.\n");
+		fprintf(stderr, "Negative char passed to the stdin. Type \"reset\".\n");
 		return ERROR;
 	}
 
@@ -48,7 +48,8 @@ char input__getch(void)
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == ERROR)
 	{
 		window__flush();
-		fprintf(stderr, "Can't restore the terminal's normal mode.\n");
+		fprintf(stderr,
+		        "Can't restore the terminal's normal mode. Type \"reset\".\n");
 		return ERROR;
 	}
 	return key;
@@ -60,10 +61,10 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 
 	/* Notice that the structure of these sequences is: <ansi_esc_code> + '['
 	+ <some_unique_numbers_and_letters>. */
-	const char arrow_up[]    = "\x1b[A";
-	const char arrow_down[]  = "\x1b[B";
-	const char arrow_right[] = "\x1b[C";
-	const char arrow_left[]  = "\x1b[D";
+	const char arrow_up[]    = "\033[A";
+	const char arrow_down[]  = "\033[B";
+	const char arrow_right[] = "\033[C";
+	const char arrow_left[]  = "\033[D";
 
 	if(!strcmp(sequence, arrow_up))
 	{
@@ -100,7 +101,7 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 {
 	const idx_t  nul_sz = 1;
-	enum         {seq_len = 8}; // TODO.
+	enum         {seq_len = 8}; // TODO: IF MORE, BREAKS THE INPUT.
 	static char  chars_sequence[seq_len];
 	static idx_t char_i;
 
@@ -131,7 +132,7 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 	}
 	else if(Buffer->live_fname_edit)
 	{
-		file__live_edit_name(Buffer, key);
+		file__live_edit_name(Buffer, Config, key);
 	}
 	else
 	{

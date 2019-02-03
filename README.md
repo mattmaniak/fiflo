@@ -42,7 +42,7 @@ man fiflorc
 make clean
 ```
 
-### Uninstall, what You have installed.
+### Uninstall, what You have installed
 ```
 sudo make uninstall
 ```

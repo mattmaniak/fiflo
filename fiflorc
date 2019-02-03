@@ -1,24 +1,16 @@
 # Example fiflo configuration file.
 # To make it work, copy it to the ~/.config/fiflorc
 #
-# Lines that starts with '#' or ' ' are ignored.
+# If You've installed the fiflo, check "man fiflorc" for details.
 #
-# If You will use one selector multiple times, the last line with it will be
-# used.
+# Remark: " = " (excluding quotation marks) is the only correct assignment.
 #
-# Values
-# black, red, green, yellow, blue, magenta, cyan, white,
-# bright-black, bright-red, bright-green, bright-yellow, bright-blue,
-# bright-magenta, bright-cyan, bright-white
-#
-# All of them are foreground (text) colors.
-# Assignment sign is the equal sign with 1 space character on each side: " = ".
-#
-# Initial configuration
-# Changes nothing because the program has it implemented independently.
-color-bar = white
-color-git-logo = bright-red
-color-line-number = bright-magenta
-color-line-number-current = white
-color-text = white
+# Default configuration below.
+# Changes nothing because the editor has it implemented independently.
+
+color-line-number = magenta
+color-line-number-current = bright-magenta
+color-text = green
+color-ui = white
 color-warning = red
+tab-width = 4

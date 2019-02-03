@@ -1,9 +1,8 @@
 .TH fiflo 1 "General Commands Manual"
 .SH NAME
-.TP
 fiflo - terminal-based text editor with Common User Access keyboard shortcuts
 .SH SYNOPSIS
-fiflo [basename/filename/option]
+fiflo [option]
 .SH DESCRIPTION
 Currently supports only all ASCII printable chars, space and horizontal tab.
 It has got dynamically allocated buffer which can hold up to 16 MB - 1 chars.
@@ -28,7 +27,7 @@ fiflorc(5)
 .TP
 .B Blinking
 Blinking window with a default tty. It's caused by the implementation which
-renders a full window everytime. On modern terminal emulators, the problem does
+renders a full window every time. On modern terminal emulators, the problem does
 not occur.
 .TP
 .B Control^[
@@ -39,5 +38,3 @@ Exits the application without restoring the terminal's state. Call "stty echo"
 or "reset" after that.
 .SH AUTHOR
 mattmaniak
-.SH LICENSE
-MIT

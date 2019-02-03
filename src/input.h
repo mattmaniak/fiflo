@@ -11,7 +11,7 @@ extern void keys__arrow_right(Buff_t*, Conf_t*);
 extern void keys__arrow_up(Buff_t*);
 extern void keys__arrow_down(Buff_t*);
 
-extern void file__live_edit_name(Buff_t*, char);
+extern void file__live_edit_name(Buff_t*, Conf_t*, char);
 
 extern void window__flush(void);
 

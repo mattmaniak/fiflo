@@ -1,0 +1,52 @@
+.TH fiflorc 5 "File Formats Manual"
+.SH NAME
+fiflo runcom
+.SH SYNOPSIS
+.TP
+[selector] = [value]
+Everything in a single line. Next one in the next line. Neighbour spaces are
+essential.
+.SH DESCRIPTION
+File that allows to change the default configuration of the fiflo which is
+built-in in the editor. It ignores the lines that starts with a whitespace,
+with the '#' or that are just empty. If You use a one of selectors multiple
+times, the value from the last occurence int the file will be read.
+.SH SELECTORS
+Order does not matter in the file.
+.TP
+.B color-line-number
+Set line numbers color excluding a current one.
+.TP
+.B color-line-number-current
+Set the current line number color.
+.TP
+.B color-text
+Color of a typed text.
+.TP
+.B color-ui
+Upper and lower bars colors.
+.TP
+.B color-warning
+When sometimes goes wrong a part of the UI is highlighted with this color.
+Actually only the punch card indicator in the lower bar handles it.
+.TP
+.B tab-width
+Equality of spaces that the tab key produces.
+.SH VALUES
+.TP
+.B red, green, yellow, blue, magenta, cyan, white, bright-red, bright-green, \
+bright-yellow, bright-blue, bright-magenta, bright-cyan, bright-white
+Available colors. Every one of them is a foreground color. There is no
+possibility to set the background. Can be used only with selectors that starts
+with "color".
+.TP
+.B 2, 4, 8
+Values to use with "tab-width".
+.SH FILES
+.TP
+.B ~/.config/nanorc
+User's specific confiuguration. If doesn't exist, the default config is loaded.
+.SH SEE ALSO
+fiflo(1)
+.SH AUTHOR
+mattmaniak

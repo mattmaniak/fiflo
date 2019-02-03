@@ -99,7 +99,7 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
 	{
 		// Prevent removind char and 3 tabs from that e.g.: "\t\t\tX".
-		if((CURSOR_X > 1) && (CURRENT_LINE[CURSOR_X - NUL_SZ - prev] == '\t')
+		if((CURSOR_X > 1) && (CURRENT_LINE[CURSOR_X - prev - NUL_SZ] == '\t')
 		   && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
 		{
 			tab_idx = (idx_t) Config->Tab_width.value - IDX;
@@ -130,7 +130,7 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 			break;
 		}
 		// Scenario when there is the tab and some text further.
-		else if((CURSOR_X > 0)
+		else if((CURSOR_X > 0) // TODO: LINE DELETION.
 		        && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
 		        && (Buffer->cursor_rev_x > 0))
 		{
