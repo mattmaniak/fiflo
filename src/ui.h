@@ -3,8 +3,8 @@
 
 // User interface components.
 
-#define GIT_LOGO        "|\\ git "
-#define GIT_LOGO_LENGTH 7
+#define GIT_LOGO        "|\\ git: "
+#define GIT_LOGO_LENGTH 8
 
 #define DOTS_LENGTH 3
 
@@ -29,6 +29,9 @@ typedef struct
 	term_t win_h;
 }
 Ui_t;
+
+// Used to style the UI.
+void ui__set_color(Opt_t*);
 
 // Prints the line number.
 void ui__print_line_number(Buff_t*, Conf_t*, idx_t, term_t);

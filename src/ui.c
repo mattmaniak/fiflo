@@ -2,25 +2,36 @@
 #include "config.h"
 #include "ui.h"
 
+void ui__set_color(Opt_t* Option)
+{
+	if(Option == NULL)
+	{
+		printf("\033[0m"); // Reset colors and others to default.
+	}
+	else
+	{
+		printf("\033[%um", Option->value);
+	}
+}
+
 void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, idx_t line_i,
                            term_t line_num_length)
 {
-	config__set_color(&Config->Color_line_number);
+	ui__set_color(&Config->Color_line_number);
 
 	if(line_i == CURRENT_LINE_IDX)
 	{
-		config__set_color(&Config->Color_line_number_current);
+		ui__set_color(&Config->Color_line_number_current);
 	}
-	printf("%*u ", --line_num_length, ++line_i);
-	config__set_color(NULL);
+	printf("%*u ", line_num_length - SPACE_SZ, line_i + IDX);
+	ui__set_color(NULL);
 
-	// And naturally a line after that.
-	config__set_color(&Config->Color_text);
+	ui__set_color(&Config->Color_text); // And naturally a line after that.
 }
 
 void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 {
-	config__set_color(&Config->Color_ui);
+	ui__set_color(&Config->Color_ui);
 
 	if(Buffer->fname_length < Ui->win_w)
 	{
@@ -56,7 +67,6 @@ void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 		       STATUS_MAX,  Buffer->status);
 	}
 	WRAP_LINE();
-	// config__set_color(NULL);;
 }
 
 void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
@@ -77,14 +87,14 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 
 	WRAP_LINE();
 
-	config__set_color(NULL); // Resets the last line color.
-	config__set_color(&Config->Color_ui);
+	ui__set_color(NULL); // Resets the last line color.
+	ui__set_color(&Config->Color_ui);
 
 	if(Buffer->pane_toggled)
 	{
-		for(size_t y = 0; y < (TOGGLED_PANE_SZ - LBAR_SZ); y++)
+		for(size_t idx = 0; idx < (TOGGLED_PANE_SZ - LBAR_SZ); idx++)
 		{
-			printf("%s", key_binding[y]);
+			printf("%s", key_binding[idx]);
 			WRAP_LINE();
 		}
 	}
@@ -108,14 +118,13 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 		if((CURRENT_LINE_LENGTH_IDX > punch_card_width)
 		&& (CURRENT_LINE[punch_card_width] != '\n'))
 		{
-			config__set_color(&Config->Color_warning);
+			ui__set_color(&Config->Color_warning);
 		}
 		printf("%d^", punch_card_width);
-		// config__set_color(NULL);
 	}
 	else // No place for the punch card indicator.
 	{
 		printf("%*s", Ui->win_w - STATUS_MAX, " ");
 	}
-	config__set_color(NULL);;
+	ui__set_color(NULL);;
 }

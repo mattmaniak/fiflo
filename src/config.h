@@ -59,7 +59,4 @@ void config__set_default(Conf_t*);
 // As above but read from the file.
 void config__load_custom(Conf_t*);
 
-// Used to style the UI.
-void config__set_color(Opt_t*);
-
 #endif

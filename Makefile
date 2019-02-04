@@ -104,8 +104,8 @@ install: $(TARGET)
 	sudo gzip $(MAN_INS_DIR)1/$(TARGET).1
 	sudo gzip $(MAN_INS_DIR)5/$(TARGET)rc.5
 
-	$(RM) -r $(DOC_INS_DIR)
-	mkdir $(DOC_INS_DIR)
+	sudo $(RM) -r $(DOC_INS_DIR)
+	sudo mkdir $(DOC_INS_DIR)
 	sudo cp LICENSE $(DOC_INS_DIR)
 	sudo cp $(DOC_DIR)/* $(DOC_INS_DIR)
 

@@ -103,7 +103,7 @@ int config__encode_color(Conf_t* Config, char* color_name)
 	else if(!strcmp(color_name, "2\n") || !strcmp(color_name, "4\n")
 	        || !strcmp(color_name, "8\n"))
 	{
-		color_name[strlen(color_name) - 1] = '\0';
+		// color_name[strlen(color_name) - NUL_SZ] = '\0'; // Delete the LF.
 		value = atoi(color_name);
 	}
 	else
@@ -148,17 +148,5 @@ void config__load_custom(Conf_t* Config)
 	if(parsed_value == 0) // If the whole file is commented out.
 	{
 		config__set_default(Config);
-	}
-}
-
-void config__set_color(Opt_t* Option)
-{
-	if(Option == NULL)
-	{
-		printf("\033[0m"); // Reset colors and others to default.
-	}
-	else
-	{
-		printf("\033[%um", Option->value);
 	}
 }

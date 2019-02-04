@@ -25,16 +25,16 @@ typedef uint32_t idx_t;
 #define ERROR -1
 
 // Max amount of chars: (16 MB - 1). Newline is also the char.
-#define CHARS_MAX (UINT_MAX / 256)
+#define CHARS_MAX (UINT_MAX / 256) // TODO: CHECK
 
 #define STATUS_MAX      32
 #define SET_STATUS(msg) strncpy(Buffer->status, msg, STATUS_MAX - IDX) // TODO.
 
 typedef struct // TODO
 {
-	bool chars_sequence;     // True if pressed key is ANSI escape code.
-	bool live_filename_edit; // As in the name.
-	bool pane_toggled;       // As in the name.
+	bool chars_sequence;  // True if pressed key is ANSI escape code.
+	bool live_fname_edit; // As in the name.
+	bool pane_toggled;    // As in the name.
 }
 Modes_t;
 
@@ -46,10 +46,10 @@ typedef struct // TODO: SPLIT AND PADDING
 	bool     pane_toggled;       // As in the name.
 
 	// Max size is 250.
-	char     git_branch[256];
+	char     git_branch[NAME_MAX];
 	bool     padding_0;
 
-	// Filename.
+	// Filename. TODO: ARRAY SIZE.
 	char     fname[PATH_MAX + SLASH_SZ + NAME_MAX]; // Full filename. Eg. /home/user/basename.
 	char     orig_fname[PATH_MAX + SLASH_SZ+ NAME_MAX];
 	size_t   fname_length;       // Strlen of the above array.
@@ -62,10 +62,9 @@ typedef struct // TODO: SPLIT AND PADDING
 	idx_t    lines_idx;          // Lines index.
 	idx_t*   lines_length_idx;   // Chars in the current line (index).
 
-	// Visual shit.
-	idx_t    preffered_cursor_rev_x; // E.g. end of the line offset when scrolling through the first chars.
+	// Mostly visual shit.
 	idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
-	idx_t    cursor_rev_y;       // As above but Y-axis.
+	idx_t    cursor_rev_y;       // As above but in Y-axis.
 	char     status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 Buff_t;

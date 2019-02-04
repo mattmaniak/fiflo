@@ -17,4 +17,6 @@ fiflo - TODOs and ideas:
 - syntax highlighting,
 - search option,
 - hex mode,
-- cursor at the beggining by default.
+- cursor at the beggining by default,
+- punch card config,
+- Makefile: permissions during the installation.

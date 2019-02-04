@@ -51,6 +51,7 @@ void print__actual_line(Buff_t* Buffer, Ui_t* Ui) // TODO: SIMPLIFY.
 		print__line_with_tabs(Buffer, CURRENT_LINE_IDX, 0,
 		                      (idx_t) Ui->text_x - LF_SZ);
 
+		// Not last rendered line so wrap it.
 		if(((CURRENT_LINE_IDX + IDX) < Ui->text_y)
 		   && (CURRENT_LINE_IDX != Buffer->lines_idx))
 		{

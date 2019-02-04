@@ -18,7 +18,8 @@ v3.0.0 (WIP):
 - abort and restore the filename before the live edit,
 - also save after pressing enter during live filename edit,
 - creates the new file with 0644 permissions instead of 0600,
-- slightly increased the filename length limit.
+- slightly increased the filename length limit,
+- more tests (code coverage check) - probably less bugs and better performance.
 
 v2.2.2 (2018, December 22):
 - Repaired positions of line numbers when the line has same width as the
