@@ -7,14 +7,14 @@ before making a change.
 ## Workflow
 ### Branching
 [V. Driessen's model](https://nvie.com/posts/a-successful-git-branching-model/)
-as described but only with: master, develop, hotifx branches.
+As described but only with: master, develop, hotifx branches.
 
 ### Version scheme
 [SemVer](https://semver.org/).
 
 ### Coding rules:
 - Allman-like brace style,
-- indentation: 1 hard tab (equal to 4 spaces),
+- indentation: 1 hard tab (width: 4),
 - only snake_case is allowed,
 - visually align: defines, types, names, assignments etc,
 - single line should not exceed 80 chars printable chars,
@@ -26,7 +26,7 @@ as described but only with: master, develop, hotifx branches.
 ## Merge request
 - As the source base and it's develop branch can be found on
 [GitLab](https://gitlab.com/mattmaniak/fiflo/tree/develop) it would great to
-use that platform by You to improve the code.
+Use that platform by You to improve the code.
 
 - Before requesting any change, check that your code matches basic standards
 described above and test it using the default Linux tty. Also You can open an

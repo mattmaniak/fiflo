@@ -1,14 +1,16 @@
 TARGET = fiflo
 
 CC =
-CFLAGS = -std=c11 -Os
+CFLAGS = -std=c11
 LDFLAGS =
+
+GCOV_FLAGS = -ftest-coverage -fprofile-arcs
 
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 -fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \
 -fstack-protector-all
 
-MSAN_FLAGS = -fsanitize=memory -fPIE -pie -fno-omit-frame-pointer \
+MSAN_FLAGS = -fsanitize=memory -fPIE -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins
 
 SRC_DIR = src
@@ -16,8 +18,10 @@ OBJ_DIR = obj
 BIN_DIR = bin
 COV_DIR = cov
 MAN_DIR = man
+DOC_DIR = doc
 
-INS_DIR = /usr/bin
+USR_INS_DIR = /usr/bin
+DOC_INS_DIR = /usr/share/doc/$(TARGET)
 MAN_INS_DIR = /usr/share/man/man
 CONF_DIR = ~/.config
 
@@ -25,13 +29,13 @@ CONF_DIR = ~/.config
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
 
 # Check and set the Compilation driver.
-ifeq ($(INS_DIR)/gcc, $(shell ls $(INS_DIR)/gcc))
+ifeq ($(USR_INS_DIR)/gcc, $(shell ls $(USR_INS_DIR)/gcc))
 	CC = gcc
 	CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wno-long-long \
 	-Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wconversion \
 	-Winline -Wredundant-decls -Wnested-externs -Wcast-align -Wstrict-prototypes
 
-else ifeq ($(INS_DIR)/clang, $(shell ls $(INS_DIR)/clang))
+else ifeq ($(USR_INS_DIR)/clang, $(shell ls $(USR_INS_DIR)/clang))
 	CC = clang
 	CFLAGS += -Weverything
 
@@ -49,28 +53,25 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 	$(CFLAGS) \
 
 # Builds the binary by linking object files.
+.PHONY: $(TARGET)
 $(TARGET): $(OBJS)
 	mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
 	$(CFLAGS) $(LDFLAGS)
 
 	@echo ' '
-	@echo "Compilation successful."
+	@echo "Fiflo compiled."
 
 # Debugging.
-.PHONY: address
-address: LDFLAGS += $(ASAN_FLAGS)
-address: $(TARGET)
-address:
-	@echo "AddressSanitizer linked successfuly."
-
 .PHONY: debug
-debug: CFLAGS += -g -ftest-coverage -fprofile-arcs
+debug: CFLAGS += $(GCOV_FLAGS) -O0
 debug: LDFLAGS += $(ASAN_FLAGS)
 debug: clean
 debug: $(TARGET)
 debug:
-	@echo "AddressSanitizer linked successfuly. Files for the gcov created."
+	@echo "ASan linked. Files for the gcov created."
+	$(RM) $(OBJ_DIR)/*.o
+# Prevent $(TARGET) compilation errors.
 
 .PHONY: coverage
 coverage:
@@ -79,53 +80,60 @@ coverage:
 	gcov $(OBJ_DIR)/*.gcno
 	mv *.gcov $(COV_DIR)
 
-# TODO
 .PHONY: memory
 memory: CC = clang
 memory: CFLAGS = -Weverything
 memory: LDFLAGS += $(MSAN_FLAGS)
+memory: clean
 memory: $(TARGET)
 memory:
-	@echo "MemorySanitizer linked successfuly."
+	@echo "MSan linked."
 
 # Fun with a filesystem.
 .PHONY: install
 install: $(TARGET)
 	@echo ' '
-	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
+	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
 	sudo $(RM) $(MAN_INS_DIR)1/$(TARGET).1.gz
 	sudo $(RM) $(MAN_INS_DIR)5/$(TARGET)rc.5.gz
 
-	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)1/$(TARGET).1
-	sudo cp $(MAN_DIR)/$(TARGET)rc.5 $(MAN_INS_DIR)5/$(TARGET)rc.5
+	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)1
+	sudo cp $(MAN_DIR)/$(TARGET)rc.5 $(MAN_INS_DIR)5
 
 	sudo gzip $(MAN_INS_DIR)1/$(TARGET).1
 	sudo gzip $(MAN_INS_DIR)5/$(TARGET)rc.5
 
+	$(RM) -r $(DOC_INS_DIR)
+	mkdir $(DOC_INS_DIR)
+	sudo cp LICENSE $(DOC_INS_DIR)
+	sudo cp $(DOC_DIR)/* $(DOC_INS_DIR)
+
 	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
 
 	@echo " "
-	@echo "Fiflo installation finished."
+	@echo "Fiflo installed."
 
-.PHONY: install_address
-install_address: address
+.PHONY: install_debug
+install_debug: debug
 	@echo " "
-	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
+	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
 	@echo " "
-	@echo "Fiflo binary only installation with ASan finished."
+	@echo "Binary only installation with ASan and gdb/gcov support finished."
 
 .PHONY: uninstall
 uninstall:
-	sudo $(RM) \
-	$(INS_DIR)/$(TARGET) \
+	sudo $(RM) $(USR_INS_DIR)/$(TARGET)
+
+	sudo $(RM) -r \
 	$(MAN_INS_DIR)1/$(TARGET).1.gz \
 	$(MAN_INS_DIR)5/$(TARGET)rc.5.gz \
+	$(DOC_INS_DIR) \
 	$(CONF_DIR)/$(TARGET)rc
 
 	@echo " "
-	@echo "Fiflo uninstallation finished."
+	@echo "Fiflo uninstalled."
 
 .PHONY: clean
 clean:

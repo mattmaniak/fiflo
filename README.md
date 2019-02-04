@@ -7,7 +7,7 @@ Terminal-based text editor with Common User Access keyboard shortcuts.
 - make,
 - gcc >= 4.9 or clang >= 3.6,
 - gzip (only for the installation),
-- sudo (e.g. if You're running the bare Debian on root...)
+- sudo (only for the installation).
 
 ### Clone on a desktop, compile and run.
 ```
@@ -48,12 +48,40 @@ sudo make uninstall
 ```
 
 ## Development
-Dive into the "doc/" direcory.
+Dive into the "doc/" direcory and read the "CONTRIBUTING.md".
 
-### Recommended tools for debugging:
+### Source files:
+- buffer.c - initialization and deleting the main buffer which holds the
+  text and it's metadata, semantic macros,
+
+- config.c - fiflorc parser and values setter,
+
+- edit.c - more complex text editing operations that happens after the
+  keypress,
+
+- fiflo.c - the main file, just "main" and the execution loop,
+
+- file.c - read/save the file, live editing the filename,
+
+- input.c - get the key from the keypress, parse it,
+
+- keys.c - basic actions of every supported key,
+
+- memory.c - allocation/deallocation of the memory for the text,
+
+- options.c - "--help" and friends parameters,
+
+- print.c - various magic that prints the text,
+
+- ui.c - user interface components like bars.
+
+- window.c - window rendering and flushing.
+
+### Needed tools for debugging:
 - AddressSanitizer (both gcc and clang),
 - MemorySanitizer (clang only),
-- valgrind.
+- valgrind,
+- gcov.
 
 ### Get and set the development branch
 ```
@@ -62,12 +90,22 @@ git checkout develop
 ```
 
 ### Debugging
-Link the AddressSanitizer. Causes slowdown and huge memory usage.
+Link the AddressSanitizer and add support fot the gcov. Causes slowdown and huge
+memory usage.
 ```
-make address
+make debug
 ```
 
-Link the MemorySanitizer (only with clang). Causes slowdown.
+After that and the fiflo execution, there is possibility to check the code
+coverage. It will create the "cov/" dir and put the every source file with
+codecov marked after the previous execution The program must be compiled with
+the "debug" option previously.
+```
+make coverage
+```
+
+Link the MemorySanitizer (only with clang) for the uninitialized heap usage
+check. Causes slowdown.
 ```
 make memory
 ```
@@ -76,11 +114,11 @@ Use the valgrind.
 ```
 valgrind -v ./fiflo [optional args]
 ```
-Note: fiflo must be compiled without ASan and MSan.
+Remark: fiflo must be compiled without ASan and MSan.
 
-### Install only the binary with the ASan linked
+### Install only the debugable binary.
 ```
-sudo make install_address
+sudo make install_debug
 ```
 
 ## FAQ
