@@ -3,7 +3,7 @@
 #include "ui.h"
 
 void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, idx_t line_i,
-                           term_t line_num_len)
+                           term_t line_num_length)
 {
 	config__set_color(&Config->Color_line_number);
 
@@ -11,7 +11,7 @@ void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, idx_t line_i,
 	{
 		config__set_color(&Config->Color_line_number_current);
 	}
-	printf("%*u ", --line_num_len, ++line_i);
+	printf("%*u ", --line_num_length, ++line_i);
 	config__set_color(NULL);
 
 	// And naturally a line after that.
@@ -95,7 +95,7 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 	if(Ui->text_x > punch_card_width) // TODO: SIMPLIFY.
 	{
 		printf("%*s",
-		       Ui->line_num_len + punch_card_width - STATUS_MAX - SPACE_SZ
+		       Ui->line_num_length + punch_card_width - STATUS_MAX - SPACE_SZ
 		       - (term_t) strlen(punch_card),
 		       " ");
 

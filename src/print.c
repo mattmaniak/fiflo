@@ -51,7 +51,6 @@ void print__actual_line(Buff_t* Buffer, Ui_t* Ui) // TODO: SIMPLIFY.
 		print__line_with_tabs(Buffer, CURRENT_LINE_IDX, 0,
 		                      (idx_t) Ui->text_x - LF_SZ);
 
-
 		if(((CURRENT_LINE_IDX + IDX) < Ui->text_y)
 		   && (CURRENT_LINE_IDX != Buffer->lines_idx))
 		{
@@ -63,7 +62,7 @@ void print__actual_line(Buff_t* Buffer, Ui_t* Ui) // TODO: SIMPLIFY.
 void print__another_line(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config,
                          idx_t line_idx)
 {
-	ui__print_line_number(Buffer, Config, line_idx, Ui->line_num_len);
+	ui__print_line_number(Buffer, Config, line_idx, Ui->line_num_length);
 
 	if(Buffer->lines_length_idx[line_idx] < Ui->text_x)
 	{
@@ -105,7 +104,7 @@ void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	{
 		print__another_line(Buffer, Ui, Config, line_idx);
 	}
-	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_len);
+	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_length);
 	print__actual_line(Buffer, Ui);
 
 	if(CURSOR_Y_SCROLLED)
@@ -116,7 +115,7 @@ void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 			print__another_line(Buffer, Ui, Config, line_idx);
 		}
 		ui__print_line_number(Buffer, Config, Buffer->lines_idx,
-		                      Ui->line_num_len);
+		                      Ui->line_num_length);
 
 
 		if(Buffer->lines_length_idx[Buffer->lines_idx] < Ui->text_x)
@@ -142,7 +141,7 @@ void print__shrink_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	{
 		print__another_line(Buffer, Ui, Config, line_idx);
 	}
-	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_len);
+	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_length);
 	print__actual_line(Buffer, Ui);
 
 	// Next lines. If scrolled. Only beginning is shown.
@@ -150,7 +149,7 @@ void print__shrink_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	{
 		print__another_line(Buffer, Ui, Config, line_idx);
 	}
-	ui__print_line_number(Buffer, Config, last_line_idx, Ui->line_num_len);
+	ui__print_line_number(Buffer, Config, last_line_idx, Ui->line_num_length);
 
 	if(Buffer->lines_length_idx[last_line_idx] < Ui->text_x)
 	{
@@ -176,7 +175,7 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	}
 
 	// Display the last line without the linefeed.
-	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_len);
+	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_length);
 
 	if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
 	{

@@ -1,5 +1,9 @@
 bin/
+cov/
 *.fiflo
+*.gcda
+*.gcno
+*.gcov
 obj/
 *.out
 *.save

@@ -92,7 +92,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui)
 		if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
 		{
 			// No horizontal scrolling.
-			move_right = (term_t) (Ui->line_num_len + CURSOR_X);
+			move_right = (term_t) (Ui->line_num_length + CURSOR_X);
 		}
 		else if((CURRENT_LINE_LENGTH_IDX - Ui->text_x) >= Buffer->cursor_rev_x)
 		{
@@ -103,7 +103,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui)
 		else
 		{
 			// Text is scrolled horizontally to the start. Cursor can be moved.
-			move_right = (term_t) (Ui->line_num_len + CURSOR_X);
+			move_right = (term_t) (Ui->line_num_length + CURSOR_X);
 		}
 		move_up = (CURRENT_LINE_IDX < Ui->text_y) ?
 		(term_t) (Ui->text_y - CURRENT_LINE_IDX - IDX + Ui->lbar_h) : Ui->lbar_h;
@@ -118,11 +118,14 @@ bool window__render(Buff_t* Buffer, Conf_t* Config)
 
 	sprintf(Ui.line_num_str, "%u", Buffer->lines_idx + IDX);
 
-	if(!(Ui.win_w = window__get_terminal_sz('X')))
+	Ui.win_w = window__get_terminal_sz('X');
+	if(Ui.win_w == 0)
 	{
 		return false;
 	}
-	if(!(Ui.win_h = window__get_terminal_sz('Y')))
+	Ui.win_h = window__get_terminal_sz('Y');
+
+	if(Ui.win_h == 0)
 	{
 		return false;
 	}
@@ -130,9 +133,9 @@ bool window__render(Buff_t* Buffer, Conf_t* Config)
 	Ui.pane_h = TOGGLED_PANE_SZ;
 	Ui.lbar_h = (Buffer->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
-	Ui.line_num_len = (term_t) (strlen(Ui.line_num_str) + SPACE_SZ);
-	Ui.text_x       = (term_t) (Ui.win_w - Ui.line_num_len);
-	Ui.text_y       = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
+	Ui.line_num_length = (term_t) (strlen(Ui.line_num_str) + SPACE_SZ);
+	Ui.text_x          = (term_t) (Ui.win_w - Ui.line_num_length);
+	Ui.text_y          = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 
 	ui__upper_bar(Buffer, Config, &Ui);
 	print__display_text(Buffer, &Ui, Config);

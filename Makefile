@@ -14,6 +14,7 @@ MSAN_FLAGS = -fsanitize=memory -fPIE -pie -fno-omit-frame-pointer \
 SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
+COV_DIR = cov
 MAN_DIR = man
 
 INS_DIR = /usr/bin
@@ -43,26 +44,43 @@ endif
 # "$<" is a first item in the dependencies list.
 # "-c" generates the object file.
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
-	@mkdir -p $(OBJ_DIR)
+	mkdir -p $(OBJ_DIR)
 	$(CC) -c -o $@ $< \
 	$(CFLAGS) \
 
 # Builds the binary by linking object files.
 $(TARGET): $(OBJS)
-	@mkdir -p $(BIN_DIR)
+	mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
 	$(CFLAGS) $(LDFLAGS)
 
-	@echo " "
+	@echo ' '
 	@echo "Compilation successful."
 
 # Debugging.
+.PHONY: address
 address: LDFLAGS += $(ASAN_FLAGS)
 address: $(TARGET)
 address:
 	@echo "AddressSanitizer linked successfuly."
 
+.PHONY: debug
+debug: CFLAGS += -g -ftest-coverage -fprofile-arcs
+debug: LDFLAGS += $(ASAN_FLAGS)
+debug: clean
+debug: $(TARGET)
+debug:
+	@echo "AddressSanitizer linked successfuly. Files for the gcov created."
+
+.PHONY: coverage
+coverage:
+	mkdir -p $(COV_DIR)
+	@echo ' '
+	gcov $(OBJ_DIR)/*.gcno
+	mv *.gcov $(COV_DIR)
+
 # TODO
+.PHONY: memory
 memory: CC = clang
 memory: CFLAGS = -Weverything
 memory: LDFLAGS += $(MSAN_FLAGS)
@@ -71,8 +89,9 @@ memory:
 	@echo "MemorySanitizer linked successfuly."
 
 # Fun with a filesystem.
+.PHONY: install
 install: $(TARGET)
-	@echo " "
+	@echo ' '
 	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
 
 	sudo $(RM) $(MAN_INS_DIR)1/$(TARGET).1.gz
@@ -89,6 +108,7 @@ install: $(TARGET)
 	@echo " "
 	@echo "Fiflo installation finished."
 
+.PHONY: install_address
 install_address: address
 	@echo " "
 	sudo cp $(BIN_DIR)/$(TARGET) $(INS_DIR)/$(TARGET)
@@ -96,6 +116,7 @@ install_address: address
 	@echo " "
 	@echo "Fiflo binary only installation with ASan finished."
 
+.PHONY: uninstall
 uninstall:
 	sudo $(RM) \
 	$(INS_DIR)/$(TARGET) \
@@ -107,6 +128,5 @@ uninstall:
 	@echo "Fiflo uninstallation finished."
 
 .PHONY: clean
-
 clean:
-	$(RM) -r $(OBJ_DIR) $(BIN_DIR)
+	$(RM) -r $(OBJ_DIR) $(BIN_DIR) $(COV_DIR)

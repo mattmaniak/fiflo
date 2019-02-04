@@ -57,9 +57,9 @@ void fiflo__run(const char* arg)
 
 int main(int argc, char** argv)
 {
-	const int max_arg_count = 2;
+	const int argc_max = 2;
 
-	if(argc > max_arg_count)
+	if(argc > argc_max)
 	{
 		fprintf(stderr, "Only one additional arg can be passed.\n");
 		goto exit;
