@@ -5,60 +5,50 @@
 
 bool file__set_name(Buff_t* Buffer, const char* arg)
 {
-	size_t arg_length  = strlen(arg);
+	char*  cw_dir;
+	size_t cw_dir_length;
 
-	bool arg_non_empty   = arg_length > 0;
-	bool arg_as_abs_path = arg[0]  == '/';
-	bool arg_as_dir      = (arg[arg_length - NUL_SZ] == '/')
-	                       && (arg[arg_length] == '\0');
-
-	if(arg_non_empty && arg_as_dir)
+	if(arg[0]  == '/')
 	{
-		fprintf(stderr, "Can't open the directory as a file.\n");
-		return false;
-	}
-
-	if(arg_as_abs_path) // TODO
-	{
-		if(arg_length >= PATH_MAX)
+		if(strlen(arg) > (PATH_MAX + NAME_MAX))
 		{
 			fprintf(stderr, "Passed filename is too long.\n");
 			return false;
 		}
-		strncpy(Buffer->fname, arg, PATH_MAX);
+		strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
 	}
 	else // Relative path or the basename.
 	{
-		char* cwdir = malloc(PATH_MAX - NAME_MAX - SLASH_SZ);
-		if(cwdir == NULL)
+		if(strlen(arg) >= NAME_MAX)
+		{
+			fprintf(stderr, "Passed filename is too long.\n");
+			return false;
+		}
+
+		cw_dir = malloc(PATH_MAX);
+		if(cw_dir == NULL)
 		{
 			fprintf(stderr, "Can't alloc a memory for the directory.\n");
 			return false;
 		}
 
-		cwdir = getcwd(cwdir, PATH_MAX - NAME_MAX - SLASH_SZ);
-		if(cwdir == NULL)
+		cw_dir = getcwd(cw_dir, PATH_MAX);
+		if(cw_dir == NULL)
 		{
 			fprintf(stderr, "Can't get the current directory. Too long.\n");
 			return false;
 		}
+		cw_dir_length = strlen(cw_dir);
 
-		if((strlen(cwdir) + arg_length) >= PATH_MAX)
-		{
-			fprintf(stderr, "Current directory is too long.\n"); // TODO.
-			return false;
-		}
-		// Copy the path.
-		strncpy(Buffer->fname, cwdir, PATH_MAX - NAME_MAX - SLASH_SZ);
+		strncpy(Buffer->fname, cw_dir, PATH_MAX); // Copy the path.
 
-		Buffer->fname[strlen(cwdir)] = '/'; // Add the slash between.
+		Buffer->fname[cw_dir_length] = '/'; // Add the slash between.
+		Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
 
 		// Append the basename.
-		for(uint16_t char_idx = 0; char_idx < arg_length; char_idx++)
-		{
-			Buffer->fname[strlen(cwdir) + char_idx + SLASH_SZ] = arg[char_idx];
-		}
-		free(cwdir);
+		strncpy(&Buffer->fname[cw_dir_length + SLASH_SZ], arg, NAME_MAX);
+
+		free(cw_dir);
 	}
 	Buffer->fname_length = strlen(Buffer->fname);
 
@@ -86,14 +76,14 @@ void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, char key)
 	{
 
 		Buffer->live_fname_edit = false;
-		file__save(Buffer, Config);
 
 		SET_STATUS("filename edited and saved as");
-
 		if(!strcmp(Buffer->fname, Buffer->orig_fname))
 		{
 			SET_STATUS("saved as");
 		}
+
+		file__save(Buffer, Config);
 		strncpy(Buffer->orig_fname, Buffer->fname, PATH_MAX);
 	}
 	else if(key == escape)

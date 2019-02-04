@@ -51,8 +51,8 @@ typedef struct // TODO: SPLIT AND PADDING
 	bool     padding_0;
 
 	// Filename.
-	char     fname[PATH_MAX];    // Full filename. Eg. /home/user/basename.
-	char     orig_fname[PATH_MAX];
+	char     fname[PATH_MAX + SLASH_SZ + NAME_MAX]; // Full filename. Eg. /home/user/basename.
+	char     orig_fname[PATH_MAX + SLASH_SZ+ NAME_MAX];
 	size_t   fname_length;       // Strlen of the above array.
 
 	uint16_t padding_1;

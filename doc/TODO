@@ -1,7 +1,7 @@
 fiflo - TODOs and ideas:
 - more variables for the better readability,
 - colorized status,
-- tab with a gap,
+- tab with the gap,
 - whitespace highlighting,
 - check code coverage,
 - more semantic functions names,
@@ -14,9 +14,8 @@ fiflo - TODOs and ideas:
 - cut/copy/paste,
 - more advanced scroll (eg. full words),
 - fully adaptive cursor,
-- load only part of a file,
+- load only part of a file (nearly-infinite buffer),
 - syntax highlighting,
 - search option,
 - hex mode,
-- usr/share/doc/fiflo,
-- cursor at the begging by default.
+- cursor at the beggining by default.

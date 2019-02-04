@@ -17,7 +17,8 @@ v3.0.0 (WIP):
 - basic tab key support without a gap,
 - abort and restore the filename before the live edit,
 - also save after pressing enter during live filename edit,
-- creates the new file with 0644 permissions instead of 0600.
+- creates the new file with 0644 permissions instead of 0600,
+- slightly increased the filename length limit.
 
 v2.2.2 (2018, December 22):
 - Repaired positions of line numbers when the line has same width as the

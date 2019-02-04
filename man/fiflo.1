@@ -2,19 +2,13 @@
 .SH NAME
 fiflo - terminal-based text editor with Common User Access keyboard shortcuts
 .SH SYNOPSIS
-fiflo [option]
+fiflo [basename/filename/option]
 .SH DESCRIPTION
 Currently supports only all ASCII printable chars, space and horizontal tab.
 It has got dynamically allocated buffer which can hold up to 16 MB - 1 chars.
 Implementation considers that newline char is equal to the LF. The tab char
 needs as many bytes as it's width in the editor: from 2 to 8.
 .SH OPTIONS
-.TP
-.B [basename]
-Open the file form an user's current or relative path.
-.TP
-.B [filename]
-Same as above but using an absolute path.
 .TP
 .B -h, --help
 Show a program help.
@@ -30,7 +24,7 @@ Blinking window with a default tty. It's caused by the implementation which
 renders a full window every time. On modern terminal emulators, the problem does
 not occur.
 .TP
-.B Control^[
+.B Ctrl^[ or Esc
 Next 3 chars will be ignored.
 .TP
 .B Alt^key

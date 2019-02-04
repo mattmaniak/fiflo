@@ -52,12 +52,12 @@ Dive into the "doc/" direcory and read the "CONTRIBUTING.md".
 
 ### Source files:
 - buffer.c - initialization and deleting the main buffer which holds the
-  text and it's metadata, semantic macros,
+text and it's metadata, semantic macros,
 
 - config.c - fiflorc parser and values setter,
 
 - edit.c - more complex text editing operations that happens after the
-  keypress,
+keypress,
 
 - fiflo.c - the main file, just "main" and the execution loop,
 

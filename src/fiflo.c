@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 		fiflo__run("");
 		goto exit;
 	}
-	else if(strlen(argv[1]) <= PATH_MAX)
+	else if(strlen(argv[1]) < ARG_MAX)
 	{
 		if(!options__parse_and_print(argv[1]))
 		{
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		fprintf(stderr, "Maximum parameter length is %u\n", PATH_MAX);
+		fprintf(stderr, "Maximum parameter length is %u\n", ARG_MAX);
 		goto exit;
 	}
 

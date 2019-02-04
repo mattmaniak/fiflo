@@ -10,7 +10,7 @@ before making a change.
 As described but only with: master, develop, hotifx branches.
 
 ### Version scheme
-[SemVer](https://semver.org/).
+[SemVer](https://semver.org/)
 
 ### Coding rules:
 - Allman-like brace style,

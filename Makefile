@@ -64,7 +64,7 @@ $(TARGET): $(OBJS)
 
 # Debugging.
 .PHONY: debug
-debug: CFLAGS += $(GCOV_FLAGS) -O0
+debug: CFLAGS += $(GCOV_FLAGS)
 debug: LDFLAGS += $(ASAN_FLAGS)
 debug: clean
 debug: $(TARGET)
