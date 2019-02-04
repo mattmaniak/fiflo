@@ -19,7 +19,7 @@ char input__getch(void)
 	if(tcgetattr(STDIN_FILENO, &old_term_params) == ERROR)
 	{
 		window__flush();
-		fprintf(stderr, "Stdin params error. Pipe isn't supported.\n");
+		fprintf(stderr, "Stdin attribiutes error. Pipe isn't supported.\n");
 		return ERROR;
 	}
 	new_term_params = old_term_params;
@@ -59,8 +59,6 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 {
 	const size_t seq_max = 3;
 
-	/* Notice that the structure of these sequences is: <ansi_esc_code> + '['
-	+ <some_unique_numbers_and_letters>. */
 	const char arrow_up[]    = "\033[A";
 	const char arrow_down[]  = "\033[B";
 	const char arrow_right[] = "\033[C";
@@ -100,7 +98,6 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 
 bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 {
-	const idx_t  nul_sz = 1;
 	enum         {seq_len = 8}; // TODO: IF MORE, BREAKS THE INPUT.
 	static char  chars_sequence[seq_len];
 	static idx_t char_i;
@@ -118,7 +115,7 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 	if(Buffer->chars_sequence)
 	{
 		chars_sequence[char_i] = key;
-		if(char_i < (seq_len - nul_sz))
+		if(char_i < (seq_len - NUL_SZ))
 		{
 			char_i++;
 		}

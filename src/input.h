@@ -1,9 +1,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include <stdio.h>
 #include <termios.h>
-#include <unistd.h>
 
 extern bool keys__key_action(Buff_t*, Conf_t*, char);
 extern void keys__arrow_left(Buff_t*, Conf_t*);

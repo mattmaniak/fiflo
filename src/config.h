@@ -44,7 +44,7 @@ typedef struct
 }
 Conf_t;
 
-//
+// Sets the selectors names.
 void config__init_selectors(Conf_t*);
 
 // Check if selector_in_file == expected_selector.
@@ -53,13 +53,13 @@ void config__parse_selector(Conf_t*, char*, int);
 // Convert a word into an ASCII escape code.
 int config__encode_color(Conf_t*, char*);
 
-//
+// As in the name. Wow.
 void config__set_default(Conf_t*);
 
-//
+// As above but read from the file.
 void config__load_custom(Conf_t*);
 
-//
+// Used to style the UI.
 void config__set_color(Opt_t*);
 
 #endif

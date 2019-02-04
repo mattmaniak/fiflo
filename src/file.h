@@ -3,15 +3,7 @@
 
 // File operations.
 
-#include <linux/limits.h>
 #include <pwd.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/file.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <fcntl.h>
 
 #define AT_LEAST_ONE_TAB 1
 
@@ -35,10 +27,10 @@ void file__convert_tab_to_file(Buff_t*, Conf_t*, idx_t, idx_t*);
 // Puts the whole text to the file.
 void file__save(Buff_t*, Conf_t*);
 
-//
+// Opens the "~/.config/fiflorc"
 bool file__load_config(Conf_t*);
 
-//
+// Reads the set branch from the ".git/" dir.
 bool file__get_git_branch(Buff_t*);
 
 #endif

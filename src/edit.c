@@ -144,19 +144,6 @@ bool edit__move_lines_backward(Buff_t* Buffer)
 	Buffer->chars_idx--;
 	PREVIOUS_LINE_LENGTH_IDX--;
 
-	// PREVIOUS_LINE[PREVIOUS_LINE_LENGTH_IDX] = '\0';
-	//
-	// PREVIOUS_LINE_LENGTH_IDX += CURRENT_LINE_LENGTH_IDX;
-	//
-	// if(!memory__extend_line(Buffer, PREVIOUS_LINE_IDX))
-	// {
-	// 	return false;
-	// }
-	// // Append part of a next line to a previous one.
-	// strcat(PREVIOUS_LINE, CURRENT_LINE);
-
-	// FUNNY: THAT SHIT ABOVE DOESN"T WORK.
-
 	// Concat the previous line with the next.
 	for(idx_t char_idx = 0; char_idx <= CURRENT_LINE_LENGTH_IDX; char_idx++)
 	{

@@ -37,7 +37,7 @@ and it's configuration guide.
 man fiflorc
 ```
 
-### Optional cleanup - remove "bin"/ and "obj/" after the compilation.
+### Optional cleanup - remove "bin"/ and "obj/" after the compilation
 ```
 make clean
 ```

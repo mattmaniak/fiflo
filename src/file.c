@@ -32,9 +32,13 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
 			return false;
 		}
 
-		cw_dir = getcwd(cw_dir, PATH_MAX);
-		if(cw_dir == NULL)
+		if(getcwd(cw_dir, PATH_MAX) != NULL)
 		{
+			cw_dir = getcwd(cw_dir, PATH_MAX);
+		}
+		else
+		{
+			free(cw_dir);
 			fprintf(stderr, "Can't get the current directory. Too long.\n");
 			return false;
 		}
@@ -124,8 +128,8 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
 	{
 		if(Buffer->fname[Buffer->fname_length - NUL_SZ] == '/')
 		{
-			SET_STATUS("current directory set");
 			fclose(Textfile);
+			SET_STATUS("current directory set");
 			return true;
 		}
 		while((ch = (char) fgetc(Textfile)) != EOF)
@@ -150,7 +154,7 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
 }
 
 void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
-                               idx_t* char_idx) // TODO: RETURN INSTEAD OF PTR.
+                               idx_t* char_idx)
 {
 	// Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
 	for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
@@ -181,6 +185,7 @@ void file__save(Buff_t* Buffer, Conf_t* Config)
 			    char_idx < Buffer->lines_length_idx[line_idx]; char_idx++)
 			{
 				file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
+
 				putc(Buffer->text[line_idx][char_idx], Textfile);
 			}
 		}
@@ -195,10 +200,19 @@ void file__save(Buff_t* Buffer, Conf_t* Config)
 
 bool file__load_config(Conf_t* Config)
 {
-	struct passwd Account_info; // 73 allocs here.
-	char          path[PATH_MAX]; // TODO: MAX SIZE.
+	// TODO: LESS ALLOCS - STATIC/CONST - STH LIKE THAT.
+	struct passwd Account_info; // A lot of allocs here.
+	char          path[PATH_MAX + NAME_MAX];
 
-	Account_info = *getpwuid(getuid());
+	if(getpwuid(getuid()) == NULL)
+	{
+		fprintf(stderr, "Can't get the account's home direcory.\n");
+		return false;
+	}
+	else
+	{
+		Account_info = *getpwuid(getuid());
+	}
 
 	strcpy(path, Account_info.pw_dir);
 	strcat(path, "/.config/fiflorc");
@@ -217,62 +231,61 @@ bool file__load_config(Conf_t* Config)
 	return true;
 }
 
-bool file__get_git_branch(Buff_t* Buffer) // TODO: MEMLEAKS.
+bool file__get_git_branch(Buff_t* Buffer)
 {
-	const char git_head_path[] = "/.git/HEAD";
-	// char       path[PATH_MAX]; // TODO: MAX SIZE.
-	FILE*      git_head_file;
+	char  git_head_file_path[PATH_MAX + NAME_MAX];
+	FILE* git_head_file;
+	char* cw_dir;
 
-	char* cwdir = malloc(PATH_MAX - NAME_MAX - 1);
-	if(cwdir == NULL)
+	cw_dir = malloc(PATH_MAX);
+	if(cw_dir == NULL)
 	{
-		fputs("Can't alloc a memory for the directory.\n", stderr);
-		return false;
-	}
-	cwdir = getcwd(cwdir, PATH_MAX - NAME_MAX - 1);
-	if(cwdir == NULL)
-	{
-		fputs("Can't get the current directory. Maybe too long.\n", stderr);
-		free(cwdir);
+		fprintf(stderr, "Can't alloc a memory for the directory.\n");
 		return false;
 	}
 
-	// strcpy(cwdir, Account_info->pw_dir);
-	strcat(cwdir, git_head_path);
-
-	// puts(cwdir);
-
-	if(access(cwdir, F_OK) == ERROR)
+	if(getcwd(cw_dir, PATH_MAX) != NULL)
 	{
-		strcpy(Buffer->git_branch, "[branch not found]");
-		free(cwdir);
+		cw_dir = getcwd(cw_dir, PATH_MAX);
+	}
+	else
+	{
+		free(cw_dir);
+		fprintf(stderr, "Can't get the current directory. Too long.\n");
+		return false;
+	}
+
+	strncpy(git_head_file_path, cw_dir, PATH_MAX);
+	strcat(git_head_file_path, "/.git/HEAD");
+
+	free(cw_dir);
+
+	if(access(git_head_file_path, F_OK) == ERROR)
+	{
+		strcpy(Buffer->git_branch, "[not a repo]");
 		return true;
 	}
 
-	git_head_file = fopen(cwdir, "r");
+	git_head_file = fopen(git_head_file_path, "r");
 	if(git_head_file == NULL)
 	{
-		fprintf(stderr, "Can't open the \"%s\" to get a Git branch.\n",
-		        git_head_path);
-
-		free(cwdir);
-		return false;
+		strcpy(Buffer->git_branch, "[can't get the branch]");
+		return true;
 	}
-	free(cwdir);
 
 	// Ignore the passed string in the file, to get the branch after the slash.
 	if(fseek(git_head_file, (long) strlen("ref: refs/heads/"), 0) == ERROR)
 	{
-		fprintf(stderr, "Can't locate the branch in the \"%s\" file\n.",
-		        git_head_path);
-		return false;
+		strcpy(Buffer->git_branch, "[can't get the branch]");
+		return true;
 	}
-	while(fgets(Buffer->git_branch, NAME_MAX + 1, git_head_file) != NULL) // TODO: MAX_LEN
+	while(fgets(Buffer->git_branch, NAME_MAX, git_head_file) != NULL)
 
-	if(Buffer->git_branch[strlen(Buffer->git_branch) - 1] == '\n')
+	if(Buffer->git_branch[strlen(Buffer->git_branch) - NUL_SZ] == '\n')
 	{
-		Buffer->git_branch[strlen(Buffer->git_branch) - 1] = '\0'; // LF removal.
+		Buffer->git_branch[strlen(Buffer->git_branch) - NUL_SZ] = '\0';
 	}
 	fclose(git_head_file);
+
 	return true;
 }

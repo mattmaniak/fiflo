@@ -3,11 +3,6 @@
 
 // User interface components.
 
-#include <stdint.h>
-#include <stdio.h>
-#include <sys/types.h>
-
-// Some semantic macros.
 #define GIT_LOGO        "|\\ git "
 #define GIT_LOGO_LENGTH 7
 
@@ -24,7 +19,6 @@ typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
 typedef struct
 {
-	char   line_num_str[16]; // Place for string of the highest line number.
 	term_t line_num_length;  // Dynamic width of the lines numbers.
 	term_t text_x;           // Horizontal space for the text (width: chars).
 	term_t text_y;           // Vertical space for the text (lines).

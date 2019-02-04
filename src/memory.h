@@ -3,9 +3,7 @@
 
 // Allocation/freeing the memory blocks that holds the text and it's metadata.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include <string.h>
 
 #define NEXT 1
 #define PREV 1

@@ -114,9 +114,11 @@ void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui)
 
 bool window__render(Buff_t* Buffer, Conf_t* Config)
 {
+	char line_num_str[16]; // Needed to count the length of the number.
+
 	Ui_t Ui;
 
-	sprintf(Ui.line_num_str, "%u", Buffer->lines_idx + IDX);
+	sprintf(line_num_str, "%u", Buffer->lines_idx + IDX);
 
 	Ui.win_w = window__get_terminal_sz('X');
 	if(Ui.win_w == 0)
@@ -133,7 +135,7 @@ bool window__render(Buff_t* Buffer, Conf_t* Config)
 	Ui.pane_h = TOGGLED_PANE_SZ;
 	Ui.lbar_h = (Buffer->pane_toggled) ? Ui.pane_h : LBAR_SZ;
 
-	Ui.line_num_length = (term_t) (strlen(Ui.line_num_str) + SPACE_SZ);
+	Ui.line_num_length = (term_t) (strlen(line_num_str) + SPACE_SZ);
 	Ui.text_x          = (term_t) (Ui.win_w - Ui.line_num_length);
 	Ui.text_y          = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 

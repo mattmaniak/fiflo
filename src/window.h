@@ -3,9 +3,7 @@
 
 // Contains all the elements that will be rendered.
 
-#include <limits.h>
 #include <sys/ioctl.h>
-#include <unistd.h>
 
 // ANSI escape codes for a terminal control.
 #define ANSI_CLEAN_WHOLE_LINE()   printf("\033[2K")
