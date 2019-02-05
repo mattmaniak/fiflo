@@ -111,7 +111,7 @@ Remark: fiflo must be compiled without ASan and MSan.
 
 ### Install only the debugable binary.
 ```
-sudo make install_debug
+sudo make debug_install
 ```
 
 ## FAQ

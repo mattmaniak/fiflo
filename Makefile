@@ -105,8 +105,8 @@ install: $(TARGET)
 	@echo " "
 	@echo "Fiflo installed."
 
-.PHONY: install_debug
-install_debug: debug
+.PHONY: debug_install
+debug_install: debug
 	@echo " "
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
