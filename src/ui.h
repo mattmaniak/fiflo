@@ -3,8 +3,9 @@
 
 // User interface components.
 
-#define GIT_LOGO        "|\\ git: "
-#define GIT_LOGO_LENGTH 8
+#define GIT_LOGO            "|\\ git "
+#define GIT_LOGO_LENGTH     7
+#define GIT_BRANCH_AREA_MIN 10
 
 #define DOTS_LENGTH 3
 
@@ -13,7 +14,7 @@
 
 #define TOGGLED_PANE_SZ 5
 
-#define WRAP_LINE() putchar('\n')
+#define WRAP_LINE() putchar('\n') // Not the text. Needed to rendering.
 
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 

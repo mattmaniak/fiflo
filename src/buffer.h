@@ -47,14 +47,11 @@ typedef struct // TODO: SPLIT AND PADDING
 
 	// Max size is 250.
 	char     git_branch[NAME_MAX];
-	bool     padding_0;
 
-	// Filename. TODO: ARRAY SIZE.
-	char     fname[PATH_MAX + SLASH_SZ + NAME_MAX]; // Full filename. Eg. /home/user/basename.
-	char     orig_fname[PATH_MAX + SLASH_SZ+ NAME_MAX];
+	// Filename.
+	char     fname[PATH_MAX + NAME_MAX]; // Full filename. Eg. /home/user/basename.
+	char     orig_fname[PATH_MAX + NAME_MAX];
 	size_t   fname_length;       // Strlen of the above array.
-
-	uint16_t padding_1;
 
 	// File's content and some indicators.
 	char**   text;               // Text buffer. E.g. text[lines_idx][chars_idx].

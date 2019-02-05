@@ -6,7 +6,6 @@
 extern bool memory__extend_line(Buff_t*, idx_t);
 extern bool memory__shrink_current_line(Buff_t*);
 extern bool memory__shrink_prev_line(Buff_t*);
-extern bool memory__extend_lines_array(Buff_t*);
 extern bool memory__shrink_lines_array(Buff_t*);
 extern bool memory__copy_lines_forward(Buff_t*);
 extern bool memory__copy_lines_backward(Buff_t*);

@@ -1,9 +1,7 @@
 fiflo - TODOs and ideas:
-- more variables for the better readability,
 - colorized status,
 - tab with the gap,
 - whitespace highlighting,
-- check code coverage,
 - simplify config.c and buffer.h
 - linked list API (v4.y.z),
 - all escapes and formatting control chars,
@@ -19,4 +17,6 @@ fiflo - TODOs and ideas:
 - hex mode,
 - cursor at the beggining by default,
 - punch card config,
-- Makefile: permissions during the installation.
+- Makefile: permissions during the installation,
+- max. left cursor position during live filename edit,
+- refresh the git branch in the separate thread.

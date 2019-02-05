@@ -1,7 +1,7 @@
 # fiflo
 Terminal-based text editor with Common User Access keyboard shortcuts.
 
-## Use
+## Usage
 ### Check the requirements for the GNU/Linux:
 - git,
 - make,
@@ -19,12 +19,13 @@ bin/fiflo
 
 ### Install
 ```
-sudo make install
+make install
 ```
+Writing "sudo" before it will break the config file permissions.
 
 Then use it directly from a disk...
 ```
-./fiflo
+fiflo
 ```
 
 or better read the  manual...
@@ -48,16 +49,15 @@ sudo make uninstall
 ```
 
 ## Development
-Dive into the "doc/" direcory and read the "CONTRIBUTING.md".
+Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 ### Source files:
-- buffer.c - initialization and deleting the main buffer which holds the
-text and it's metadata, semantic macros,
+- buffer.c - initialization and deleting the main buffer which holds the text
+and it's metadata,semantic macros,
 
 - config.c - fiflorc parser and values setter,
 
-- edit.c - more complex text editing operations that happens after the
-keypress,
+- edit.c - more complex text editing operations that happens after the keypress,
 
 - fiflo.c - the main file, just "main" and the execution loop,
 
@@ -78,10 +78,9 @@ keypress,
 - window.c - window rendering and flushing.
 
 ### Needed tools for debugging:
-- AddressSanitizer (both gcc and clang),
-- MemorySanitizer (clang only),
-- valgrind,
-- gcov.
+- AddressSanitizer (built-in gcc and clang),
+- gcov,
+- valgrind.
 
 ### Get and set the development branch
 ```
@@ -102,12 +101,6 @@ codecov marked after the previous execution The program must be compiled with
 the "debug" option previously.
 ```
 make coverage
-```
-
-Link the MemorySanitizer (only with clang) for the uninitialized heap usage
-check. Causes slowdown.
-```
-make memory
 ```
 
 Use the valgrind.

@@ -80,15 +80,6 @@ coverage:
 	gcov $(OBJ_DIR)/*.gcno
 	mv *.gcov $(COV_DIR)
 
-.PHONY: memory
-memory: CC = clang
-memory: CFLAGS = -Weverything
-memory: LDFLAGS += $(MSAN_FLAGS)
-memory: clean
-memory: $(TARGET)
-memory:
-	@echo "MSan linked."
-
 # Fun with a filesystem.
 .PHONY: install
 install: $(TARGET)
@@ -120,7 +111,7 @@ install_debug: debug
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
 	@echo " "
-	@echo "Binary only installation with ASan and gdb/gcov support finished."
+	@echo "Binary only installation with ASan and gcov support finished."
 
 .PHONY: uninstall
 uninstall:

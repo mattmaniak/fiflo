@@ -10,7 +10,7 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
 
 	if(arg[0]  == '/')
 	{
-		if(strlen(arg) > (PATH_MAX + NAME_MAX))
+		if(strlen(arg) >= (PATH_MAX + NAME_MAX))
 		{
 			fprintf(stderr, "Passed filename is too long.\n");
 			return false;
@@ -43,6 +43,16 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
 			return false;
 		}
 		cw_dir_length = strlen(cw_dir);
+
+		// Getcwd() returns the path without the slash, which is required here.
+		if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
+		{
+			free(cw_dir);
+			fprintf(stderr,
+			        "Can't insert the slash. Current direcory is too long.\n");
+
+			return false;
+		}
 
 		strncpy(Buffer->fname, cw_dir, PATH_MAX); // Copy the path.
 
@@ -200,9 +210,8 @@ void file__save(Buff_t* Buffer, Conf_t* Config)
 
 bool file__load_config(Conf_t* Config)
 {
-	// TODO: LESS ALLOCS - STATIC/CONST - STH LIKE THAT.
 	struct passwd Account_info; // A lot of allocs here.
-	char          path[PATH_MAX + NAME_MAX];
+	char          conf_fname[PATH_MAX + NAME_MAX];
 
 	if(getpwuid(getuid()) == NULL)
 	{
@@ -214,15 +223,15 @@ bool file__load_config(Conf_t* Config)
 		Account_info = *getpwuid(getuid());
 	}
 
-	strcpy(path, Account_info.pw_dir);
-	strcat(path, "/.config/fiflorc");
+	strcpy(conf_fname, Account_info.pw_dir);
+	strcat(conf_fname, "/.config/fiflorc");
 
-	if(access(path, F_OK) == ERROR)
+	if(access(conf_fname, F_OK) == ERROR)
 	{
 		config__set_default(Config);
 	}
 
-	Config->File = fopen(path, "r");
+	Config->File = fopen(conf_fname, "r");
 	if(Config->File != NULL)
 	{
 		config__load_custom(Config);
@@ -276,7 +285,7 @@ bool file__get_git_branch(Buff_t* Buffer)
 	// Ignore the passed string in the file, to get the branch after the slash.
 	if(fseek(git_head_file, (long) strlen("ref: refs/heads/"), 0) == ERROR)
 	{
-		strcpy(Buffer->git_branch, "[can't get the branch]");
+		strcpy(Buffer->git_branch, "[can't locate the branch]");
 		return true;
 	}
 	while(fgets(Buffer->git_branch, NAME_MAX, git_head_file) != NULL)
