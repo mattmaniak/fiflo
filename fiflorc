@@ -1,7 +1,7 @@
 # Example fiflo configuration file.
 # To make it work, copy it to the /etc/fiflorc
 #
-# If You've installed the fiflo, check "man fiflorc" for details.
+# If You did "sudo make install", check "man fiflorc" for details.
 #
 # Remark: " = " (excluding quotation marks) is the only correct assignment.
 #
