@@ -23,7 +23,7 @@ DOC_DIR = doc
 USR_INS_DIR = /usr/bin
 DOC_INS_DIR = /usr/share/doc/$(TARGET)
 MAN_INS_DIR = /usr/share/man/man
-CONF_DIR = ~/.config
+CONF_DIR = /etc
 
 # All in the ./obj depending on the ./src.
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
@@ -67,7 +67,6 @@ debug: CFLAGS += $(GCOV_FLAGS)
 debug: LDFLAGS += $(ASAN_FLAGS)
 debug: clean
 debug: $(TARGET)
-debug:
 	@echo "ASan linked. Files for the gcov created."
 	$(RM) $(OBJ_DIR)/*.o
 # Prevent $(TARGET) compilation errors.
@@ -99,7 +98,7 @@ install: $(TARGET)
 	sudo cp LICENSE $(DOC_INS_DIR)
 	sudo cp $(DOC_DIR)/* $(DOC_INS_DIR)
 
-	cp -i $(TARGET)rc $(CONF_DIR)/$(TARGET)rc
+	sudo cp -i $(TARGET)rc $(CONF_DIR)
 
 	@echo " "
 	@echo "Fiflo installed."

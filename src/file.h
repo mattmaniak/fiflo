@@ -25,7 +25,7 @@ bool file__load(Buff_t*, Conf_t*);
 void file__convert_tab_to_file(Buff_t*, Conf_t*, idx_t, idx_t*);
 
 // Puts the whole text to the file.
-void file__save(Buff_t*, Conf_t*);
+bool file__save(Buff_t*, Conf_t*);
 
 // Opens the "~/.config/fiflorc"
 bool file__load_config(Conf_t*);

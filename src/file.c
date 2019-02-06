@@ -131,17 +131,19 @@ bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, char ch)
 
 bool file__load(Buff_t* Buffer, Conf_t* Config)
 {
-	FILE* Textfile = fopen(Buffer->fname, "r");
+	FILE* Textfile;
 	char  ch;
+
+	if(Buffer->fname[Buffer->fname_length - NUL_SZ] == '/')
+	{
+		SET_STATUS("current directory set");
+		return true;
+	}
+
+	Textfile = fopen(Buffer->fname, "r");
 
 	if(Textfile != NULL)
 	{
-		if(Buffer->fname[Buffer->fname_length - NUL_SZ] == '/')
-		{
-			fclose(Textfile);
-			SET_STATUS("current directory set");
-			return true;
-		}
 		while((ch = (char) fgetc(Textfile)) != EOF)
 		{
 			if(!file__convert_tab_from_file(Buffer, Config, ch))
@@ -153,7 +155,11 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
 				return false;
 			}
 		}
-		fclose(Textfile);
+		if(fclose(Textfile) == EOF)
+		{
+			fprintf(stderr, "Can't close the textfile after load.\n");
+			return false;
+		}
 		SET_STATUS("read the file");
 	}
 	else
@@ -181,7 +187,7 @@ void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
 	}
 }
 
-void file__save(Buff_t* Buffer, Conf_t* Config)
+bool file__save(Buff_t* Buffer, Conf_t* Config)
 {
 	FILE* Textfile = fopen(Buffer->fname, "w");
 
@@ -195,36 +201,26 @@ void file__save(Buff_t* Buffer, Conf_t* Config)
 			    char_idx < Buffer->lines_length_idx[line_idx]; char_idx++)
 			{
 				file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
-
 				putc(Buffer->text[line_idx][char_idx], Textfile);
 			}
 		}
-		fclose(Textfile);
+		if(fclose(Textfile) == EOF)
+		{
+			fprintf(stderr, "Can't close the textfile after save.\n");
+			return false;
+		}
 		SET_STATUS("saved");
 	}
 	else
 	{
 		SET_STATUS("can't write to the file");
 	}
+	return true;
 }
 
 bool file__load_config(Conf_t* Config)
 {
-	struct passwd Account_info; // A lot of allocs here.
-	char          conf_fname[PATH_MAX + NAME_MAX];
-
-	if(getpwuid(getuid()) == NULL)
-	{
-		fprintf(stderr, "Can't get the account's home direcory.\n");
-		return false;
-	}
-	else
-	{
-		Account_info = *getpwuid(getuid());
-	}
-
-	strcpy(conf_fname, Account_info.pw_dir);
-	strcat(conf_fname, "/.config/fiflorc");
+	char conf_fname[] = "/etc/fiflorc";
 
 	if(access(conf_fname, F_OK) == ERROR)
 	{
@@ -235,7 +231,12 @@ bool file__load_config(Conf_t* Config)
 	if(Config->File != NULL)
 	{
 		config__load_custom(Config);
-		fclose(Config->File);
+
+		if(fclose(Config->File) == EOF)
+		{
+			fprintf(stderr, "Can't close the config file.\n");
+			return false;
+		}
 	}
 	return true;
 }
@@ -243,7 +244,7 @@ bool file__load_config(Conf_t* Config)
 bool file__get_git_branch(Buff_t* Buffer)
 {
 	char  git_head_file_path[PATH_MAX + NAME_MAX];
-	FILE* git_head_file;
+	FILE* Git_head_file;
 	char* proj_dir;
 
 	proj_dir = malloc(PATH_MAX);
@@ -281,24 +282,28 @@ bool file__get_git_branch(Buff_t* Buffer)
 		return true;
 	}
 
-	git_head_file = fopen(git_head_file_path, "r");
-	if(git_head_file == NULL)
+	Git_head_file = fopen(git_head_file_path, "r");
+	if(Git_head_file == NULL)
 	{
 		return true;
 	}
 
 	// Ignore the passed string in the file, to get the branch after the slash.
-	if(fseek(git_head_file, (long) strlen("ref: refs/heads/"), 0) == ERROR)
+	if(fseek(Git_head_file, (long) strlen("ref: refs/heads/"), 0) == ERROR)
 	{
 		return true;
 	}
-	while(fgets(Buffer->git_branch, NAME_MAX, git_head_file) != NULL)
+	while(fgets(Buffer->git_branch, NAME_MAX, Git_head_file) != NULL)
 
 	if(Buffer->git_branch[strlen(Buffer->git_branch) - NUL_SZ] == '\n')
 	{
 		Buffer->git_branch[strlen(Buffer->git_branch) - NUL_SZ] = '\0';
 	}
-	fclose(git_head_file);
 
+	if(fclose(Git_head_file) == EOF)
+	{
+		fprintf(stderr, "Can't close the git \"HEAD\" file.\n");
+		return false;
+	}
 	return true;
 }

@@ -103,8 +103,7 @@ int config__encode_color(Conf_t* Config, char* color_name)
 	else if(!strcmp(color_name, "2\n") || !strcmp(color_name, "4\n")
 	        || !strcmp(color_name, "8\n"))
 	{
-		// color_name[strlen(color_name) - NUL_SZ] = '\0'; // Delete the LF.
-		value = atoi(color_name);
+		value = atoi(color_name); // Seems like linefeed removal too.
 	}
 	else
 	{
@@ -116,7 +115,7 @@ int config__encode_color(Conf_t* Config, char* color_name)
 void config__set_default(Conf_t* Config)
 {
 	Config->Color_ui.value                  = WHITE;
-	Config->Color_line_number.value         = BRIGHT_MAGENTA;
+	Config->Color_line_number.value         = MAGENTA;
 	Config->Color_line_number_current.value = WHITE;
 	Config->Color_text.value                = GREEN;
 	Config->Color_warning.value             = RED;

@@ -13,7 +13,7 @@ extern bool edit__move_lines_forward(Buff_t*);
 extern bool edit__delete_last_empty_line(Buff_t*);
 extern bool edit__delete_char(Buff_t*);
 
-extern void file__save(Buff_t*, Conf_t*);
+extern bool file__save(Buff_t*, Conf_t*);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
 bool keys__key_action(Buff_t*, Conf_t*, char);

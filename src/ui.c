@@ -24,9 +24,9 @@ void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, idx_t line_i,
 		ui__set_color(&Config->Color_line_number_current);
 	}
 	printf("%*u ", line_num_length - SPACE_SZ, line_i + IDX);
-	ui__set_color(NULL);
 
-	ui__set_color(&Config->Color_text); // And naturally a line after that.
+	ui__set_color(NULL);
+	ui__set_color(&Config->Color_text); // And naturally the line after that.
 }
 
 void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)

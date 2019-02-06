@@ -1,5 +1,5 @@
 # Example fiflo configuration file.
-# To make it work, copy it to the ~/.config/fiflorc
+# To make it work, copy it to the /etc/fiflorc
 #
 # If You've installed the fiflo, check "man fiflorc" for details.
 #

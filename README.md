@@ -19,9 +19,8 @@ bin/fiflo
 
 ### Install
 ```
-make install
+sudo make install
 ```
-Writing "sudo" before it will break the config file permissions.
 
 Then use it directly from a disk...
 ```

@@ -3,6 +3,52 @@
 #include "shortcuts.h"
 #include "keys.h"
 
+bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
+{
+	switch(key)
+	{
+		default:
+		return keys__printable_char(Buffer, key);
+
+		case '\t':
+		/* When the TAB key is pressed, it will insert e.g. 4 '\t' into the
+		buffer. They will be converted during the rendering, loading and saving
+		the file. */
+		for(int char_idx = 0; char_idx < Config->Tab_width.value; char_idx++)
+		{
+			if(!keys__printable_char(Buffer, '\t'))
+			{
+				return false;
+			}
+		}
+		break;
+
+		case BACKSPACE:
+		return keys__backspace(Buffer, Config);
+
+		case CTRL_Q:
+		return false;
+
+		case CTRL_S:
+		if(!file__save(Buffer, Config))
+		{
+			return false;
+		}
+		break;
+
+		case CTRL_BACKSLASH:
+		Buffer->pane_toggled = !Buffer->pane_toggled;
+		break;
+
+		case CTRL_D:
+		return edit__delete_line(Buffer);
+
+		case CTRL_O:
+		Buffer->live_fname_edit = true;
+	}
+	return true;
+}
+
 bool keys__linefeed(Buff_t* Buffer)
 {
 	if(BUFFER_NOT_FULL)
@@ -150,49 +196,6 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 	}
 	SET_STATUS("edited");
 
-	return true;
-}
-
-bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
-{
-	switch(key)
-	{
-		default:
-		return keys__printable_char(Buffer, key);
-
-		case '\t':
-		/* When the TAB key is pressed, it will insert e.g. 4 '\t' into the
-		buffer. They will be converted during the rendering, loading and saving
-		the file. */
-		for(int char_idx = 0; char_idx < Config->Tab_width.value; char_idx++)
-		{
-			if(!keys__printable_char(Buffer, '\t'))
-			{
-				return false;
-			}
-		}
-		break;
-
-		case BACKSPACE:
-		return keys__backspace(Buffer, Config);
-
-		case CTRL_Q:
-		return false;
-
-		case CTRL_S:
-		file__save(Buffer, Config);
-		break;
-
-		case CTRL_BACKSLASH:
-		Buffer->pane_toggled = !Buffer->pane_toggled;
-		break;
-
-		case CTRL_D:
-		return edit__delete_line(Buffer);
-
-		case CTRL_O:
-		Buffer->live_fname_edit = true;
-	}
 	return true;
 }
 

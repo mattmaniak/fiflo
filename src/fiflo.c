@@ -1,5 +1,3 @@
-#ifdef __linux__
-
 #include "buffer.h"
 #include "config.h"
 #include "fiflo.h"
@@ -89,7 +87,3 @@ int main(int argc, char** argv)
 	fflush(NULL);
 	return 0;
 }
-
-#else
-#error "GNU/Linux is required."
-#endif
