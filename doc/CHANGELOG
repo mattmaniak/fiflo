@@ -7,6 +7,10 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 Versions:
+v3.1.0 (WIP):
+- Tab with the gap,
+- git branch from the file's dir instead of the current working directory.
+
 v3.0.0 (2019, February 6):
 - logo removed from the upper bar,
 - 80th column indicator aka punch card,
