@@ -25,9 +25,7 @@ bool buffer__init(Buff_t* Buffer)
 	Buffer->cursor_rev_y    = 0;
 	CURRENT_LINE_LENGTH_IDX = 0;
 
-	Buffer->live_fname_edit = false;
 	Buffer->chars_sequence  = false;
-	Buffer->pane_toggled    = false;
 
 	CURRENT_LINE = malloc(ADDR_SZ);
 	if(CURRENT_LINE == NULL)

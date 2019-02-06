@@ -1,5 +1,6 @@
 #include "buffer.h"
 #include "config.h"
+#include "modes.h"
 #include "ui.h"
 #include "window.h"
 
@@ -73,7 +74,7 @@ void window__fill(Buff_t* Buffer, Ui_t* Ui)
 	// Else the lower bar will by posed by the text.
 }
 
-void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui)
+void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
 {
 	// Set by default to a filename edit.
 	term_t move_right = (term_t) (Buffer->fname_length);
@@ -88,7 +89,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui)
 	ANSI_CURSOR_LEFT(Ui->win_w);
 	ANSI_SAVE_CURSOR_POS();
 
-	if(!Buffer->live_fname_edit)
+	if(!Modes->live_fname_edit)
 	{
 		if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
 		{
@@ -113,7 +114,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Ui_t* Ui)
 	ANSI_CURSOR_UP(move_up);
 }
 
-bool window__render(Buff_t* Buffer, Conf_t* Config)
+bool window__render(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
 {
 	char line_num_str[16]; // Needed to count the length of the number.
 
@@ -134,7 +135,7 @@ bool window__render(Buff_t* Buffer, Conf_t* Config)
 	}
 
 	Ui.pane_h = TOGGLED_PANE_SZ;
-	Ui.lbar_h = (Buffer->pane_toggled) ? Ui.pane_h : LBAR_SZ;
+	Ui.lbar_h = (Modes->lbar_toggled) ? Ui.pane_h : LBAR_SZ;
 
 	Ui.line_num_length = (term_t) (strlen(line_num_str) + SPACE_SZ);
 	Ui.text_x          = (term_t) (Ui.win_w - Ui.line_num_length);
@@ -144,9 +145,9 @@ bool window__render(Buff_t* Buffer, Conf_t* Config)
 	print__display_text(Buffer, &Ui, Config);
 
 	window__fill(Buffer, &Ui);
-	ui__lower_bar(Buffer, Config, &Ui);
+	ui__lower_bar(Buffer, Config, Modes, &Ui);
 
-	window__set_cursor_pos(Buffer, &Ui);
+	window__set_cursor_pos(Buffer, Modes, &Ui);
 
 	return true;
 }

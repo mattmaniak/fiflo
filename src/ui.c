@@ -1,5 +1,6 @@
 #include "buffer.h"
 #include "config.h"
+#include "modes.h"
 #include "ui.h"
 
 void ui__set_color(Opt_t* Option)
@@ -69,7 +70,7 @@ void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 	WRAP_LINE();
 }
 
-void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
+void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, Ui_t* Ui)
 {
 	idx_t punch_card_width = 80;
 	char  punch_card[16];
@@ -90,7 +91,7 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 	ui__set_color(NULL); // Resets the last line color.
 	ui__set_color(&Config->Color_ui);
 
-	if(Buffer->pane_toggled)
+	if(Modes->lbar_toggled)
 	{
 		for(size_t idx = 0; idx < (TOGGLED_PANE_SZ - LBAR_SZ); idx++)
 		{

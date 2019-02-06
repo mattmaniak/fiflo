@@ -16,7 +16,7 @@ extern bool edit__delete_char(Buff_t*);
 extern bool file__save(Buff_t*, Conf_t*);
 
 // Knows what to do next with pressed key or combination. Based on ASCII.
-bool keys__key_action(Buff_t*, Conf_t*, char);
+bool keys__key_action(Buff_t*, Conf_t*, Mod_t*, char);
 
 // Adds char when the pressed key is a printable one.
 bool keys__printable_char(Buff_t*, char);
@@ -26,6 +26,9 @@ bool keys__linefeed(Buff_t*);
 
 // Removes a last char and optionally deletes the last line.
 bool keys__backspace(Buff_t*, Conf_t*);
+
+// Inserts specified amount of '\t' to emulate the Tab.
+bool keys__tab(Buff_t* Buffer, Conf_t* Config);
 
 // These ones moves the cursor.
 void keys__arrow_left(Buff_t*, Conf_t*);

@@ -97,14 +97,14 @@ make debug
 After that and the fiflo execution, there is possibility to check the code
 coverage. It will create the "cov/" dir and put the every source file with
 codecov marked after the previous execution The program must be compiled with
-the "debug" option previously.
+the "debug" option previously. Gcc only.
 ```
 make coverage
 ```
 
 Use the valgrind.
 ```
-valgrind -v ./fiflo [optional args]
+valgrind -v ./fiflo [optional args for the editor]
 ```
 Remark: fiflo must be compiled without ASan and MSan.
 

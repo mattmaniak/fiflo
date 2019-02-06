@@ -1,6 +1,7 @@
 #include "buffer.h"
 #include "config.h"
 #include "shortcuts.h"
+#include "modes.h"
 #include "file.h"
 
 bool file__set_name(Buff_t* Buffer, const char* arg)
@@ -69,7 +70,8 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
 	return true;
 }
 
-void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, char key)
+void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
+                          char key)
 {
 	const char enter  = '\n';
 	const char escape = '\033';
@@ -89,7 +91,7 @@ void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, char key)
 	else if(key == enter)
 	{
 
-		Buffer->live_fname_edit = false;
+		Modes->live_fname_edit = false;
 
 		SET_STATUS("filename edited and saved as");
 		if(!strcmp(Buffer->fname, Buffer->orig_fname))
@@ -105,7 +107,7 @@ void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, char key)
 		strncpy(Buffer->fname, Buffer->orig_fname, PATH_MAX);
 		Buffer->fname_length = strlen(Buffer->fname);
 
-		Buffer->live_fname_edit = false;
+		Modes->live_fname_edit = false;
 		SET_STATUS("filename unchanged");
 	}
 }

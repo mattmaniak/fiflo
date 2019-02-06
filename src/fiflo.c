@@ -1,5 +1,6 @@
 #include "buffer.h"
 #include "config.h"
+#include "modes.h"
 #include "fiflo.h"
 
 void fiflo__run(const char* arg)
@@ -8,6 +9,9 @@ void fiflo__run(const char* arg)
 
 	Buff_t Buffer;
 	Conf_t Config;
+	Mod_t  Modes;
+
+	modes__init(&Modes);
 
 	if(!buffer__init(&Buffer))
 	{
@@ -33,12 +37,12 @@ void fiflo__run(const char* arg)
 		{
 			break;
 		}
-		if(!input__parse_key(&Buffer, &Config, pressed_key))
+		if(!input__parse_key(&Buffer, &Config, &Modes, pressed_key))
 		{
 			break;
 		}
 		// Flushes and renders always after the keypress.
-		if(!window__render(&Buffer, &Config))
+		if(!window__render(&Buffer, &Config, &Modes))
 		{
 			break;
 		}
@@ -68,7 +72,9 @@ int main(int argc, char** argv)
 		fiflo__run("");
 		goto exit;
 	}
-	else if(strlen(argv[1]) < ARG_MAX)
+	/* Can't use the "ARG_MAX", because clang 6.0.0 with -Weverything doesn't
+	recognize it. */
+	else if(strlen(argv[1]) < (PATH_MAX + NAME_MAX))
 	{
 		if(!options__parse_and_print(argv[1]))
 		{
@@ -79,7 +85,8 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		fprintf(stderr, "Maximum parameter length is %u\n", ARG_MAX);
+		fprintf(stderr, "Maximum parameter length is %u\n",
+		        PATH_MAX + NAME_MAX);
 		goto exit;
 	}
 

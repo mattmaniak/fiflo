@@ -6,24 +6,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum
-{
-	RED            = 31,
-	GREEN          = 32,
-	YELLOW         = 33,
-	BLUE           = 34,
-	MAGENTA        = 35,
-	CYAN           = 36,
-	WHITE          = 37,
-	BRIGHT_RED     = 91,
-	BRIGHT_GREEN   = 92,
-	BRIGHT_YELLOW  = 93,
-	BRIGHT_BLUE    = 94,
-	BRIGHT_MAGENTA = 95,
-	BRIGHT_CYAN    = 96,
-	BRIGHT_WHITE   = 97
-}
-Colors_t;
+#define RED            31
+#define GREEN          32
+#define YELLOW         33
+#define BLUE           34
+#define MAGENTA        35
+#define CYAN           36
+#define WHITE          37
+#define BRIGHT_RED     91
+#define BRIGHT_GREEN   92
+#define BRIGHT_YELLOW  93
+#define BRIGHT_BLUE    94
+#define BRIGHT_MAGENTA 95
+#define BRIGHT_CYAN    96
+#define BRIGHT_WHITE   97
 
 typedef struct
 {

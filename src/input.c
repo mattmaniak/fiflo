@@ -1,6 +1,7 @@
 #include "buffer.h"
 #include "config.h"
 #include "shortcuts.h"
+#include "modes.h"
 #include "input.h"
 
 char input__getch(void)
@@ -82,7 +83,6 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 	{
 		Buffer->chars_sequence = false;
 	}
-	// Buffer->chars_sequence = false;
 
 #ifdef DEBUG_INPUT
 	printf("cursor_rev_x %u, cursor_rev_y %u.\n", Buffer->cursor_rev_x,
@@ -91,13 +91,12 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 
 }
 
-bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
+bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, char key)
 {
-	enum         {seq_len = 8}; // TODO: IF MORE, BREAKS THE INPUT.
-	static char  chars_sequence[seq_len];
+	static char  chars_sequence[SEQ_MAX];
 	static idx_t char_idx;
 
-	if((key == CTRL_LEFT_BRACKET) && (!Buffer->live_fname_edit))
+	if((key == CTRL_LEFT_BRACKET) && (!Modes->live_fname_edit))
 	{
 		Buffer->chars_sequence = true;
 
@@ -110,7 +109,7 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 	if(Buffer->chars_sequence)
 	{
 		chars_sequence[char_idx] = key;
-		if(char_idx < (seq_len - NUL_SZ))
+		if(char_idx < (SEQ_MAX - NUL_SZ))
 		{
 			char_idx++;
 		}
@@ -122,13 +121,13 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 			char_idx = 0;
 		}
 	}
-	else if(Buffer->live_fname_edit)
+	else if(Modes->live_fname_edit)
 	{
-		file__live_edit_name(Buffer, Config, key);
+		file__live_edit_name(Buffer, Config, Modes, key);
 	}
 	else
 	{
-		return keys__key_action(Buffer, Config, key);
+		return keys__key_action(Buffer, Config, Modes, key);
 	}
 	return true;
 }

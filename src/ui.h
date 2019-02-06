@@ -41,6 +41,6 @@ void ui__print_line_number(Buff_t*, Conf_t*, idx_t, term_t);
 void ui__upper_bar(Buff_t*, Conf_t*, Ui_t*);
 
 // Renders the lower bar that contains keyboard info.
-void ui__lower_bar(Buff_t*, Conf_t*, Ui_t*);
+void ui__lower_bar(Buff_t*, Conf_t*, Mod_t*, Ui_t*);
 
 #endif

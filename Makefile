@@ -31,9 +31,7 @@ OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
 # Check and set the Compilation driver.
 ifeq ($(USR_INS_DIR)/gcc, $(shell ls $(USR_INS_DIR)/gcc))
 	CC = gcc
-	CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wno-long-long \
-	-Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wconversion \
-	-Winline -Wredundant-decls -Wnested-externs -Wcast-align -Wstrict-prototypes
+	CFLAGS += -Wall -Wextra -pedantic
 
 else ifeq ($(USR_INS_DIR)/clang, $(shell ls $(USR_INS_DIR)/clang))
 	CC = clang
@@ -67,8 +65,10 @@ debug: CFLAGS += $(GCOV_FLAGS)
 debug: LDFLAGS += $(ASAN_FLAGS)
 debug: clean
 debug: $(TARGET)
-	@echo "ASan linked. Files for the gcov created."
+debug:
 	$(RM) $(OBJ_DIR)/*.o
+	@echo ' '
+	@echo "ASan linked. Files for the gcov created."
 # Prevent $(TARGET) compilation errors.
 
 .PHONY: coverage
@@ -81,6 +81,7 @@ coverage:
 # Fun with a filesystem.
 .PHONY: install
 install: $(TARGET)
+install:
 	@echo ' '
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 

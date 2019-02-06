@@ -1,9 +1,10 @@
 #include "buffer.h"
 #include "config.h"
 #include "shortcuts.h"
+#include "modes.h"
 #include "keys.h"
 
-bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
+bool keys__key_action(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, char key)
 {
 	switch(key)
 	{
@@ -11,17 +12,7 @@ bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
 		return keys__printable_char(Buffer, key);
 
 		case '\t':
-		/* When the TAB key is pressed, it will insert e.g. 4 '\t' into the
-		buffer. They will be converted during the rendering, loading and saving
-		the file. */
-		for(int char_idx = 0; char_idx < Config->Tab_width.value; char_idx++)
-		{
-			if(!keys__printable_char(Buffer, '\t'))
-			{
-				return false;
-			}
-		}
-		break;
+		return keys__tab(Buffer, Config);
 
 		case BACKSPACE:
 		return keys__backspace(Buffer, Config);
@@ -37,21 +28,21 @@ bool keys__key_action(Buff_t* Buffer, Conf_t* Config, char key)
 		break;
 
 		case CTRL_BACKSLASH:
-		Buffer->pane_toggled = !Buffer->pane_toggled;
+		Modes->lbar_toggled = !Modes->lbar_toggled;
 		break;
 
 		case CTRL_D:
 		return edit__delete_line(Buffer);
 
 		case CTRL_O:
-		Buffer->live_fname_edit = true;
+		Modes->live_fname_edit = true;
 	}
 	return true;
 }
 
 bool keys__linefeed(Buff_t* Buffer)
 {
-	if(BUFFER_NOT_FULL)
+	if(Buffer->lines_idx < CHARS_MAX)
 	{
 		Buffer->lines_idx++;
 		if(!memory__extend_lines_array(Buffer))
@@ -104,7 +95,7 @@ bool keys__printable_char(Buff_t* Buffer, char key)
 			{
 				edit__shift_text_horizonally(Buffer, 'r');
 			}
-			CURRENT_LINE[CURSOR_X - NUL_SZ] = key;
+			CURRENT_LINE[CURSOR_X - NUL_SZ]       = key;
 			CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0';
 
 			// Initializing nul handler.
@@ -127,7 +118,7 @@ bool keys__printable_char(Buff_t* Buffer, char key)
 		}
 		else
 		{
-			SET_STATUS("can't read or insert more data");
+			SET_STATUS("can't read or insert more chars");
 		}
 	}
 	else
@@ -196,6 +187,30 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 	}
 	SET_STATUS("edited");
 
+	return true;
+}
+
+bool keys__tab(Buff_t* Buffer, Conf_t* Config)
+{
+	/* When the TAB key is pressed, it will insert e.g. 4 '\t' into the
+	buffer. They will be converted during the rendering, loading and saving
+	the file. */
+
+	// Prevent not-full Tab insert.
+	if(Buffer->chars_idx <= (CHARS_MAX - (idx_t) Config->Tab_width.value))
+	{
+		for(int tab_sz = 0; tab_sz < Config->Tab_width.value; tab_sz++)
+		{
+			if(!keys__printable_char(Buffer, '\t'))
+			{
+				return false;
+			}
+		}
+	}
+	else
+	{
+		SET_STATUS("can't read or insert more tabs");
+	}
 	return true;
 }
 

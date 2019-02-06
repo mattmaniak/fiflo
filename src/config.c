@@ -42,7 +42,7 @@ void config__parse_selector(Conf_t* Config, char* selector, int value)
 
 int config__encode_color(Conf_t* Config, char* color_name)
 {
-	Colors_t value = WHITE; // The default one.
+	int value = 0;
 
 	if(!strcmp(color_name, "red\n"))
 	{

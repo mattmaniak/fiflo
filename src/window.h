@@ -26,9 +26,9 @@ void window__flush(void);
 void window__fill(Buff_t*, Ui_t*);
 
 // Stupid wrapper for above things.
-bool window__render(Buff_t*, Conf_t*);
+bool window__render(Buff_t*, Conf_t*, Mod_t*);
 
 // Sets the a cursor position starting from the left bottom.
-void window__set_cursor_pos(Buff_t*, Ui_t*);
+void window__set_cursor_pos(Buff_t*, Mod_t*, Ui_t*);
 
 #endif

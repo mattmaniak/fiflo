@@ -25,32 +25,22 @@ typedef uint32_t idx_t;
 #define ERROR -1
 
 // Max amount of chars: (16 MB - 1). Newline is also the char.
-#define CHARS_MAX (UINT_MAX / 256) // TODO: CHECK
+#define CHARS_MAX (UINT_MAX / 256)
 
 #define STATUS_MAX      32
-#define SET_STATUS(msg) strncpy(Buffer->status, msg, STATUS_MAX - IDX) // TODO.
+#define SET_STATUS(msg) strncpy(Buffer->status, msg, STATUS_MAX - IDX)
 
-typedef struct // TODO
+typedef struct
 {
-	bool chars_sequence;  // True if pressed key is ANSI escape code.
-	bool live_fname_edit; // As in the name.
-	bool pane_toggled;    // As in the name.
-}
-Modes_t;
-
-typedef struct // TODO: SPLIT AND PADDING
-{
-	// Modes.
-	bool     chars_sequence;     // True if pressed key is ANSI escape code.
-	bool     live_fname_edit;    // As in the name.
-	bool     pane_toggled;       // As in the name.
-
-	// Max size is 250.
-	char     git_branch[NAME_MAX];
+	bool     chars_sequence;       // True if pressed key is ANSI escape code.
+	char     git_branch[NAME_MAX]; // Max size is 250.
 
 	// Filename.
 	char     fname[PATH_MAX + NAME_MAX]; // Full filename. Eg. /home/user/basename.
 	char     orig_fname[PATH_MAX + NAME_MAX];
+
+	const uint16_t padding;
+
 	size_t   fname_length;       // Strlen of the above array.
 
 	// File's content and some indicators.
@@ -77,7 +67,7 @@ Buff_t;
 #define CURRENT_LINE_IDX        (Buffer->lines_idx - Buffer->cursor_rev_y)
 #define CURRENT_LINE            Buffer->text[CURRENT_LINE_IDX]
 #define CURRENT_LINE_LENGTH_IDX Buffer->lines_length_idx[CURRENT_LINE_IDX]
-#define CURSOR_X            (CURRENT_LINE_LENGTH_IDX - Buffer->cursor_rev_x)
+#define CURSOR_X                (CURRENT_LINE_LENGTH_IDX - Buffer->cursor_rev_x)
 
 #define PREVIOUS_LINE_IDX        (CURRENT_LINE_IDX - 1)
 #define PREVIOUS_LINE            Buffer->text[PREVIOUS_LINE_IDX]

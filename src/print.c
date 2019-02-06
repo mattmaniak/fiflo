@@ -1,5 +1,6 @@
 #include "buffer.h"
 #include "config.h"
+#include "modes.h"
 #include "ui.h"
 #include "print.h"
 
@@ -32,7 +33,7 @@ idx_t print__set_start_line(Buff_t* Buffer, Ui_t* Ui)
 	return scrolled_lines;
 }
 
-void print__actual_line(Buff_t* Buffer, Ui_t* Ui) // TODO: SIMPLIFY.
+void print__actual_line(Buff_t* Buffer, Ui_t* Ui)
 {
 	// There is small amount of chars. Horizontal scroll isn't required.
 	if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)

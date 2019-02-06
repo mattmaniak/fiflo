@@ -3,11 +3,11 @@
 
 #include <termios.h>
 
-#define SEQ_MAX (6 + NUL_SZ)
+#define SEQ_MAX 8
 
-extern void file__live_edit_name(Buff_t*, Conf_t*, char);
+extern void file__live_edit_name(Buff_t*, Conf_t*, Mod_t*, char);
 
-extern bool keys__key_action(Buff_t*, Conf_t*, char);
+extern bool keys__key_action(Buff_t*, Conf_t*, Mod_t*, char);
 extern void keys__arrow_left(Buff_t*, Conf_t*);
 extern void keys__arrow_right(Buff_t*, Conf_t*);
 extern void keys__arrow_up(Buff_t*);
@@ -22,6 +22,6 @@ char input__getch(void);
 void input__recognize_sequence(Buff_t*, Conf_t*, char*);
 
 // Saves the last pressed key to the temponary buffer and analyzes it.
-bool input__parse_key(Buff_t*, Conf_t*, char);
+bool input__parse_key(Buff_t*, Conf_t*, Mod_t*, char);
 
 #endif
