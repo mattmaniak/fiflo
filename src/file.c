@@ -244,48 +244,52 @@ bool file__get_git_branch(Buff_t* Buffer)
 {
 	char  git_head_file_path[PATH_MAX + NAME_MAX];
 	FILE* git_head_file;
-	char* cw_dir;
+	char* proj_dir;
 
-	cw_dir = malloc(PATH_MAX);
-	if(cw_dir == NULL)
+	proj_dir = malloc(PATH_MAX);
+	if(proj_dir == NULL)
 	{
 		fprintf(stderr, "Can't alloc a memory for the directory.\n");
 		return false;
 	}
 
-	if(getcwd(cw_dir, PATH_MAX) != NULL)
+	if(getcwd(proj_dir, PATH_MAX) != NULL)
 	{
-		cw_dir = getcwd(cw_dir, PATH_MAX);
+		getcwd(proj_dir, PATH_MAX);
 	}
 	else
 	{
-		free(cw_dir);
 		fprintf(stderr, "Can't get the current directory. Too long.\n");
 		return false;
 	}
+	if(strlen(proj_dir) >= (PATH_MAX - SLASH_SZ))
+	{
+		fprintf(stderr,
+		        "Can't insert the slash. Current direcory is too long.\n");
 
-	strncpy(git_head_file_path, cw_dir, PATH_MAX);
+		free(proj_dir);
+		return false;
+	}
+
+	strncpy(git_head_file_path, proj_dir, PATH_MAX);
 	strcat(git_head_file_path, "/.git/HEAD");
 
-	free(cw_dir);
+	free(proj_dir);
 
 	if(access(git_head_file_path, F_OK) == ERROR)
 	{
-		strcpy(Buffer->git_branch, "[not a repo]");
 		return true;
 	}
 
 	git_head_file = fopen(git_head_file_path, "r");
 	if(git_head_file == NULL)
 	{
-		strcpy(Buffer->git_branch, "[can't get the branch]");
 		return true;
 	}
 
 	// Ignore the passed string in the file, to get the branch after the slash.
 	if(fseek(git_head_file, (long) strlen("ref: refs/heads/"), 0) == ERROR)
 	{
-		strcpy(Buffer->git_branch, "[can't locate the branch]");
 		return true;
 	}
 	while(fgets(Buffer->git_branch, NAME_MAX, git_head_file) != NULL)

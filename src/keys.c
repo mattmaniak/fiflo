@@ -103,7 +103,6 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 		   && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
 		{
 			tab_idx = (idx_t) Config->Tab_width.value - IDX;
-			puts("BREAK_0");
 		}
 
 		if(!EMPTY_LINE)
@@ -126,23 +125,19 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 		   && (CURRENT_LINE[CURRENT_LINE_LENGTH_IDX - NUL_SZ] != '\t')
 		   && (Buffer->cursor_rev_x == 0))
 		{
-			puts("BREAK_1");
 			break;
 		}
 		/* Prevent removing the line when the first char in the line has to be
 		removed. */
 		else if((CURSOR_X == 0) && (CURRENT_LINE[CURSOR_X] != '\t'))
 		{
-			puts("BREAK_2.5");
 			break;
 		}
-
 		// Scenario when there is the tab and some text further.
 		else if((CURSOR_X > 0)
 		        && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
 		        && (Buffer->cursor_rev_x > 0))
 		{
-			puts("BREAK_2");
 			break;
 		}
 
@@ -150,10 +145,8 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
  		in X. */
 		if(remembered_line_idx != CURRENT_LINE_IDX)
 		{
-			puts("BREAK_3");
 			break;
 		}
-		// puts("LOLO");
 	}
 	SET_STATUS("edited");
 

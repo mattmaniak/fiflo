@@ -3,6 +3,8 @@
 
 #include <termios.h>
 
+#define SEQ_MAX (6 + NUL_SZ)
+
 extern void file__live_edit_name(Buff_t*, Conf_t*, char);
 
 extern bool keys__key_action(Buff_t*, Conf_t*, char);

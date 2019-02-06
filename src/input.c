@@ -36,13 +36,7 @@ char input__getch(void)
 		fprintf(stderr, "Can't set the terminal's raw mode. Type \"reset\".\n");
 		return ERROR;
 	}
-
-	if((key = (char) getchar()) < 0) // TODO: RESTORE TERM SETTINGS ON EXIT.
-	{
-		window__flush();
-		fprintf(stderr, "Negative char passed to the stdin. Type \"reset\".\n");
-		return ERROR;
-	}
+	key = (char) getchar();
 
 	// Immediately restore the state of the stdin (0) to the* new_term_params.
 	if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == ERROR)
@@ -57,7 +51,7 @@ char input__getch(void)
 
 void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 {
-	const size_t seq_max = 3;
+	const size_t seq_max = 4;
 
 	const char arrow_up[]    = "\033[A";
 	const char arrow_down[]  = "\033[B";
@@ -84,10 +78,11 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
 		keys__arrow_left(Buffer, Config);
 		Buffer->chars_sequence = false;
 	}
-	else if(strlen(sequence) > seq_max)
+	else if(strlen(sequence) >= seq_max)
 	{
 		Buffer->chars_sequence = false;
 	}
+	// Buffer->chars_sequence = false;
 
 #ifdef DEBUG_INPUT
 	printf("cursor_rev_x %u, cursor_rev_y %u.\n", Buffer->cursor_rev_x,
@@ -100,7 +95,7 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 {
 	enum         {seq_len = 8}; // TODO: IF MORE, BREAKS THE INPUT.
 	static char  chars_sequence[seq_len];
-	static idx_t char_i;
+	static idx_t char_idx;
 
 	if((key == CTRL_LEFT_BRACKET) && (!Buffer->live_fname_edit))
 	{
@@ -110,21 +105,21 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, char key)
 		Buffer->chars_sequence = false;
 #endif
 
-		char_i = 0;
+		char_idx = 0;
 	}
 	if(Buffer->chars_sequence)
 	{
-		chars_sequence[char_i] = key;
-		if(char_i < (seq_len - NUL_SZ))
+		chars_sequence[char_idx] = key;
+		if(char_idx < (seq_len - NUL_SZ))
 		{
-			char_i++;
+			char_idx++;
 		}
-		chars_sequence[char_i] = '\0';
+		chars_sequence[char_idx] = '\0';
 
 		input__recognize_sequence(Buffer, Config, chars_sequence);
 		if(!Buffer->chars_sequence)
 		{
-			char_i = 0;
+			char_idx = 0;
 		}
 	}
 	else if(Buffer->live_fname_edit)

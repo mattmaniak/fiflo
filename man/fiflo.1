@@ -6,10 +6,10 @@ fiflo [basename/filename/option]
 .SH DESCRIPTION
 Currently supports only all ASCII printable chars, space and horizontal tab.
 It has got dynamically allocated buffer which can hold up to 16 MB - 1 chars.
-Implementation considers that newline char is equal to the LF. The tab char
-needs as many bytes as it's width in the editor: from 2, 4 or 8. Also supports
-the paste option from outside the terminal but it probably depends from the...
-Terminal.
+Implementation considers that newline char is equal to the linefeed. The tab
+char needs as many bytes as it's width in the editor: from 2, 4 or 8. Also it
+supports the paste option from outside the terminal but it probably depends from
+the terminal.
 .SH OPTIONS
 .TP
 .B -h, --help
@@ -28,10 +28,6 @@ not occur.
 .TP
 .B Ctrl^[ or Esc
 Next 3 chars will be ignored.
-.TP
-.B Alt^key
-Exits the application without restoring the terminal's state. Call "stty echo"
-or "reset" after that.
 .TP
 .B Left cursor position during the live filename edit.
 Don't know why the minimum X for the cursor is 1 in that case.

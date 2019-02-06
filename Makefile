@@ -53,7 +53,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 	$(CFLAGS) \
 
 # Builds the binary by linking object files.
-.PHONY: $(TARGET)
 $(TARGET): $(OBJS)
 	mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ $^ \
@@ -105,8 +104,8 @@ install: $(TARGET)
 	@echo " "
 	@echo "Fiflo installed."
 
-.PHONY: debug_install
-debug_install: debug
+.PHONY: install_debug
+install_debug: debug
 	@echo " "
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
