@@ -1,161 +1,208 @@
+<<<<<<< HEAD
 #include "include/buffer.h"
 #include "include/ascii.h"
 #include "include/edit.h"
+=======
+#include "buffer.h"
+#include "shortcuts.h"
+#include "edit.h"
+>>>>>>> develop
 
-f_mtdt* delete_last_line(f_mtdt* Buff)
+bool edit__delete_char(Buff_t* Buffer)
 {
-	free(LAST_LINE);
+	if(!CURSOR_AT_LINE_START)
+	{
+		edit__shift_text_horizonally(Buffer, 'l');
+		if(!memory__shrink_current_line(Buffer))
+		{
+			return false;
+		}
+		CURRENT_LINE_LENGTH_IDX--;
+		Buffer->chars_idx--;
+	}
+	// Deletes the non-empty line and copy chars to previous.
+	else if(!FIRST_LINE)
+	{
+		if(!edit__move_lines_backward(Buffer))
+		{
+			return false;
+		}
+	}
+	CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = '\0'; // Linefeed to the '\0'.
 
-	Buff->lines_i--;
-	Buff = shrink_lines_array_mem(Buff);
-
-	return Buff;
+	return true;
 }
 
-f_mtdt* delete_line(f_mtdt* Buff)
+bool edit__delete_line(Buff_t* Buffer)
 {
-	buff_t next_line_len = Buff->line_len_i[ACT_LINE_I + 1];
+	idx_t next_idx      = 1;
+	idx_t next_line_idx = CURRENT_LINE_IDX + next_idx;
+	idx_t next_line_len = Buffer->lines_length_idx[next_line_idx];
 
 	if(!FIRST_LINE)
 	{
 		if(CURSOR_Y_SCROLLED)
 		{
-			Buff->cusr_x = (CURSOR_AT_LINE_START) ? next_line_len : 1;
+			Buffer->cursor_rev_x = (CURSOR_AT_LINE_START)
+			                       ? next_line_len : LF_SZ;
 
-			Buff = copy_lines_mem_backward(Buff);
-			Buff = delete_last_line(Buff);
-
-			Buff->cusr_y--;
+			if(!memory__copy_lines_backward(Buffer))
+			{
+				return false;
+			}
+			if(!edit__delete_last_line(Buffer))
+			{
+				return false;
+			}
+			Buffer->cursor_rev_y--;
 		}
 		else
 		{
-			Buff = delete_last_line(Buff);
+			if(!edit__delete_last_line(Buffer))
+			{
+				return false;
+			}
 
 			/* With the last line deletion there is a need to remove the
 			linefeed in the previous line. */
-			LAST_LINE_LEN_I--;
-			LAST_LINE[LAST_LINE_LEN_I] = '\0';
+			LAST_LINE_LENGTH_IDX--;
+			LAST_LINE[LAST_LINE_LENGTH_IDX] = '\0';
 
-			Buff->cusr_x = 0;
+			Buffer->cursor_rev_x = 0;
 		}
 	}
 	else
 	{
-		LAST_LINE_LEN_I = 0;
-		LAST_LINE[LAST_LINE_LEN_I] = '\0';
+		LAST_LINE_LENGTH_IDX = 0;
+		LAST_LINE[LAST_LINE_LENGTH_IDX] = '\0';
 
-		LAST_LINE = realloc(LAST_LINE, sizeof(Buff->text));
-		chk_ptr(Buff, LAST_LINE, "malloc after the first line removal");
-
-		Buff->cusr_x = 0;
+		LAST_LINE = realloc(LAST_LINE, INITIAL_MEMBLOCK);
+		if(LAST_LINE == NULL)
+		{
+			fprintf(stderr, "Can't realloc a memory in the first line.\n");
+		}
+		Buffer->cursor_rev_x = 0;
 	}
-	return Buff;
+	return true;
 }
 
-f_mtdt* shift_text_horizonally(f_mtdt* Buff, char direction)
+void edit__shift_text_horizonally(Buff_t* Buffer, char direction)
 {
-	const bool prev = 1;
-	buff_t char_i;
+	const size_t prev = 1;
+	idx_t        char_idx;
 
 	switch(direction)
 	{
 		case 'l':
-			for(char_i = CURSOR_VERTICAL_I; char_i <= ACT_LINE_LEN_I; char_i++)
-			{
-				ACT_LINE[char_i - prev] = ACT_LINE[char_i];
-			}
-			break;
+		for(char_idx = CURSOR_X; char_idx <= CURRENT_LINE_LENGTH_IDX;
+		    char_idx++)
+		{
+			CURRENT_LINE[char_idx - prev] = CURRENT_LINE[char_idx];
+		}
+		break;
 
 		case 'r':
-			for(char_i = ACT_LINE_LEN_I; char_i >= CURSOR_VERTICAL_I; char_i--)
-			{
-				ACT_LINE[char_i] = ACT_LINE[char_i - prev];
-			}
+		for(char_idx = CURRENT_LINE_LENGTH_IDX; char_idx >= CURSOR_X;
+		    char_idx--)
+		{
+			CURRENT_LINE[char_idx] = CURRENT_LINE[char_idx - prev];
+		}
 	}
-	return Buff;
 }
 
-f_mtdt* move_lines_forward(f_mtdt* Buff)
+bool edit__move_lines_forward(Buff_t* Buffer)
 {
-	PREV_LINE_LEN_I -= Buff->cusr_x;
+	PREVIOUS_LINE_LENGTH_IDX -= Buffer->cursor_rev_x;
 
 	// Move more lines vertically with the part of the current line.
 	if(CURSOR_Y_SCROLLED)
 	{
-		Buff = copy_lines_mem_forward(Buff);
-		ACT_LINE_LEN_I = 0;
+		if(!memory__copy_lines_forward(Buffer))
+		{
+			return false;
+		}
+		CURRENT_LINE_LENGTH_IDX = 0;
 	}
 
 	// Move the right part (separated by the cursor) of the line to the next.
-	for(buff_t char_i = PREV_LINE_LEN_I;
-	char_i < PREV_LINE_LEN_I + Buff->cusr_x; char_i++)
+	for(idx_t char_i = PREVIOUS_LINE_LENGTH_IDX;
+	    char_i < PREVIOUS_LINE_LENGTH_IDX + Buffer->cursor_rev_x; char_i++)
 	{
-		ACT_LINE[ACT_LINE_LEN_I] = PREV_LINE[char_i];
-		ACT_LINE_LEN_I++;
-		ACT_LINE = extend_line_mem(Buff, ACT_LINE_I);
+		CURRENT_LINE[CURRENT_LINE_LENGTH_IDX] = PREVIOUS_LINE[char_i];
+		CURRENT_LINE_LENGTH_IDX++;
+		if(!memory__extend_line(Buffer, CURRENT_LINE_IDX))
+		{
+			return false;
+		}
 	}
 
 	// Now the length of the upper line will be shortened after copying.
-	PREV_LINE[PREV_LINE_LEN_I] = '\0';
-	PREV_LINE = shrink_prev_line_mem(Buff);
-
-	return Buff;
-}
-
-f_mtdt* delete_last_empty_line(f_mtdt* Buff)
-{
-	free(ACT_LINE);
-
-	Buff->lines_i--;
-	ACT_LINE = shrink_act_line_mem(Buff);
-
-	ACT_LINE_LEN_I--;
-	Buff->chars_i--;
-
-	Buff = shrink_lines_array_mem(Buff);
-
-	return Buff;
-}
-
-f_mtdt* delete_non_last_line(f_mtdt* Buff)
-{
-	PREV_LINE_LEN_I--;
-	Buff->chars_i--;
-
-	// Append part of a next line to a previous one.
-	for(buff_t char_i = 0; char_i <= ACT_LINE_LEN_I; char_i++)
+	PREVIOUS_LINE[PREVIOUS_LINE_LENGTH_IDX] = '\0';
+	if(!memory__shrink_prev_line(Buffer))
 	{
-		PREV_LINE[PREV_LINE_LEN_I] = ACT_LINE[char_i];
-
-		if(ACT_LINE[char_i] != '\0')
-		{
-			PREV_LINE_LEN_I++;
-		}
-		PREV_LINE = extend_line_mem(Buff, PREV_LINE_I);
+		return false;
 	}
+	return true;
+}
+
+bool edit__move_lines_backward(Buff_t* Buffer)
+{
+	Buffer->chars_idx--;
+	PREVIOUS_LINE_LENGTH_IDX--;
+
+	// Concat the previous line with the next.
+	for(idx_t char_idx = 0; char_idx <= CURRENT_LINE_LENGTH_IDX; char_idx++)
+	{
+		PREVIOUS_LINE[PREVIOUS_LINE_LENGTH_IDX] = CURRENT_LINE[char_idx];
+
+		if(CURRENT_LINE[char_idx] != '\0')
+		{
+			PREVIOUS_LINE_LENGTH_IDX++;
+		}
+		if(!memory__extend_line(Buffer, PREVIOUS_LINE_IDX))
+		{
+			return false;
+		}
+	}
+
 	if(CURSOR_Y_SCROLLED)
 	{
-		Buff = copy_lines_mem_backward(Buff);
+		if(!memory__copy_lines_backward(Buffer))
+		{
+			return false;
+		}
 	}
-	Buff = delete_last_line(Buff);
-
-	return Buff;
+	if(!edit__delete_last_line(Buffer))
+	{
+		return false;
+	}
+	return true;
 }
 
-f_mtdt* delete_char(f_mtdt* Buff)
+bool edit__delete_last_empty_line(Buff_t* Buffer)
 {
-	if(!CURSOR_AT_LINE_START)
-	{
-		Buff = shift_text_horizonally(Buff, 'l');
-		ACT_LINE = shrink_act_line_mem(Buff);
+	free(CURRENT_LINE);
 
-		ACT_LINE_LEN_I--;
-		Buff->chars_i--;
-	}
-	// Deletes the non-empty line and copy chars to previous.
-	else if(!FIRST_LINE)
+	Buffer->lines_idx--;
+	if(!memory__shrink_current_line(Buffer))
 	{
-		Buff = delete_non_last_line(Buff);
+		return false;
 	}
-	return Buff;
+
+	CURRENT_LINE_LENGTH_IDX--;
+	Buffer->chars_idx--;
+
+	if(!memory__shrink_lines_array(Buffer))
+	{
+		return false;
+	}
+	return true;
+}
+
+bool edit__delete_last_line(Buff_t* Buffer)
+{
+	free(LAST_LINE);
+
+	Buffer->lines_idx--;
+	return memory__shrink_lines_array(Buffer);
 }

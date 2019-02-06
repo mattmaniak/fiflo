@@ -1,203 +1,215 @@
 #include "include/buffer.h"
 #include "include/memory.h"
 
-noreturn void free_buff_exit(f_mtdt* Buff, const bool status)
+bool memory__extend_line(Buff_t* Buffer, idx_t line_idx)
 {
-	for(buff_t line_i = 0; line_i <= Buff->lines_i; line_i++)
+	idx_t memblock = MEMBLOCK;
+
+	if(Buffer->lines_length_idx[line_idx] == INITIAL_MEMBLOCK)
 	{
-		free(Buff->text[line_i]);
-	}
-	free(Buff->line_len_i);
-	free(Buff->text);
-	free(Buff);
-
-	exit(status);
-}
-
-void chk_ptr(f_mtdt* Buff, void* ptr, const char* err_msg)
-{
-	if(ptr == NULL)
-	{
-		fprintf(stderr, "Can't %s.\n", err_msg);
-		free_buff_exit(Buff, 1);
-	}
-}
-
-char* extend_line_mem(f_mtdt* Buff, buff_t line_i)
-{
-	buff_t memblock = MEMBLK;
-
-	if(Buff->line_len_i[line_i] == INIT_MEMBLK)
-	{
-		// There are 4/8 chars, extend to MEMBLK.
-		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
+		// There are 4/8 chars, extend to MEMBLOCK.
+		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Extend_line_mem %d with mem of %d B.\n",
-		line_i + INDEX, memblock);
+		printf("Extend_line %u with mem of %u B.\n",
+		       line_idx + IDX, memblock);
 #endif
 
 	}
-	else if((Buff->line_len_i[line_i] > INIT_MEMBLK)
-	&& (Buff->line_len_i[line_i] % MEMBLK == 0))
+	else if((Buffer->lines_length_idx[line_idx] > INITIAL_MEMBLOCK)
+	        && (Buffer->lines_length_idx[line_idx] % MEMBLOCK == 0))
 	{
 		// There are more chars so append the new memblock.
-		memblock = ((Buff->line_len_i[line_i] / MEMBLK) * MEMBLK) + MEMBLK;
-		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
+		memblock = ((Buffer->lines_length_idx[line_idx] / MEMBLOCK) * MEMBLOCK)
+		           + MEMBLOCK;
+
+		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Extend_line_mem %d with mem of %d B.\n",
-		line_i + INDEX, memblock);
+		printf("Extend_line %u with mem of %u B.\n",
+		       line_idx + IDX, memblock);
 #endif
 
 	}
-	chk_ptr(Buff, Buff->text[line_i], "extend the memblock for the line");
-
-	return Buff->text[line_i];
+	if(Buffer->text[line_idx] == NULL)
+	{
+		fprintf(stderr, "Can't extend a memory block for the line.\n");
+		return false;
+	}
+	return true;
 }
 
-char* shrink_act_line_mem(f_mtdt* Buff)
+bool memory__shrink_current_line(Buff_t* Buffer)
 {
-	buff_t memblock = INIT_MEMBLK;
+	idx_t memblock = INITIAL_MEMBLOCK;
 
 	/* These cases are executed only when the backspace is pressed. Works in the
- 	same way as "extend_act_line_mem". */
-	if((ACT_LINE_LEN_I >= INIT_MEMBLK) && (ACT_LINE_LEN_I < MEMBLK))
+ 	same way as "extend_current_line". */
+	if((CURRENT_LINE_LENGTH_IDX >= INITIAL_MEMBLOCK)
+	   && (CURRENT_LINE_LENGTH_IDX < MEMBLOCK))
 	{
-		// Shrink to size of the MEMBLK.
-		memblock = MEMBLK;
+		// Shrink to size of the MEMBLOCK.
+		memblock = MEMBLOCK;
 	}
-	else if(ACT_LINE_LEN_I >= MEMBLK)
+	else if(CURRENT_LINE_LENGTH_IDX >= MEMBLOCK)
 	{
 		// Remove the newest memblock because isn't needed now.
-		memblock = ((ACT_LINE_LEN_I / MEMBLK) * MEMBLK) + MEMBLK;
+		memblock = ((CURRENT_LINE_LENGTH_IDX / MEMBLOCK) * MEMBLOCK) + MEMBLOCK;
 	}
-	ACT_LINE = realloc(ACT_LINE, memblock);
+	CURRENT_LINE = realloc(CURRENT_LINE, memblock);
+	if(CURRENT_LINE == NULL)
+	{
+		fprintf(stderr, "Can't shrink the memblock with the current line.\n");
+		return false;
+	}
 
 #ifdef DEBUG_MEMORY
-	printf("Shrink_act_line_mem %d with mem of %d B.\n",
-	ACT_LINE_I + INDEX, memblock);
+	printf("Shrink_current_line %u with mem of %u B.\n",
+	       CURRENT_LINE_IDX + IDX, memblock);
 #endif
 
-	chk_ptr(Buff, ACT_LINE, "shrink the memblock with the current line");
-
-	return ACT_LINE;
+	return true;
 }
 
-char* shrink_prev_line_mem(f_mtdt* Buff)
+bool memory__shrink_prev_line(Buff_t* Buffer)
 {
-	buff_t memblock = INIT_MEMBLK;
+	idx_t memblock = INITIAL_MEMBLOCK;
 
-	if((PREV_LINE_LEN_I >= INIT_MEMBLK) && (PREV_LINE_LEN_I < MEMBLK))
+	if((PREVIOUS_LINE_LENGTH_IDX >= INITIAL_MEMBLOCK)
+	   && (PREVIOUS_LINE_LENGTH_IDX < MEMBLOCK))
 	{
-		memblock = MEMBLK;
+		memblock = MEMBLOCK;
 	}
-	else if((PREV_LINE_LEN_I >= MEMBLK))
+	else if((PREVIOUS_LINE_LENGTH_IDX >= MEMBLOCK))
 	{
 		// Set the size of some MEMBLKs.
-		memblock = ((PREV_LINE_LEN_I / MEMBLK) * MEMBLK) + MEMBLK;
+		memblock = ((PREVIOUS_LINE_LENGTH_IDX / MEMBLOCK) * MEMBLOCK)
+		           + MEMBLOCK;
 	}
-	PREV_LINE = realloc(PREV_LINE, memblock);
+	PREVIOUS_LINE = realloc(PREVIOUS_LINE, memblock);
 
 #ifdef DEBUG_MEMORY
-	printf("Shrink_prev_line_mem %d with mem of %d B\n",
-	PREV_LINE_I + INDEX, memblock);
+	printf("Shrink_PREV_line %u with mem of %u B\n",
+	       PREVIOUS_LINE_IDX + IDX, memblock);
 #endif
 
-	chk_ptr(Buff, PREV_LINE, "shrink the memblock with the previous line");
-
-	return PREV_LINE;
+	if(PREVIOUS_LINE == NULL)
+	{
+		fprintf(stderr, "Can't shrink the memblock with the PREVious line.\n");
+		return false;
+	}
+	return true;
 }
 
-f_mtdt* extend_lines_array_mem(f_mtdt* Buff)
+bool memory__extend_lines_array(Buff_t* Buffer)
 {
 	// Enhance the array that contains pointers to lines.
-	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
+	Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX) * ADDR_SZ);
 
-	chk_ptr(Buff, Buff->text, "extend the array with lines");
+	if(Buffer->text == NULL)
+	{
+		fprintf(stderr, "Can't extend the array with lines.\n");
+		return false;
+	}
 
 	// Enhance the array that contains lines length indicators.
-	Buff->line_len_i = realloc(Buff->line_len_i,
-	(Buff->lines_i + INDEX) * ADDR_SZ);
+	Buffer->lines_length_idx = realloc(Buffer->lines_length_idx, ADDR_SZ *
+	                                   (Buffer->lines_idx + IDX));
 
-	chk_ptr(Buff, Buff->line_len_i, "extend the array with lines length");
+	if(Buffer->lines_length_idx == NULL)
+	{
+		fprintf(stderr, "Can't extend the array with lines length.\n");
+		return false;
+	}
 
 	// The new line is allocated with only 4 or 8 bytes bytes.
-	LAST_LINE = malloc(INIT_MEMBLK);
-	chk_ptr(Buff, LAST_LINE, "malloc the new line");
+	LAST_LINE = malloc(INITIAL_MEMBLOCK);
+	if(LAST_LINE == NULL)
+	{
+		fprintf(stderr, "Can't alloc a memory for the new line.\n");
+		return false;
+	}
 
 	// Naturally the new line doesn't contains any chars - only terminator.
-	LAST_LINE_LEN_I = 0;
+	LAST_LINE_LENGTH_IDX = 0;
 
-	return Buff;
+	return true;
 }
 
-f_mtdt* shrink_lines_array_mem(f_mtdt* Buff)
+bool memory__shrink_lines_array(Buff_t* Buffer)
 {
-	Buff->text = realloc(Buff->text, (Buff->lines_i + INDEX) * ADDR_SZ);
+	Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX) * ADDR_SZ);
 
-	chk_ptr(Buff, Buff->text, "shrink the array with lines");
-
-	Buff->line_len_i = realloc(Buff->line_len_i,
-	(Buff->lines_i + INDEX) * ADDR_SZ);
-
-	chk_ptr(Buff, Buff->line_len_i, "shrink the array with lines length");
-
-	return Buff;
-}
-
-f_mtdt* copy_lines_mem_forward(f_mtdt* Buff)
-{
-	const bool prev = 1;
-
-	for(buff_t line_i = Buff->lines_i; line_i > ACT_LINE_I; line_i--)
+	if(Buffer->text == NULL)
 	{
-		buff_t memblock =
-		((Buff->line_len_i[line_i - prev] / MEMBLK) * MEMBLK) + MEMBLK;
+		fprintf(stderr, "Can't shrink the array with lines.\n");
+		return false;
+	}
 
-		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
+	Buffer->lines_length_idx = realloc(Buffer->lines_length_idx, ADDR_SZ *
+	                                   (Buffer->lines_idx + IDX));
+
+	if(Buffer->lines_length_idx == NULL)
+	{
+		fprintf(stderr, "Can't shrink the array with lines length.\n");
+		return false;
+	}
+	return true;
+}
+
+bool memory__copy_lines_forward(Buff_t* Buffer)
+{
+	for(idx_t line_idx = Buffer->lines_idx; line_idx > CURRENT_LINE_IDX;
+	    line_idx--)
+	{
+		idx_t memblock = ((Buffer->lines_length_idx[line_idx - PREV] / MEMBLOCK)
+		                 * MEMBLOCK) + MEMBLOCK;
+
+		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Copied line %d forward to %d with new mem of %d B.\n",
-		line_i + INDEX - prev, line_i + INDEX, memblock);
+		printf("Copied line %u forward to %u with new mem of %u B.\n",
+		       line_idx + IDX - PREV, line_idx + IDX, memblock);
 #endif
 
-		chk_ptr(Buff, Buff->text[line_i], "resize the line forward");
+		if(Buffer->text[line_idx] == NULL)
+		{
+			fprintf(stderr, "Can't resize the line forward.\n");
+			return false;
+		}
 
-		Buff->text[line_i] =
-		strcpy(Buff->text[line_i], Buff->text[line_i - prev]);
+		strcpy(Buffer->text[line_idx], Buffer->text[line_idx - PREV]);
 
-		chk_ptr(Buff, Buff->text[line_i], "copy the line forward");
-
-		Buff->line_len_i[line_i] = Buff->line_len_i[line_i - prev];
+		Buffer->lines_length_idx[line_idx] =
+		Buffer->lines_length_idx[line_idx - PREV];
 	}
-	return Buff;
+	return true;
 }
 
-f_mtdt* copy_lines_mem_backward(f_mtdt* Buff)
+bool memory__copy_lines_backward(Buff_t* Buffer)
 {
-	const bool next = 1;
-
-	for(buff_t line_i = ACT_LINE_I; line_i < Buff->lines_i; line_i++)
+	for(idx_t line_idx = CURRENT_LINE_IDX; line_idx < Buffer->lines_idx;
+	    line_idx++)
 	{
-		buff_t memblock =
-		((Buff->line_len_i[line_i + next] / MEMBLK) * MEMBLK) + MEMBLK;
+		idx_t memblock = ((Buffer->lines_length_idx[line_idx + NEXT] / MEMBLOCK)
+		                 * MEMBLOCK) + MEMBLOCK;
 
-		Buff->text[line_i] = realloc(Buff->text[line_i], memblock);
+		Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
-		printf("Copied line %d backward to %d with new mem of %d B.\n",
-		line_i + INDEX + next, line_i + INDEX, memblock);
+		printf("Copied line %u backward to %u with new mem of %u B.\n",
+		       line_idx + IDX + NEXT, line_idx + IDX, memblock);
 #endif
 
-		chk_ptr(Buff, Buff->text[line_i], "resize the line backward");
+		if(Buffer->text[line_idx] == NULL)
+		{
+			fprintf(stderr, "Can't copy a line backward.\n");
+			return false;
+		}
+		strcpy(Buffer->text[line_idx], Buffer->text[line_idx + NEXT]);
 
-		Buff->text[line_i] =
-		strcpy(Buff->text[line_i], Buff->text[line_i + next]);
-
-		chk_ptr(Buff, Buff->text[line_i], "copy the line backward");
-
-		Buff->line_len_i[line_i] = Buff->line_len_i[line_i + next];
+		Buffer->lines_length_idx[line_idx] =
+		Buffer->lines_length_idx[line_idx + NEXT];
 	}
-	return Buff;
+	return true;
 }

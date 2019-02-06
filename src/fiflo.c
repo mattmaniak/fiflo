@@ -1,111 +1,112 @@
+<<<<<<< HEAD
 #ifdef __linux__
 
 #include "include/buffer.h"
 #include "include/ascii.h"
 #include "include/fiflo.h"
+=======
+#include "buffer.h"
+#include "config.h"
+#include "modes.h"
+#include "fiflo.h"
+>>>>>>> develop
 
-f_mtdt* init_buffer(f_mtdt* Buff, const char* arg)
+void fiflo__run(const char* arg)
 {
-	Buff->text = malloc(ADDR_SZ);
+	char pressed_key = '\0'; // This assignment as the initializer only.
 
-	if(Buff->text == NULL)
+	Buff_t Buffer;
+	Conf_t Config;
+	Mod_t  Modes;
+
+	modes__init(&Modes);
+
+	if(!buffer__init(&Buffer))
 	{
-		fputs("Can't malloc the array with lines.", stderr);
-		exit(1);
+		goto free;
 	}
-	Buff->line_len_i = malloc(((sizeof(buff_t) / ADDR_SZ) * ADDR_SZ) + ADDR_SZ);
-
-	if(Buff->line_len_i == NULL)
+	if(!file__load_config(&Config))
 	{
-		fputs("Can't malloc the array with lines length.", stderr);
-		free(Buff->text);
-		exit(1);
+		goto free;
 	}
-	Buff->chars_i = 0;
-	Buff->lines_i = 0;
-	Buff->cusr_x = 0;
-	Buff->cusr_y = 0;
-	ACT_LINE_LEN_I = 0;
-
-	Buff->live_fname_edit = false;
-	Buff->key_sequence = false;
-	Buff->pane_toggled = false;
-
-	ACT_LINE = malloc(ADDR_SZ);
-
-	if(ACT_LINE == NULL)
+	if(!file__set_name(&Buffer, arg))
 	{
-		fputs("Can't malloc the array with lines length.", stderr);
-		free(Buff->text);
-		free(Buff->line_len_i);
-		exit(1);
+		goto free;
 	}
-	Buff = set_fname(Buff, arg);
-
-	return Buff;
-}
-
-void options(const char* arg)
-{
-	if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
+	if(!file__load(&Buffer, &Config))
 	{
-		printf("%s\n\n%s\n%s\n%s\n",
-		"Usage: fiflo [basename/filename/option].",
-
-		"Options:      Description:",
-		"-h, --help    Show a program help.",
-		"-v, --version Display information about a version You use.");
-		exit(0);
-	}
-	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
-	{
+<<<<<<< HEAD
 		printf("%s\n%s\n%s\n",
 		"fiflo v2.2.2",
 		"(C) 2018 mattmaniak, MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
 		exit(0);
+=======
+		goto free;
+>>>>>>> develop
 	}
-}
-
-noreturn void run(const char* arg)
-{
-	char pressed = '\0'; // Initializer.
-
-	f_mtdt* Buff = malloc(sizeof(f_mtdt));
-	chk_ptr(Buff, Buff, "malloc the metadata buffer");
-
-	Buff = init_buffer(Buff, arg);
-	Buff = read_file(Buff);
+	strncpy(Buffer.orig_fname, Buffer.fname, PATH_MAX);
 
 	for(;;) // The main program loop.
 	{
-		Buff = parse_key(Buff, pressed);
-		render_window(Buff);
-
-		pressed = getch(Buff);
-		flush_window(Buff);
+		if(!file__get_git_branch(&Buffer))
+		{
+			break;
+		}
+		if(!input__parse_key(&Buffer, &Config, &Modes, pressed_key))
+		{
+			break;
+		}
+		// Flushes and renders always after the keypress.
+		if(!window__render(&Buffer, &Config, &Modes))
+		{
+			break;
+		}
+		if((pressed_key = input__getch()) == ERROR)
+		{
+			break;
+		}
+		window__flush();
 	}
+
+	free:
+	buffer__free(&Buffer);
 }
 
-int main(const int argc, const char** argv)
+int main(int argc, char** argv)
 {
-	if(argc > 2)
+	const int argc_max = 2;
+
+	if(argc > argc_max)
 	{
-		fputs("Only one additional arg can be passed.\n", stderr);
-		exit(1);
+		fprintf(stderr, "Only one additional arg can be passed.\n");
+		goto exit;
 	}
 
 	if(argv[1] == NULL)	// Sets the default basename and starts.
 	{
-		run("");
+		fiflo__run("");
+		goto exit;
+	}
+	/* Can't use the "ARG_MAX", because clang 6.0.0 with -Weverything doesn't
+	recognize it. */
+	else if(strlen(argv[1]) < (PATH_MAX + NAME_MAX))
+	{
+		if(!options__parse_and_print(argv[1]))
+		{
+			goto exit;
+		}
+		fiflo__run(argv[1]);
+		goto exit;
 	}
 	else
 	{
-		options(argv[1]);
-		run(argv[1]);
+		fprintf(stderr, "Maximum parameter length is %u\n",
+		        PATH_MAX + NAME_MAX);
+		goto exit;
 	}
-}
 
-#else
-#error "GNU/Linux is required."
-#endif
+	exit:
+	fflush(NULL);
+	return 0;
+}
