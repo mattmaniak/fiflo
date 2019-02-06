@@ -7,9 +7,9 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 Versions:
-v3.0.0 (WIP):
+v3.0.0 (2019, February 6):
 - logo removed from the upper bar,
-- 80th column indicator,
+- 80th column indicator aka punch card,
 - git branch name display,
 - return-based API,
 - transparent UI with some colors,

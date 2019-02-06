@@ -8,8 +8,8 @@ bool options__parse_and_print(const char* arg)
 		"Usage: fiflo [basename/filename/option].",
 
 		"Options:      Description:",
-		"-h, --help    Show a program help.",
-		"-v, --version Display information about this version.");
+		"-h, --help    Show the help.",
+		"-v, --version Display info about this version.");
 		return false;
 	}
 	else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
@@ -17,7 +17,7 @@ bool options__parse_and_print(const char* arg)
 		printf("%s\n%s\n%s\n%s\n%s\n",
 		"|``",
 		"|``",
-		"fiflo v3.0.0 (WIP)",
+		"fiflo v3.0.0",
 		"(C) 2018-2019 mattmaniak under the MIT License",
 		"https://gitlab.com/mattmaniak/fiflo.git");
 		return false;
