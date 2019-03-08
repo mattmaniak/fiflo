@@ -1,0 +1,16 @@
+# Example fiflo configuration file.
+# To make it work, copy it to the /etc/fiflorc
+#
+# If You did "sudo make install", check "man fiflorc" for details.
+#
+# Remark: " = " (excluding quotation marks) is the only correct assignment.
+#
+# Default configuration below.
+# Changes nothing because the editor has it implemented independently.
+
+color-line-number = magenta
+color-line-number-current = white
+color-text = green
+color-ui = white
+color-warning = red
+tab-width = 4

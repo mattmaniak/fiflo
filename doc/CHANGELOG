@@ -1,11 +1,12 @@
-# fiflo - changelog
+fiflo - changelog
 
-## Description
+Description
 Below version numbers contains more detailed descriptions of annotated Git
 tags. Dates are not alternative version names. They are just release dates.
 Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
+<<<<<<< HEAD:doc/CHANGELOG.md
 ## Versions:
 ### v2.2.2 (2018, December 22):
 - Repaired positions of line numbers when the line has same width as the
@@ -15,6 +16,32 @@ editor's area.
 - headers directory specified for clang compilation.
 
 ### v2.2.0 (2018, December 18):
+=======
+Versions:
+v3.0.0 (2019, February 6):
+- logo removed from the upper bar,
+- 80th column indicator aka punch card,
+- git branch name display,
+- return-based API,
+- transparent UI with some colors,
+- fiflorc file - basic configuration,
+- basic tab key support without a gap,
+- abort and restore the filename before the live edit,
+- also save after pressing enter during live filename edit,
+- creates the new file with 0644 permissions instead of 0600,
+- slightly increased the filename length limit,
+- more tests (code coverage check) - probably less bugs and better performance,
+- Alt^key won't crash it anymore.
+
+v2.2.2 (2018, December 22):
+- Repaired positions of line numbers when the line has same width as the
+editor's area.
+
+v2.2.1 (2018, December 18):
+- headers directory specified for clang compilation.
+
+v2.2.0 (2018, December 18):
+>>>>>>> develop:doc/CHANGELOG
 - logo added,
 - inverted color UI,
 - vertically movable cursor,
@@ -23,10 +50,10 @@ editor's area.
 - permament line numbers blocks,
 - a few Common User Access bindings,
 - lower pane with keybindings,
-- private mode deleted, keyboard shortcuts also don't generete signals now,
+- private mode deleted, keyboard shortcuts also don't generete signals,
 - more efficient compilation.
 
-### v2.1.0 (2018, November 10):
+v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,
 - messages and the chars indicator in the upper bar,
 - improved Makefile,
@@ -35,10 +62,10 @@ editor's area.
 - line length "graphical" indicator
 - private mode (unusual use of xon and xoff),
 - lower bar,
-- scrollable cursor in X axis with the ability to move a line to another,
+- scrollable cursor in X with the ability to move a line to another,
 - new transparent UI.
 
-### v2.0.0 (2018, September 11):
+v2.0.0 (2018, September 11):
 - vertical && horizontal scroll,
 - new allocation method (lines as a separate strings),
 - arrows are ignored,
@@ -46,7 +73,7 @@ editor's area.
 - TAB as one SPACE,
 - dynamic buffer of size 64K.
 
-### v1.1.0 (2018, August 12):
+v1.1.0 (2018, August 12):
 - dynamically allocated text (in theory max. 2G - 1),
 - real stdin (built-in terminal) cursor,
 - version info,
@@ -55,7 +82,7 @@ editor's area.
 - folder as the file prevention,
 - auto_newline when the single line is equal <user's terminal width>.
 
-### v1.0.0 (2018, July 15):
+v1.0.0 (2018, July 15):
 - simplified alghoritms,
 - less memory usage,
 - proper text allocation,
@@ -65,9 +92,9 @@ editor's area.
 - UI redesigned,
 - 80 chars per line limit && auto newline,
 
-### v0.5.0-unstable (2018, July 1):
-(The last v0.y.z version and showup of the old program logic. Mostly insecure.
-Not merged with "master" so look for it using tags.)
+v0.5.0-unstable (2018, July 1):
+(The last v0.y.z version and showup of the old program logic. Mostly
+insecure. Not merged with "master" so look for it using tags.)
 - multiple lines writing && rendering,
 - file input/output operations,
 - man-page added,
@@ -75,40 +102,40 @@ Not merged with "master" so look for it using tags.)
 - absolute paths support,
 - OS check.
 
-### v0.4.3 (2018, June 10):
-- fnfo about min term size fix.
+v0.4.3 (2018, June 10):
+- info about min term size fix.
 
-### v0.4.2 (2018, June 10):
+v0.4.2 (2018, June 10):
 - makefile update.
 
 ### v0.4.1 (2018, June 10):
 - docs update.
 
-### v0.4.0 (2018, June 10):
+v0.4.0 (2018, June 10):
 - rendering a single line of typed chars/strings,
 - UI redesigned,
 - cursor added,
 - makefile && similar ones improved.
 
-### v0.3.0 (2018, May 31):
+v0.3.0 (2018, May 31):
 - printing only pressed char on the screen,
 - working char counter with under/overflow protection,
 - rendering in a one frame,
 - full terminal size checking.
 
-### v0.2.0 (2018, May 27):
+v0.2.0 (2018, May 27):
 - version deleted from the upper bar,
 - program's name centering in the upper bar fixed,
-- basic *nixGetch implemented.
+- basic nixGetch implemented.
 
-### v0.1.1 (2018, May 27):
+v0.1.1 (2018, May 27):
 - branches are now merged, not rebased.
 
-### v0.1.0 (2018, May 27):
+v0.1.0 (2018, May 27):
 - program's name and version in upper bar,
 - changelog added,
 - windows size checking,
 - changelog improvements.
 
-### v0.0.0 (2018, May 27):
+v0.0.0 (2018, May 27):
 - initial release (basic window rendering).

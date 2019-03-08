@@ -1,11 +1,15 @@
 .TH fiflo 1 "General Commands Manual"
 .SH NAME
-.TP
-fiflo
+fiflo - terminal-based text editor with Common User Access keyboard shortcuts
 .SH SYNOPSIS
 fiflo [basename/filename/option]
 .SH DESCRIPTION
-User-friendly ASCII terminal-based text editor.
+Currently supports only all ASCII printable chars, space and horizontal tab.
+It has got dynamically allocated buffer which can hold up to 16 MB - 1 chars.
+Implementation considers that newline char is equal to the linefeed. The tab
+char needs as many bytes as it's width in the editor: from 2, 4 or 8. Also it
+supports the paste option from outside the terminal but it probably depends from
+the terminal.
 .SH OPTIONS
 .TP
 .B -h, --help
@@ -14,15 +18,18 @@ Show a program help.
 .B -v, --version
 Display information about a version You use.
 .SH SEE ALSO
-https://gitlab.com/mattmaniak/fiflo.git
+fiflorc(5)
 .SH BUGS
 .TP
 .B Blinking
-Blinking window with a default tty. It's caused by the implementation wnich
-renders a full window everytime. On modern terminal emulators, the problem does
+Blinking window with a default tty. It's caused by the implementation which
+renders a full window every time. On modern terminal emulators, the problem does
 not occur.
 .TP
-.B CTRL^[
+.B Ctrl^[ or Esc
 Next 3 chars will be ignored.
+.TP
+.B Left cursor position during the live filename edit.
+Don't know why the minimum X for the cursor is 1 in that case.
 .SH AUTHOR
 mattmaniak
