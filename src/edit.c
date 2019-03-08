@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-#include "include/buffer.h"
-#include "include/ascii.h"
-#include "include/edit.h"
-=======
 #include "buffer.h"
 #include "shortcuts.h"
 #include "edit.h"
->>>>>>> develop
 
 bool edit__delete_char(Buff_t* Buffer)
 {

@@ -1,15 +1,7 @@
-<<<<<<< HEAD
-#ifdef __linux__
-
-#include "include/buffer.h"
-#include "include/ascii.h"
-#include "include/fiflo.h"
-=======
 #include "buffer.h"
 #include "config.h"
 #include "modes.h"
 #include "fiflo.h"
->>>>>>> develop
 
 void fiflo__run(const char* arg)
 {
@@ -35,15 +27,7 @@ void fiflo__run(const char* arg)
 	}
 	if(!file__load(&Buffer, &Config))
 	{
-<<<<<<< HEAD
-		printf("%s\n%s\n%s\n",
-		"fiflo v2.2.2",
-		"(C) 2018 mattmaniak, MIT License",
-		"https://gitlab.com/mattmaniak/fiflo.git");
-		exit(0);
-=======
 		goto free;
->>>>>>> develop
 	}
 	strncpy(Buffer.orig_fname, Buffer.fname, PATH_MAX);
 

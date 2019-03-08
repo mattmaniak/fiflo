@@ -6,18 +6,11 @@ tags. Dates are not alternative version names. They are just release dates.
 Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
-<<<<<<< HEAD:doc/CHANGELOG.md
-## Versions:
-### v2.2.2 (2018, December 22):
-- Repaired positions of line numbers when the line has same width as the
-editor's area.
-
-### v2.2.1 (2018, December 18):
-- headers directory specified for clang compilation.
-
-### v2.2.0 (2018, December 18):
-=======
 Versions:
+v3.0.1 (2019, March 8):
+- backspace when there is char and tab at the right fix,
+- compilation possible again.
+
 v3.0.0 (2019, February 6):
 - logo removed from the upper bar,
 - 80th column indicator aka punch card,
@@ -41,13 +34,12 @@ v2.2.1 (2018, December 18):
 - headers directory specified for clang compilation.
 
 v2.2.0 (2018, December 18):
->>>>>>> develop:doc/CHANGELOG
 - logo added,
 - inverted color UI,
 - vertically movable cursor,
 - fluid line numbers indicators,
 - actual line number highlight,
-- permament line numbers blocks,
+- permanent line numbers blocks,
 - a few Common User Access bindings,
 - lower pane with keybindings,
 - private mode deleted, keyboard shortcuts also don't generete signals,
@@ -57,7 +49,7 @@ v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,
 - messages and the chars indicator in the upper bar,
 - improved Makefile,
-- more efficent memory allocation.
+- more efficient memory allocation.
 - control keys changed,
 - line length "graphical" indicator
 - private mode (unusual use of xon and xoff),
