@@ -7,8 +7,7 @@ LDFLAGS =
 GCOV_FLAGS = -ftest-coverage -fprofile-arcs
 
 ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
--fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error \
--fstack-protector-all
+-fsanitize-undefined-trap-on-error -fstack-protector-all
 
 MSAN_FLAGS = -fsanitize=memory -fPIE -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins

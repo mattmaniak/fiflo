@@ -3,8 +3,6 @@
 
 // File operations.
 
-#include <pwd.h>
-
 #define AT_LEAST_ONE_TAB 1
 
 extern bool keys__printable_char(Buff_t*, char);

@@ -21,4 +21,5 @@ fiflo - TODOs and ideas:
 - max. left cursor position during live filename edit,
 - refresh the git branch in the separate thread.
 - git branch form the file directory, not from the current one,
-- swap the status message with the git logo and branch.
+- swap the status message with the git logo and branch,
+- CRLF support.

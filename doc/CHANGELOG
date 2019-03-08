@@ -11,6 +11,10 @@ v3.1.0 (WIP):
 - Tab with the gap,
 - git branch from the file's dir instead of the current working directory.
 
+v3.0.1 (2019, March 8):
+- backspace when there is char and tab at the right fix,
+- compilation possible again.
+
 v3.0.0 (2019, February 6):
 - logo removed from the upper bar,
 - 80th column indicator aka punch card,
@@ -39,7 +43,7 @@ v2.2.0 (2018, December 18):
 - vertically movable cursor,
 - fluid line numbers indicators,
 - actual line number highlight,
-- permament line numbers blocks,
+- permanent line numbers blocks,
 - a few Common User Access bindings,
 - lower pane with keybindings,
 - private mode deleted, keyboard shortcuts also don't generete signals,
@@ -49,7 +53,7 @@ v2.1.0 (2018, November 10):
 - new file size limit: 16 MB - 1,
 - messages and the chars indicator in the upper bar,
 - improved Makefile,
-- more efficent memory allocation.
+- more efficient memory allocation.
 - control keys changed,
 - line length "graphical" indicator
 - private mode (unusual use of xon and xoff),
