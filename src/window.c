@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-#include "include/buffer.h"
-#include "include/ui.h"
-#include "include/window.h"
-=======
 #include "buffer.h"
 #include "config.h"
 #include "modes.h"
 #include "ui.h"
 #include "window.h"
->>>>>>> develop
 
 term_t window__get_terminal_sz(char axis)
 {

@@ -142,6 +142,17 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 			tab_idx = (idx_t) Config->Tab_width.value - IDX;
 		}
 
+		// Scenario when there is char at the beginning and tab at the right.
+		if((CURSOR_X == 1) && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
+		   && (CURRENT_LINE[CURSOR_X] == '\t') && (Buffer->cursor_rev_x > 0))
+		{
+			if(!edit__delete_char(Buffer))
+			{
+				return false;
+			}
+			break;
+		}
+
 		if(!EMPTY_LINE)
 		{
 			if(!edit__delete_char(Buffer))
@@ -158,9 +169,8 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 		}
 
 		// Some text and the tab(s) at the end.
-		if((CURRENT_LINE_LENGTH_IDX > 0)
-		   && (CURRENT_LINE[CURRENT_LINE_LENGTH_IDX - NUL_SZ] != '\t')
-		   && (Buffer->cursor_rev_x == 0))
+		if((CURRENT_LINE_LENGTH_IDX > 0) && (Buffer->cursor_rev_x == 0)
+		   && (CURRENT_LINE[CURRENT_LINE_LENGTH_IDX - NUL_SZ] != '\t'))
 		{
 			break;
 		}
@@ -171,8 +181,7 @@ bool keys__backspace(Buff_t* Buffer, Conf_t* Config)
 			break;
 		}
 		// Scenario when there is the tab and some text further.
-		else if((CURSOR_X > 0)
-		        && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
+		else if((CURSOR_X > 0) && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
 		        && (Buffer->cursor_rev_x > 0))
 		{
 			break;

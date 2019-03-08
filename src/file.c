@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-#include "include/buffer.h"
-#include "include/ascii.h"
-#include "include/file.h"
-=======
 #include "buffer.h"
 #include "config.h"
 #include "shortcuts.h"
 #include "modes.h"
 #include "file.h"
->>>>>>> develop
 
 bool file__set_name(Buff_t* Buffer, const char* arg)
 {
