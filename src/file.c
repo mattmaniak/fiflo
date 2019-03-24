@@ -90,7 +90,6 @@ void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
 	}
 	else if(key == enter)
 	{
-
 		Modes->live_fname_edit = false;
 
 		SET_STATUS("filename edited and saved as");
@@ -141,12 +140,11 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
 		SET_STATUS("current directory set");
 		return true;
 	}
-
 	Textfile = fopen(Buffer->fname, "r");
 
 	if(Textfile != NULL)
 	{
-		while((ch = (char) fgetc(Textfile)) != EOF)
+		while((ch = (char) getc(Textfile)) != EOF)
 		{
 			if(!file__convert_tab_from_file(Buffer, Config, ch))
 			{
@@ -246,8 +244,8 @@ bool file__load_config(Conf_t* Config)
 bool file__get_git_branch(Buff_t* Buffer)
 {
 	char  git_head_file_path[PATH_MAX + NAME_MAX];
-	FILE* Git_head_file;
 	char* proj_dir;
+	FILE* Git_head_file;
 
 	proj_dir = malloc(PATH_MAX);
 	if(proj_dir == NULL)
