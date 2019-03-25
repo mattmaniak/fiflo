@@ -94,7 +94,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
 		if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
 		{
 			// No horizontal scrolling.
-			move_right = (term_t) (Ui->line_num_length + CURSOR_X);
+			move_right = (term_t) (Ui->line_num_length + CURSOR_X_IDX);
 		}
 		else if((CURRENT_LINE_LENGTH_IDX - Ui->text_x) >= Buffer->cursor_rev_x)
 		{
@@ -105,7 +105,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
 		else
 		{
 			// Text is scrolled horizontally to the start. Cursor can be moved.
-			move_right = (term_t) (Ui->line_num_length + CURSOR_X);
+			move_right = (term_t) (Ui->line_num_length + CURSOR_X_IDX);
 		}
 		move_up = (CURRENT_LINE_IDX < Ui->text_y) ?
 		(term_t) (Ui->text_y - CURRENT_LINE_IDX - IDX + Ui->lbar_h) : Ui->lbar_h;

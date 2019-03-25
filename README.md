@@ -50,29 +50,29 @@ sudo make uninstall
 ## Development
 Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
-### Source files:
-- buffer.c - initialization and deleting the main buffer which holds the text
+### Source files (submodules):
+- buffer - initialization and deleting the main buffer which holds the text
 and it's metadata,semantic macros,
 
-- config.c - fiflorc parser and values setter,
+- config - fiflorc parser and values setter,
 
-- edit.c - more complex text editing operations that happens after the keypress,
+- edit - more complex text editing operations that happens after the keypress,
 
-- fiflo.c - the main file, just "main" and the execution loop,
+- fiflo - the main file, just "main" and the execution loop,
 
-- file.c - read/save the file, live editing the filename,
+- file - read/save the file, live editing the filename,
 
-- input.c - get the key from the keypress, parse it,
+- input - gets the key and parses it,
 
-- keys.c - basic actions of every supported key,
+- keys - basic actions of every supported key,
 
-- memory.c - allocation/deallocation of the memory for the text,
+- memory - (de)allocation of the memory for the text,
 
-- options.c - "--help" and friends parameters,
+- options - "--help" and friends parameters,
 
-- print.c - various magic that prints the text,
+- print - various magic that prints the text,
 
-- ui.c - user interface components like bars.
+- ui - user interface components like bars.
 
 - window.c - window rendering and flushing.
 

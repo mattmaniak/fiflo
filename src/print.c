@@ -86,7 +86,7 @@ void print__scroll_line_horizontally(Buff_t* Buffer, Ui_t* Ui)
 {
 	// Text will be scrolled. Not cursor.
 	print__line_with_tabs(Buffer, CURRENT_LINE_IDX,
-	                      CURSOR_X + CURSOR_SZ - Ui->text_x, CURSOR_X);
+	                      CURSOR_X_IDX + CURSOR_SZ - Ui->text_x, CURSOR_X_IDX);
 
 	/* Sometimes is needed because the "window__fill" function renders the
 	smallest required amount of linefeeds. In other cases the linefeed is
@@ -143,7 +143,9 @@ void print__shrink_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	{
 		print__another_line(Buffer, Ui, Config, line_idx);
 	}
-	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_length);
+	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX,
+	                      Ui->line_num_length);
+
 	print__actual_line(Buffer, Ui);
 
 	// Next lines. If scrolled. Only beginning is shown.
@@ -177,7 +179,8 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	}
 
 	// Display the last line without the linefeed.
-	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_length);
+	ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX,
+	                      Ui->line_num_length);
 
 	if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
 	{
@@ -194,8 +197,8 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 	{
 		// Text will be scrolled. Not cursor.
 		print__line_with_tabs(Buffer, CURRENT_LINE_IDX,
-		                      CURSOR_X + CURSOR_SZ - Ui->text_x,
-		                      CURSOR_X);
+		                      CURSOR_X_IDX + CURSOR_SZ - Ui->text_x,
+		                      CURSOR_X_IDX);
 	}
 	else
 	{

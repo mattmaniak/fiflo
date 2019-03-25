@@ -67,7 +67,7 @@ Buff_t;
 #define CURRENT_LINE_IDX        (Buffer->lines_idx - Buffer->cursor_rev_y)
 #define CURRENT_LINE            Buffer->text[CURRENT_LINE_IDX]
 #define CURRENT_LINE_LENGTH_IDX Buffer->lines_length_idx[CURRENT_LINE_IDX]
-#define CURSOR_X                (CURRENT_LINE_LENGTH_IDX - Buffer->cursor_rev_x)
+#define CURSOR_X_IDX            (CURRENT_LINE_LENGTH_IDX - Buffer->cursor_rev_x)
 
 #define PREVIOUS_LINE_IDX        (CURRENT_LINE_IDX - 1)
 #define PREVIOUS_LINE            Buffer->text[PREVIOUS_LINE_IDX]

@@ -9,7 +9,12 @@ files use git-show or git-log.
 Versions:
 v3.1.0 (WIP):
 - Tab with the gap,
-- git branch from the file's dir instead of the current working directory.
+- git branch from the file's dir instead of the current working directory,
+- moving the cursor without redrawing the window,
+- default configuration changed.
+
+v3.0.2 (2019, March 25):
+- punch card scrolling fix.
 
 v3.0.1 (2019, March 8):
 - backspace when there is char and tab at the right fix,
