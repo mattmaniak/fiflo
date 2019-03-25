@@ -7,6 +7,9 @@ Changelog contains only new tangible features. To see what's new in source
 files use git-show or git-log.
 
 Versions:
+v3.0.2 (2019, March 25):
+- punch card scrolling fix.
+
 v3.0.1 (2019, March 8):
 - backspace when there is char and tab at the right fix,
 - compilation possible again.
