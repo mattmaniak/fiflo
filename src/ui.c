@@ -103,17 +103,15 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, Ui_t* Ui)
 	       STATUS_MAX - (term_t) strlen(key_binding[TOGGLED_PANE_SZ - LBAR_SZ]),
 	       " ");
 
-	if(Ui->text_x > punch_card_width) // TODO: SIMPLIFY.
+	if(Ui->text_x > punch_card_width)
 	{
 		printf("%*s",
 		       Ui->line_num_length + punch_card_width - STATUS_MAX - SPACE_SZ
-		       - (term_t) strlen(punch_card),
-		       " ");
+		       - (term_t) strlen(punch_card), " ");
 
-
-		if(CURRENT_LINE_LENGTH_IDX >= Ui->text_x) // Scrolling.
+		if(CURSOR_X >= Ui->text_x) // Scrolling.
 		{
-			punch_card_width += CURRENT_LINE_LENGTH_IDX + IDX - Ui->text_x;
+			punch_card_width = CURSOR_X + IDX - Ui->text_x + 80;
 		}
 
 		if((CURRENT_LINE_LENGTH_IDX > punch_card_width)
