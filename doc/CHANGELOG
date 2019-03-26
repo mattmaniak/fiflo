@@ -3,15 +3,16 @@ fiflo - changelog
 Description
 Below version numbers contains more detailed descriptions of annotated Git
 tags. Dates are not alternative version names. They are just release dates.
-Changelog contains only new tangible features. To see what's new in source
-files use git-show or git-log.
+Changelog contains only new tangible features and source code changes. To see
+what's new in the implementation, use git-show or git-log.
 
 Versions:
 v3.1.0 (WIP):
-- Tab with the gap,
 - git branch from the file's dir instead of the current working directory,
-- moving the cursor without redrawing the window,
-- default configuration changed.
+- misc UI changes,
+- default configuration changed,
+- whitespace highlighting,
+- tabs to spaces change in the source code.
 
 v3.0.2 (2019, March 25):
 - punch card scrolling fix.

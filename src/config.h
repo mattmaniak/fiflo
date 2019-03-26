@@ -13,6 +13,7 @@
 #define MAGENTA        35
 #define CYAN           36
 #define WHITE          37
+#define BRIGHT_BLACK   90
 #define BRIGHT_RED     91
 #define BRIGHT_GREEN   92
 #define BRIGHT_YELLOW  93
@@ -23,20 +24,21 @@
 
 typedef struct
 {
-	char selector[32];
-	int  value;
+    char selector[32];
+    int  value;
 }
 Opt_t;
 
 typedef struct
 {
-	FILE* File;
-	Opt_t Color_ui;
-	Opt_t Color_line_number;
-	Opt_t Color_line_number_current;
-	Opt_t Color_text;
-	Opt_t Color_warning;
-	Opt_t Tab_width;
+    FILE* File;
+    Opt_t Color_ui;
+    Opt_t Color_line_number;
+    Opt_t Color_line_number_current;
+    Opt_t Color_whitespace;
+    Opt_t Color_text;
+    Opt_t Color_warning;
+    Opt_t Tab_width;
 }
 Conf_t;
 

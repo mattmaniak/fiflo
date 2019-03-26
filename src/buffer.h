@@ -32,27 +32,28 @@ typedef uint32_t idx_t;
 
 typedef struct
 {
-	bool     chars_sequence;       // True if pressed key is ANSI escape code.
-	char     git_branch[NAME_MAX]; // Max size is 250.
+    bool     chars_sequence;       // True if pressed key is ANSI escape code.
+    char     git_branch[NAME_MAX]; // Max size is 250.
 
-	// Filename.
-	char     fname[PATH_MAX + NAME_MAX]; // Full filename. Eg. /home/user/basename.
-	char     orig_fname[PATH_MAX + NAME_MAX];
+    // Filename.
+    char*    current_path;
+    char     fname[PATH_MAX + NAME_MAX]; // Full filename. Eg. /home/user/basename.
+    char     orig_fname[PATH_MAX + NAME_MAX];
 
-	const uint16_t padding;
+    const uint16_t padding;
 
-	size_t   fname_length;       // Strlen of the above array.
+    size_t   fname_length;       // Strlen of the above array.
 
-	// File's content and some indicators.
-	char**   text;               // Text buffer. E.g. text[lines_idx][chars_idx].
-	idx_t    chars_idx;          // All chars index.
-	idx_t    lines_idx;          // Lines index.
-	idx_t*   lines_length_idx;   // Chars in the current line (index).
+    // File's content and some indicators.
+    char**   text;               // Text buffer. E.g. text[lines_idx][chars_idx].
+    idx_t    chars_idx;          // All chars index.
+    idx_t    lines_idx;          // Lines index.
+    idx_t*   lines_length_idx;   // Chars in the current line (index).
 
-	// Mostly visual shit.
-	idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
-	idx_t    cursor_rev_y;       // As above but in Y-axis.
-	char     status[STATUS_MAX]; // Displayed message in the upper bar.
+    // Mostly visual shit.
+    idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
+    idx_t    cursor_rev_y;       // As above but in Y-axis.
+    char     status[STATUS_MAX]; // Displayed message in the upper bar.
 }
 Buff_t;
 

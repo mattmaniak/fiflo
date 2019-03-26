@@ -1,7 +1,6 @@
 fiflo - TODOs and ideas:
 - colorized status,
 - tab with the gap,
-- whitespace highlighting,
 - simplify config.c and buffer.h,
 - linked list API (v4.y.z),
 - all escapes and formatting control chars,
@@ -22,4 +21,5 @@ fiflo - TODOs and ideas:
 - git branch form the file directory, not from the current one,
 - swap the status message with the git logo and branch,
 - CRLF support,
-- moving the cursor without the window redrawing.
+- moving the cursor without the window redrawing,
+- distinguish indentation type.

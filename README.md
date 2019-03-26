@@ -108,7 +108,7 @@ valgrind -v ./fiflo [optional args for the editor]
 ```
 Remark: fiflo must be compiled without ASan and MSan.
 
-### Install only the debugable binary.
+### Compile and install only the debugable binary.
 ```
 sudo make install_debug
 ```
