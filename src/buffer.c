@@ -2,6 +2,13 @@
 
 bool buffer__init(Buff_t* Buffer)
 {
+    Buffer->path = malloc(PATH_MAX);
+    if(Buffer->path == NULL)
+    {
+        fprintf(stderr, "Can't alloc a memory for the directory.\n");
+        return false;
+    }
+
     // Pointer to pointers, so the address size is needed.
     Buffer->text = malloc(ADDR_SZ);
     if(Buffer->text == NULL)
@@ -51,8 +58,8 @@ void buffer__free(Buff_t* Buffer)
     {
         free(Buffer->text);
     }
-    if(Buffer->current_path != NULL)
+    if(Buffer->path != NULL)
     {
-        free(Buffer->current_path);
+        free(Buffer->path);
     }
 }

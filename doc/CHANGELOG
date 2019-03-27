@@ -9,10 +9,11 @@ what's new in the implementation, use git-show or git-log.
 Versions:
 v3.1.0 (WIP):
 - git branch from the file's dir instead of the current working directory,
-- misc UI changes,
-- default configuration changed,
+- misc. UI changes,
+- default config changed,
 - whitespace highlighting,
-- tabs to spaces change in the source code.
+- tabs to spaces change in the source code,
+- proper "../"-like paths as arg handling.
 
 v3.0.2 (2019, March 25):
 - punch card scrolling fix.
@@ -95,7 +96,7 @@ v1.0.0 (2018, July 15):
 - 80 chars per line limit && auto newline,
 
 v0.5.0-unstable (2018, July 1):
-(The last v0.y.z version and showup of the old program logic. Mostly
+(The last v0.y.z version and show-up of the old program logic. Mostly
 insecure. Not merged with "master" so look for it using tags.)
 - multiple lines writing && rendering,
 - file input/output operations,
@@ -110,7 +111,7 @@ v0.4.3 (2018, June 10):
 v0.4.2 (2018, June 10):
 - makefile update.
 
-### v0.4.1 (2018, June 10):
+v0.4.1 (2018, June 10):
 - docs update.
 
 v0.4.0 (2018, June 10):

@@ -36,7 +36,8 @@ typedef struct
     char     git_branch[NAME_MAX]; // Max size is 250.
 
     // Filename.
-    char*    current_path;
+    char*    path;               // Doesn't include the trailing slash.
+    char     basename[NAME_MAX];
     char     fname[PATH_MAX + NAME_MAX]; // Full filename. Eg. /home/user/basename.
     char     orig_fname[PATH_MAX + NAME_MAX];
 

@@ -3,12 +3,13 @@
 #include "shortcuts.h"
 #include "modes.h"
 #include "file.h"
+#include "path.h"
 
 bool file__set_name(Buff_t* Buffer, const char* arg)
 {
     size_t cw_dir_length;
 
-    if(arg[0]  == '/')
+    if((arg[0]  == '/') || (arg[0]  == '.')) // TODO: PATH INSTEAD OF "../".
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
@@ -16,6 +17,13 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
             return false;
         }
         strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
+
+        if(!path__extract_path_from_arg(Buffer))
+        {
+            return false;
+        }
+        path__extract_basename_from_arg(Buffer);
+        path__merge_path_and_basename(Buffer);
     }
     else // Relative path or the basename.
     {
@@ -25,23 +33,16 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
             return false;
         }
 
-        Buffer->current_path = malloc(PATH_MAX);
-        if(Buffer->current_path == NULL)
+        if(getcwd(Buffer->path, PATH_MAX) != NULL)
         {
-            fprintf(stderr, "Can't alloc a memory for the directory.\n");
-            return false;
-        }
-
-        if(getcwd(Buffer->current_path, PATH_MAX) != NULL)
-        {
-            Buffer->current_path = getcwd(Buffer->current_path, PATH_MAX);
+            Buffer->path = getcwd(Buffer->path, PATH_MAX);
         }
         else
         {
             fprintf(stderr, "Can't get the current directory. Too long.\n");
             return false;
         }
-        cw_dir_length = strlen(Buffer->current_path);
+        cw_dir_length = strlen(Buffer->path);
 
         // Getcwd() returns the path without the slash, which is required here.
         if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
@@ -52,7 +53,7 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
             return false;
         }
 
-        strncpy(Buffer->fname, Buffer->current_path, PATH_MAX); // Copy the path.
+        strncpy(Buffer->fname, Buffer->path, PATH_MAX); // Copy the path.
 
         Buffer->fname[cw_dir_length] = '/'; // Add the slash between.
         Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
@@ -236,41 +237,13 @@ bool file__load_config(Conf_t* Config)
     return true;
 }
 
-bool file__get_git_branch(Buff_t* Buffer)
+bool file__get_git_branch(Buff_t* Buffer) // TODO: ERROR MESSAGES.
 {
     char  git_head_file_path[PATH_MAX + NAME_MAX];
-    char* proj_dir;
     FILE* Git_head_file;
 
-    proj_dir = malloc(PATH_MAX);
-    if(proj_dir == NULL)
-    {
-        fprintf(stderr, "Can't alloc a memory for the directory.\n");
-        return false;
-    }
-
-    if(getcwd(proj_dir, PATH_MAX) != NULL)
-    {
-        getcwd(proj_dir, PATH_MAX);
-    }
-    else
-    {
-        fprintf(stderr, "Can't get the current directory. Too long.\n");
-        return false;
-    }
-    if(strlen(proj_dir) >= (PATH_MAX - SLASH_SZ))
-    {
-        fprintf(stderr,
-                "Can't insert the slash. Current direcory is too long.\n");
-
-        free(proj_dir);
-        return false;
-    }
-
-    strncpy(git_head_file_path, proj_dir, PATH_MAX);
+    strncpy(git_head_file_path, Buffer->path, PATH_MAX);
     strcat(git_head_file_path, "/.git/HEAD");
-
-    free(proj_dir);
 
     if(access(git_head_file_path, F_OK) == ERROR)
     {
