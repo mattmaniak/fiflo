@@ -3,15 +3,15 @@
 
 bool config__load(Conf_t* Config)
 {
-    char conf_fname[] = "/etc/fiflorc";
+    char config_fname[] = "/etc/fiflorc";
 
-    if(access(conf_fname, F_OK) == ERROR) // There is no config file.
+    if(access(config_fname, F_OK) == ERROR) // There is no config file.
     {
         config__set_default(Config);
         return true;
     }
 
-    Config->File = fopen(conf_fname, "r");
+    Config->File = fopen(config_fname, "r");
     if(Config->File != NULL)
     {
         config__load_custom(Config);

@@ -177,7 +177,6 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
             fprintf(stderr, "Can't resize the line forward.\n");
             return false;
         }
-
         strcpy(Buffer->text[line_idx], Buffer->text[line_idx - PREV]);
 
         Buffer->lines_length_idx[line_idx] =

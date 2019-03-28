@@ -50,38 +50,46 @@ char input__getch(void)
     return key;
 }
 
-void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, char* sequence)
+void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
+                               char* sequence)
 {
-    const size_t seq_max = 4;
+    const size_t seq_max = 6;
 
     const char arrow_up[]    = "\033[A";
     const char arrow_down[]  = "\033[B";
     const char arrow_right[] = "\033[C";
     const char arrow_left[]  = "\033[D";
 
+    const char ctrl_arrow_up[]    = "\033[1;5A";
+    const char ctrl_arrow_down[]  = "\033[1;5B";
+
     if(!strcmp(sequence, arrow_up))
     {
-        keys__arrow_up(Buffer);
-        Buffer->chars_sequence = false;
+        shortcuts__arrow_up(Buffer);
     }
     else if(!strcmp(sequence, arrow_down))
     {
-        keys__arrow_down(Buffer);
-        Buffer->chars_sequence = false;
+        shortcuts__arrow_down(Buffer);
     }
     else if(!strcmp(sequence, arrow_right))
     {
-        keys__arrow_right(Buffer, Config);
-        Buffer->chars_sequence = false;
+        shortcuts__arrow_right(Buffer, Config, Modes);
     }
     else if(!strcmp(sequence, arrow_left))
     {
-        keys__arrow_left(Buffer, Config);
-        Buffer->chars_sequence = false;
+        shortcuts__arrow_left(Buffer, Config, Modes);
+    }
+    else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
+    {
+        shortcuts__ctrl__arrow_up(Buffer);
+    }
+    else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end immediately.
+    {
+        shortcuts__ctrl__arrow_down(Buffer);
     }
     else if(strlen(sequence) >= seq_max)
     {
-        Buffer->chars_sequence = false;
+        Buffer->escape_sequence_on_input = false;
     }
 
 #ifdef DEBUG_INPUT
@@ -98,15 +106,15 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, char key)
 
     if(key == CTRL_LEFT_BRACKET)
     {
-        Buffer->chars_sequence = true;
+        Buffer->escape_sequence_on_input = true;
 
 #ifdef DEBUG_INPUT
-        Buffer->chars_sequence = false;
+        Buffer->escape_sequence_on_input = false;
 #endif
 
         char_idx = 0;
     }
-    if(Buffer->chars_sequence)
+    if(Buffer->escape_sequence_on_input)
     {
         chars_sequence[char_idx] = key;
         if(char_idx < (SEQ_MAX - NUL_SZ))
@@ -115,8 +123,8 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, char key)
         }
         chars_sequence[char_idx] = '\0';
 
-        input__recognize_sequence(Buffer, Config, chars_sequence);
-        if(!Buffer->chars_sequence)
+        input__recognize_sequence(Buffer, Config, Modes, chars_sequence);
+        if(!Buffer->escape_sequence_on_input)
         {
             char_idx = 0;
         }

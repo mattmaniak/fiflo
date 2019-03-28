@@ -3,7 +3,7 @@
 
 // User interface components.
 
-#define GIT_LOGO            "|\\ git "
+#define GIT_LOGO            "git |\\ "
 #define GIT_LOGO_LENGTH     7
 #define GIT_BRANCH_AREA_MIN 10
 

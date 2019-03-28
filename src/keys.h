@@ -30,10 +30,4 @@ bool keys__backspace(Buff_t*, Conf_t*);
 // Inserts specified amount of '\t' to emulate the Tab.
 bool keys__tab(Buff_t* Buffer, Conf_t* Config);
 
-// These ones moves the cursor.
-void keys__arrow_left(Buff_t*, Conf_t*);
-void keys__arrow_right(Buff_t*, Conf_t*);
-void keys__arrow_up(Buff_t*);
-void keys__arrow_down(Buff_t*);
-
 #endif

@@ -21,8 +21,9 @@ typedef uint32_t idx_t;
 #define CURSOR_SZ 1
 #define SPACE_SZ  1
 #define SLASH_SZ  1
-
-#define ERROR -1
+#define PREV      1
+#define NEXT      1
+#define ERROR     -1
 
 // Max amount of chars: (16 MB - 1). Newline is also the char.
 #define CHARS_MAX (UINT_MAX / 256)
@@ -32,8 +33,8 @@ typedef uint32_t idx_t;
 
 typedef struct
 {
-    bool     chars_sequence;       // True if pressed key is ANSI escape code.
-    char     git_branch[NAME_MAX]; // Max size is 250 defined in Git.
+    bool     escape_sequence_on_input; // True if pressed key is ANSI escape code.
+    char     git_branch[NAME_MAX];     // Max size is 250 defined in Git.
 
     // Filename.
     char*    pathname;               // Doesn't include the trailing slash.
@@ -71,6 +72,7 @@ Buff_t;
 #define CURRENT_LINE            Buffer->text[CURRENT_LINE_IDX]
 #define CURRENT_LINE_LENGTH_IDX Buffer->lines_length_idx[CURRENT_LINE_IDX]
 #define CURSOR_X_IDX            (CURRENT_LINE_LENGTH_IDX - Buffer->cursor_rev_x)
+#define CURRENT_CHAR            CURRENT_LINE[CURRENT_LINE_LENGTH_IDX]
 
 #define PREVIOUS_LINE_IDX        (CURRENT_LINE_IDX - 1)
 #define PREVIOUS_LINE            Buffer->text[PREVIOUS_LINE_IDX]

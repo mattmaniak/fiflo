@@ -6,6 +6,6 @@
 #include <string.h>
 
 // E.g. "fiflo --version" etc.
-bool options__parse_and_print(const char*);
+bool options__parse_and_print(const char* const);
 
 #endif

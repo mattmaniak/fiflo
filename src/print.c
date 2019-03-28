@@ -12,12 +12,12 @@ void print__line_with_tabs(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
         if(Buffer->text[line_idx][char_idx] == '\t')
         {
             ui__set_color(&Config->Color_whitespace);
-            putchar('>');
+            putchar(TAB_HIGHLIGHT);
         }
         else if(Buffer->text[line_idx][char_idx] == ' ')
         {
             ui__set_color(&Config->Color_whitespace);
-            putchar('-');
+            putchar(SPACE_HIGHLIGHT);
         }
         else
         {

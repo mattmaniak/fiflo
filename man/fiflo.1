@@ -17,6 +17,13 @@ Show a program help.
 .TP
 .B -v, --version
 Display information about a version You use.
+.SH KEYBOARD SHORTCUTS
+.TP
+.B Arrows
+Moves the cursor one column or row by one line or char.
+.TP
+.B Ctrl^Arrows
+Vertically: go to the first/last line.
 .SH SEE ALSO
 fiflorc(5)
 .SH BUGS
@@ -27,7 +34,7 @@ renders a full window every time. On modern terminal emulators, the problem does
 not occur.
 .TP
 .B Ctrl^[ or Esc
-Next 3 chars will be ignored.
+Next six chars will be ignored.
 .TP
 .B Left cursor position during the live filename edit.
 Don't know why the minimum X for the cursor is 1 in that case.

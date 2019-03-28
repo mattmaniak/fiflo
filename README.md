@@ -78,6 +78,8 @@ and it's metadata,semantic macros,
 
 - print - various magic that prints the text,
 
+- shortcuts - keyboard bindings that don't insert chars, e.g. arrows,
+
 - ui - user interface components like bars.
 
 - window.c - window rendering and flushing.

@@ -1,6 +1,6 @@
 #include "options.h"
 
-bool options__parse_and_print(const char* arg)
+bool options__parse_and_print(const char* const arg)
 {
     if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
     {

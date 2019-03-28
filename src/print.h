@@ -3,6 +3,9 @@
 
 // Renders the text itself. Cares about scrolling.
 
+#define SPACE_HIGHLIGHT '-'
+#define TAB_HIGHLIGHT   '>'
+
 // Converts stupidly-implemented tabs into some renderable spaces.
 void print__line_with_tabs(Buff_t*, Conf_t*, idx_t, idx_t, idx_t);
 

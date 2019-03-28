@@ -25,12 +25,13 @@ bool buffer__init(Buff_t* Buffer)
         fprintf(stderr, "Can't alloc a memory the array with lines length.\n");
         return false;
     }
-    Buffer->chars_idx       = 0;
-    Buffer->lines_idx       = 0;
-    Buffer->cursor_rev_x    = 0;
-    Buffer->cursor_rev_y    = 0;
-    CURRENT_LINE_LENGTH_IDX = 0;
-    Buffer->chars_sequence  = false;
+    Buffer->chars_idx                = 0;
+    Buffer->lines_idx                = 0;
+    Buffer->cursor_rev_x             = 0;
+    Buffer->cursor_rev_y             = 0;
+    Buffer->fname_cursor_rev_x       = 0;
+    CURRENT_LINE_LENGTH_IDX          = 0;
+    Buffer->escape_sequence_on_input = false;
 
     CURRENT_LINE = malloc(ADDR_SZ);
     if(CURRENT_LINE == NULL)

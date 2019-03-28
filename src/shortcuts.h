@@ -1,6 +1,9 @@
 #ifndef SHORTCUTS_H
 #define SHORTCUTS_H
 
+#include "config.h"
+#include "modes.h"
+
 // Ancient ASCII control characters that can be used as keyboard shortcuts.
 
 #define CTRL_A             1   // Start of header
@@ -29,5 +32,15 @@
 #define CTRL_CARRET        30  // Record separator.
 #define CTRL_DASH          31  // Unit separator.
 #define BACKSPACE          127 // Delete. Backspace for real.
+
+// These ones moves the cursor.
+void shortcuts__arrow_left(Buff_t*, Conf_t*, Mod_t*);
+void shortcuts__arrow_right(Buff_t*, Conf_t*, Mod_t*);
+void shortcuts__arrow_up(Buff_t*);
+void shortcuts__arrow_down(Buff_t*);
+
+// Scrolls more intensively.
+void shortcuts__ctrl__arrow_up(Buff_t*);
+void shortcuts__ctrl__arrow_down(Buff_t*);
 
 #endif

@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "config.h"
-#include "shortcuts.h"
 #include "modes.h"
+#include "shortcuts.h"
 #include "file.h"
 #include "path.h"
 
@@ -9,7 +9,7 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
 {
     size_t cw_dir_length_idx;
 
-    if((arg[0]  == '/') || (arg[0]  == '.'))
+    if((arg[0]  == '/') || (arg[0]  == '.')) // Absolute or parent dir.
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
@@ -73,16 +73,32 @@ void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
 {
     const char enter  = '\n';
     const char escape = '\033';
+    idx_t      char_idx;
 
     if((key >= 32) && (key != BACKSPACE)
     && ((Buffer->fname_length + IDX) < PATH_MAX))
     {
-        Buffer->fname[Buffer->fname_length] = key;
+        // Shift the part of the filename right.
+        for(char_idx = Buffer->fname_length;
+            char_idx >= Buffer->fname_length - Buffer->fname_cursor_rev_x;
+            char_idx--)
+        {
+            Buffer->fname[char_idx] = Buffer->fname[char_idx - PREV];
+        }
+        Buffer->fname[Buffer->fname_length - Buffer->fname_cursor_rev_x] = key;
         Buffer->fname_length++;
         Buffer->fname[Buffer->fname_length] = '\0';
+
     }
-    else if((key == BACKSPACE) && (Buffer->fname_length > 0))
+    else if((key == BACKSPACE)
+            && ((Buffer->fname_length - Buffer->fname_cursor_rev_x) > 0))
     {
+        // Shift the part of the filename right.
+        for(char_idx = Buffer->fname_length - Buffer->fname_cursor_rev_x;
+            char_idx < Buffer->fname_length; char_idx++)
+        {
+            Buffer->fname[char_idx - PREV] = Buffer->fname[char_idx];
+        }
         Buffer->fname_length--;
         Buffer->fname[Buffer->fname_length] = '\0';
     }
@@ -250,7 +266,7 @@ bool file__get_git_branch(Buff_t* Buffer)
     if(fclose(Git_head_file) == EOF)
     {
         fprintf(stderr,
-                "Can't close the git \"HEAD\" file to get the branch.\n");
+                "Can't close the git \".git/HEAD\" file to get the branch.\n");
         return false;
     }
     return true;

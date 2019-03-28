@@ -6,7 +6,7 @@ fiflo - TODOs and ideas:
 - all escapes and formatting control chars,
 - full text horizontal scroll,
 - pre-allocation of a memory, eg. next 16 lines,
-- scroll with eg. 10 lines ahead,
+- hard vertical scroll,
 - cut/copy/paste,
 - more advanced scroll (eg. full words),
 - fully adaptive cursor,
@@ -18,7 +18,6 @@ fiflo - TODOs and ideas:
 - punch card config,
 - max. left cursor position during live filename edit,
 - refresh the git branch in the separate thread.
-- swap the status message with the git logo and branch,
 - CRLF support,
 - moving the cursor without the window redrawing,
 - distinguish indentation type,

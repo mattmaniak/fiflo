@@ -9,9 +9,10 @@ what's new in the implementation, use git-show or git-log.
 Versions:
 v3.1.0 (WIP):
 - git branch from the file's dir instead of the current working directory,
-- misc. UI changes,
-- default configuration simplified,
-- whitespace highlighting,
+- preconfigured monochrome UI by default,
+- whitespace highlighting (spaces, tabs),
+- Ctrl^Arrows - more advanced scroll.
+- hard scroll instead of soft one,
 - tabs to spaces change in the source code,
 - proper "../"-like paths as arg handling,
 - cursor scroll in the live filename edit mode.
