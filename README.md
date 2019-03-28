@@ -58,6 +58,8 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 - buffer - initialization and deleting the main buffer which holds the text
 and it's metadata,semantic macros,
 
+- chars - ascii codes that are interpreted as text,
+
 - config - fiflorc parser and values setter,
 
 - edit - more complex text editing operations that happens after the keypress,
@@ -70,15 +72,15 @@ and it's metadata,semantic macros,
 
 - input - gets the key and parses it,
 
-- keys - basic actions of every supported key,
+- keys - keyboard bindings that don't insert chars, e.g. arrows,
 
 - memory - (de)allocation of the memory for the text,
 
 - options - "--help" and friends parameters,
 
-- print - various magic that prints the text,
+- path - pathname, basename setting from arg,
 
-- shortcuts - keyboard bindings that don't insert chars, e.g. arrows,
+- print - various magic that prints the text,
 
 - ui - user interface components like bars.
 

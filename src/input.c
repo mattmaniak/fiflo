@@ -1,6 +1,6 @@
 #include "buffer.h"
 #include "config.h"
-#include "shortcuts.h"
+#include "keys.h"
 #include "modes.h"
 #include "input.h"
 
@@ -51,7 +51,7 @@ char input__getch(void)
 }
 
 void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
-                               char* sequence)
+                               const char* const sequence)
 {
     const size_t seq_max = 6;
 
@@ -65,27 +65,27 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
 
     if(!strcmp(sequence, arrow_up))
     {
-        shortcuts__arrow_up(Buffer);
+        keys__arrow_up(Buffer);
     }
     else if(!strcmp(sequence, arrow_down))
     {
-        shortcuts__arrow_down(Buffer);
+        keys__arrow_down(Buffer);
     }
     else if(!strcmp(sequence, arrow_right))
     {
-        shortcuts__arrow_right(Buffer, Config, Modes);
+        keys__arrow_right(Buffer, Config, Modes);
     }
     else if(!strcmp(sequence, arrow_left))
     {
-        shortcuts__arrow_left(Buffer, Config, Modes);
+        keys__arrow_left(Buffer, Config, Modes);
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
-        shortcuts__ctrl__arrow_up(Buffer);
+        keys__ctrl__arrow_up(Buffer);
     }
     else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end immediately.
     {
-        shortcuts__ctrl__arrow_down(Buffer);
+        keys__ctrl__arrow_down(Buffer);
     }
     else if(strlen(sequence) >= seq_max)
     {
@@ -99,7 +99,8 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
 
 }
 
-bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, char key)
+bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
+                      const char key)
 {
     static char  chars_sequence[SEQ_MAX];
     static idx_t char_idx;
@@ -135,7 +136,7 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, char key)
     }
     else
     {
-        return keys__key_action(Buffer, Config, Modes, key);
+        return chars__parse_char(Buffer, Config, Modes, key);
     }
     return true;
 }

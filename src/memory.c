@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "memory.h"
 
-bool memory__extend_line(Buff_t* Buffer, idx_t line_idx)
+bool memory__extend_line(Buff_t* Buffer, const idx_t line_idx)
 {
     idx_t memblock = MEMBLOCK;
 

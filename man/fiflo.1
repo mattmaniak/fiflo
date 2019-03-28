@@ -19,6 +19,19 @@ Show a program help.
 Display information about a version You use.
 .SH KEYBOARD SHORTCUTS
 .TP
+.B Ctrl^D
+Delete the current line.
+.TP
+.B Ctrl^O
+Save as - Switch to the filename edit mode. Enter to confirm and save. Escapes
+returns to the text editing.
+.TP
+.B Ctrl^Q
+Exit.
+.TP
+.B Ctrl^S
+Quickly aave the file with the filename displayed in the upper bar.
+.TP
 .B Arrows
 Moves the cursor one column or row by one line or char.
 .TP
@@ -33,7 +46,7 @@ Blinking window with a default tty. It's caused by the implementation which
 renders a full window every time. On modern terminal emulators, the problem does
 not occur.
 .TP
-.B Ctrl^[ or Esc
+.B Ctrl^[ or Escape
 Next six chars will be ignored.
 .TP
 .B Left cursor position during the live filename edit.

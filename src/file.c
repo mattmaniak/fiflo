@@ -1,11 +1,11 @@
 #include "buffer.h"
 #include "config.h"
 #include "modes.h"
-#include "shortcuts.h"
+#include "keys.h"
 #include "file.h"
 #include "path.h"
 
-bool file__set_name(Buff_t* Buffer, const char* arg)
+bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
     size_t cw_dir_length_idx;
 
@@ -57,7 +57,7 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
         }
         strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy the pathname.
 
-        Buffer->fname[cw_dir_length_idx] = '/'; // Add the slash between.
+        Buffer->fname[cw_dir_length_idx]            = '/'; // Add the slash.
         Buffer->fname[cw_dir_length_idx + SLASH_SZ] = '\0';
 
         // Append the basename.
@@ -69,14 +69,14 @@ bool file__set_name(Buff_t* Buffer, const char* arg)
 }
 
 void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
-                          char key)
+                          const char key)
 {
     const char enter  = '\n';
     const char escape = '\033';
     idx_t      char_idx;
 
     if((key >= 32) && (key != BACKSPACE)
-    && ((Buffer->fname_length + IDX) < PATH_MAX))
+       && ((Buffer->fname_length + IDX) < PATH_MAX))
     {
         // Shift the part of the filename right.
         for(char_idx = Buffer->fname_length;
@@ -124,7 +124,7 @@ void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
     }
 }
 
-bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, char ch)
+bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, const char ch)
 {
     /* Converts in-file '\t' in to sequence of e.g. "\t\t\t\t" if the tab width
     is set to 4. */
@@ -134,7 +134,7 @@ bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, char ch)
             char_idx < (idx_t) (Config->Tab_width.value - AT_LEAST_ONE_TAB);
             char_idx++)
         {
-            if(!keys__printable_char(Buffer, ch))
+            if(!chars__printable_char(Buffer, ch))
             {
                 return false;
             }
@@ -166,7 +166,7 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
         {
             return false;
         }
-        if(!keys__printable_char(Buffer, ch))
+        if(!chars__printable_char(Buffer, ch))
         {
             return false;
         }
@@ -177,11 +177,12 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
         return false;
     }
     SET_STATUS("read the file");
+
     return true;
 }
 
-void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
-                               idx_t* char_idx)
+void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config,
+                               const idx_t line_idx, idx_t* char_idx)
 {
     // Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
     for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
@@ -215,6 +216,7 @@ bool file__save(Buff_t* Buffer, Conf_t* Config)
             char_idx < Buffer->lines_length_idx[line_idx]; char_idx++)
         {
             file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
+
             putc(Buffer->text[line_idx][char_idx], Textfile);
         }
     }
@@ -255,6 +257,8 @@ bool file__get_git_branch(Buff_t* Buffer)
         strcpy(Buffer->git_branch, "[none]");
         return true;
     }
+
+    // Read the content of the file.
     while(fgets(Buffer->git_branch, NAME_MAX, Git_head_file) != NULL)
 
     // Delete the linefeed from the name.

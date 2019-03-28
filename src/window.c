@@ -4,7 +4,7 @@
 #include "ui.h"
 #include "window.h"
 
-term_t window__get_terminal_sz(char axis)
+term_t window__get_terminal_sz(const char axis)
 {
     const int line_sz = 1;
     const int sz_max  = USHRT_MAX;

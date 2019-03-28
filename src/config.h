@@ -23,6 +23,9 @@
 #define BRIGHT_CYAN    96
 #define BRIGHT_WHITE   97
 
+#define MIN_TAB_SZ 2
+#define MAX_TAB_SZ 8
+
 typedef struct
 {
     char selector[32];
@@ -36,9 +39,9 @@ typedef struct
     Opt_t Color_ui;
     Opt_t Color_line_number;
     Opt_t Color_line_number_current;
-    Opt_t Color_whitespace;
     Opt_t Color_text;
     Opt_t Color_warning;
+    Opt_t Color_whitespace;
     Opt_t Tab_width;
 }
 Conf_t;
@@ -50,10 +53,10 @@ bool config__load(Conf_t*);
 void config__init_selectors(Conf_t*);
 
 // Check if selector_in_file == expected_selector.
-void config__parse_selector(Conf_t*, char*, int);
+void config__parse_selector(Conf_t*, const char* const, const int);
 
 // Convert a word into an ASCII escape code.
-int config__encode_color(Conf_t*, char*);
+int config__parse_value(const char* const);
 
 // As in the name. Wow.
 void config__set_default(Conf_t*);

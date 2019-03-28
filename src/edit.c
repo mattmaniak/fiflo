@@ -1,5 +1,5 @@
 #include "buffer.h"
-#include "shortcuts.h"
+#include "keys.h"
 #include "edit.h"
 
 bool edit__delete_char(Buff_t* Buffer)
@@ -80,7 +80,7 @@ bool edit__delete_line(Buff_t* Buffer)
     return true;
 }
 
-void edit__shift_text_horizonally(Buff_t* Buffer, char direction)
+void edit__shift_text_horizonally(Buff_t* Buffer, const char direction)
 {
     const size_t prev     = 1;
     idx_t        char_idx = CURSOR_X_IDX;

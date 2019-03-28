@@ -5,9 +5,9 @@
 #include "print.h"
 
 void print__line_with_tabs(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
-                           idx_t start_chars_idx, idx_t end_char_idx)
+                           idx_t start_char_idx, idx_t end_char_idx)
 {
-    for(idx_t char_idx = start_chars_idx; char_idx < end_char_idx; char_idx++)
+    for(idx_t char_idx = start_char_idx; char_idx < end_char_idx; char_idx++)
     {
         if(Buffer->text[line_idx][char_idx] == '\t')
         {
@@ -81,11 +81,8 @@ void print__another_line(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config,
     }
     else
     {
-        print__line_with_tabs(Buffer, Config, line_idx, 0, (idx_t) Ui->text_x - LF_SZ);
-    }
-
-    if(Buffer->lines_length_idx[line_idx] >= Ui->text_x)
-    {
+        print__line_with_tabs(Buffer, Config, line_idx, 0,
+                              (idx_t) Ui->text_x - LF_SZ);
         WRAP_LINE();
     }
 }
@@ -114,7 +111,9 @@ void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     {
         print__another_line(Buffer, Ui, Config, line_idx);
     }
-    ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX, Ui->line_num_length);
+    ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX,
+                          Ui->line_num_length);
+
     print__actual_line(Buffer, Config, Ui);
 
     if(CURSOR_Y_SCROLLED)
@@ -197,7 +196,8 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
         {
             chars_end_offset--;
         }
-        print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX, 0, chars_end_offset);
+        print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX, 0,
+                              chars_end_offset);
 
     }
     // Chars won't fits in the horizontal space.
@@ -228,6 +228,7 @@ void print__display_text(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     }
     else
     {
+        // first_rendered_line_idx = ;
         print__scroll_lines(Buffer, Ui, Config);
     }
 }

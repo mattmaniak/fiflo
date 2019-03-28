@@ -3,7 +3,7 @@
 #include "modes.h"
 #include "fiflo.h"
 
-void fiflo__run(const char* arg)
+void fiflo__run(const char* const arg)
 {
     char pressed_key = '\0'; // This assignment as the initializer only.
 
@@ -52,7 +52,6 @@ void fiflo__run(const char* arg)
         }
         window__flush();
     }
-
     free:
     buffer__free(&Buffer);
 }

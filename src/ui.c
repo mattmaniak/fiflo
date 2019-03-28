@@ -15,8 +15,8 @@ void ui__set_color(Opt_t* Option)
     }
 }
 
-void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
-                           term_t line_num_length)
+void ui__print_line_number(Buff_t* Buffer, Conf_t* Config, const idx_t line_idx,
+                           const term_t line_num_length)
 {
     ui__set_color(&Config->Color_line_number);
 
@@ -76,12 +76,11 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, Ui_t* Ui)
         "CTRL^D - delete line",
         "CTRL^O - save as",
         "CTRL^Q - exit",
-        "CTRL^O - save",
+        "CTRL^S - save",
         "CTRL^\\ - keyboard shortcuts"
     };
 
     sprintf(punch_card, "%u", punch_card_width);
-
     WRAP_LINE();
 
     ui__set_color(NULL); // Resets the last line color.

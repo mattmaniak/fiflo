@@ -12,10 +12,10 @@ v3.1.0 (WIP):
 - preconfigured monochrome UI by default,
 - whitespace highlighting (spaces, tabs),
 - Ctrl^Arrows - more advanced scroll.
-- hard scroll instead of soft one,
 - tabs to spaces change in the source code,
-- proper "../"-like paths as arg handling,
-- cursor scroll in the live filename edit mode.
+- proper "../"-like paths as parameter handling,
+- cursor scroll in the live filename edit mode,
+- wrong values in the config file prevention.
 
 v3.0.2 (2019, March 25):
 - punch card scrolling fix.

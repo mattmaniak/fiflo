@@ -3,7 +3,7 @@
 
 // All the unseen magic that will happen when You insert the char.
 
-extern bool memory__extend_line(Buff_t*, idx_t);
+extern bool memory__extend_line(Buff_t*, const idx_t);
 extern bool memory__shrink_current_line(Buff_t*);
 extern bool memory__shrink_prev_line(Buff_t*);
 extern bool memory__shrink_lines_array(Buff_t*);
@@ -17,7 +17,7 @@ bool edit__delete_char(Buff_t*);
 bool edit__delete_line(Buff_t*);
 
 // Moves the text when the cursor is moved left and char is pressed.
-void edit__shift_text_horizonally(Buff_t*, char);
+void edit__shift_text_horizonally(Buff_t*, const char);
 
 // As in the name, but supports Y shift with the cursor scrolled horizontally.
 bool edit__move_lines_forward(Buff_t*);
