@@ -1,13 +1,17 @@
 # fiflo
 Terminal-based text editor with Common User Access keyboard shortcuts.
 
+## Abstract
+Learn C by writing in pure C. It is exercise where I've started learning
+pointers and memory management. As You can see it has grown to the text editor.
+
 ## Usage
 ### Check the requirements for the GNU/Linux:
 - git,
 - make,
 - gcc >= 4.9 or clang >= 3.6,
 - gzip (only for the installation),
-- sudo (only for the installation).
+- sudo (only for the installation, even for the bare Debian on root).
 
 ### Clone on a desktop, compile and run.
 ```
@@ -61,6 +65,8 @@ and it's metadata,semantic macros,
 - fiflo - the main file, just "main" and the execution loop,
 
 - file - read/save the file, live editing the filename,
+
+- filename - working dir and name setting,
 
 - input - gets the key and parses it,
 

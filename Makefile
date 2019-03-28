@@ -110,6 +110,7 @@ install_debug:
 
 	@echo " "
 	@echo "Binary only installation with ASan and gcov support finished."
+install_debug : clean
 
 .PHONY: uninstall
 uninstall:

@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "path.h"
 
-bool path__extract_path_from_arg(Buff_t* Buffer)
+bool path__extract_pathname_from_arg(Buff_t* Buffer)
 {
     size_t char_idx           = 0;
     size_t last_slash_pos_idx = 0;
@@ -14,27 +14,25 @@ bool path__extract_path_from_arg(Buff_t* Buffer)
         }
         char_idx++;
     }
-    strncpy(Buffer->path, Buffer->fname, last_slash_pos_idx);
+    strncpy(Buffer->pathname, Buffer->fname, last_slash_pos_idx);
 
-    Buffer->path[last_slash_pos_idx] = '\0';
+    Buffer->pathname[last_slash_pos_idx] = '\0';
 
-    if(chdir(Buffer->path) == ERROR)
+    if(chdir(Buffer->pathname) == ERROR)
     {
         fprintf(stderr, "Can't change the current direcory.\n");
         return false;
     }
 
-    if(getcwd(Buffer->path, PATH_MAX) != NULL)
+    if(getcwd(Buffer->pathname, PATH_MAX) != NULL)
     {
-        Buffer->path = getcwd(Buffer->path, PATH_MAX);
+        Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX);
     }
     else
     {
         fprintf(stderr, "Can't get the current directory. Too long.\n");
         return false;
     }
-    puts(Buffer->path);
-
     return true;
 }
 
@@ -53,13 +51,11 @@ void path__extract_basename_from_arg(Buff_t* Buffer)
         char_idx--;
     }
     strcpy(Buffer->basename, &Buffer->fname[last_slash_pos_idx]);
-
-    puts(Buffer->basename);
 }
 
-void path__merge_path_and_basename(Buff_t* Buffer)
+void path__merge_pathname_and_basename(Buff_t* Buffer)
 {
-    strcpy(Buffer->fname, Buffer->path);
+    strcpy(Buffer->fname, Buffer->pathname);
     Buffer->fname[strlen(Buffer->fname)] = '/';
 
     strcat(Buffer->fname, Buffer->basename);

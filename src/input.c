@@ -96,7 +96,7 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, char key)
     static char  chars_sequence[SEQ_MAX];
     static idx_t char_idx;
 
-    if((key == CTRL_LEFT_BRACKET) && (!Modes->live_fname_edit))
+    if(key == CTRL_LEFT_BRACKET)
     {
         Buffer->chars_sequence = true;
 

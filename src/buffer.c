@@ -2,8 +2,8 @@
 
 bool buffer__init(Buff_t* Buffer)
 {
-    Buffer->path = malloc(PATH_MAX);
-    if(Buffer->path == NULL)
+    Buffer->pathname = malloc(PATH_MAX);
+    if(Buffer->pathname == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for the directory.\n");
         return false;
@@ -58,8 +58,8 @@ void buffer__free(Buff_t* Buffer)
     {
         free(Buffer->text);
     }
-    if(Buffer->path != NULL)
+    if(Buffer->pathname != NULL)
     {
-        free(Buffer->path);
+        free(Buffer->pathname);
     }
 }

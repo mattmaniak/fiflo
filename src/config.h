@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define RED            31
 #define GREEN          32
@@ -41,6 +42,9 @@ typedef struct
     Opt_t Tab_width;
 }
 Conf_t;
+
+// Opens the "~/.config/fiflorc"
+bool config__load(Conf_t*);
 
 // Sets the selectors names.
 void config__init_selectors(Conf_t*);

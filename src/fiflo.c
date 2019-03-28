@@ -17,7 +17,7 @@ void fiflo__run(const char* arg)
     {
         goto free;
     }
-    if(!file__load_config(&Config))
+    if(!config__load(&Config))
     {
         goto free;
     }
@@ -29,7 +29,7 @@ void fiflo__run(const char* arg)
     {
         goto free;
     }
-    strncpy(Buffer.orig_fname, Buffer.fname, PATH_MAX);
+    strncpy(Buffer.fname_copy, Buffer.fname, PATH_MAX);
 
     for(;;) // The main program loop.
     {
@@ -89,8 +89,8 @@ int main(int argc, char** argv)
                 PATH_MAX + NAME_MAX);
         goto exit;
     }
-
     exit:
-    fflush(NULL);
+    fflush(NULL); // Clean both output buffers.
+
     return 0;
 }

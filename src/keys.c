@@ -230,6 +230,10 @@ void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
 {
     bool more_than_one_line = Buffer->lines_idx > 0;
 
+    // if(Buffer->liv)
+    // {
+    //
+    // }
     if(!CURSOR_AT_LINE_START)
     {
         // Skip the e.g "\t\t\t\t" as the one tab.
@@ -258,6 +262,10 @@ void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
 
 void keys__arrow_right(Buff_t* Buffer, Conf_t* Config)
 {
+    // if(Buffer->live_fname_edit)
+    // {
+    //
+    // }
     if(CURSOR_X_SCROLLED)
     {
         // Skip the e.g "\t\t\t\t" as the one tab.

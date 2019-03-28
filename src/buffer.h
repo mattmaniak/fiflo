@@ -33,16 +33,17 @@ typedef uint32_t idx_t;
 typedef struct
 {
     bool     chars_sequence;       // True if pressed key is ANSI escape code.
-    char     git_branch[NAME_MAX]; // Max size is 250.
+    char     git_branch[NAME_MAX]; // Max size is 250 defined in Git.
 
     // Filename.
-    char*    path;               // Doesn't include the trailing slash.
+    char*    pathname;               // Doesn't include the trailing slash.
     char     basename[NAME_MAX];
     char     fname[PATH_MAX + NAME_MAX]; // Full filename. Eg. /home/user/basename.
-    char     orig_fname[PATH_MAX + NAME_MAX];
+    char     fname_copy[PATH_MAX + NAME_MAX];
 
     const uint16_t padding;
 
+    idx_t    fname_cursor_rev_x; // TODO.
     size_t   fname_length;       // Strlen of the above array.
 
     // File's content and some indicators.

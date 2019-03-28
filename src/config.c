@@ -1,4 +1,29 @@
 #include "config.h"
+#include "buffer.h"
+
+bool config__load(Conf_t* Config)
+{
+    char conf_fname[] = "/etc/fiflorc";
+
+    if(access(conf_fname, F_OK) == ERROR) // There is no config file.
+    {
+        config__set_default(Config);
+        return true;
+    }
+
+    Config->File = fopen(conf_fname, "r");
+    if(Config->File != NULL)
+    {
+        config__load_custom(Config);
+
+        if(fclose(Config->File) == EOF)
+        {
+            fprintf(stderr, "Can't close the config file.\n");
+            return false;
+        }
+    }
+    return true;
+}
 
 void config__init_selectors(Conf_t* Config)
 {
@@ -148,7 +173,7 @@ void config__load_custom(Conf_t* Config)
         {
             continue;
         }
-        // Splits around the " = ".
+        // Splits the string around the " = ".
         strncpy(selector, strtok(line, " = "), 48);
         strncpy(value,    strtok(NULL, " = "), 32);
 

@@ -25,9 +25,6 @@ void file__convert_tab_to_file(Buff_t*, Conf_t*, idx_t, idx_t*);
 // Puts the whole text to the file.
 bool file__save(Buff_t*, Conf_t*);
 
-// Opens the "~/.config/fiflorc"
-bool file__load_config(Conf_t*);
-
 // Reads the set branch from the ".git/" dir.
 bool file__get_git_branch(Buff_t*);
 

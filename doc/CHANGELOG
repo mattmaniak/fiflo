@@ -10,10 +10,11 @@ Versions:
 v3.1.0 (WIP):
 - git branch from the file's dir instead of the current working directory,
 - misc. UI changes,
-- default config changed,
+- default configuration simplified,
 - whitespace highlighting,
 - tabs to spaces change in the source code,
-- proper "../"-like paths as arg handling.
+- proper "../"-like paths as arg handling,
+- cursor scroll in the live filename edit mode.
 
 v3.0.2 (2019, March 25):
 - punch card scrolling fix.
