@@ -38,49 +38,43 @@ void config__init_selectors(Conf_t* Config)
     strcpy(Config->Tab_width.selector,         "tab-width");
 }
 
-void config__parse_selector(Conf_t* Config, const char* const selector,
+bool config__parse_selector(Conf_t* Config, const char* const selector,
                             const int value)
 {
     // Adds the value to the found selector in the configuration.
-
-    if((value >= MIN_TAB_SZ) && (value <= MAX_TAB_SZ))
+    if(!strcmp(Config->Color_ui.selector, selector))
     {
-        if(!strcmp(Config->Tab_width.selector, selector))
-        {
-            Config->Tab_width.value = value;
-        }
+        Config->Color_ui.value = value;
     }
-    else if(value >= RED) // Colors.
+    else if(!strcmp(Config->Color_line_number_current.selector, selector))
     {
-        if(!strcmp(Config->Color_ui.selector, selector))
-        {
-            Config->Color_ui.value = value;
-        }
-        else if(!strcmp(Config->Color_line_number_current.selector, selector))
-        {
-            Config->Color_line_number_current.value = value;
-        }
-        else if(!strcmp(Config->Color_line_number.selector, selector))
-        {
-            Config->Color_line_number.value = value;
-        }
-        else if(!strcmp(Config->Color_text.selector, selector))
-        {
-            Config->Color_text.value = value;
-        }
-        else if(!strcmp(Config->Color_warning.selector, selector))
-        {
-            Config->Color_warning.value = value;
-        }
-        else if(!strcmp(Config->Color_whitespace.selector, selector))
-        {
-            Config->Color_whitespace.value = value;
-        }
+        Config->Color_line_number_current.value = value;
+    }
+    else if(!strcmp(Config->Color_line_number.selector, selector))
+    {
+        Config->Color_line_number.value = value;
+    }
+    else if(!strcmp(Config->Color_text.selector, selector))
+    {
+        Config->Color_text.value = value;
+    }
+    else if(!strcmp(Config->Color_warning.selector, selector))
+    {
+        Config->Color_warning.value = value;
+    }
+    else if(!strcmp(Config->Color_whitespace.selector, selector))
+    {
+        Config->Color_whitespace.value = value;
+    }
+    else if(!strcmp(Config->Tab_width.selector, selector))
+    {
+        Config->Tab_width.value = value;
     }
     else
     {
-        config__set_default(Config);
+        return false;
     }
+    return true;
 }
 
 int config__parse_value(const char* const read_value)
@@ -170,7 +164,7 @@ void config__load_custom(Conf_t* Config)
 
     while(fgets(line, 80, Config->File) != NULL)
     {
-        if((line[0] == '#') || (line[0] <= ' ')) // Hash, space or unseen char.
+        if((line[0] == '#') || (line[0] <= 32)) // Hash, space or unseen char.
         {
             continue;
         }
@@ -179,7 +173,12 @@ void config__load_custom(Conf_t* Config)
         strncpy(value,    strtok(NULL, " = "), 32);
 
         parsed_value = config__parse_value(value);
-        config__parse_selector(Config, selector, parsed_value);
+
+        if(!config__parse_selector(Config, selector, parsed_value))
+        {
+            config__set_default(Config);
+            break;
+        }
     }
     if(parsed_value == 0) // If the whole file is commented out.
     {

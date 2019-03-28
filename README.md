@@ -41,7 +41,7 @@ and it's configuration guide.
 man fiflorc
 ```
 
-### Optional cleanup - remove "bin"/ and "obj/" after the compilation
+### Optional cleanup - remove bin/ and obj/ after the compilation
 ```
 make clean
 ```
@@ -105,9 +105,9 @@ make debug
 ```
 
 After that and the fiflo execution, there is possibility to check the code
-coverage. It will create the "cov/" dir and put the every source file with
-codecov marked after the previous execution The program must be compiled with
-the "debug" option previously. Gcc only.
+coverage. It will create the cov/ dir and put the every source file with codecov
+marked after the previous execution The program must be compiled with the
+"debug" option previously. Gcc only.
 ```
 make coverage
 ```
@@ -118,11 +118,11 @@ valgrind -v ./fiflo [optional args for the editor]
 ```
 Remark: fiflo must be compiled without ASan and MSan.
 
-### Compile and install only the debugable binary.
+### Install only the binary with ASan linked for debugging.
 ```
 sudo make install_debug
 ```
 
 ## FAQ
-Will you port it into the Windows?
+Will you port it to the Windows?
 - No.

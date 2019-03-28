@@ -53,7 +53,7 @@ bool config__load(Conf_t*);
 void config__init_selectors(Conf_t*);
 
 // Check if selector_in_file == expected_selector.
-void config__parse_selector(Conf_t*, const char* const, const int);
+bool config__parse_selector(Conf_t*, const char* const, const int);
 
 // Convert a word into an ASCII escape code.
 int config__parse_value(const char* const);

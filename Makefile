@@ -103,14 +103,12 @@ install:
 	@echo "Fiflo installed."
 
 .PHONY: install_debug
-install_debug: debug
 install_debug:
 	@echo " "
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
 	@echo " "
 	@echo "Binary only installation with ASan and gcov support finished."
-install_debug : clean
 
 .PHONY: uninstall
 uninstall:
