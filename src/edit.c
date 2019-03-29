@@ -199,3 +199,59 @@ bool edit__delete_last_line(Buff_t* Buffer)
     Buffer->lines_idx--;
     return memory__shrink_lines_array(Buffer);
 }
+
+void edit__filename(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
+                    const char key)
+{
+    const char enter  = '\n';
+    const char escape = '\033';
+    idx_t      char_idx;
+
+    if((key >= 32) && (key != BACKSPACE)
+       && ((Buffer->fname_length + IDX) < PATH_MAX))
+    {
+        // Shift the part of the filename right.
+        for(char_idx = Buffer->fname_length;
+            char_idx >= Buffer->fname_length - Buffer->fname_cursor_rev_x;
+            char_idx--)
+        {
+            Buffer->fname[char_idx] = Buffer->fname[char_idx - PREV];
+        }
+        Buffer->fname[Buffer->fname_length - Buffer->fname_cursor_rev_x] = key;
+        Buffer->fname_length++;
+        Buffer->fname[Buffer->fname_length] = '\0';
+
+    }
+    else if((key == BACKSPACE)
+            && ((Buffer->fname_length - Buffer->fname_cursor_rev_x) > 0))
+    {
+        // Shift the part of the filename right.
+        for(char_idx = Buffer->fname_length - Buffer->fname_cursor_rev_x;
+            char_idx < Buffer->fname_length; char_idx++)
+        {
+            Buffer->fname[char_idx - PREV] = Buffer->fname[char_idx];
+        }
+        Buffer->fname_length--;
+        Buffer->fname[Buffer->fname_length] = '\0';
+    }
+    else if(key == enter)
+    {
+        Modes->live_fname_edit = false;
+        SET_STATUS("filename edited and saved as");
+
+        if(!strcmp(Buffer->fname, Buffer->fname_copy))
+        {
+            SET_STATUS("saved as");
+        }
+        file__save(Buffer, Config);
+        strncpy(Buffer->fname_copy, Buffer->fname, PATH_MAX);
+    }
+    else if(key == escape)
+    {
+        strncpy(Buffer->fname, Buffer->fname_copy, PATH_MAX);
+        Buffer->fname_length = strlen(Buffer->fname);
+
+        Modes->live_fname_edit = false;
+        SET_STATUS("filename unchanged");
+    }
+}

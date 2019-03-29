@@ -10,6 +10,8 @@ extern bool memory__shrink_lines_array(Buff_t*);
 extern bool memory__copy_lines_forward(Buff_t*);
 extern bool memory__copy_lines_backward(Buff_t*);
 
+extern bool file__save(Buff_t*, Conf_t*);
+
 // Optionally shifts the text horizontally.
 bool edit__delete_char(Buff_t*);
 
@@ -30,5 +32,8 @@ bool edit__delete_last_empty_line(Buff_t*);
 
 // As in the name.
 bool edit__delete_last_line(Buff_t*);
+
+// When the CTRL^O is pressed, there is possibility to basically edit the fname.
+void edit__filename(Buff_t*, Conf_t*, Mod_t*, const char);
 
 #endif

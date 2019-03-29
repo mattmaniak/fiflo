@@ -132,7 +132,7 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
     }
     else if(Modes->live_fname_edit)
     {
-        file__live_edit_name(Buffer, Config, Modes, key);
+        edit__filename(Buffer, Config, Modes, key);
     }
     else
     {

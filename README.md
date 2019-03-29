@@ -84,7 +84,7 @@ and it's metadata,semantic macros,
 
 - ui - user interface components like bars.
 
-- window.c - window rendering and flushing.
+- window - window rendering and flushing.
 
 ### Needed tools for debugging:
 - AddressSanitizer (built-in gcc and clang),

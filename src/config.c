@@ -42,33 +42,39 @@ bool config__parse_selector(Conf_t* Config, const char* const selector,
                             const int value)
 {
     // Adds the value to the found selector in the configuration.
-    if(!strcmp(Config->Color_ui.selector, selector))
+    if(value >= RED)
     {
-        Config->Color_ui.value = value;
-    }
-    else if(!strcmp(Config->Color_line_number_current.selector, selector))
-    {
-        Config->Color_line_number_current.value = value;
-    }
-    else if(!strcmp(Config->Color_line_number.selector, selector))
-    {
-        Config->Color_line_number.value = value;
-    }
-    else if(!strcmp(Config->Color_text.selector, selector))
-    {
-        Config->Color_text.value = value;
-    }
-    else if(!strcmp(Config->Color_warning.selector, selector))
-    {
-        Config->Color_warning.value = value;
-    }
-    else if(!strcmp(Config->Color_whitespace.selector, selector))
-    {
-        Config->Color_whitespace.value = value;
+        if(!strcmp(Config->Color_ui.selector, selector))
+        {
+            Config->Color_ui.value = value;
+        }
+        else if(!strcmp(Config->Color_line_number_current.selector, selector))
+        {
+            Config->Color_line_number_current.value = value;
+        }
+        else if(!strcmp(Config->Color_line_number.selector, selector))
+        {
+            Config->Color_line_number.value = value;
+        }
+        else if(!strcmp(Config->Color_text.selector, selector))
+        {
+            Config->Color_text.value = value;
+        }
+        else if(!strcmp(Config->Color_warning.selector, selector))
+        {
+            Config->Color_warning.value = value;
+        }
+        else if(!strcmp(Config->Color_whitespace.selector, selector))
+        {
+            Config->Color_whitespace.value = value;
+        }
     }
     else if(!strcmp(Config->Tab_width.selector, selector))
     {
-        Config->Tab_width.value = value;
+        if((value >= MIN_TAB_SZ) && (value <= MAX_TAB_SZ))
+        {
+            Config->Tab_width.value = value;
+        }
     }
     else
     {

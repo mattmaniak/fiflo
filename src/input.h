@@ -5,7 +5,7 @@
 
 #define SEQ_MAX 8
 
-extern void file__live_edit_name(Buff_t*, Conf_t*, Mod_t*, const char);
+extern void edit__filename(Buff_t*, Conf_t*, Mod_t*, const char);
 
 extern bool chars__parse_char(Buff_t*, Conf_t*, Mod_t*, const char);
 extern void shortcuts__arrow_left(Buff_t*, Conf_t*, Mod_t*);

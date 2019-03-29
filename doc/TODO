@@ -19,5 +19,4 @@ fiflo - TODOs and ideas:
 - refresh the git branch in the separate thread.
 - CRLF support,
 - moving the cursor without the window redrawing,
-- distinguish indentation type,
-- repair punch card override highlighting.
+- distinguish indentation type.

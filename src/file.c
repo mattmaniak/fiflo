@@ -68,62 +68,6 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
     return true;
 }
 
-void file__live_edit_name(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
-                          const char key)
-{
-    const char enter  = '\n';
-    const char escape = '\033';
-    idx_t      char_idx;
-
-    if((key >= 32) && (key != BACKSPACE)
-       && ((Buffer->fname_length + IDX) < PATH_MAX))
-    {
-        // Shift the part of the filename right.
-        for(char_idx = Buffer->fname_length;
-            char_idx >= Buffer->fname_length - Buffer->fname_cursor_rev_x;
-            char_idx--)
-        {
-            Buffer->fname[char_idx] = Buffer->fname[char_idx - PREV];
-        }
-        Buffer->fname[Buffer->fname_length - Buffer->fname_cursor_rev_x] = key;
-        Buffer->fname_length++;
-        Buffer->fname[Buffer->fname_length] = '\0';
-
-    }
-    else if((key == BACKSPACE)
-            && ((Buffer->fname_length - Buffer->fname_cursor_rev_x) > 0))
-    {
-        // Shift the part of the filename right.
-        for(char_idx = Buffer->fname_length - Buffer->fname_cursor_rev_x;
-            char_idx < Buffer->fname_length; char_idx++)
-        {
-            Buffer->fname[char_idx - PREV] = Buffer->fname[char_idx];
-        }
-        Buffer->fname_length--;
-        Buffer->fname[Buffer->fname_length] = '\0';
-    }
-    else if(key == enter)
-    {
-        Modes->live_fname_edit = false;
-        SET_STATUS("filename edited and saved as");
-
-        if(!strcmp(Buffer->fname, Buffer->fname_copy))
-        {
-            SET_STATUS("saved as");
-        }
-        file__save(Buffer, Config);
-        strncpy(Buffer->fname_copy, Buffer->fname, PATH_MAX);
-    }
-    else if(key == escape)
-    {
-        strncpy(Buffer->fname, Buffer->fname_copy, PATH_MAX);
-        Buffer->fname_length = strlen(Buffer->fname);
-
-        Modes->live_fname_edit = false;
-        SET_STATUS("filename unchanged");
-    }
-}
-
 bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, const char ch)
 {
     /* Converts in-file '\t' in to sequence of e.g. "\t\t\t\t" if the tab width

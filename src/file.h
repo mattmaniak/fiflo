@@ -10,9 +10,6 @@ extern bool chars__printable_char(Buff_t*, const char);
 // Sets the filename. If basename is passed as arg actent path will be added.
 bool file__set_name(Buff_t*, const char* const);
 
-// When the CTRL^O is pressed, there is possibility to basically edit the fname.
-void file__live_edit_name(Buff_t*, Conf_t*, Mod_t*, const char);
-
 // If there is tab char in a file, load e.g. 4 tabs to a memory.
 bool file__convert_tab_from_file(Buff_t*, Conf_t*, const char);
 
