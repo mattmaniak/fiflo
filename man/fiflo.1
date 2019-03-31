@@ -17,6 +17,29 @@ Show a program help.
 .TP
 .B -v, --version
 Display information about a version You use.
+.SH KEYBOARD
+.TP
+.B Ctrl^D
+Delete the current line.
+.TP
+.B Ctrl^O
+Save as - Switch to the filename edit mode. Enter to confirm and save. Escapes
+returns to the text editing.
+.TP
+.B Ctrl^Q
+Exit.
+.TP
+.B Ctrl^S
+Quickly save the file with the filename displayed in the upper bar.
+.TP
+.B Ctrl^Backslash
+Expand the lower bar with basic keyboard shortcuts.
+.TP
+.B Arrows
+Moves the cursor one column or row by one line or char.
+.TP
+.B Ctrl^Arrows
+Vertically: go to the first/last line.
 .SH SEE ALSO
 fiflorc(5)
 .SH BUGS
@@ -26,10 +49,14 @@ Blinking window with a default tty. It's caused by the implementation which
 renders a full window every time. On modern terminal emulators, the problem does
 not occur.
 .TP
-.B Ctrl^[ or Esc
-Next 3 chars will be ignored.
+.B Ctrl^[ or Escape
+The next five chars will be ignored.
 .TP
-.B Left cursor position during the live filename edit.
+.B Editing filename and the minimal left cursor position.
 Don't know why the minimum X for the cursor is 1 in that case.
+.TP
+.B Using arrows during the live filename edit
+It will insert some of the escape sequence chars to the text and exit from
+filename edition mode.
 .SH AUTHOR
 mattmaniak

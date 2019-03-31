@@ -1,39 +1,46 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-// Currently supported characters and their actions inside.
+#include "config.h"
+#include "modes.h"
 
-extern bool memory__extend_line(Buff_t*, idx_t);
-extern bool memory__extend_lines_array(Buff_t*);
-extern bool memory__copy_lines_forward(Buff_t*);
+// Ancient ASCII control characters that can be used as keyboard shortcuts.
 
-extern bool edit__delete_line(Buff_t*);
-extern void edit__shift_text_horizonally(Buff_t*, char);
-extern bool edit__move_lines_forward(Buff_t*);
-extern bool edit__delete_last_empty_line(Buff_t*);
-extern bool edit__delete_char(Buff_t*);
-
-extern bool file__save(Buff_t*, Conf_t*);
-
-// Knows what to do next with pressed key or combination. Based on ASCII.
-bool keys__key_action(Buff_t*, Conf_t*, Mod_t*, char);
-
-// Adds char when the pressed key is a printable one.
-bool keys__printable_char(Buff_t*, char);
-
-// Initialize the new line.
-bool keys__linefeed(Buff_t*);
-
-// Removes a last char and optionally deletes the last line.
-bool keys__backspace(Buff_t*, Conf_t*);
-
-// Inserts specified amount of '\t' to emulate the Tab.
-bool keys__tab(Buff_t* Buffer, Conf_t* Config);
+#define CTRL_A             1   // Start of header
+#define CTRL_B             2   // Start of text.
+#define CTRL_C             3   // End of text.
+#define CTRL_D             4   // End of transmission.
+#define	CTRL_E             5   // Enquiry.
+#define CTRL_F             6   // Acknowledge.
+#define CTRL_M             13  // Carriage return. Converted to linefeed (10).
+#define CTRL_N             14  // Shift out.
+#define CTRL_O             15  // Shift in.
+#define CTRL_P             16  // Data link escape.
+#define CTRL_Q             17  // Device control 1 (xon).
+#define CTRL_R             18  // Device control 2.
+#define CTRL_S             19  // Device control 3 (xoff).
+#define CTRL_T             20  // Device control 4.
+#define CTRL_U             21  // Negative acknowledge.
+#define CTRL_V             22  // Synchronous idle.
+#define CTRL_W             23  // End of transmission block.
+#define CTRL_X             24  // Cancel.
+#define CTRL_Y             25  // End of medium.
+#define CTRL_Z             26  // Substitute.
+#define CTRL_LEFT_BRACKET  27  // Escape for ANSI codes.
+#define CTRL_BACKSLASH     28  // File separator.
+#define CTRL_RIGHT_BRACKET 29  // Group separator.
+#define CTRL_CARRET        30  // Record separator.
+#define CTRL_DASH          31  // Unit separator.
+#define BACKSPACE          127 // Delete. Backspace for real.
 
 // These ones moves the cursor.
 void keys__arrow_left(Buff_t*, Conf_t*);
 void keys__arrow_right(Buff_t*, Conf_t*);
 void keys__arrow_up(Buff_t*);
 void keys__arrow_down(Buff_t*);
+
+// Scrolls more intensively.
+void keys__ctrl__arrow_up(Buff_t*);
+void keys__ctrl__arrow_down(Buff_t*);
 
 #endif

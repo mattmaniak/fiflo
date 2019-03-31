@@ -14,7 +14,7 @@ As described but only with: master, develop, hotifx branches.
 
 ### Coding rules:
 - Allman-like brace style,
-- indentation: 1 hard tab (width: 4),
+- indentation: 4 spaces,
 - only snake_case is allowed,
 - visually align: defines, types, names, assignments etc,
 - single line should not exceed 80 chars printable chars,
@@ -32,5 +32,4 @@ Use that platform by You to improve the code.
 described above and test it using the default Linux tty. Also You can open an
 issue instead of a request.
 
-- Note that the maintainer is responsible for merging, tagging, generally
-versioning.
+- Note that the maintainer is responsible for merging, tagging and versioning.

@@ -5,8 +5,8 @@
 
 typedef struct
 {
-	bool live_fname_edit; // As in the name.
-	bool lbar_toggled;    // As in the name.
+    bool live_fname_edit; // As in the name.
+    bool lbar_toggled;    // As in the name.
 }
 Mod_t;
 

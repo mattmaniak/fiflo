@@ -4,13 +4,13 @@ fiflo runcom
 .SH SYNOPSIS
 .TP
 [selector] = [value]
-Everything in a single line. Next one in the next line. Neighbour spaces are
-essential.
+Everything in a single line. Next one in the next line. Single neighbour spaces
+around the equality sign are essential.
 .SH DESCRIPTION
 File that allows to change the default configuration of the fiflo which is
 built-in in the editor. It ignores the lines that starts with a whitespace,
 with the '#' or that are just empty. If You use a one of selectors multiple
-times, the value from the last occurence int the file will be read.
+times, the value from the last occurence in the file will be read.
 .SH SELECTORS
 Order does not matter in the file.
 .TP
@@ -28,24 +28,33 @@ Upper and lower bars colors.
 .TP
 .B color-warning
 When sometimes goes wrong a part of the UI is highlighted with this color.
-Actually only the punch card indicator in the lower bar handles it.
+Actually it is only the punch card indicator.
+.TP
+.B color-whitespace
+Tabs and spaces highlighting.
 .TP
 .B tab-width
 Equality of spaces that the tab key produces.
 .SH VALUES
 .TP
-.B red, green, yellow, blue, magenta, cyan, white, bright-red, bright-green, \
-bright-yellow, bright-blue, bright-magenta, bright-cyan, bright-white
+.B red, green, yellow, blue, magenta, cyan, white, bright-black, bright-red, \
+bright-green, bright-yellow, bright-blue, bright-magenta, bright-cyan, \
+bright-white
 Available colors. Every one of them is a foreground color. There is no
 possibility to set the background. Can be used only with selectors that starts
 with "color".
 .TP
-.B 2, 4, 8
-Values to use with "tab-width".
+.B <2; 8>
+Available tab width.
+.SH WRONG SYNTAX HANDLING
+If the selector or value is wrong or if there is no trailing newline at the end
+of the file, the default value will be applied. Else if the selector and value
+are wrong, default editor's configuration will be applied.
 .SH FILES
 .TP
 .B /etc/fiflorc
-Global and only confiuguration. If doesn't exist, the default config is loaded.
+The only (global) confiuguration. If doesn't exist, the default config will be
+loaded.
 .SH SEE ALSO
 fiflo(1)
 .SH AUTHOR

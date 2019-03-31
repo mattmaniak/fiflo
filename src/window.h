@@ -17,7 +17,7 @@
 extern void print__display_text(Buff_t*, Ui_t*, Conf_t*);
 
 // Returns current terminal width and height and exits if is wrong.
-term_t window__get_terminal_sz(char axis);
+term_t window__get_terminal_sz(const char);
 
 // Clean the whole rendered window.
 void window__flush(void);
