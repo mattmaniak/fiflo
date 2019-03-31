@@ -17,7 +17,7 @@ Show a program help.
 .TP
 .B -v, --version
 Display information about a version You use.
-.SH KEYBOARD SHORTCUTS
+.SH KEYBOARD
 .TP
 .B Ctrl^D
 Delete the current line.
@@ -30,7 +30,10 @@ returns to the text editing.
 Exit.
 .TP
 .B Ctrl^S
-Quickly aave the file with the filename displayed in the upper bar.
+Quickly save the file with the filename displayed in the upper bar.
+.TP
+.B Ctrl^Backslash
+Expand the lower bar with basic keyboard shortcuts.
 .TP
 .B Arrows
 Moves the cursor one column or row by one line or char.
@@ -47,9 +50,13 @@ renders a full window every time. On modern terminal emulators, the problem does
 not occur.
 .TP
 .B Ctrl^[ or Escape
-Next six chars will be ignored.
+The next five chars will be ignored.
 .TP
-.B Left cursor position during the live filename edit.
+.B Editing filename and the minimal left cursor position.
 Don't know why the minimum X for the cursor is 1 in that case.
+.TP
+.B Using arrows during the live filename edit
+It will insert some of the escape sequence chars to the text and exit from
+filename edition mode.
 .SH AUTHOR
 mattmaniak

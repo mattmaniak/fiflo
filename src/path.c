@@ -15,12 +15,12 @@ bool path__extract_pathname_from_arg(Buff_t* Buffer)
         char_idx++;
     }
     strncpy(Buffer->pathname, Buffer->fname, last_slash_pos_idx);
-
     Buffer->pathname[last_slash_pos_idx] = '\0';
 
     if(chdir(Buffer->pathname) == ERROR)
     {
-        fprintf(stderr, "Can't change the current direcory.\n");
+        fprintf(stderr,
+                "Can't change the direcory to get the parent file path.\n");
         return false;
     }
 
@@ -56,7 +56,9 @@ void path__extract_basename_from_arg(Buff_t* Buffer)
 void path__merge_pathname_and_basename(Buff_t* Buffer)
 {
     strcpy(Buffer->fname, Buffer->pathname);
+
     Buffer->fname[strlen(Buffer->fname)] = '/';
+    Buffer->fname[strlen(Buffer->fname)] = '\0';
 
     strcat(Buffer->fname, Buffer->basename);
 }

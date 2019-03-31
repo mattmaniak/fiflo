@@ -81,7 +81,7 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
         if(BUFFER_NOT_FULL)
         {
             Buffer->chars_idx++;
-            CURRENT_LINE_LENGTH_IDX++;
+            CURRENT_LINE_LENGTH++;
 
             if(!memory__extend_line(Buffer, CURRENT_LINE_IDX))
             {
@@ -92,14 +92,14 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
             {
                 edit__shift_text_horizonally(Buffer, 'r');
             }
-            CURRENT_LINE[CURSOR_X_IDX - NUL_SZ] = ch;
+            CURRENT_LINE[CURSOR_X_POS - NUL_SZ] = ch;
             CURRENT_CHAR                        = '\0';
 
             // Initializing nul handler.
             if((ch == '\0') && !EMPTY_LINE)
             {
                 Buffer->chars_idx--;
-                CURRENT_LINE_LENGTH_IDX--;
+                CURRENT_LINE_LENGTH--;
             }
             else if(ch == '\n')
             {
@@ -133,16 +133,16 @@ bool chars__backspace(Buff_t* Buffer, Conf_t* Config)
     for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
     {
         // Prevent removind char and 3 tabs from that e.g.: "\t\t\t\t".
-        if((CURSOR_X_IDX > 1)
-           && (CURRENT_LINE[CURSOR_X_IDX - NUL_SZ - prev] == '\t')
-           && (CURRENT_LINE[CURSOR_X_IDX - NUL_SZ] != '\t'))
+        if((CURSOR_X_POS > 1)
+           && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ - prev] == '\t')
+           && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t'))
         {
             tab_idx = (idx_t) Config->Tab_width.value - IDX;
         }
 
         // Scenario when there is char at the beginning and tab at the right.
-        if((CURSOR_X_IDX == 1) && (CURRENT_LINE[CURSOR_X_IDX - NUL_SZ] != '\t')
-           && (CURRENT_LINE[CURSOR_X_IDX] == '\t')
+        if((CURSOR_X_POS == 1) && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t')
+           && (CURRENT_LINE[CURSOR_X_POS] == '\t')
            && (Buffer->cursor_rev_x > 0))
         {
             if(!edit__delete_char(Buffer))
@@ -168,20 +168,20 @@ bool chars__backspace(Buff_t* Buffer, Conf_t* Config)
         }
 
         // Some text and the tab(s) at the end.
-        if((CURRENT_LINE_LENGTH_IDX > 0) && (Buffer->cursor_rev_x == 0)
-           && (CURRENT_LINE[CURRENT_LINE_LENGTH_IDX - NUL_SZ] != '\t'))
+        if((CURRENT_LINE_LENGTH > 0) && (Buffer->cursor_rev_x == 0)
+           && (CURRENT_LINE[CURRENT_LINE_LENGTH - NUL_SZ] != '\t'))
         {
             break;
         }
         /* Prevent removing the line when the first char in the line has to be
         removed. */
-        else if((CURSOR_X_IDX == 0) && (CURRENT_LINE[CURSOR_X_IDX] != '\t'))
+        else if((CURSOR_X_POS == 0) && (CURRENT_LINE[CURSOR_X_POS] != '\t'))
         {
             break;
         }
         // Scenario when there is the tab and some text further.
-        else if((CURSOR_X_IDX > 0) && (Buffer->cursor_rev_x > 0)
-                && (CURRENT_LINE[CURSOR_X_IDX - NUL_SZ] != '\t'))
+        else if((CURSOR_X_POS > 0) && (Buffer->cursor_rev_x > 0)
+                && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t'))
         {
             break;
         }

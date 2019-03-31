@@ -50,10 +50,10 @@ char input__getch(void)
     return key;
 }
 
-void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
+void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config,
                                const char* const sequence)
 {
-    const size_t seq_max = 6;
+    const size_t seq_length_max = 6;
 
     const char arrow_up[]    = "\033[A";
     const char arrow_down[]  = "\033[B";
@@ -73,11 +73,11 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
     }
     else if(!strcmp(sequence, arrow_right))
     {
-        keys__arrow_right(Buffer, Config, Modes);
+        keys__arrow_right(Buffer, Config);
     }
     else if(!strcmp(sequence, arrow_left))
     {
-        keys__arrow_left(Buffer, Config, Modes);
+        keys__arrow_left(Buffer, Config);
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
@@ -87,7 +87,7 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
     {
         keys__ctrl__arrow_down(Buffer);
     }
-    else if(strlen(sequence) >= seq_max)
+    else if(strlen(sequence) >= seq_length_max)
     {
         Buffer->escape_sequence_on_input = false;
     }
@@ -105,7 +105,7 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
     static char  chars_sequence[SEQ_MAX];
     static idx_t char_idx;
 
-    if(key == CTRL_LEFT_BRACKET)
+    if((key == CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
     {
         Buffer->escape_sequence_on_input = true;
 
@@ -123,8 +123,8 @@ bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
             char_idx++;
         }
         chars_sequence[char_idx] = '\0';
+        input__recognize_sequence(Buffer, Config, chars_sequence);
 
-        input__recognize_sequence(Buffer, Config, Modes, chars_sequence);
         if(!Buffer->escape_sequence_on_input)
         {
             char_idx = 0;

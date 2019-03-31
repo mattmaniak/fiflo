@@ -44,13 +44,13 @@ idx_t print__set_start_line(Buff_t* Buffer, Ui_t* Ui)
 void print__actual_line(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 {
     // There is small amount of chars. Horizontal scroll isn't required.
-    if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
+    if(CURRENT_LINE_LENGTH < Ui->text_x)
     {
         print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX, 0,
-                              CURRENT_LINE_LENGTH_IDX);
+                              CURRENT_LINE_LENGTH);
     }
     // Chars won't fits in the horizontal space.
-    else if((CURRENT_LINE_LENGTH_IDX - Ui->text_x) >= Buffer->cursor_rev_x)
+    else if((CURRENT_LINE_LENGTH - Ui->text_x) >= Buffer->cursor_rev_x)
     {
         // Render only right part of the line.
         print__scroll_line_horizontally(Buffer, Config, Ui);
@@ -74,10 +74,10 @@ void print__another_line(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config,
 {
     ui__print_line_number(Buffer, Config, line_idx, Ui->line_num_length);
 
-    if(Buffer->lines_length_idx[line_idx] < Ui->text_x)
+    if(Buffer->lines_length[line_idx] < Ui->text_x)
     {
         print__line_with_tabs(Buffer, Config, line_idx, 0,
-                              Buffer->lines_length_idx[line_idx]);
+                              Buffer->lines_length[line_idx]);
     }
     else
     {
@@ -91,7 +91,7 @@ void print__scroll_line_horizontally(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 {
     // Text will be scrolled. Not cursor.
     print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX,
-                          CURSOR_X_IDX + CURSOR_SZ - Ui->text_x, CURSOR_X_IDX);
+                          CURSOR_X_POS + CURSOR_SZ - Ui->text_x, CURSOR_X_POS);
 
     /* Sometimes is needed because the "window__fill" function renders the
     smallest required amount of linefeeds. In other cases the linefeed is
@@ -127,10 +127,10 @@ void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
                               Ui->line_num_length);
 
 
-        if(Buffer->lines_length_idx[Buffer->lines_idx] < Ui->text_x)
+        if(Buffer->lines_length[Buffer->lines_idx] < Ui->text_x)
         {
             print__line_with_tabs(Buffer, Config, Buffer->lines_idx, 0,
-                                  Buffer->lines_length_idx[Buffer->lines_idx]);
+                                  Buffer->lines_length[Buffer->lines_idx]);
         }
         else
         {
@@ -162,10 +162,10 @@ void print__shrink_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     }
     ui__print_line_number(Buffer, Config, last_line_idx, Ui->line_num_length);
 
-    if(Buffer->lines_length_idx[last_line_idx] < Ui->text_x)
+    if(Buffer->lines_length[last_line_idx] < Ui->text_x)
     {
         print__line_with_tabs(Buffer, Config, last_line_idx, 0,
-                              Buffer->lines_length_idx[last_line_idx] - LF_SZ);
+                              Buffer->lines_length[last_line_idx] - LF_SZ);
     }
     else
     {
@@ -176,7 +176,7 @@ void print__shrink_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 
 void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 {
-    idx_t chars_end_offset = CURRENT_LINE_LENGTH_IDX;
+    idx_t chars_end_offset = CURRENT_LINE_LENGTH;
 
     // Previous lines. If scrolled. Only beginning is shown.
     for(idx_t line_idx = print__set_start_line(Buffer, Ui);
@@ -189,10 +189,10 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     ui__print_line_number(Buffer, Config, CURRENT_LINE_IDX,
                           Ui->line_num_length);
 
-    if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
+    if(CURRENT_LINE_LENGTH < Ui->text_x)
     {
-        if((CURRENT_LINE_LENGTH_IDX > 0)
-        && (CURRENT_LINE[CURRENT_LINE_LENGTH_IDX - NUL_SZ] == '\n'))
+        if((CURRENT_LINE_LENGTH > 0)
+        && (CURRENT_LINE[CURRENT_LINE_LENGTH - NUL_SZ] == '\n'))
         {
             chars_end_offset--;
         }
@@ -201,12 +201,12 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
 
     }
     // Chars won't fits in the horizontal space.
-    else if((CURRENT_LINE_LENGTH_IDX - Ui->text_x) >= Buffer->cursor_rev_x)
+    else if((CURRENT_LINE_LENGTH - Ui->text_x) >= Buffer->cursor_rev_x)
     {
         // Text will be scrolled. Not cursor.
         print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX,
-                              CURSOR_X_IDX + CURSOR_SZ - Ui->text_x,
-                              CURSOR_X_IDX);
+                              CURSOR_X_POS + CURSOR_SZ - Ui->text_x,
+                              CURSOR_X_POS);
     }
     else
     {

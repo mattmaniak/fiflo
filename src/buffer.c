@@ -17,10 +17,10 @@ bool buffer__init(Buff_t* Buffer)
         return false;
     }
 
-    Buffer->lines_length_idx = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ)
-                                      + ADDR_SZ);
+    Buffer->lines_length = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ)
+                                  + ADDR_SZ);
 
-    if(Buffer->lines_length_idx == NULL)
+    if(Buffer->lines_length == NULL)
     {
         fprintf(stderr, "Can't alloc a memory the array with lines length.\n");
         return false;
@@ -29,8 +29,7 @@ bool buffer__init(Buff_t* Buffer)
     Buffer->lines_idx                = 0;
     Buffer->cursor_rev_x             = 0;
     Buffer->cursor_rev_y             = 0;
-    Buffer->fname_cursor_rev_x       = 0;
-    CURRENT_LINE_LENGTH_IDX          = 0;
+    CURRENT_LINE_LENGTH              = 0;
     Buffer->escape_sequence_on_input = false;
 
     CURRENT_LINE = malloc(ADDR_SZ);
@@ -51,9 +50,9 @@ void buffer__free(Buff_t* Buffer)
             free(Buffer->text[line_idx]);
         }
     }
-    if(Buffer->lines_length_idx != NULL)
+    if(Buffer->lines_length != NULL)
     {
-        free(Buffer->lines_length_idx);
+        free(Buffer->lines_length);
     }
     if(Buffer->text != NULL)
     {

@@ -7,14 +7,13 @@ Changelog contains only new tangible features and source code changes. To see
 what's new in the implementation, use git-show or git-log.
 
 Versions:
-v3.1.0 (WIP):
+v3.1.0 (2019, March 31):
 - git branch from the file's dir instead of the current working directory,
-- preconfigured monochrome UI by default,
+- pre-configured monochrome UI by default,
 - whitespace highlighting (spaces, tabs),
 - Ctrl^Arrow up/down - scroll to the beginning/end of a file.
 - tabs to spaces change in the source code,
-- proper "../"-like paths as parameter handling,
-- cursor scroll in the live filename edit mode,
+- proper "../"-like paths as parameter support,
 - wrong values in the config file handling.
 
 v3.0.2 (2019, March 25):

@@ -46,10 +46,10 @@ with "color".
 .TP
 .B <2; 8>
 Available tab width.
-.SH DEBUGGING
-If the selector or value is wrong, the default value will be applied. Else if
-the selector and value are wrong, default editor's configuration will be
-applied.
+.SH WRONG SYNTAX HANDLING
+If the selector or value is wrong or if there is no trailing newline at the end
+of the file, the default value will be applied. Else if the selector and value
+are wrong, default editor's configuration will be applied.
 .SH FILES
 .TP
 .B /etc/fiflorc

@@ -34,8 +34,8 @@
 #define BACKSPACE          127 // Delete. Backspace for real.
 
 // These ones moves the cursor.
-void keys__arrow_left(Buff_t*, Conf_t*, Mod_t*);
-void keys__arrow_right(Buff_t*, Conf_t*, Mod_t*);
+void keys__arrow_left(Buff_t*, Conf_t*);
+void keys__arrow_right(Buff_t*, Conf_t*);
 void keys__arrow_up(Buff_t*);
 void keys__arrow_down(Buff_t*);
 

@@ -7,6 +7,7 @@
 
 // Takes care about extracting names from the passed arg.
 
+// Used when the non-absolute path is passed as arg.
 bool path__extract_pathname_from_arg(Buff_t*);
 void path__extract_basename_from_arg(Buff_t*);
 void path__merge_pathname_and_basename(Buff_t*);

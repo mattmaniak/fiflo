@@ -1,17 +1,9 @@
 #include "buffer.h"
 #include "keys.h"
 
-void keys__arrow_left(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
+void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
 {
     bool more_than_one_line = Buffer->lines_idx > 0;
-
-    if(Modes->live_fname_edit)
-    {
-        if(Buffer->fname_cursor_rev_x < strlen(Buffer->fname))
-        {
-            Buffer->fname_cursor_rev_x++; // Scroll left.
-        }
-    }
 
     if(!CURSOR_AT_LINE_START)
     {
@@ -19,7 +11,7 @@ void keys__arrow_left(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
         for(idx_t tab_idx = 1; tab_idx < (idx_t) Config->Tab_width.value;
             tab_idx++)
         {
-            if(CURRENT_LINE[CURSOR_X_IDX - tab_idx] != '\t')
+            if(CURRENT_LINE[CURSOR_X_POS - tab_idx] != '\t')
             {
                 Buffer->cursor_rev_x++;
                 break; // No tab, so don't skip anything.
@@ -40,23 +32,15 @@ void keys__arrow_left(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__arrow_right(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
+void keys__arrow_right(Buff_t* Buffer, Conf_t* Config)
 {
-    if(Modes->live_fname_edit)
-    {
-        if(Buffer->fname_cursor_rev_x > 0)
-        {
-            Buffer->fname_cursor_rev_x--; // Scroll right.
-        }
-    }
-
     if(CURSOR_X_SCROLLED)
     {
         // Skip the e.g "\t\t\t\t" as the one tab.
         for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value;
             tab_idx++)
         {
-            if(CURRENT_LINE[CURSOR_X_IDX + tab_idx] != '\t')
+            if(CURRENT_LINE[CURSOR_X_POS + tab_idx] != '\t')
             {
                 Buffer->cursor_rev_x--;
                 break; // No tab, so don't skip anything.
@@ -69,7 +53,7 @@ void keys__arrow_right(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
         if(!CURSOR_X_SCROLLED && CURSOR_Y_SCROLLED)
         {
             Buffer->cursor_rev_y--;
-            Buffer->cursor_rev_x = CURRENT_LINE_LENGTH_IDX;
+            Buffer->cursor_rev_x = CURRENT_LINE_LENGTH;
         }
         /* Last line doesn't contain keys__linefeed so ignoring that isn't
         necessary. */
@@ -88,7 +72,7 @@ void keys__arrow_up(Buff_t* Buffer)
         /* Cursor at the left side: doesn't go at the end of a line. Always
         at the beginning or ignore the linefeed. */
         Buffer->cursor_rev_x = (CURSOR_AT_LINE_START)
-                               ? PREVIOUS_LINE_LENGTH_IDX : LF_SZ;
+                               ? PREVIOUS_LINE_LENGTH : LF_SZ;
         Buffer->cursor_rev_y++;
     }
     Buffer->escape_sequence_on_input = false;
@@ -105,7 +89,7 @@ void keys__arrow_down(Buff_t* Buffer)
         {
             /* Cursor at the left side: doesn't go at the end of a line. Always
             at the beginning. */
-            Buffer->cursor_rev_x = CURRENT_LINE_LENGTH_IDX;
+            Buffer->cursor_rev_x = CURRENT_LINE_LENGTH;
         }
         else
         {
@@ -119,7 +103,7 @@ void keys__arrow_down(Buff_t* Buffer)
 void keys__ctrl__arrow_up(Buff_t* Buffer)
 {
     Buffer->cursor_rev_y = Buffer->lines_idx;
-    Buffer->cursor_rev_x = CURRENT_LINE_LENGTH_IDX;
+    Buffer->cursor_rev_x = CURRENT_LINE_LENGTH;
 
     Buffer->escape_sequence_on_input = false;
 }
@@ -127,7 +111,7 @@ void keys__ctrl__arrow_up(Buff_t* Buffer)
 void keys__ctrl__arrow_down(Buff_t* Buffer)
 {
     Buffer->cursor_rev_y = 0;
-    Buffer->cursor_rev_x = CURRENT_LINE_LENGTH_IDX;
+    Buffer->cursor_rev_x = CURRENT_LINE_LENGTH;
 
     Buffer->escape_sequence_on_input = false;
 }

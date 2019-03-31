@@ -17,7 +17,7 @@ bool options__parse_and_print(const char* const arg)
         printf("%s\n%s\n%s\n%s\n%s\n",
         "|``",
         "|``",
-        "fiflo v3.1.0 (WIP)",
+        "fiflo v3.1.0",
         "(C) 2018-2019 mattmaniak under the MIT License",
         "https://gitlab.com/mattmaniak/fiflo.git");
         return false;

@@ -77,7 +77,7 @@ void window__fill(Buff_t* Buffer, Ui_t* Ui)
 void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
 {
     // Set by default to a filename edit.
-    term_t move_right = (term_t) (Buffer->fname_length);
+    term_t move_right = Buffer->fname_length;
     term_t move_up    = (term_t) (Ui->win_h - LBAR_SZ);
 
     if(move_right >= Ui->win_w)
@@ -91,12 +91,12 @@ void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
 
     if(!Modes->live_fname_edit)
     {
-        if(CURRENT_LINE_LENGTH_IDX < Ui->text_x)
+        if(CURRENT_LINE_LENGTH < Ui->text_x)
         {
             // No horizontal scrolling.
-            move_right = (term_t) (Ui->line_num_length + CURSOR_X_IDX);
+            move_right = (term_t) (Ui->line_num_length + CURSOR_X_POS);
         }
-        else if((CURRENT_LINE_LENGTH_IDX - Ui->text_x) >= Buffer->cursor_rev_x)
+        else if((CURRENT_LINE_LENGTH - Ui->text_x) >= Buffer->cursor_rev_x)
         {
             /* Last Ui->text_x chars are seen. Current line is scrolled,
             not cursor. */
@@ -105,7 +105,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
         else
         {
             // Text is scrolled horizontally to the start. Cursor can be moved.
-            move_right = (term_t) (Ui->line_num_length + CURSOR_X_IDX);
+            move_right = (term_t) (Ui->line_num_length + CURSOR_X_POS);
         }
         move_up = (CURRENT_LINE_IDX < Ui->text_y) ?
         (term_t) (Ui->text_y - CURRENT_LINE_IDX - IDX + Ui->lbar_h) : Ui->lbar_h;

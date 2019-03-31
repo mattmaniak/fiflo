@@ -68,8 +68,9 @@ void ui__upper_bar(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 
 void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, Ui_t* Ui)
 {
-    idx_t punch_card_width = 80;
-    char  punch_card[16];
+    idx_t       punch_card_width = 80;
+    const idx_t tmp_width        = punch_card_width;
+    char        punch_card[16];
 
     const char key_binding[8][STATUS_MAX] =
     {
@@ -104,13 +105,13 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, Ui_t* Ui)
                Ui->line_num_length + punch_card_width - STATUS_MAX - SPACE_SZ
                - (term_t) strlen(punch_card), " ");
 
-        if(CURSOR_X_IDX >= Ui->text_x) // Scrolling.
+        if(CURSOR_X_POS >= Ui->text_x) // Scrolling.
         {
-            punch_card_width = CURSOR_X_IDX + IDX - Ui->text_x + 80;
+            punch_card_width = CURSOR_X_POS + IDX - Ui->text_x + tmp_width;
         }
 
-        if((CURRENT_LINE_LENGTH_IDX > punch_card_width)
-        && (CURRENT_LINE[punch_card_width] != '\n'))
+        if((CURRENT_LINE_LENGTH > punch_card_width)
+           && (CURRENT_LINE[punch_card_width] != '\n'))
         {
             ui__set_color(&Config->Color_warning);
         }

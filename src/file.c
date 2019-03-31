@@ -7,7 +7,7 @@
 
 bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
-    size_t cw_dir_length_idx;
+    size_t cw_dir_length;
 
     if((arg[0]  == '/') || (arg[0]  == '.')) // Absolute or parent dir.
     {
@@ -45,10 +45,10 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
             fprintf(stderr, "Can't get the current directory. Too long.\n");
             return false;
         }
-        cw_dir_length_idx = strlen(Buffer->pathname);
+        cw_dir_length = strlen(Buffer->pathname);
 
         // Getcwd() returns the pathname without the slash, which is required here.
-        if(cw_dir_length_idx >= (PATH_MAX - SLASH_SZ))
+        if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
                     "Can't insert the slash. Current direcory is too long.\n");
@@ -57,11 +57,11 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         }
         strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy the pathname.
 
-        Buffer->fname[cw_dir_length_idx]            = '/'; // Add the slash.
-        Buffer->fname[cw_dir_length_idx + SLASH_SZ] = '\0';
+        Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
+        Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
 
         // Append the basename.
-        strncpy(&Buffer->fname[cw_dir_length_idx + SLASH_SZ], arg, NAME_MAX);
+        strncpy(&Buffer->fname[cw_dir_length + SLASH_SZ], arg, NAME_MAX);
     }
     Buffer->fname_length = strlen(Buffer->fname);
 
@@ -157,7 +157,7 @@ bool file__save(Buff_t* Buffer, Conf_t* Config)
         /* Using fputs or fprintf causes use-of-uninitialized-value using
         MSan because of there is more memory allocated than is needed. */
         for(idx_t char_idx = 0;
-            char_idx < Buffer->lines_length_idx[line_idx]; char_idx++)
+            char_idx < Buffer->lines_length[line_idx]; char_idx++)
         {
             file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
 
