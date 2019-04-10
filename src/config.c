@@ -1,151 +1,193 @@
 #include "config.h"
+#include "buffer.h"
+
+bool config__load(Conf_t* Config)
+{
+    char config_fname[] = "/etc/fiflorc";
+
+    if(access(config_fname, F_OK) == ERROR) // There is no config file.
+    {
+        config__set_default(Config);
+        return true;
+    }
+
+    Config->File = fopen(config_fname, "r");
+    if(Config->File != NULL)
+    {
+        config__load_custom(Config);
+
+        if(fclose(Config->File) == EOF)
+        {
+            fprintf(stderr, "Can't close the config file.\n");
+            return false;
+        }
+    }
+    return true;
+}
 
 void config__init_selectors(Conf_t* Config)
 {
-	strcpy(Config->Color_line_number_current.selector,
-	       "color-line-number-current");
+    strcpy(Config->Color_line_number_current.selector,
+           "color-line-number-current");
 
-	strcpy(Config->Color_line_number.selector, "color-line-number");
-	strcpy(Config->Color_ui.selector,          "color-ui");
-	strcpy(Config->Color_text.selector,        "color-text");
-	strcpy(Config->Color_warning.selector,     "color-warning");
-	strcpy(Config->Tab_width.selector,         "tab-width");
+    strcpy(Config->Color_line_number.selector, "color-line-number");
+    strcpy(Config->Color_ui.selector,          "color-ui");
+    strcpy(Config->Color_text.selector,        "color-text");
+    strcpy(Config->Color_warning.selector,     "color-warning");
+    strcpy(Config->Color_whitespace.selector,  "color-whitespace");
+    strcpy(Config->Tab_width.selector,         "tab-width");
 }
 
-void config__parse_selector(Conf_t* Config, char* selector, int value)
+bool config__parse_selector(Conf_t* Config, const char* const selector,
+                            const int value)
 {
-	if(!strcmp(Config->Color_ui.selector, selector))
-	{
-		Config->Color_ui.value = value;
-	}
-	if(!strcmp(Config->Color_line_number_current.selector, selector))
-	{
-		Config->Color_line_number_current.value = value;
-	}
-	else if(!strcmp(Config->Color_line_number.selector, selector))
-	{
-		Config->Color_line_number.value = value;
-	}
-	else if(!strcmp(Config->Color_text.selector, selector))
-	{
-		Config->Color_text.value = value;
-	}
-	else if(!strcmp(Config->Color_warning.selector, selector))
-	{
-		Config->Color_warning.value = value;
-	}
-	else if(!strcmp(Config->Tab_width.selector, selector))
-	{
-		Config->Tab_width.value = value;
-	}
+    // Adds the value to the found selector in the configuration.
+    if(value >= RED)
+    {
+        if(!strcmp(Config->Color_ui.selector, selector))
+        {
+            Config->Color_ui.value = value;
+        }
+        else if(!strcmp(Config->Color_line_number_current.selector, selector))
+        {
+            Config->Color_line_number_current.value = value;
+        }
+        else if(!strcmp(Config->Color_line_number.selector, selector))
+        {
+            Config->Color_line_number.value = value;
+        }
+        else if(!strcmp(Config->Color_text.selector, selector))
+        {
+            Config->Color_text.value = value;
+        }
+        else if(!strcmp(Config->Color_warning.selector, selector))
+        {
+            Config->Color_warning.value = value;
+        }
+        else if(!strcmp(Config->Color_whitespace.selector, selector))
+        {
+            Config->Color_whitespace.value = value;
+        }
+    }
+    else if(!strcmp(Config->Tab_width.selector, selector))
+    {
+        if((value >= MIN_TAB_SZ) && (value <= MAX_TAB_SZ))
+        {
+            Config->Tab_width.value = value;
+        }
+    }
+    else
+    {
+        return false;
+    }
+    return true;
 }
 
-int config__encode_color(Conf_t* Config, char* color_name)
+int config__parse_value(const char* const read_value)
 {
-	int value = 0;
-
-	if(!strcmp(color_name, "red\n"))
-	{
-		value = RED;
-	}
-	else if(!strcmp(color_name, "green\n"))
-	{
-		value = GREEN;
-	}
-	else if(!strcmp(color_name, "yellow\n"))
-	{
-		value = YELLOW;
-	}
-	else if(!strcmp(color_name, "blue\n"))
-	{
-		value = BLUE;
-	}
-	else if(!strcmp(color_name, "magenta\n"))
-	{
-		value = MAGENTA;
-	}
-	else if(!strcmp(color_name, "cyan\n"))
-	{
-		value = CYAN;
-	}
-	else if(!strcmp(color_name, "white\n"))
-	{
-		value = WHITE;
-	}
-	else if(!strcmp(color_name, "bright-red\n"))
-	{
-		value = BRIGHT_RED;
-	}
-	else if(!strcmp(color_name, "bright-green\n"))
-	{
-		value = BRIGHT_GREEN;
-	}
-	else if(!strcmp(color_name, "bright-yellow\n"))
-	{
-		value = BRIGHT_YELLOW;
-	}
-	else if(!strcmp(color_name, "bright-blue\n"))
-	{
-		value = BRIGHT_BLUE;
-	}
-	else if(!strcmp(color_name, "bright-magenta\n"))
-	{
-		value = BRIGHT_MAGENTA;
-	}
-	else if(!strcmp(color_name, "bright-cyan\n"))
-	{
-		value = BRIGHT_CYAN;
-	}
-	else if(!strcmp(color_name, "bright-white\n"))
-	{
-		value = BRIGHT_WHITE;
-	}
-	else if(!strcmp(color_name, "2\n") || !strcmp(color_name, "4\n")
-	        || !strcmp(color_name, "8\n"))
-	{
-		value = atoi(color_name); // Seems like linefeed removal too.
-	}
-	else
-	{
-		config__set_default(Config);
-	}
-	return value;
+    if(!strcmp(read_value, "red\n"))
+    {
+        return RED;
+    }
+    else if(!strcmp(read_value, "green\n"))
+    {
+        return GREEN;
+    }
+    else if(!strcmp(read_value, "yellow\n"))
+    {
+        return YELLOW;
+    }
+    else if(!strcmp(read_value, "blue\n"))
+    {
+        return BLUE;
+    }
+    else if(!strcmp(read_value, "magenta\n"))
+    {
+        return MAGENTA;
+    }
+    else if(!strcmp(read_value, "cyan\n"))
+    {
+        return CYAN;
+    }
+    else if(!strcmp(read_value, "white\n"))
+    {
+        return WHITE;
+    }
+    else if(!strcmp(read_value, "bright-black\n"))
+    {
+        return BRIGHT_BLACK;
+    }
+    else if(!strcmp(read_value, "bright-red\n"))
+    {
+        return BRIGHT_RED;
+    }
+    else if(!strcmp(read_value, "bright-green\n"))
+    {
+        return BRIGHT_GREEN;
+    }
+    else if(!strcmp(read_value, "bright-yellow\n"))
+    {
+        return BRIGHT_YELLOW;
+    }
+    else if(!strcmp(read_value, "bright-blue\n"))
+    {
+        return BRIGHT_BLUE;
+    }
+    else if(!strcmp(read_value, "bright-magenta\n"))
+    {
+        return BRIGHT_MAGENTA;
+    }
+    else if(!strcmp(read_value, "bright-cyan\n"))
+    {
+        return BRIGHT_CYAN;
+    }
+    else if(!strcmp(read_value, "bright-white\n"))
+    {
+        return BRIGHT_WHITE;
+    }
+    return atoi(read_value); // Seems like linefeed removal too.
 }
 
 void config__set_default(Conf_t* Config)
 {
-	Config->Color_ui.value                  = WHITE;
-	Config->Color_line_number.value         = MAGENTA;
-	Config->Color_line_number_current.value = WHITE;
-	Config->Color_text.value                = GREEN;
-	Config->Color_warning.value             = RED;
-	Config->Tab_width.value                 = 4;
+    Config->Color_ui.value                  = WHITE;
+    Config->Color_line_number.value         = WHITE;
+    Config->Color_line_number_current.value = BRIGHT_BLACK;
+    Config->Color_text.value                = WHITE;
+    Config->Color_warning.value             = RED;
+    Config->Color_whitespace.value          = BRIGHT_BLACK;
+    Config->Tab_width.value                 = 8;
 }
 
 void config__load_custom(Conf_t* Config)
 {
-	int  parsed_value = 0;
-	char line[128];
-	char selector[48];
-	char value[32];
+    int  parsed_value = 0;
+    char line[80];
+    char selector[48];
+    char value[32];
 
-	config__init_selectors(Config);
+    config__init_selectors(Config);
 
-	while(fgets(line, 80, Config->File) != NULL)
-	{
-		if((line[0] == '#') || (line[0] <= 32))
-		{
-			continue;
-		}
-		// Splits around the " = ".
-		strncpy(selector, strtok(line, " = "), 48);
-		strncpy(value, strtok(NULL, " = "), 32);
+    while(fgets(line, 80, Config->File) != NULL)
+    {
+        if((line[0] == '#') || (line[0] <= 32)) // Hash, space or unseen char.
+        {
+            continue;
+        }
+        // Splits the string around the " = ".
+        strncpy(selector, strtok(line, " = "), 48);
+        strncpy(value,    strtok(NULL, " = "), 32);
 
-		parsed_value = config__encode_color(Config, value);
-		config__parse_selector(Config, selector, parsed_value);
-	}
-	if(parsed_value == 0) // If the whole file is commented out.
-	{
-		config__set_default(Config);
-	}
+        parsed_value = config__parse_value(value);
+
+        if(!config__parse_selector(Config, selector, parsed_value))
+        {
+            config__set_default(Config);
+            break;
+        }
+    }
+    if(parsed_value == 0) // If the whole file is commented out.
+    {
+        config__set_default(Config);
+    }
 }

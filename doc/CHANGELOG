@@ -3,10 +3,19 @@ fiflo - changelog
 Description
 Below version numbers contains more detailed descriptions of annotated Git
 tags. Dates are not alternative version names. They are just release dates.
-Changelog contains only new tangible features. To see what's new in source
-files use git-show or git-log.
+Changelog contains only new tangible features and source code changes. To see
+what's new in the implementation, use git-show or git-log.
 
 Versions:
+v3.1.0 (2019, March 31):
+- git branch from the file's dir instead of the current working directory,
+- pre-configured monochrome UI by default,
+- whitespace highlighting (spaces, tabs),
+- Ctrl^Arrow up/down - scroll to the beginning/end of a file.
+- tabs to spaces change in the source code,
+- proper "../"-like paths as parameter support,
+- wrong values in the config file handling.
+
 v3.0.2 (2019, March 25):
 - punch card scrolling fix.
 
@@ -88,7 +97,7 @@ v1.0.0 (2018, July 15):
 - 80 chars per line limit && auto newline,
 
 v0.5.0-unstable (2018, July 1):
-(The last v0.y.z version and showup of the old program logic. Mostly
+(The last v0.y.z version and show-up of the old program logic. Mostly
 insecure. Not merged with "master" so look for it using tags.)
 - multiple lines writing && rendering,
 - file input/output operations,
@@ -103,7 +112,7 @@ v0.4.3 (2018, June 10):
 v0.4.2 (2018, June 10):
 - makefile update.
 
-### v0.4.1 (2018, June 10):
+v0.4.1 (2018, June 10):
 - docs update.
 
 v0.4.0 (2018, June 10):

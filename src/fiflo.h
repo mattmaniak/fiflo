@@ -19,7 +19,7 @@ extern bool window__render(Buff_t*, Conf_t*, Mod_t*);
 extern void window__flush(void);
 
 // Some initializers and the main program loop.
-void fiflo__run(const char*);
+void fiflo__run(const char* const);
 
 int main(int, char**);
 

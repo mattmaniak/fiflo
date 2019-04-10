@@ -1,13 +1,19 @@
 # fiflo
 Terminal-based text editor with Common User Access keyboard shortcuts.
 
+## Abstract
+Learn C by writing in pure C. It is exercise where I've started learning
+pointers and memory management. As You can see it has grown to the text editor.
+It is inspired by the Nano's minimalism and the Atom's rich features that make
+programming easier.
+
 ## Usage
 ### Check the requirements for the GNU/Linux:
 - git,
 - make,
 - gcc >= 4.9 or clang >= 3.6,
 - gzip (only for the installation),
-- sudo (only for the installation).
+- sudo (only for the installation, even for the bare Debian on root).
 
 ### Clone on a desktop, compile and run.
 ```
@@ -37,7 +43,7 @@ and it's configuration guide.
 man fiflorc
 ```
 
-### Optional cleanup - remove "bin"/ and "obj/" after the compilation
+### Optional cleanup - remove bin/ and obj/ after the compilation
 ```
 make clean
 ```
@@ -50,31 +56,37 @@ sudo make uninstall
 ## Development
 Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
-### Source files:
-- buffer.c - initialization and deleting the main buffer which holds the text
+### Source files (submodules):
+- buffer - initialization and deleting the main buffer which holds the text
 and it's metadata,semantic macros,
 
-- config.c - fiflorc parser and values setter,
+- chars - ascii codes that are interpreted as text,
 
-- edit.c - more complex text editing operations that happens after the keypress,
+- config - fiflorc parser and values setter,
 
-- fiflo.c - the main file, just "main" and the execution loop,
+- edit - more complex text editing operations that happens after the keypress,
 
-- file.c - read/save the file, live editing the filename,
+- fiflo - the main file, just "main" and the execution loop,
 
-- input.c - get the key from the keypress, parse it,
+- file - read/save the file, live editing the filename,
 
-- keys.c - basic actions of every supported key,
+- filename - working dir and name setting,
 
-- memory.c - allocation/deallocation of the memory for the text,
+- input - gets the key and parses it,
 
-- options.c - "--help" and friends parameters,
+- keys - keyboard bindings that don't insert chars, e.g. arrows,
 
-- print.c - various magic that prints the text,
+- memory - (de)allocation of the memory for the text,
 
-- ui.c - user interface components like bars.
+- options - "--help" and friends parameters,
 
-- window.c - window rendering and flushing.
+- path - pathname, basename setting from arg,
+
+- print - various magic that prints the text,
+
+- ui - user interface components like bars.
+
+- window - window rendering and flushing.
 
 ### Needed tools for debugging:
 - AddressSanitizer (built-in gcc and clang),
@@ -95,9 +107,9 @@ make debug
 ```
 
 After that and the fiflo execution, there is possibility to check the code
-coverage. It will create the "cov/" dir and put the every source file with
-codecov marked after the previous execution The program must be compiled with
-the "debug" option previously. Gcc only.
+coverage. It will create the cov/ dir and put the every source file with codecov
+marked after the previous execution The program must be compiled with the
+"debug" option previously. Gcc only.
 ```
 make coverage
 ```
@@ -108,11 +120,11 @@ valgrind -v ./fiflo [optional args for the editor]
 ```
 Remark: fiflo must be compiled without ASan and MSan.
 
-### Install only the debugable binary.
+### Install only the binary with ASan linked for debugging.
 ```
 sudo make install_debug
 ```
 
 ## FAQ
-Will you port it into the Windows?
+Will you port it to the Windows?
 - No.
