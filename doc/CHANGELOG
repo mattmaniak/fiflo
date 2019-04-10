@@ -7,6 +7,9 @@ Changelog contains only new tangible features and source code changes. To see
 what's new in the implementation, use git-show or git-log.
 
 Versions:
+v3.1.1 (2019, April 10):
+- hidden files are supported again instead of handling as parent directories.
+
 v3.1.0 (2019, March 31):
 - git branch from the file's dir instead of the current working directory,
 - pre-configured monochrome UI by default,
