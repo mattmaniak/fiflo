@@ -9,7 +9,8 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
     size_t cw_dir_length;
 
-    if((arg[0]  == '/') || (arg[0]  == '.')) // Absolute or parent dir.
+    // Absolute or the parent dir.
+    if((arg[0]  == '/') || !strncmp(arg, "./", 2) || !strncmp(arg, "../", 3))
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
@@ -18,15 +19,12 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         }
         strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
 
-        if(arg[0]  == '.') // Get the pathname instead of "./" or "../" dirs.
+        if(!path__extract_pathname_from_arg(Buffer))
         {
-            if(!path__extract_pathname_from_arg(Buffer))
-            {
-                return false;
-            }
-            path__extract_basename_from_arg(Buffer);
-            path__merge_pathname_and_basename(Buffer);
+            return false;
         }
+        path__extract_basename_from_arg(Buffer);
+        path__merge_pathname_and_basename(Buffer);
     }
     else // Relative pathname or the basename.
     {

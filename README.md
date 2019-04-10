@@ -70,8 +70,6 @@ and it's metadata,semantic macros,
 
 - file - read/save the file, live editing the filename,
 
-- filename - working dir and name setting,
-
 - input - gets the key and parses it,
 
 - keys - keyboard bindings that don't insert chars, e.g. arrows,
