@@ -9,8 +9,8 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
     size_t cw_dir_length;
 
-    // Absolute or the parent dir.
-    if((arg[0]  == '/') || !strncmp(arg, "./", 2) || !strncmp(arg, "../", 3))
+    // Parent dir.
+    if(!strncmp(arg, "./", 2) || !strncmp(arg, "../", 3))
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
@@ -25,6 +25,15 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         }
         path__extract_basename_from_arg(Buffer);
         path__merge_pathname_and_basename(Buffer);
+    }
+    else if(arg[0] == '/') // Absolute dir.
+    {
+        if(strlen(arg) >= (PATH_MAX + NAME_MAX))
+        {
+            fprintf(stderr, "Passed filename is too long.\n");
+            return false;
+        }
+        strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
     }
     else // Relative pathname or the basename.
     {

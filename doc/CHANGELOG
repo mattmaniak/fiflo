@@ -7,6 +7,9 @@ Changelog contains only new tangible features and source code changes. To see
 what's new in the implementation, use git-show or git-log.
 
 Versions:
+v3.1.2 (2019, April 13):
+- passing an absolute path is possible again,
+
 v3.1.1 (2019, April 10):
 - hidden files are supported again instead of handling as parent directories.
 
