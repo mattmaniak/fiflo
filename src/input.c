@@ -62,6 +62,8 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config,
 
     const char ctrl_arrow_up[]    = "\033[1;5A";
     const char ctrl_arrow_down[]  = "\033[1;5B";
+    const char ctrl_arrow_right[] = "\033[1;5C";
+    const char ctrl_arrow_left[]  = "\033[1;5D";
 
     if(!strcmp(sequence, arrow_up))
     {
@@ -83,9 +85,17 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config,
     {
         keys__ctrl__arrow_up(Buffer);
     }
-    else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end immediately.
+    else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
         keys__ctrl__arrow_down(Buffer);
+    }
+    else if(!strcmp(sequence, ctrl_arrow_right))
+    {
+        keys__ctrl__arrow_right(Buffer, Config);
+    }
+    else if(!strcmp(sequence, ctrl_arrow_left))
+    {
+        keys__ctrl__arrow_left(Buffer, Config);
     }
     else if(strlen(sequence) >= seq_length_max)
     {

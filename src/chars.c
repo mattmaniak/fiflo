@@ -61,7 +61,7 @@ bool chars__linefeed(Buff_t* Buffer)
                 return false;
             }
         }
-        CURRENT_CHAR = '\0';
+        LAST_CHAR_IN_LINE = '\0';
     }
     return true;
 }
@@ -92,8 +92,8 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
             {
                 edit__shift_text_horizonally(Buffer, 'r');
             }
-            CURRENT_LINE[CURSOR_X_POS - NUL_SZ] = ch;
-            CURRENT_CHAR                        = '\0';
+            CURRENT_LINE[CURSOR_X - NUL_SZ] = ch;
+            LAST_CHAR_IN_LINE                        = '\0';
 
             // Initializing nul handler.
             if((ch == '\0') && !EMPTY_LINE)
@@ -133,16 +133,16 @@ bool chars__backspace(Buff_t* Buffer, Conf_t* Config)
     for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
     {
         // Prevent removind char and 3 tabs from that e.g.: "\t\t\t\t".
-        if((CURSOR_X_POS > 1)
-           && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ - prev] == '\t')
-           && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t'))
+        if((CURSOR_X > 1)
+           && (CURRENT_LINE[CURSOR_X - NUL_SZ - prev] == '\t')
+           && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
         {
             tab_idx = (idx_t) Config->Tab_width.value - IDX;
         }
 
         // Scenario when there is char at the beginning and tab at the right.
-        if((CURSOR_X_POS == 1) && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t')
-           && (CURRENT_LINE[CURSOR_X_POS] == '\t')
+        if((CURSOR_X == 1) && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
+           && (CURRENT_LINE[CURSOR_X] == '\t')
            && (Buffer->cursor_rev_x > 0))
         {
             if(!edit__delete_char(Buffer))
@@ -175,13 +175,13 @@ bool chars__backspace(Buff_t* Buffer, Conf_t* Config)
         }
         /* Prevent removing the line when the first char in the line has to be
         removed. */
-        else if((CURSOR_X_POS == 0) && (CURRENT_LINE[CURSOR_X_POS] != '\t'))
+        else if((CURSOR_X == 0) && (CURRENT_LINE[CURSOR_X] != '\t'))
         {
             break;
         }
         // Scenario when there is the tab and some text further.
-        else if((CURSOR_X_POS > 0) && (Buffer->cursor_rev_x > 0)
-                && (CURRENT_LINE[CURSOR_X_POS - NUL_SZ] != '\t'))
+        else if((CURSOR_X > 0) && (Buffer->cursor_rev_x > 0)
+                && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
         {
             break;
         }

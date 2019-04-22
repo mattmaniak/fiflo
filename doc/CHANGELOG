@@ -7,6 +7,9 @@ Changelog contains only new tangible features and source code changes. To see
 what's new in the implementation, use git-show or git-log.
 
 Versions:
+v3.2.0 (2019, April, WIP):
+- Ctrl^Arrow left/right skips full words.
+
 v3.1.2 (2019, April 13):
 - passing an absolute path is possible again.
 
@@ -17,7 +20,7 @@ v3.1.0 (2019, March 31):
 - git branch from the file's dir instead of the current working directory,
 - pre-configured monochrome UI by default,
 - whitespace highlighting (spaces, tabs),
-- Ctrl^Arrow up/down - scroll to the beginning/end of a file.
+- Ctrl^Arrow up/down - scroll to the first/last line.
 - tabs to spaces change in the source code,
 - proper "../"-like paths as parameter support,
 - wrong values in the config file handling.

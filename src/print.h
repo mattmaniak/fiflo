@@ -3,7 +3,7 @@
 
 // Renders the text itself. Cares about scrolling.
 
-#define SPACE_HIGHLIGHT '-'
+#define SPACE_HIGHLIGHT '.'
 #define TAB_HIGHLIGHT   '>'
 
 // Converts stupidly-implemented tabs into some renderable spaces.

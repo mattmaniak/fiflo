@@ -11,7 +11,7 @@ void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
         for(idx_t tab_idx = 1; tab_idx < (idx_t) Config->Tab_width.value;
             tab_idx++)
         {
-            if(CURRENT_LINE[CURSOR_X_POS - tab_idx] != '\t')
+            if(CURRENT_LINE[CURSOR_X - tab_idx] != '\t')
             {
                 Buffer->cursor_rev_x++;
                 break; // No tab, so don't skip anything.
@@ -40,7 +40,7 @@ void keys__arrow_right(Buff_t* Buffer, Conf_t* Config)
         for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value;
             tab_idx++)
         {
-            if(CURRENT_LINE[CURSOR_X_POS + tab_idx] != '\t')
+            if(CURRENT_LINE[CURSOR_X + tab_idx] != '\t')
             {
                 Buffer->cursor_rev_x--;
                 break; // No tab, so don't skip anything.
@@ -95,6 +95,52 @@ void keys__arrow_down(Buff_t* Buffer)
         {
             // Ignore the LF or not.
             Buffer->cursor_rev_x = (CURSOR_Y_SCROLLED) ? LF_SZ : 0;
+        }
+    }
+    Buffer->escape_sequence_on_input = false;
+}
+
+void keys__ctrl__arrow_left(Buff_t* Buffer, Conf_t* Config)
+{
+    if((CURRENT_CHAR != ' ') && (CURRENT_CHAR != '\t'))
+    {
+        while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
+              && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+        {
+            // keys__arrow_left(Buffer, Config);
+            Buffer->cursor_rev_x++;
+        }
+    }
+    else // Non-whitespace chars.
+    {
+        while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
+              && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+        {
+            // keys__arrow_left(Buffer, Config);
+            Buffer->cursor_rev_x++;
+        }
+    }
+    Buffer->escape_sequence_on_input = false;
+}
+
+void keys__ctrl__arrow_right(Buff_t* Buffer, Conf_t* Config)
+{
+    if((CURRENT_CHAR != ' ') && (CURRENT_CHAR != '\t'))
+    {
+        while((Buffer->cursor_rev_x > NUL_SZ)
+              && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+        {
+            // keys__arrow_right(Buffer, Config);
+            Buffer->cursor_rev_x--;
+        }
+    }
+    else // Non-whitespace chars.
+    {
+        while((Buffer->cursor_rev_x > NUL_SZ)
+              && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+        {
+            // keys__arrow_right(Buffer, Config);
+            Buffer->cursor_rev_x--;
         }
     }
     Buffer->escape_sequence_on_input = false;

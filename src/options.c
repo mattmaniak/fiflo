@@ -1,4 +1,5 @@
 #include "options.h"
+#include "release.h"
 
 bool options__parse_and_print(const char* const arg)
 {
@@ -10,6 +11,7 @@ bool options__parse_and_print(const char* const arg)
         "Options:      Description:",
         "-h, --help    Show the help.",
         "-v, --version Display info about this version.");
+
         return false;
     }
     else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
@@ -17,9 +19,10 @@ bool options__parse_and_print(const char* const arg)
         printf("%s\n%s\n%s\n%s\n%s\n",
         "|``",
         "|``",
-        "fiflo v3.2.0 (WIP)",
-        "(C) 2018-2019 mattmaniak under the MIT License",
-        "https://gitlab.com/mattmaniak/fiflo.git");
+        RELEASE__VERSION,
+        RELEASE__COPYRIGHT,
+        RELEASE__REPO);
+
         return false;
     }
     return true;

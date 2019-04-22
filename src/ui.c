@@ -105,9 +105,9 @@ void ui__lower_bar(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes, Ui_t* Ui)
                Ui->line_num_length + punch_card_width - STATUS_MAX - SPACE_SZ
                - (term_t) strlen(punch_card), " ");
 
-        if(CURSOR_X_POS >= Ui->text_x) // Scrolling.
+        if(CURSOR_X >= Ui->text_x) // Scrolling.
         {
-            punch_card_width = CURSOR_X_POS + IDX - Ui->text_x + tmp_width;
+            punch_card_width = CURSOR_X + IDX - Ui->text_x + tmp_width;
         }
 
         if((CURRENT_LINE_LENGTH > punch_card_width)

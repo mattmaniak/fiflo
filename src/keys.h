@@ -39,7 +39,11 @@ void keys__arrow_right(Buff_t*, Conf_t*);
 void keys__arrow_up(Buff_t*);
 void keys__arrow_down(Buff_t*);
 
-// Scrolls more intensively.
+// Skips the whole words.
+void keys__ctrl__arrow_left(Buff_t*, Conf_t*);
+void keys__ctrl__arrow_right(Buff_t*, Conf_t*);
+
+// Scrolls to the beginning/end of the file.
 void keys__ctrl__arrow_up(Buff_t*);
 void keys__ctrl__arrow_down(Buff_t*);
 

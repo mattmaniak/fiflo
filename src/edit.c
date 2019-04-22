@@ -29,9 +29,8 @@ bool edit__delete_char(Buff_t* Buffer)
 
 bool edit__delete_line(Buff_t* Buffer)
 {
-    const idx_t next_idx         = 1;
-    idx_t       next_line_idx    = CURRENT_LINE_IDX + next_idx;
-    idx_t       next_line_length = Buffer->lines_length[next_line_idx];
+    idx_t next_line_idx    = CURRENT_LINE_IDX + NEXT;
+    idx_t next_line_length = Buffer->lines_length[next_line_idx];
 
     if(!FIRST_LINE)
     {
@@ -83,19 +82,19 @@ bool edit__delete_line(Buff_t* Buffer)
 void edit__shift_text_horizonally(Buff_t* Buffer, const char direction)
 {
     const size_t prev     = 1;
-    idx_t        char_idx = CURSOR_X_POS;
+    idx_t        char_idx = CURSOR_X;
 
     switch(direction)
     {
-        case 'l':
+    case 'l':
         for(; char_idx <= CURRENT_LINE_LENGTH; char_idx++)
         {
             CURRENT_LINE[char_idx - prev] = CURRENT_LINE[char_idx];
         }
         break;
 
-        case 'r':
-        for(char_idx = CURRENT_LINE_LENGTH; char_idx >= CURSOR_X_POS;
+    case 'r':
+        for(char_idx = CURRENT_LINE_LENGTH; char_idx >= CURSOR_X;
             char_idx--)
         {
             CURRENT_LINE[char_idx] = CURRENT_LINE[char_idx - prev];

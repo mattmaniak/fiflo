@@ -9,6 +9,7 @@ void print__line_with_tabs(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
 {
     for(idx_t char_idx = start_char_idx; char_idx < end_char_idx; char_idx++)
     {
+        // Whitespace highlighting.
         if(Buffer->text[line_idx][char_idx] == '\t')
         {
             ui__set_color(&Config->Color_whitespace);
@@ -91,7 +92,7 @@ void print__scroll_line_horizontally(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
 {
     // Text will be scrolled. Not cursor.
     print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX,
-                          CURSOR_X_POS + CURSOR_SZ - Ui->text_x, CURSOR_X_POS);
+                          CURSOR_X + CURSOR_SZ - Ui->text_x, CURSOR_X);
 
     /* Sometimes is needed because the "window__fill" function renders the
     smallest required amount of linefeeds. In other cases the linefeed is
@@ -205,8 +206,8 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     {
         // Text will be scrolled. Not cursor.
         print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX,
-                              CURSOR_X_POS + CURSOR_SZ - Ui->text_x,
-                              CURSOR_X_POS);
+                              CURSOR_X + CURSOR_SZ - Ui->text_x,
+                              CURSOR_X);
     }
     else
     {

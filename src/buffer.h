@@ -70,8 +70,10 @@ Buff_t;
 #define CURRENT_LINE_IDX     (Buffer->lines_idx - Buffer->cursor_rev_y)
 #define CURRENT_LINE         Buffer->text[CURRENT_LINE_IDX]
 #define CURRENT_LINE_LENGTH  Buffer->lines_length[CURRENT_LINE_IDX]
-#define CURSOR_X_POS         (CURRENT_LINE_LENGTH - Buffer->cursor_rev_x)
-#define CURRENT_CHAR         CURRENT_LINE[CURRENT_LINE_LENGTH]
+#define CURSOR_X             (CURRENT_LINE_LENGTH - Buffer->cursor_rev_x)
+#define CURRENT_CHAR         CURRENT_LINE[CURSOR_X]
+#define PREVIOUS_CHAR        CURRENT_LINE[CURSOR_X - 1]
+#define LAST_CHAR_IN_LINE    CURRENT_LINE[CURRENT_LINE_LENGTH]
 
 #define PREVIOUS_LINE_IDX    (CURRENT_LINE_IDX - 1)
 #define PREVIOUS_LINE        Buffer->text[PREVIOUS_LINE_IDX]
