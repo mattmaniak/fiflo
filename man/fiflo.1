@@ -52,15 +52,11 @@ fiflorc(5)
 .TP
 .B Blinking
 Blinking window with a default tty. It's caused by the implementation which
-renders a full window every time. On modern terminal emulators, the problem does
-not occur.
+renders a full window every time. With modern terminal emulators, the problem
+does not occur.
 .TP
 .B Ctrl^[ or Escape
 The next five chars will be ignored.
-.TP
-.B Editing filename and the minimal left cursor position.
-Don't know why the minimum X for the cursor is 1 in that case.
-.TP
 .B Using arrows during the live filename edit
 It will insert some of the escape sequence chars to the text and exit from
 filename edition mode.

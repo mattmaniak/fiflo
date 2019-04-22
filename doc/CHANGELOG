@@ -8,7 +8,8 @@ what's new in the implementation, use git-show or git-log.
 
 Versions:
 v3.2.0 (2019, April, WIP):
-- Ctrl^Arrow left/right skips full words.
+- Ctrl^Arrow left/right skips full words,
+- horizontal UI padding.
 
 v3.1.2 (2019, April 13):
 - passing an absolute path is possible again.

@@ -23,12 +23,13 @@ term_t window__get_terminal_sz(const char);
 void window__flush(void);
 
 // Vertical fill between the text and lower bar. If there isn't many lines.
-void window__fill(Buff_t*, Ui_t*);
+void window__fill(const Buff_t* const, const Ui_t* const);
+
+// Sets the a cursor position starting from the left bottom.
+void window__set_cursor_pos(const Buff_t* const, const Mod_t* const,
+                            const Ui_t* const);
 
 // Stupid wrapper for above things.
 bool window__render(Buff_t*, Conf_t*, Mod_t*);
-
-// Sets the a cursor position starting from the left bottom.
-void window__set_cursor_pos(Buff_t*, Mod_t*, Ui_t*);
 
 #endif

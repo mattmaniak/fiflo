@@ -206,8 +206,7 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     {
         // Text will be scrolled. Not cursor.
         print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX,
-                              CURSOR_X + CURSOR_SZ - Ui->text_x,
-                              CURSOR_X);
+                              CURSOR_X + CURSOR_SZ - Ui->text_x, CURSOR_X);
     }
     else
     {

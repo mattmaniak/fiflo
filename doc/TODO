@@ -17,6 +17,5 @@ fiflo - TODOs and ideas:
 - CRLF support,
 - moving the cursor without the window redrawing,
 - cursor scroll in the live filename edit mode,
-- horizontal padding at the left and right side,
 - real wrap guide,
 - distinguish indentation type.
