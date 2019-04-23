@@ -5,6 +5,11 @@
 
 #include <sys/ioctl.h>
 
+#include "buffer.h"
+#include "config.h"
+#include "modes.h"
+#include "ui.h"
+
 // ANSI escape codes for a terminal control.
 #define ANSI_CLEAN_WHOLE_LINE()   printf("\033[2K")
 #define ANSI_SAVE_CURSOR_POS()    printf("\033[s")

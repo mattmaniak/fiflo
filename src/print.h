@@ -3,6 +3,11 @@
 
 // Renders the text itself. Cares about scrolling.
 
+#include "buffer.h"
+#include "config.h"
+#include "modes.h"
+#include "ui.h"
+
 #define SPACE_HIGHLIGHT '.'
 #define TAB_HIGHLIGHT   '>'
 

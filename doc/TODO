@@ -12,7 +12,6 @@ fiflo - TODOs and ideas:
 - search option,
 - hex mode,
 - cursor at the beginning by default,
-- max. left cursor position during live filename edit,
 - refresh the git branch on the separate thread.
 - CRLF support,
 - moving the cursor without the window redrawing,

@@ -3,11 +3,15 @@
 
 // User interface components.
 
-#define GIT_LOGO            "git |\\ "
-#define GIT_LOGO_LENGTH     7
-#define GIT_BRANCH_AREA_MIN 10
+#include <string.h>
 
-#define DOTS_LENGTH 3
+#include "buffer.h"
+#include "config.h"
+#include "modes.h"
+
+#define GIT_LOGO            "git |\\ "
+#define GIT_LOGO_LENGTH     (int) strlen(GIT_LOGO)
+#define GIT_BRANCH_AREA_MIN 10
 
 #define UBAR_SZ 2
 #define LBAR_SZ 1 // Must be equal 1, otherwise will break rendering a little.

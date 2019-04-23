@@ -1,7 +1,3 @@
-#include "buffer.h"
-#include "config.h"
-#include "modes.h"
-#include "ui.h"
 #include "window.h"
 
 term_t window__get_terminal_sz(const char axis)

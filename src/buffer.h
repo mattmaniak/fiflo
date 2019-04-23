@@ -37,20 +37,20 @@ typedef struct
     char     git_branch[NAME_MAX];     // Max size is 250 defined in Git.
 
     // Filename.
-    char*    pathname;               // Doesn't include the trailing slash.
+    char*    pathname; // Doesn't include the trailing slash.
     char     basename[NAME_MAX];
     char     fname[PATH_MAX + NAME_MAX]; // Full filename. Eg. /home/user/basename.
     char     fname_copy[PATH_MAX + NAME_MAX];
 
     const uint16_t padding;
 
-    size_t   fname_length;       // Strlen of the above array.
+    size_t   fname_length; // Strlen of the above array.
 
     // File's content and some indicators.
-    char**   text;               // Text buffer. E.g. text[lines_idx][chars_idx].
-    idx_t    chars_idx;          // All chars index.
-    idx_t    lines_idx;          // Lines index.
-    idx_t*   lines_length;   // Chars in the current line (index).
+    char**   text;         // Text buffer. E.g. text[lines_idx][chars_idx].
+    idx_t    chars_idx;    // All chars index.
+    idx_t    lines_idx;    // Lines index.
+    idx_t*   lines_length; // Chars in the current line (index).
 
     // Mostly visual shit.
     idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
@@ -61,7 +61,7 @@ Buff_t;
 
 // Bytes of the memory width.
 #define ADDR_SZ              sizeof(Buffer->text)
-#define INITIAL_MEMBLOCK     (ADDR_SZ * sizeof(char)) // Aligned initial memblk.
+#define INITIAL_MEMBLOCK     (ADDR_SZ * sizeof(char)) // Also aligned.
 
 // Must be >= 16 and dividable by 8.
 #define MEMBLOCK             (idx_t) (128 * sizeof(char))

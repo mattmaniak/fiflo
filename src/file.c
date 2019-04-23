@@ -1,9 +1,4 @@
-#include "buffer.h"
-#include "config.h"
-#include "modes.h"
-#include "keys.h"
 #include "file.h"
-#include "path.h"
 
 bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
@@ -75,7 +70,8 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
     return true;
 }
 
-bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, const char ch)
+bool file__convert_tab_from_file(Buff_t* Buffer, const Conf_t* const Config,
+                                 const char ch)
 {
     /* Converts in-file '\t' in to sequence of e.g. "\t\t\t\t" if the tab width
     is set to 4. */
@@ -94,7 +90,7 @@ bool file__convert_tab_from_file(Buff_t* Buffer, Conf_t* Config, const char ch)
     return true;
 }
 
-bool file__load(Buff_t* Buffer, Conf_t* Config)
+bool file__load(Buff_t* Buffer, const Conf_t* const Config)
 {
     FILE* Textfile;
     char  ch;
@@ -132,7 +128,7 @@ bool file__load(Buff_t* Buffer, Conf_t* Config)
     return true;
 }
 
-void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config,
+void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
                                const idx_t line_idx, idx_t* char_idx)
 {
     // Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
@@ -150,7 +146,7 @@ void file__convert_tab_to_file(Buff_t* Buffer, Conf_t* Config,
     }
 }
 
-bool file__save(Buff_t* Buffer, Conf_t* Config)
+bool file__save(Buff_t*Buffer, const Conf_t* const Config)
 {
     FILE* Textfile = fopen(Buffer->fname, "w");
 

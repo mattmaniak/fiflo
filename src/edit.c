@@ -1,5 +1,3 @@
-#include "buffer.h"
-#include "keys.h"
 #include "edit.h"
 
 bool edit__delete_char(Buff_t* Buffer)
@@ -199,7 +197,7 @@ bool edit__delete_last_line(Buff_t* Buffer)
     return memory__shrink_lines_array(Buffer);
 }
 
-void edit__filename(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
+void edit__filename(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
                     const char key)
 {
     const char enter  = '\n';

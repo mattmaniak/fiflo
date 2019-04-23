@@ -1,5 +1,4 @@
 #include "options.h"
-#include "release.h"
 
 bool options__parse_and_print(const char* const arg)
 {

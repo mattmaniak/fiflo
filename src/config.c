@@ -1,5 +1,4 @@
 #include "config.h"
-#include "buffer.h"
 
 bool config__load(Conf_t* Config)
 {

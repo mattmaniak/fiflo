@@ -1,11 +1,7 @@
-#include "buffer.h"
-#include "config.h"
-#include "modes.h"
-#include "keys.h"
 #include "chars.h"
 
-bool chars__parse_char(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
-                      const char ch)
+bool chars__parse_char(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
+                       const char ch)
 {
     switch(ch)
     {
@@ -125,7 +121,7 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
     return true;
 }
 
-bool chars__backspace(Buff_t* Buffer, Conf_t* Config)
+bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
 {
     const idx_t prev = 1;
     idx_t       remembered_line_idx = CURRENT_LINE_IDX;
@@ -198,7 +194,7 @@ bool chars__backspace(Buff_t* Buffer, Conf_t* Config)
     return true;
 }
 
-bool chars__tab(Buff_t* Buffer, Conf_t* Config)
+bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
 {
     /* When the TAB key is pressed, it will insert e.g. 4 '\t' into the
     buffer. They will be converted during the rendering, loading and saving

@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "keys.h"
 
-void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
+void keys__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
 {
     bool more_than_one_line = Buffer->lines_idx > 0;
 
@@ -32,7 +32,7 @@ void keys__arrow_left(Buff_t* Buffer, Conf_t* Config)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__arrow_right(Buff_t* Buffer, Conf_t* Config)
+void keys__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
 {
     if(CURSOR_X_SCROLLED)
     {
@@ -100,7 +100,7 @@ void keys__arrow_down(Buff_t* Buffer)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__ctrl__arrow_left(Buff_t* Buffer, Conf_t* Config)
+void keys__ctrl__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
 {
     if((CURRENT_CHAR != ' ') && (CURRENT_CHAR != '\t'))
     {
@@ -123,7 +123,7 @@ void keys__ctrl__arrow_left(Buff_t* Buffer, Conf_t* Config)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__ctrl__arrow_right(Buff_t* Buffer, Conf_t* Config)
+void keys__ctrl__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
 {
     if((CURRENT_CHAR != ' ') && (CURRENT_CHAR != '\t'))
     {

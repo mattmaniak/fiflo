@@ -7,6 +7,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "buffer.h"
+
 #define RED            31
 #define GREEN          32
 #define YELLOW         33

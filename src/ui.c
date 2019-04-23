@@ -1,6 +1,3 @@
-#include "buffer.h"
-#include "config.h"
-#include "modes.h"
 #include "ui.h"
 
 void ui__set_color(const Opt_t* const Option)
@@ -30,40 +27,32 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     ui__set_color(&Config->Color_ui);
     printf("%*s", LEFT_PADDING, " ");
 
-    if(Buffer->fname_length < Ui->win_w)
+    if(Buffer->fname_length < (size_t) (Ui->win_w - RIGHT_PADDING))
     {
         puts(Buffer->fname);
     }
     else
     {
         // The filename is too long to show - scroll it.
-        for(size_t char_i = Buffer->fname_length - Ui->win_w + CURSOR_SZ;
-            char_i < Buffer->fname_length; char_i++)
+        for(size_t char_i = Buffer->fname_length - Ui->win_w
+            + HORIZONTAL_PADDING; char_i < Buffer->fname_length; char_i++)
         {
             putchar(Buffer->fname[char_i]);
         }
-        printf("%*s", RIGHT_PADDING, " ");
         WRAP_LINE();
     }
-    printf("%*s", LEFT_PADDING, " ");
+    printf("%*s%s%*s", LEFT_PADDING, " ", Buffer->status, (int) (STATUS_MAX
+           - strlen(Buffer->status) - SPACE_SZ), GIT_LOGO);
 
     if((term_t) strlen(Buffer->git_branch)
-       <= (Ui->win_w - GIT_LOGO_LENGTH - STATUS_MAX - SPACE_SZ
-           - HORIZONTAL_PADDING))
+       < (Ui->win_w - GIT_LOGO_LENGTH - STATUS_MAX - HORIZONTAL_PADDING))
     {
-        printf("%s%*s%s", Buffer->status, Ui->win_w
-               - (term_t) strlen(Buffer->git_branch) - HORIZONTAL_PADDING
-               - (term_t) strlen(Buffer->status), GIT_LOGO, Buffer->git_branch);
+        printf("%s", Buffer->git_branch);
     }
     else
     {
-        printf("%s%*s%.*s...", Buffer->status, Ui->win_w
-               - (term_t) strlen(Buffer->git_branch)
-               - (term_t) strlen(Buffer->status), GIT_LOGO, Ui->win_w
-               - STATUS_MAX - GIT_LOGO_LENGTH + SPACE_SZ + HORIZONTAL_PADDING,
-               Buffer->git_branch);
+        printf("%.*s", Ui->win_w - STATUS_MAX - SPACE_SZ , Buffer->git_branch);
     }
-    printf("%*s", RIGHT_PADDING, " ");
     WRAP_LINE();
 }
 

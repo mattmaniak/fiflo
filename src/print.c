@@ -1,7 +1,3 @@
-#include "buffer.h"
-#include "config.h"
-#include "modes.h"
-#include "ui.h"
 #include "print.h"
 
 void print__line_with_tabs(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
