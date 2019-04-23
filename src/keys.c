@@ -107,8 +107,16 @@ void keys__ctrl__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
         while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
               && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
         {
-            // keys__arrow_left(Buffer, Config);
             Buffer->cursor_rev_x++;
+        }
+        if((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')) // Skip whitespace.
+        {
+            while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
+                  && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+            {
+                Buffer->cursor_rev_x++;
+            }
+            Buffer->cursor_rev_x--; // Don't select the printable char.
         }
     }
     else // Non-whitespace chars.
@@ -116,8 +124,16 @@ void keys__ctrl__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
         while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
               && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
         {
-            // keys__arrow_left(Buffer, Config);
             Buffer->cursor_rev_x++;
+        }
+        // Don't stop on the printable char, skip word.
+        if(!((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+        {
+            while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
+                  && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+            {
+                Buffer->cursor_rev_x++;
+            }
         }
     }
     Buffer->escape_sequence_on_input = false;
@@ -130,7 +146,6 @@ void keys__ctrl__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
         while((Buffer->cursor_rev_x > NUL_SZ)
               && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
         {
-            // keys__arrow_right(Buffer, Config);
             Buffer->cursor_rev_x--;
         }
     }
@@ -139,7 +154,11 @@ void keys__ctrl__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
         while((Buffer->cursor_rev_x > NUL_SZ)
               && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
         {
-            // keys__arrow_right(Buffer, Config);
+            Buffer->cursor_rev_x--;
+        }
+        // Don't stop before the last part of the tab.
+        if((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t'))
+        {
             Buffer->cursor_rev_x--;
         }
     }
