@@ -81,19 +81,19 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
-        keys__ctrl__arrow_up(Buffer);
+        keys__ctrl_arrow_up(Buffer);
     }
     else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
-        keys__ctrl__arrow_down(Buffer);
+        keys__ctrl_arrow_down(Buffer);
     }
     else if(!strcmp(sequence, ctrl_arrow_right))
     {
-        keys__ctrl__arrow_right(Buffer, Config);
+        keys__ctrl_arrow_right(Buffer);
     }
     else if(!strcmp(sequence, ctrl_arrow_left))
     {
-        keys__ctrl__arrow_left(Buffer, Config);
+        keys__ctrl_arrow_left(Buffer);
     }
     else if(strlen(sequence) >= seq_length_max)
     {
