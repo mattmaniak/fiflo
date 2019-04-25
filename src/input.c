@@ -1,7 +1,3 @@
-#include "buffer.h"
-#include "config.h"
-#include "keys.h"
-#include "modes.h"
 #include "input.h"
 
 char input__getch(void)
@@ -21,6 +17,7 @@ char input__getch(void)
     {
         window__flush();
         fprintf(stderr, "Stdin attribiutes error. Pipe isn't supported.\n");
+
         return ERROR;
     }
     new_term_params = old_term_params;
@@ -35,6 +32,7 @@ char input__getch(void)
     {
         window__flush();
         fprintf(stderr, "Can't set the terminal's raw mode. Type \"reset\".\n");
+
         return ERROR;
     }
     key = (char) getchar();
@@ -50,7 +48,7 @@ char input__getch(void)
     return key;
 }
 
-void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config,
+void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
                                const char* const sequence)
 {
     const size_t seq_length_max = 6;
@@ -62,6 +60,8 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config,
 
     const char ctrl_arrow_up[]    = "\033[1;5A";
     const char ctrl_arrow_down[]  = "\033[1;5B";
+    const char ctrl_arrow_right[] = "\033[1;5C";
+    const char ctrl_arrow_left[]  = "\033[1;5D";
 
     if(!strcmp(sequence, arrow_up))
     {
@@ -81,11 +81,19 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config,
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
-        keys__ctrl__arrow_up(Buffer);
+        keys__ctrl_arrow_up(Buffer);
     }
-    else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end immediately.
+    else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
-        keys__ctrl__arrow_down(Buffer);
+        keys__ctrl_arrow_down(Buffer);
+    }
+    else if(!strcmp(sequence, ctrl_arrow_right))
+    {
+        keys__ctrl_arrow_right(Buffer);
+    }
+    else if(!strcmp(sequence, ctrl_arrow_left))
+    {
+        keys__ctrl_arrow_left(Buffer);
     }
     else if(strlen(sequence) >= seq_length_max)
     {
@@ -99,7 +107,7 @@ void input__recognize_sequence(Buff_t* Buffer, Conf_t* Config,
 
 }
 
-bool input__parse_key(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes,
+bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
                       const char key)
 {
     static char  chars_sequence[SEQ_MAX];

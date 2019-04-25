@@ -1,6 +1,3 @@
-#include "buffer.h"
-#include "config.h"
-#include "modes.h"
 #include "fiflo.h"
 
 void fiflo__run(const char* const arg)

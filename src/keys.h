@@ -34,13 +34,17 @@
 #define BACKSPACE          127 // Delete. Backspace for real.
 
 // These ones moves the cursor.
-void keys__arrow_left(Buff_t*, Conf_t*);
-void keys__arrow_right(Buff_t*, Conf_t*);
+void keys__arrow_left(Buff_t*, const Conf_t* const);
+void keys__arrow_right(Buff_t*, const Conf_t* const);
 void keys__arrow_up(Buff_t*);
 void keys__arrow_down(Buff_t*);
 
-// Scrolls more intensively.
-void keys__ctrl__arrow_up(Buff_t*);
-void keys__ctrl__arrow_down(Buff_t*);
+// Skips the whole words.
+void keys__ctrl_arrow_left(Buff_t*);
+void keys__ctrl_arrow_right(Buff_t*);
+
+// Scrolls to the beginning/end of the file.
+void keys__ctrl_arrow_up(Buff_t*);
+void keys__ctrl_arrow_down(Buff_t*);
 
 #endif

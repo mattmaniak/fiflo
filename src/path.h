@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "buffer.h"
+
 // Takes care about extracting names from the passed arg.
 
 // Used when the non-absolute path is passed as arg.

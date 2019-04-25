@@ -33,24 +33,28 @@ typedef uint32_t idx_t;
 
 typedef struct
 {
-    bool     escape_sequence_on_input; // True if pressed key is ANSI escape code.
-    char     git_branch[NAME_MAX];     // Max size is 250 defined in Git.
+    // True if pressed key is ANSI escape code.
+    bool     escape_sequence_on_input;
+    char     git_branch[NAME_MAX]; // Max size is 250 defined by Git.
 
     // Filename.
-    char*    pathname;               // Doesn't include the trailing slash.
+    char*    pathname; // Doesn't include the trailing slash.
     char     basename[NAME_MAX];
-    char     fname[PATH_MAX + NAME_MAX]; // Full filename. Eg. /home/user/basename.
+
+    // Full filename. Eg. /home/user/basename.
+    char     fname[PATH_MAX + NAME_MAX];
     char     fname_copy[PATH_MAX + NAME_MAX];
 
-    const uint16_t padding;
+    const int8_t  _padding_0;
+    const int16_t _padding_1;
 
-    size_t   fname_length;       // Strlen of the above array.
+    size_t   fname_length; // Strlen of the above array.
 
     // File's content and some indicators.
-    char**   text;               // Text buffer. E.g. text[lines_idx][chars_idx].
-    idx_t    chars_idx;          // All chars index.
-    idx_t    lines_idx;          // Lines index.
-    idx_t*   lines_length;   // Chars in the current line (index).
+    char**   text;         // Text buffer. E.g. text[lines_idx][chars_idx].
+    idx_t    chars_idx;    // All chars index.
+    idx_t    lines_idx;    // Lines index.
+    idx_t*   lines_length; // Chars in the current line (index).
 
     // Mostly visual shit.
     idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
@@ -61,7 +65,7 @@ Buff_t;
 
 // Bytes of the memory width.
 #define ADDR_SZ              sizeof(Buffer->text)
-#define INITIAL_MEMBLOCK     (ADDR_SZ * sizeof(char)) // Aligned initial memblk.
+#define INITIAL_MEMBLOCK     (ADDR_SZ * sizeof(char)) // Also aligned.
 
 // Must be >= 16 and dividable by 8.
 #define MEMBLOCK             (idx_t) (128 * sizeof(char))
@@ -70,8 +74,10 @@ Buff_t;
 #define CURRENT_LINE_IDX     (Buffer->lines_idx - Buffer->cursor_rev_y)
 #define CURRENT_LINE         Buffer->text[CURRENT_LINE_IDX]
 #define CURRENT_LINE_LENGTH  Buffer->lines_length[CURRENT_LINE_IDX]
-#define CURSOR_X_POS         (CURRENT_LINE_LENGTH - Buffer->cursor_rev_x)
-#define CURRENT_CHAR         CURRENT_LINE[CURRENT_LINE_LENGTH]
+#define CURSOR_X             (CURRENT_LINE_LENGTH - Buffer->cursor_rev_x)
+#define CURRENT_CHAR         CURRENT_LINE[CURSOR_X]
+#define PREVIOUS_CHAR        CURRENT_LINE[CURSOR_X - 1]
+#define LAST_CHAR_IN_LINE    CURRENT_LINE[CURRENT_LINE_LENGTH]
 
 #define PREVIOUS_LINE_IDX    (CURRENT_LINE_IDX - 1)
 #define PREVIOUS_LINE        Buffer->text[PREVIOUS_LINE_IDX]

@@ -5,8 +5,7 @@
 
 #include <string.h>
 
-#define NEXT 1
-#define PREV 1
+#include "buffer.h"
 
 // Allocs next memory block for chars in a line if needed.
 bool memory__extend_line(Buff_t*, const idx_t);

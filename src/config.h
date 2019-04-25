@@ -7,6 +7,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "buffer.h"
+
 #define RED            31
 #define GREEN          32
 #define YELLOW         33
@@ -43,6 +45,8 @@ typedef struct
     Opt_t Color_warning;
     Opt_t Color_whitespace;
     Opt_t Tab_width;
+
+    int32_t _padding;
 }
 Conf_t;
 

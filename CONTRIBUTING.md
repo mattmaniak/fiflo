@@ -15,6 +15,7 @@ As described but only with: master, develop, hotifx branches.
 ### Coding rules:
 - Allman-like brace style,
 - indentation: 4 spaces,
+- line ending: LF,
 - only snake_case is allowed,
 - visually align: defines, types, names, assignments etc,
 - single line should not exceed 80 chars printable chars,

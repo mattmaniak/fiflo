@@ -1,4 +1,3 @@
-#include "buffer.h"
 #include "path.h"
 
 bool path__extract_pathname_from_arg(Buff_t* Buffer)

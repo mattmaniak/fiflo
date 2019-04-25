@@ -1,7 +1,3 @@
-#include "buffer.h"
-#include "config.h"
-#include "modes.h"
-#include "ui.h"
 #include "window.h"
 
 term_t window__get_terminal_sz(const char axis)
@@ -10,9 +6,9 @@ term_t window__get_terminal_sz(const char axis)
     const int sz_max  = USHRT_MAX;
     const int h_min   = UBAR_SZ + line_sz + TOGGLED_PANE_SZ;
     const int w_min   = GIT_LOGO_LENGTH + SPACE_SZ + GIT_BRANCH_AREA_MIN
-                        + SPACE_SZ + STATUS_MAX;
+                        + SPACE_SZ + STATUS_MAX + HORIZONTAL_PADDING;
 
-    struct winsize terminal;
+    const struct winsize terminal;
 
     /* TIOCGWINSZ request to the stdout descriptor. &term is required by that
     specific device (stdout). */
@@ -60,7 +56,7 @@ void window__flush(void)
     fflush(NULL);
 }
 
-void window__fill(Buff_t* Buffer, Ui_t* Ui)
+void window__fill(const Buff_t* const Buffer, const Ui_t* const Ui)
 {
     // Fill the empty area below the text to pos the lower bar.
     if((Buffer->lines_idx + IDX) < (idx_t) Ui->text_y)
@@ -74,10 +70,11 @@ void window__fill(Buff_t* Buffer, Ui_t* Ui)
     // Else the lower bar will by posed by the text.
 }
 
-void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
+void window__set_cursor_pos(const Buff_t* const Buffer,
+                            const Mod_t* const Modes, const Ui_t* const Ui)
 {
     // Set by default to a filename edit.
-    term_t move_right = Buffer->fname_length;
+    term_t move_right = (term_t) (LEFT_PADDING + Buffer->fname_length);
     term_t move_up    = (term_t) (Ui->win_h - LBAR_SZ);
 
     if(move_right >= Ui->win_w)
@@ -94,7 +91,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
         if(CURRENT_LINE_LENGTH < Ui->text_x)
         {
             // No horizontal scrolling.
-            move_right = (term_t) (Ui->line_num_length + CURSOR_X_POS);
+            move_right = (term_t) (Ui->line_num_length + CURSOR_X);
         }
         else if((CURRENT_LINE_LENGTH - Ui->text_x) >= Buffer->cursor_rev_x)
         {
@@ -105,7 +102,7 @@ void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
         else
         {
             // Text is scrolled horizontally to the start. Cursor can be moved.
-            move_right = (term_t) (Ui->line_num_length + CURSOR_X_POS);
+            move_right = (term_t) (Ui->line_num_length + CURSOR_X);
         }
         move_up = (CURRENT_LINE_IDX < Ui->text_y) ?
         (term_t) (Ui->text_y - CURRENT_LINE_IDX - IDX + Ui->lbar_h) : Ui->lbar_h;
@@ -114,21 +111,19 @@ void window__set_cursor_pos(Buff_t* Buffer, Mod_t* Modes, Ui_t* Ui)
     ANSI_CURSOR_UP(move_up);
 }
 
-bool window__render(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
+bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
+                    const Mod_t* const Modes)
 {
     char line_num_str[16]; // Needed to count the length of the number.
     Ui_t Ui;
 
     sprintf(line_num_str, "%u", Buffer->lines_idx + IDX);
 
-    Ui.win_w = window__get_terminal_sz('X');
-    if(Ui.win_w == 0)
+    if((Ui.win_w = window__get_terminal_sz('X')) == 0)
     {
         return false;
     }
-
-    Ui.win_h = window__get_terminal_sz('Y');
-    if(Ui.win_h == 0)
+    if((Ui.win_h = window__get_terminal_sz('Y')) == 0)
     {
         return false;
     }
@@ -136,7 +131,9 @@ bool window__render(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
     Ui.pane_h = TOGGLED_PANE_SZ;
     Ui.lbar_h = (Modes->lbar_toggled) ? Ui.pane_h : LBAR_SZ;
 
-    Ui.line_num_length = (term_t) (strlen(line_num_str) + SPACE_SZ);
+    Ui.line_num_length = (term_t) (strlen(line_num_str) + SPACE_SZ
+                         + LEFT_PADDING);
+
     Ui.text_x          = (term_t) (Ui.win_w - Ui.line_num_length);
     Ui.text_y          = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
 

@@ -3,16 +3,23 @@
 
 // User interface components.
 
-#define GIT_LOGO            "git |\\ "
-#define GIT_LOGO_LENGTH     7
-#define GIT_BRANCH_AREA_MIN 10
+#include <string.h>
 
-#define DOTS_LENGTH 3
+#include "buffer.h"
+#include "config.h"
+#include "modes.h"
+
+#define GIT_LOGO            "git |\\ "
+#define GIT_LOGO_LENGTH     (int) strlen(GIT_LOGO)
+#define GIT_BRANCH_AREA_MIN 10
 
 #define UBAR_SZ 2
 #define LBAR_SZ 1 // Must be equal 1, otherwise will break rendering a little.
 
 #define TOGGLED_PANE_SZ 5
+#define LEFT_PADDING  1
+#define RIGHT_PADDING 1
+#define HORIZONTAL_PADDING (LEFT_PADDING + RIGHT_PADDING)
 
 #define WRAP_LINE() putchar('\n') // Not the text. Needed to rendering.
 
@@ -31,15 +38,17 @@ typedef struct
 Ui_t;
 
 // Used to style the UI.
-void ui__set_color(Opt_t*);
+void ui__set_color(const Opt_t* const);
 
 // Prints the line number.
-void ui__print_line_number(Buff_t*, Conf_t*, const idx_t, const term_t);
+void ui__print_line_number(const Buff_t* const, const Conf_t* const,
+                           const idx_t, const term_t);
 
 // Renders the upper bar with a filename and indicators.
-void ui__upper_bar(Buff_t*, Conf_t*, Ui_t*);
+void ui__upper_bar(const Buff_t* const, const Conf_t* const, const Ui_t* const);
 
 // Renders the lower bar that contains keyboard info.
-void ui__lower_bar(Buff_t*, Conf_t*, Mod_t*, Ui_t*);
+void ui__lower_bar(const Buff_t* const, const Conf_t* const, const Mod_t* const,
+                   const Ui_t* const);
 
 #endif
