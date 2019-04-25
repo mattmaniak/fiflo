@@ -1,7 +1,8 @@
 #include "print.h"
 
-void print__line_with_tabs(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
-                           idx_t start_char_idx, idx_t end_char_idx)
+void print__line_with_tabs(const Buff_t* const Buffer,
+                           const Conf_t* const Config, const idx_t line_idx,
+                           const idx_t start_char_idx, const idx_t end_char_idx)
 {
     for(idx_t char_idx = start_char_idx; char_idx < end_char_idx; char_idx++)
     {
@@ -25,7 +26,7 @@ void print__line_with_tabs(Buff_t* Buffer, Conf_t* Config, idx_t line_idx,
     }
 }
 
-idx_t print__set_start_line(Buff_t* Buffer, Ui_t* Ui)
+idx_t print__set_start_line(const Buff_t* const Buffer, const Ui_t* const Ui)
 {
     idx_t scrolled_lines = 0;
 
@@ -38,7 +39,8 @@ idx_t print__set_start_line(Buff_t* Buffer, Ui_t* Ui)
     return scrolled_lines;
 }
 
-void print__actual_line(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
+void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
+                        const Ui_t* const Ui)
 {
     // There is small amount of chars. Horizontal scroll isn't required.
     if(CURRENT_LINE_LENGTH < Ui->text_x)
@@ -66,8 +68,8 @@ void print__actual_line(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
     }
 }
 
-void print__another_line(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config,
-                         idx_t line_idx)
+void print__another_line(const Buff_t* const Buffer, const Ui_t* const Ui,
+                         const Conf_t* const Config, const idx_t line_idx)
 {
     ui__print_line_number(Buffer, Config, line_idx, Ui->line_num_length);
 
@@ -84,7 +86,9 @@ void print__another_line(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config,
     }
 }
 
-void print__scroll_line_horizontally(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
+void print__scroll_line_horizontally(const Buff_t* const Buffer,
+                                     const Conf_t* const Config,
+                                     const Ui_t* const Ui)
 {
     // Text will be scrolled. Not cursor.
     print__line_with_tabs(Buffer, Config, CURRENT_LINE_IDX,
@@ -99,7 +103,8 @@ void print__scroll_line_horizontally(Buff_t* Buffer, Conf_t* Config, Ui_t* Ui)
     }
 }
 
-void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
+void print__fit_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
+                      const Conf_t* const Config)
 {
     const idx_t current_line_sz = 1;
     idx_t       line_idx;
@@ -137,7 +142,8 @@ void print__fit_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     }
 }
 
-void print__shrink_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
+void print__shrink_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
+                         const Conf_t* const Config)
 {
     idx_t last_line_idx = (idx_t) Ui->text_y - IDX;
     idx_t line_idx      = 0;
@@ -171,7 +177,8 @@ void print__shrink_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     }
 }
 
-void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
+void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
+                         const Conf_t* const Config)
 {
     idx_t chars_end_offset = CURRENT_LINE_LENGTH;
 
@@ -212,7 +219,8 @@ void print__scroll_lines(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
     }
 }
 
-void print__display_text(Buff_t* Buffer, Ui_t* Ui, Conf_t* Config)
+void print__display_text(const Buff_t* const Buffer, const Ui_t* const Ui,
+                         const Conf_t* const Config)
 {
     if(Buffer->lines_idx < Ui->text_y)
     {

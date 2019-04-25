@@ -45,7 +45,8 @@ typedef struct
     char     fname[PATH_MAX + NAME_MAX];
     char     fname_copy[PATH_MAX + NAME_MAX];
 
-    const uint16_t padding;
+    const int8_t  _padding_0;
+    const int16_t _padding_1;
 
     size_t   fname_length; // Strlen of the above array.
 

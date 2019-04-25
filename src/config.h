@@ -45,6 +45,8 @@ typedef struct
     Opt_t Color_warning;
     Opt_t Color_whitespace;
     Opt_t Tab_width;
+
+    int32_t _padding;
 }
 Conf_t;
 

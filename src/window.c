@@ -74,7 +74,7 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
                             const Mod_t* const Modes, const Ui_t* const Ui)
 {
     // Set by default to a filename edit.
-    term_t move_right = LEFT_PADDING + Buffer->fname_length;
+    term_t move_right = (term_t) (LEFT_PADDING + Buffer->fname_length);
     term_t move_up    = (term_t) (Ui->win_h - LBAR_SZ);
 
     if(move_right >= Ui->win_w)
@@ -111,7 +111,8 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
     ANSI_CURSOR_UP(move_up);
 }
 
-bool window__render(Buff_t* Buffer, Conf_t* Config, Mod_t* Modes)
+bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
+                    const Mod_t* const Modes)
 {
     char line_num_str[16]; // Needed to count the length of the number.
     Ui_t Ui;

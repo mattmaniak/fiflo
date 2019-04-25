@@ -2,16 +2,14 @@
 
 bool buffer__init(Buff_t* Buffer)
 {
-    Buffer->pathname = malloc(PATH_MAX);
-    if(Buffer->pathname == NULL)
+    if((Buffer->pathname = malloc(PATH_MAX)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for the directory.\n");
         return false;
     }
 
     // Pointer to pointers, so the address size is needed.
-    Buffer->text = malloc(ADDR_SZ);
-    if(Buffer->text == NULL)
+    if((Buffer->text = malloc(ADDR_SZ)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory the array with lines.\n");
         return false;
@@ -25,15 +23,15 @@ bool buffer__init(Buff_t* Buffer)
         fprintf(stderr, "Can't alloc a memory the array with lines length.\n");
         return false;
     }
-    Buffer->chars_idx                = 0;
-    Buffer->lines_idx                = 0;
-    Buffer->cursor_rev_x             = 0;
-    Buffer->cursor_rev_y             = 0;
-    CURRENT_LINE_LENGTH              = 0;
+    Buffer->chars_idx    = 0;
+    Buffer->lines_idx    = 0;
+    Buffer->cursor_rev_x = 0;
+    Buffer->cursor_rev_y = 0;
+    CURRENT_LINE_LENGTH  = 0;
+
     Buffer->escape_sequence_on_input = false;
 
-    CURRENT_LINE = malloc(ADDR_SZ);
-    if(CURRENT_LINE == NULL)
+    if((CURRENT_LINE = malloc(ADDR_SZ)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for the first line.\n");
         return false;

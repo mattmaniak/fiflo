@@ -116,19 +116,24 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
             Buffer->cursor_rev_x++;
         }
         // Skip the tab instantly instead of 1 column char for the first time.
-        if((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t'))
+        if(!EMPTY_LINE && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t'))
+           && ((CURRENT_LINE[CURSOR_X - PREV] == ' ')
+           || (CURRENT_LINE[CURSOR_X - PREV] == '\t')))
         {
+            // Prevents skipping only one part of the tab.
             while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
                   && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
             {
                 Buffer->cursor_rev_x++;
             }
+            if((CURRENT_CHAR != ' ') && (CURRENT_CHAR != '\t'))
+            {
+                Buffer->cursor_rev_x--; // Don't stop on the printable char.
+            }
         }
     }
     else // Non-whitespace chars.
     {
-        puts("DODO_1");
-
         while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
               && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
         {
@@ -137,11 +142,11 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
         // Skip the whole word at once instead of 1 char for the first time.
         if(!((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
         {
-            // while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
-            //       && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
-            // {
+            while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
+                  && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+            {
                 Buffer->cursor_rev_x++;
-            // }
+            }
         }
     }
     Buffer->escape_sequence_on_input = false;

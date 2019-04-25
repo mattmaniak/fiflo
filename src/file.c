@@ -129,7 +129,7 @@ bool file__load(Buff_t* Buffer, const Conf_t* const Config)
 }
 
 void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
-                               const idx_t line_idx, idx_t* char_idx)
+                               const idx_t line_idx, idx_t* const char_idx)
 {
     // Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
     for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)

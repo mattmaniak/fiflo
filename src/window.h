@@ -8,6 +8,7 @@
 #include "buffer.h"
 #include "config.h"
 #include "modes.h"
+#include "print.h"
 #include "ui.h"
 
 // ANSI escape codes for a terminal control.
@@ -33,6 +34,7 @@ void window__set_cursor_pos(const Buff_t* const, const Mod_t* const,
                             const Ui_t* const);
 
 // Stupid wrapper for above things.
-bool window__render(Buff_t*, Conf_t*, Mod_t*);
+bool window__render(const Buff_t* const, const Conf_t* const,
+                    const Mod_t* const);
 
 #endif
