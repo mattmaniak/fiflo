@@ -17,4 +17,5 @@ fiflo - TODOs and ideas:
 - moving the cursor without the window redrawing,
 - cursor scroll in the live filename edit mode,
 - real wrap guide,
-- distinguish indentation type.
+- distinguish indentation type,
+- reimplement Ctrl^Arrow up/down.

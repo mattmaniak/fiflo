@@ -123,11 +123,12 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
             {
                 Buffer->cursor_rev_x++;
             }
-            Buffer->cursor_rev_x--; // Don't select the printable char.
         }
     }
     else // Non-whitespace chars.
     {
+        puts("DODO_1");
+
         while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
               && ((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
         {
@@ -136,11 +137,11 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
         // Skip the whole word at once instead of 1 char for the first time.
         if(!((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
         {
-            while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
-                  && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
-            {
+            // while((Buffer->cursor_rev_x < CURRENT_LINE_LENGTH)
+            //       && !((CURRENT_CHAR == ' ') || (CURRENT_CHAR == '\t')))
+            // {
                 Buffer->cursor_rev_x++;
-            }
+            // }
         }
     }
     Buffer->escape_sequence_on_input = false;

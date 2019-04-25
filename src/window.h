@@ -19,8 +19,6 @@
 #define ANSI_CURSOR_RIGHT(offset) printf("\033[%uC", offset)
 #define ANSI_CURSOR_LEFT(offset)  printf("\033[%uD", offset)
 
-extern void print__display_text(Buff_t*, Ui_t*, Conf_t*);
-
 // Returns current terminal width and height and exits if is wrong.
 term_t window__get_terminal_sz(const char);
 
