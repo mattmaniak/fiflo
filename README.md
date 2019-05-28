@@ -1,5 +1,5 @@
 # fiflo
-Terminal-based text editor with Common User Access keyboard shortcuts.
+Terminal-based text editor with Windows-like (CUA) bindings.
 
 ## Abstract
 Learn C by writing in pure C. It is exercise where I've started learning
