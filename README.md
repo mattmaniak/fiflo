@@ -2,9 +2,9 @@
 Terminal-based text editor with Windows-like (CUA) bindings.
 
 ## Abstract
-Learn C by writing in pure C. It is exercise where I've started learning
-pointers and memory management. As You can see it has grown to the text editor.
-It is inspired by the Nano's minimalism and the Atom's rich features that make
+Learn C by writing pure C. It is exercise where I've started learning pointers
+and memory management. As You can see it has grown to the text editor. It is
+inspired by the Nano's minimalism and the Atom's rich features that make
 programming easier.
 
 ## Usage
