@@ -7,6 +7,9 @@ Changelog contains only new tangible features and source code changes. To see
 what's new in the implementation, use git-show or git-log.
 
 Versions:
+v3.3.0 (WIP):
+- vertical arrows^Ctrl scroll full paragraphs now.
+
 v3.2.0 (2019, April 25):
 - Ctrl^Arrow left/right skips full words,
 - horizontal UI padding,

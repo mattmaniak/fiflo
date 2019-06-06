@@ -185,7 +185,18 @@ void keys__ctrl_arrow_right(Buff_t* Buffer)
 
 void keys__ctrl_arrow_up(Buff_t* Buffer)
 {
-    Buffer->cursor_rev_y = Buffer->lines_idx;
+    if(!CURSOR_AT_TOP)
+    {
+        for(;;)
+        {
+            Buffer->cursor_rev_y++;
+
+            if((CURRENT_LINE[0] == '\n') || CURSOR_AT_TOP)
+            {
+                break;
+            }
+        }
+    }
     Buffer->cursor_rev_x = CURRENT_LINE_LENGTH;
 
     Buffer->escape_sequence_on_input = false;
@@ -193,7 +204,18 @@ void keys__ctrl_arrow_up(Buff_t* Buffer)
 
 void keys__ctrl_arrow_down(Buff_t* Buffer)
 {
-    Buffer->cursor_rev_y = 0;
+    if(Buffer->cursor_rev_y > 0) // Not at the bottom.
+    {
+        for(;;)
+        {
+            Buffer->cursor_rev_y--;
+
+            if((CURRENT_LINE[0] == '\n') || (Buffer->cursor_rev_y == 0))
+            {
+                break;
+            }
+        }
+    }
     Buffer->cursor_rev_x = CURRENT_LINE_LENGTH;
 
     Buffer->escape_sequence_on_input = false;

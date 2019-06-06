@@ -18,6 +18,5 @@ fiflo - TODOs and ideas:
 - cursor scroll in the live filename edit mode,
 - real wrap guide,
 - distinguish indentation type,
-- reimplement Ctrl^Arrow up/down,
 - more precise Ctrl^Arrow left,
 - add fake namespaces for macros.
