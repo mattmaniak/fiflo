@@ -10,7 +10,7 @@ Versions:
 v3.2.0 (2019, April 25):
 - Ctrl^Arrow left/right skips full words,
 - horizontal UI padding,
-- more condensed interface text.
+- more condensed interface.
 
 v3.1.2 (2019, April 13):
 - passing an absolute path is possible again.
