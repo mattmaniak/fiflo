@@ -63,12 +63,12 @@ typedef struct
 }
 Buff_t;
 
-// Bytes of the memory width.
-#define ADDR_SZ              sizeof(Buffer->text)
-#define INITIAL_MEMBLOCK     (ADDR_SZ * sizeof(char)) // Also aligned.
+// Aligned memory blocks.
+#define BUFFER__ADDR_SZ          sizeof(Buffer->text)
+#define BUFFER__INITIAL_MEMBLOCK (BUFFER__ADDR_SZ * sizeof(char))
 
 // Must be >= 16 and dividable by 8.
-#define MEMBLOCK             (idx_t) (128 * sizeof(char))
+#define BUFFER__MEMBLOCK     (idx_t) (128 * sizeof(char))
 
 // Some placeholders.
 #define CURRENT_LINE_IDX     (Buffer->lines_idx - Buffer->cursor_rev_y)

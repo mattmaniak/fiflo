@@ -8,7 +8,7 @@ void keys__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
     if(!CURSOR_AT_LINE_START)
     {
         // Skip the e.g "\t\t\t\t" as the one tab.
-        for(idx_t tab_idx = 1; tab_idx < (idx_t) Config->Tab_width.value;
+        for(idx_t tab_idx = 1; tab_idx < (idx_t) Config->Tab_sz.value;
             tab_idx++)
         {
             if(CURRENT_LINE[CURSOR_X - tab_idx] != '\t')
@@ -16,9 +16,9 @@ void keys__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
                 Buffer->cursor_rev_x++;
                 break; // No tab, so don't skip anything.
             }
-            else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
+            else if(tab_idx == (idx_t) Config->Tab_sz.value - IDX)
             {
-                Buffer->cursor_rev_x += (idx_t) Config->Tab_width.value;
+                Buffer->cursor_rev_x += (idx_t) Config->Tab_sz.value;
             }
         }
 
@@ -37,7 +37,7 @@ void keys__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
     if(CURSOR_X_SCROLLED)
     {
         // Skip the e.g "\t\t\t\t" as the one tab.
-        for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value;
+        for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_sz.value;
             tab_idx++)
         {
             if(CURRENT_LINE[CURSOR_X + tab_idx] != '\t')
@@ -45,9 +45,9 @@ void keys__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
                 Buffer->cursor_rev_x--;
                 break; // No tab, so don't skip anything.
             }
-            else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
+            else if(tab_idx == (idx_t) Config->Tab_sz.value - IDX)
             {
-                Buffer->cursor_rev_x -= (idx_t) Config->Tab_width.value;
+                Buffer->cursor_rev_x -= (idx_t) Config->Tab_sz.value;
             }
         }
         if(!CURSOR_X_SCROLLED && CURSOR_Y_SCROLLED)

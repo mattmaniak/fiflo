@@ -20,7 +20,7 @@ bool edit__delete_char(Buff_t* Buffer)
             return false;
         }
     }
-    CURRENT_LINE[CURRENT_LINE_LENGTH] = '\0'; // Delete the linefeed.
+    LAST_CHAR_IN_LINE = '\0'; // Delete the linefeed.
 
     return true;
 }
@@ -67,7 +67,7 @@ bool edit__delete_line(Buff_t* Buffer)
         LAST_LINE_LENGTH = 0;
         LAST_LINE[LAST_LINE_LENGTH] = '\0';
 
-        LAST_LINE = realloc(LAST_LINE, INITIAL_MEMBLOCK);
+        LAST_LINE = realloc(LAST_LINE, BUFFER__INITIAL_MEMBLOCK);
         if(LAST_LINE == NULL)
         {
             fprintf(stderr, "Can't realloc a memory in the first line.\n");
@@ -118,7 +118,7 @@ bool edit__move_lines_forward(Buff_t* Buffer)
     for(idx_t char_i = PREVIOUS_LINE_LENGTH;
         char_i < PREVIOUS_LINE_LENGTH + Buffer->cursor_rev_x; char_i++)
     {
-        CURRENT_LINE[CURRENT_LINE_LENGTH] = PREVIOUS_LINE[char_i];
+        LAST_CHAR_IN_LINE = PREVIOUS_LINE[char_i];
         CURRENT_LINE_LENGTH++;
         if(!memory__extend_line(Buffer, CURRENT_LINE_IDX))
         {

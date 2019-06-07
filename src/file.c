@@ -78,7 +78,7 @@ bool file__convert_tab_from_file(Buff_t* Buffer, const Conf_t* const Config,
     if(ch == '\t')
     {
         for(idx_t char_idx = 0;
-            char_idx < (idx_t) (Config->Tab_width.value - AT_LEAST_ONE_TAB);
+            char_idx < (idx_t) (Config->Tab_sz.value - AT_LEAST_ONE_TAB);
             char_idx++)
         {
             if(!chars__printable_char(Buffer, ch))
@@ -132,16 +132,16 @@ void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
                                const idx_t line_idx, idx_t* const char_idx)
 {
     // Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
-    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
+    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_sz.value; tab_idx++)
     {
         if(Buffer->text[line_idx][*char_idx + tab_idx] != '\t')
         {
             break; // No tab, so don't convert anything.
         }
-        else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
+        else if(tab_idx == (idx_t) Config->Tab_sz.value - IDX)
         {
             // Some in-memory tabs converted
-            *char_idx += (idx_t) Config->Tab_width.value - AT_LEAST_ONE_TAB;
+            *char_idx += (idx_t) Config->Tab_sz.value - AT_LEAST_ONE_TAB;
         }
     }
 }
@@ -163,7 +163,6 @@ bool file__save(Buff_t*Buffer, const Conf_t* const Config)
             char_idx < Buffer->lines_length[line_idx]; char_idx++)
         {
             file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
-
             putc(Buffer->text[line_idx][char_idx], Textfile);
         }
     }

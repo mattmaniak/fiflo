@@ -89,7 +89,7 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
                 edit__shift_text_horizonally(Buffer, 'r');
             }
             CURRENT_LINE[CURSOR_X - NUL_SZ] = ch;
-            LAST_CHAR_IN_LINE                        = '\0';
+            LAST_CHAR_IN_LINE               = '\0';
 
             // Initializing nul handler.
             if((ch == '\0') && !EMPTY_LINE)
@@ -126,20 +126,18 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
     const idx_t prev = 1;
     idx_t       remembered_line_idx = CURRENT_LINE_IDX;
 
-    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
+    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_sz.value; tab_idx++)
     {
         // Prevent removind char and 3 tabs from that e.g.: "\t\t\t\t".
-        if((CURSOR_X > 1)
-           && (CURRENT_LINE[CURSOR_X - NUL_SZ - prev] == '\t')
+        if((CURSOR_X > 1) && (CURRENT_LINE[CURSOR_X - NUL_SZ - prev] == '\t')
            && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
         {
-            tab_idx = (idx_t) Config->Tab_width.value - IDX;
+            tab_idx = (idx_t) Config->Tab_sz.value - IDX;
         }
 
         // Scenario when there is char at the beginning and tab at the right.
         if((CURSOR_X == 1) && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
-           && (CURRENT_LINE[CURSOR_X] == '\t')
-           && (Buffer->cursor_rev_x > 0))
+           && (CURRENT_LINE[CURSOR_X] == '\t') && (Buffer->cursor_rev_x > 0))
         {
             if(!edit__delete_char(Buffer))
             {
@@ -201,9 +199,9 @@ bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
     the file. */
 
     // Prevent not-full Tab insert.
-    if(Buffer->chars_idx <= (CHARS_MAX - (idx_t) Config->Tab_width.value))
+    if(Buffer->chars_idx <= (CHARS_MAX - (idx_t) Config->Tab_sz.value))
     {
-        for(int tab_sz = 0; tab_sz < Config->Tab_width.value; tab_sz++)
+        for(int tab_sz = 0; tab_sz < Config->Tab_sz.value; tab_sz++)
         {
             if(!chars__printable_char(Buffer, '\t'))
             {

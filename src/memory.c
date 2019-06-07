@@ -2,11 +2,11 @@
 
 bool memory__extend_line(Buff_t* Buffer, const idx_t line_idx)
 {
-    idx_t memblock = MEMBLOCK;
+    idx_t memblock = BUFFER__MEMBLOCK;
 
-    if(Buffer->lines_length[line_idx] == INITIAL_MEMBLOCK)
+    if(Buffer->lines_length[line_idx] == BUFFER__INITIAL_MEMBLOCK)
     {
-        // There are 4/8 chars, extend to MEMBLOCK.
+        // There are 4/8 chars, extend to BUFFER__MEMBLOCK.
         Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
 #ifdef DEBUG_MEMORY
@@ -15,12 +15,12 @@ bool memory__extend_line(Buff_t* Buffer, const idx_t line_idx)
 #endif
 
     }
-    else if((Buffer->lines_length[line_idx] > INITIAL_MEMBLOCK)
-            && (Buffer->lines_length[line_idx] % MEMBLOCK == 0))
+    else if((Buffer->lines_length[line_idx] > BUFFER__INITIAL_MEMBLOCK)
+            && (Buffer->lines_length[line_idx] % BUFFER__MEMBLOCK == 0))
     {
         // There are more chars so append the new memblock.
-        memblock = ((Buffer->lines_length[line_idx] / MEMBLOCK) * MEMBLOCK)
-                   + MEMBLOCK;
+        memblock = ((Buffer->lines_length[line_idx] / BUFFER__MEMBLOCK)
+                    * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
 
         Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
@@ -30,6 +30,7 @@ bool memory__extend_line(Buff_t* Buffer, const idx_t line_idx)
 #endif
 
     }
+
     if(Buffer->text[line_idx] == NULL)
     {
         fprintf(stderr, "Can't extend a memory block for the line.\n");
@@ -40,20 +41,21 @@ bool memory__extend_line(Buff_t* Buffer, const idx_t line_idx)
 
 bool memory__shrink_current_line(Buff_t* Buffer)
 {
-    idx_t memblock = INITIAL_MEMBLOCK;
+    idx_t memblock = BUFFER__INITIAL_MEMBLOCK;
 
     /* These cases are executed only when the backspace is pressed. Works in the
     same way as "extend_current_line". */
-    if((CURRENT_LINE_LENGTH >= INITIAL_MEMBLOCK)
-       && (CURRENT_LINE_LENGTH < MEMBLOCK))
+    if((CURRENT_LINE_LENGTH >= BUFFER__INITIAL_MEMBLOCK)
+       && (CURRENT_LINE_LENGTH < BUFFER__MEMBLOCK))
     {
-        // Shrink to size of the MEMBLOCK.
-        memblock = MEMBLOCK;
+        // Shrink to size of the BUFFER__MEMBLOCK.
+        memblock = BUFFER__MEMBLOCK;
     }
-    else if(CURRENT_LINE_LENGTH >= MEMBLOCK)
+    else if(CURRENT_LINE_LENGTH >= BUFFER__MEMBLOCK)
     {
         // Remove the newest memblock because isn't needed now.
-        memblock = ((CURRENT_LINE_LENGTH / MEMBLOCK) * MEMBLOCK) + MEMBLOCK;
+        memblock = ((CURRENT_LINE_LENGTH / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
+                   + BUFFER__MEMBLOCK;
     }
     CURRENT_LINE = realloc(CURRENT_LINE, memblock);
     if(CURRENT_LINE == NULL)
@@ -72,18 +74,18 @@ bool memory__shrink_current_line(Buff_t* Buffer)
 
 bool memory__shrink_prev_line(Buff_t* Buffer)
 {
-    idx_t memblock = INITIAL_MEMBLOCK;
+    idx_t memblock = BUFFER__INITIAL_MEMBLOCK;
 
-    if((PREVIOUS_LINE_LENGTH >= INITIAL_MEMBLOCK)
-       && (PREVIOUS_LINE_LENGTH < MEMBLOCK))
+    if((PREVIOUS_LINE_LENGTH >= BUFFER__INITIAL_MEMBLOCK)
+       && (PREVIOUS_LINE_LENGTH < BUFFER__MEMBLOCK))
     {
-        memblock = MEMBLOCK;
+        memblock = BUFFER__MEMBLOCK;
     }
-    else if((PREVIOUS_LINE_LENGTH >= MEMBLOCK))
+    else if((PREVIOUS_LINE_LENGTH >= BUFFER__MEMBLOCK))
     {
         // Set the size of some MEMBLKs.
-        memblock = ((PREVIOUS_LINE_LENGTH / MEMBLOCK) * MEMBLOCK)
-                   + MEMBLOCK;
+        memblock = ((PREVIOUS_LINE_LENGTH / BUFFER__MEMBLOCK)
+                    * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
     }
     PREVIOUS_LINE = realloc(PREVIOUS_LINE, memblock);
 
@@ -103,7 +105,8 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
 bool memory__extend_lines_array(Buff_t* Buffer)
 {
     // Enhance the array that contains pointers to lines.
-    Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX) * ADDR_SZ);
+    Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX)
+                           * BUFFER__ADDR_SZ);
 
     if(Buffer->text == NULL)
     {
@@ -112,7 +115,7 @@ bool memory__extend_lines_array(Buff_t* Buffer)
     }
 
     // Enhance the array that contains lines length indicators.
-    Buffer->lines_length = realloc(Buffer->lines_length, ADDR_SZ *
+    Buffer->lines_length = realloc(Buffer->lines_length, BUFFER__ADDR_SZ *
                                    (Buffer->lines_idx + IDX));
 
     if(Buffer->lines_length == NULL)
@@ -122,7 +125,7 @@ bool memory__extend_lines_array(Buff_t* Buffer)
     }
 
     // The new line is allocated with only 4 or 8 bytes bytes.
-    LAST_LINE = malloc(INITIAL_MEMBLOCK);
+    LAST_LINE = malloc(BUFFER__INITIAL_MEMBLOCK);
     if(LAST_LINE == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for the new line.\n");
@@ -137,7 +140,8 @@ bool memory__extend_lines_array(Buff_t* Buffer)
 
 bool memory__shrink_lines_array(Buff_t* Buffer)
 {
-    Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX) * ADDR_SZ);
+    Buffer->text = realloc(Buffer->text, (Buffer->lines_idx + IDX)
+                           * BUFFER__ADDR_SZ);
 
     if(Buffer->text == NULL)
     {
@@ -145,7 +149,7 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
         return false;
     }
 
-    Buffer->lines_length = realloc(Buffer->lines_length, ADDR_SZ *
+    Buffer->lines_length = realloc(Buffer->lines_length, BUFFER__ADDR_SZ *
                                    (Buffer->lines_idx + IDX));
 
     if(Buffer->lines_length == NULL)
@@ -161,8 +165,9 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
     for(idx_t line_idx = Buffer->lines_idx; line_idx > CURRENT_LINE_IDX;
         line_idx--)
     {
-        idx_t memblock = ((Buffer->lines_length[line_idx - PREV] / MEMBLOCK)
-                         * MEMBLOCK) + MEMBLOCK;
+        idx_t memblock = ((Buffer->lines_length[line_idx - PREV]
+                          / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
+                          + BUFFER__MEMBLOCK;
 
         Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
@@ -188,8 +193,9 @@ bool memory__copy_lines_backward(Buff_t* Buffer)
     for(idx_t line_idx = CURRENT_LINE_IDX; line_idx < Buffer->lines_idx;
         line_idx++)
     {
-        idx_t memblock = ((Buffer->lines_length[line_idx + NEXT] / MEMBLOCK)
-                         * MEMBLOCK) + MEMBLOCK;
+        idx_t memblock = ((Buffer->lines_length[line_idx + NEXT]
+                          / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
+                          + BUFFER__MEMBLOCK;
 
         Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 

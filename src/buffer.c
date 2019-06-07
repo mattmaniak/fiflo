@@ -9,14 +9,14 @@ bool buffer__init(Buff_t* Buffer)
     }
 
     // Pointer to pointers, so the address size is needed.
-    if((Buffer->text = malloc(ADDR_SZ)) == NULL)
+    if((Buffer->text = malloc(BUFFER__ADDR_SZ)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory the array with lines.\n");
         return false;
     }
 
-    Buffer->lines_length = malloc(((sizeof(idx_t) / ADDR_SZ) * ADDR_SZ)
-                                  + ADDR_SZ);
+    Buffer->lines_length = malloc(((sizeof(idx_t) / BUFFER__ADDR_SZ)
+                                   * BUFFER__ADDR_SZ) + BUFFER__ADDR_SZ);
 
     if(Buffer->lines_length == NULL)
     {
@@ -31,7 +31,7 @@ bool buffer__init(Buff_t* Buffer)
 
     Buffer->escape_sequence_on_input = false;
 
-    if((CURRENT_LINE = malloc(ADDR_SZ)) == NULL)
+    if((CURRENT_LINE = malloc(BUFFER__ADDR_SZ)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for the first line.\n");
         return false;

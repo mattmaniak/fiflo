@@ -34,14 +34,14 @@ void config__init_selectors(Conf_t* Config)
     strcpy(Config->Color_text.selector,        "color-text");
     strcpy(Config->Color_warning.selector,     "color-warning");
     strcpy(Config->Color_whitespace.selector,  "color-whitespace");
-    strcpy(Config->Tab_width.selector,         "tab-width");
+    strcpy(Config->Tab_sz.selector,            "tab-size");
 }
 
 bool config__parse_selector(Conf_t* Config, const char* const selector,
                             const int value)
 {
     // Adds the value to the found selector in the configuration.
-    if(value >= RED)
+    if(value >= CONFIG__RED)
     {
         if(!strcmp(Config->Color_ui.selector, selector))
         {
@@ -68,11 +68,11 @@ bool config__parse_selector(Conf_t* Config, const char* const selector,
             Config->Color_whitespace.value = value;
         }
     }
-    else if(!strcmp(Config->Tab_width.selector, selector))
+    else if(!strcmp(Config->Tab_sz.selector, selector))
     {
-        if((value >= MIN_TAB_SZ) && (value <= MAX_TAB_SZ))
+        if((value >= CONFIG__MIN_TAB_SZ) && (value <= CONFIG__MAX_TAB_SZ))
         {
-            Config->Tab_width.value = value;
+            Config->Tab_sz.value = value;
         }
     }
     else
@@ -86,76 +86,76 @@ int config__parse_value(const char* const read_value)
 {
     if(!strcmp(read_value, "red\n"))
     {
-        return RED;
+        return CONFIG__RED;
     }
     else if(!strcmp(read_value, "green\n"))
     {
-        return GREEN;
+        return CONFIG__GREEN;
     }
     else if(!strcmp(read_value, "yellow\n"))
     {
-        return YELLOW;
+        return CONFIG__YELLOW;
     }
     else if(!strcmp(read_value, "blue\n"))
     {
-        return BLUE;
+        return CONFIG__BLUE;
     }
     else if(!strcmp(read_value, "magenta\n"))
     {
-        return MAGENTA;
+        return CONFIG__MAGENTA;
     }
     else if(!strcmp(read_value, "cyan\n"))
     {
-        return CYAN;
+        return CONFIG__CYAN;
     }
     else if(!strcmp(read_value, "white\n"))
     {
-        return WHITE;
+        return CONFIG__WHITE;
     }
     else if(!strcmp(read_value, "bright-black\n"))
     {
-        return BRIGHT_BLACK;
+        return CONFIG__BRIGHT_BLACK;
     }
     else if(!strcmp(read_value, "bright-red\n"))
     {
-        return BRIGHT_RED;
+        return CONFIG__BRIGHT_RED;
     }
     else if(!strcmp(read_value, "bright-green\n"))
     {
-        return BRIGHT_GREEN;
+        return CONFIG__BRIGHT_GREEN;
     }
     else if(!strcmp(read_value, "bright-yellow\n"))
     {
-        return BRIGHT_YELLOW;
+        return CONFIG__BRIGHT_YELLOW;
     }
     else if(!strcmp(read_value, "bright-blue\n"))
     {
-        return BRIGHT_BLUE;
+        return CONFIG__BRIGHT_BLUE;
     }
     else if(!strcmp(read_value, "bright-magenta\n"))
     {
-        return BRIGHT_MAGENTA;
+        return CONFIG__BRIGHT_MAGENTA;
     }
     else if(!strcmp(read_value, "bright-cyan\n"))
     {
-        return BRIGHT_CYAN;
+        return CONFIG__BRIGHT_CYAN;
     }
     else if(!strcmp(read_value, "bright-white\n"))
     {
-        return BRIGHT_WHITE;
+        return CONFIG__BRIGHT_WHITE;
     }
     return atoi(read_value); // Seems like linefeed removal too.
 }
 
 void config__set_default(Conf_t* Config)
 {
-    Config->Color_ui.value                  = WHITE;
-    Config->Color_line_number.value         = WHITE;
-    Config->Color_line_number_current.value = BRIGHT_BLACK;
-    Config->Color_text.value                = WHITE;
-    Config->Color_warning.value             = RED;
-    Config->Color_whitespace.value          = BRIGHT_BLACK;
-    Config->Tab_width.value                 = 8;
+    Config->Color_ui.value                  = CONFIG__WHITE;
+    Config->Color_line_number.value         = CONFIG__WHITE;
+    Config->Color_line_number_current.value = CONFIG__BRIGHT_BLACK;
+    Config->Color_text.value                = CONFIG__WHITE;
+    Config->Color_warning.value             = CONFIG__RED;
+    Config->Color_whitespace.value          = CONFIG__BRIGHT_BLACK;
+    Config->Tab_sz.value                    = CONFIG__MAX_TAB_SZ;
 }
 
 void config__load_custom(Conf_t* Config)

@@ -18,9 +18,9 @@ bool options__parse_and_print(const char* const arg)
         printf("%s\n%s\n%s\n%s\n%s\n",
         "|``",
         "|``",
-        VERSION,
-        COPYRIGHT,
-        REPO);
+        RELEASE__VERSION,
+        RELEASE__COPYRIGHT,
+        RELEASE__REPO);
 
         return false;
     }
