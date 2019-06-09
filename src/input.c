@@ -23,7 +23,7 @@ char input__getch(void)
     new_term_params = old_term_params;
 
     // Look that the options of below flags are negated.
-    new_term_params.c_iflag &= ~(enable_xon);
+    new_term_params.c_iflag &= ~enable_xon;
     new_term_params.c_lflag &= ~(canonical_mode_on | echo_input | enable_sigs);
 
     /* Immediately set the state of the stdin to the *new_term_params. Use the
@@ -110,7 +110,7 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
 bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
                       const char key)
 {
-    static char  chars_sequence[SEQ_MAX];
+    static char  chars_sequence[INPUT__SEQ_MAX];
     static idx_t char_idx;
 
     if((key == CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
@@ -126,7 +126,7 @@ bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
     if(Buffer->escape_sequence_on_input)
     {
         chars_sequence[char_idx] = key;
-        if(char_idx < (SEQ_MAX - NUL_SZ))
+        if(char_idx < (INPUT__SEQ_MAX - NUL_SZ))
         {
             char_idx++;
         }

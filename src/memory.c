@@ -45,20 +45,20 @@ bool memory__shrink_current_line(Buff_t* Buffer)
 
     /* These cases are executed only when the backspace is pressed. Works in the
     same way as "extend_current_line". */
-    if((CURRENT_LINE_LENGTH >= BUFFER__INITIAL_MEMBLOCK)
-       && (CURRENT_LINE_LENGTH < BUFFER__MEMBLOCK))
+    if((BUFFER__CURRENT_LINE_LENGTH >= BUFFER__INITIAL_MEMBLOCK)
+       && (BUFFER__CURRENT_LINE_LENGTH < BUFFER__MEMBLOCK))
     {
         // Shrink to size of the BUFFER__MEMBLOCK.
         memblock = BUFFER__MEMBLOCK;
     }
-    else if(CURRENT_LINE_LENGTH >= BUFFER__MEMBLOCK)
+    else if(BUFFER__CURRENT_LINE_LENGTH >= BUFFER__MEMBLOCK)
     {
         // Remove the newest memblock because isn't needed now.
-        memblock = ((CURRENT_LINE_LENGTH / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
-                   + BUFFER__MEMBLOCK;
+        memblock = ((BUFFER__CURRENT_LINE_LENGTH / BUFFER__MEMBLOCK)
+                    * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
     }
-    CURRENT_LINE = realloc(CURRENT_LINE, memblock);
-    if(CURRENT_LINE == NULL)
+    BUFFER__CURRENT_LINE = realloc(BUFFER__CURRENT_LINE, memblock);
+    if(BUFFER__CURRENT_LINE == NULL)
     {
         fprintf(stderr, "Can't shrink the memblock with the current line.\n");
         return false;
@@ -66,7 +66,7 @@ bool memory__shrink_current_line(Buff_t* Buffer)
 
 #ifdef DEBUG_MEMORY
     printf("Shrink_current_line %u with mem of %u B.\n",
-           CURRENT_LINE_IDX + IDX, memblock);
+           BUFFER__CURRENT_LINE_IDX + IDX, memblock);
 #endif
 
     return true;
@@ -76,25 +76,25 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
 {
     idx_t memblock = BUFFER__INITIAL_MEMBLOCK;
 
-    if((PREVIOUS_LINE_LENGTH >= BUFFER__INITIAL_MEMBLOCK)
-       && (PREVIOUS_LINE_LENGTH < BUFFER__MEMBLOCK))
+    if((BUFFER__PREVIOUS_LINE_LENGTH >= BUFFER__INITIAL_MEMBLOCK)
+       && (BUFFER__PREVIOUS_LINE_LENGTH < BUFFER__MEMBLOCK))
     {
         memblock = BUFFER__MEMBLOCK;
     }
-    else if((PREVIOUS_LINE_LENGTH >= BUFFER__MEMBLOCK))
+    else if((BUFFER__PREVIOUS_LINE_LENGTH >= BUFFER__MEMBLOCK))
     {
         // Set the size of some MEMBLKs.
-        memblock = ((PREVIOUS_LINE_LENGTH / BUFFER__MEMBLOCK)
+        memblock = ((BUFFER__PREVIOUS_LINE_LENGTH / BUFFER__MEMBLOCK)
                     * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
     }
-    PREVIOUS_LINE = realloc(PREVIOUS_LINE, memblock);
+    BUFFER__PREVIOUS_LINE = realloc(BUFFER__PREVIOUS_LINE, memblock);
 
 #ifdef DEBUG_MEMORY
     printf("Shrink_PREV_line %u with mem of %u B\n",
-           PREVIOUS_LINE_IDX + IDX, memblock);
+           BUFFER__PREVIOUS_LINE_IDX + IDX, memblock);
 #endif
 
-    if(PREVIOUS_LINE == NULL)
+    if(BUFFER__PREVIOUS_LINE == NULL)
     {
         fprintf(stderr, "Can't shrink the memblock with the PREVious line.\n");
         return false;
@@ -125,15 +125,15 @@ bool memory__extend_lines_array(Buff_t* Buffer)
     }
 
     // The new line is allocated with only 4 or 8 bytes bytes.
-    LAST_LINE = malloc(BUFFER__INITIAL_MEMBLOCK);
-    if(LAST_LINE == NULL)
+    BUFFER__LAST_LINE = malloc(BUFFER__INITIAL_MEMBLOCK);
+    if(BUFFER__LAST_LINE == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for the new line.\n");
         return false;
     }
 
     // Naturally the new line doesn't contains any chars - only terminator.
-    LAST_LINE_LENGTH = 0;
+    BUFFER__LAST_LINE_LENGTH = 0;
 
     return true;
 }
@@ -162,7 +162,7 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
 
 bool memory__copy_lines_forward(Buff_t* Buffer)
 {
-    for(idx_t line_idx = Buffer->lines_idx; line_idx > CURRENT_LINE_IDX;
+    for(idx_t line_idx = Buffer->lines_idx; line_idx > BUFFER__CURRENT_LINE_IDX;
         line_idx--)
     {
         idx_t memblock = ((Buffer->lines_length[line_idx - PREV]
@@ -190,7 +190,7 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
 
 bool memory__copy_lines_backward(Buff_t* Buffer)
 {
-    for(idx_t line_idx = CURRENT_LINE_IDX; line_idx < Buffer->lines_idx;
+    for(idx_t line_idx = BUFFER__CURRENT_LINE_IDX; line_idx < Buffer->lines_idx;
         line_idx++)
     {
         idx_t memblock = ((Buffer->lines_length[line_idx + NEXT]

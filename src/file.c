@@ -49,7 +49,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         }
         cw_dir_length = strlen(Buffer->pathname);
 
-        // Getcwd() returns the pathname without the slash, which is required here.
+        // Getcwd() returns the pathname without the slash, which is required.
         if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
@@ -57,7 +57,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 
             return false;
         }
-        strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy the pathname.
+        strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy pathname.
 
         Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
         Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
@@ -78,7 +78,7 @@ bool file__convert_tab_from_file(Buff_t* Buffer, const Conf_t* const Config,
     if(ch == '\t')
     {
         for(idx_t char_idx = 0;
-            char_idx < (idx_t) (Config->Tab_sz.value - AT_LEAST_ONE_TAB);
+            char_idx < (idx_t) (Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB);
             char_idx++)
         {
             if(!chars__printable_char(Buffer, ch))
@@ -141,7 +141,7 @@ void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
         else if(tab_idx == (idx_t) Config->Tab_sz.value - IDX)
         {
             // Some in-memory tabs converted
-            *char_idx += (idx_t) Config->Tab_sz.value - AT_LEAST_ONE_TAB;
+            *char_idx += (idx_t) Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB;
         }
     }
 }

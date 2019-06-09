@@ -12,7 +12,7 @@
 #include "modes.h"
 #include "window.h"
 
-#define SEQ_MAX 8
+#define INPUT__SEQ_MAX 8
 
 // Reads one char wthout confirming by enter the key. Termios based.
 char input__getch(void);

@@ -9,7 +9,7 @@
 #include "modes.h"
 #include "path.h"
 
-#define AT_LEAST_ONE_TAB 1
+#define FILE__AT_LEAST_ONE_TAB 1
 
 extern bool chars__printable_char(Buff_t*, const char);
 

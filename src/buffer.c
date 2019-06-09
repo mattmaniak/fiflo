@@ -27,11 +27,11 @@ bool buffer__init(Buff_t* Buffer)
     Buffer->lines_idx    = 0;
     Buffer->cursor_rev_x = 0;
     Buffer->cursor_rev_y = 0;
-    CURRENT_LINE_LENGTH  = 0;
+    BUFFER__CURRENT_LINE_LENGTH  = 0;
 
     Buffer->escape_sequence_on_input = false;
 
-    if((CURRENT_LINE = malloc(BUFFER__ADDR_SZ)) == NULL)
+    if((BUFFER__CURRENT_LINE = malloc(BUFFER__ADDR_SZ)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for the first line.\n");
         return false;

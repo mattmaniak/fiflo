@@ -56,10 +56,10 @@ typedef struct
     idx_t    lines_idx;    // Lines index.
     idx_t*   lines_length; // Chars in the current line (index).
 
-    // Mostly visual shit.
+    // Visual shit.
     idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
     idx_t    cursor_rev_y;       // As above but in Y-axis.
-    char     status[STATUS_MAX]; // Displayed message in the upper bar.
+    char     status[STATUS_MAX]; // Message displayed in the upper bar.
 }
 Buff_t;
 
@@ -71,28 +71,28 @@ Buff_t;
 #define BUFFER__MEMBLOCK     (idx_t) (128 * sizeof(char))
 
 // Some placeholders.
-#define CURRENT_LINE_IDX     (Buffer->lines_idx - Buffer->cursor_rev_y)
-#define CURRENT_LINE         Buffer->text[CURRENT_LINE_IDX]
-#define CURRENT_LINE_LENGTH  Buffer->lines_length[CURRENT_LINE_IDX]
-#define CURSOR_X             (CURRENT_LINE_LENGTH - Buffer->cursor_rev_x)
-#define CURRENT_CHAR         CURRENT_LINE[CURSOR_X]
-#define PREVIOUS_CHAR        CURRENT_LINE[CURSOR_X - 1]
-#define LAST_CHAR_IN_LINE    CURRENT_LINE[CURRENT_LINE_LENGTH]
+#define BUFFER__CURRENT_LINE_IDX     (Buffer->lines_idx - Buffer->cursor_rev_y)
+#define BUFFER__CURRENT_LINE         Buffer->text[BUFFER__CURRENT_LINE_IDX]
+#define BUFFER__CURRENT_LINE_LENGTH  Buffer->lines_length[BUFFER__CURRENT_LINE_IDX]
+#define BUFFER__CURSOR_X             (BUFFER__CURRENT_LINE_LENGTH - Buffer->cursor_rev_x)
+#define BUFFER__CURRENT_CHAR         BUFFER__CURRENT_LINE[BUFFER__CURSOR_X]
+#define BUFFER__PREVIOUS_CHAR        BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - 1]
+#define BUFFER__LAST_CHAR_IN_LINE    BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH]
 
-#define PREVIOUS_LINE_IDX    (CURRENT_LINE_IDX - 1)
-#define PREVIOUS_LINE        Buffer->text[PREVIOUS_LINE_IDX]
-#define PREVIOUS_LINE_LENGTH Buffer->lines_length[PREVIOUS_LINE_IDX]
+#define BUFFER__PREVIOUS_LINE_IDX    (BUFFER__CURRENT_LINE_IDX - 1)
+#define BUFFER__PREVIOUS_LINE        Buffer->text[BUFFER__PREVIOUS_LINE_IDX]
+#define BUFFER__PREVIOUS_LINE_LENGTH Buffer->lines_length[BUFFER__PREVIOUS_LINE_IDX]
 
-#define LAST_LINE            Buffer->text[Buffer->lines_idx]
-#define LAST_LINE_LENGTH     Buffer->lines_length[Buffer->lines_idx]
+#define BUFFER__LAST_LINE            Buffer->text[Buffer->lines_idx]
+#define BUFFER__LAST_LINE_LENGTH     Buffer->lines_length[Buffer->lines_idx]
 
-#define BUFFER_NOT_FULL      (Buffer->chars_idx    < CHARS_MAX)
-#define CURSOR_X_SCROLLED    (Buffer->cursor_rev_x > 0)
-#define CURSOR_Y_SCROLLED    (Buffer->cursor_rev_y > 0)
-#define EMPTY_LINE           (CURRENT_LINE_LENGTH  == 0)
-#define FIRST_LINE           (CURRENT_LINE_IDX     == 0)
-#define CURSOR_AT_LINE_START (Buffer->cursor_rev_x == CURRENT_LINE_LENGTH)
-#define CURSOR_AT_TOP        (Buffer->cursor_rev_y == Buffer->lines_idx)
+#define BUFFER__CHARS_LIMIT_NOT_EXCEEDED      (Buffer->chars_idx    < CHARS_MAX)
+#define BUFFER__CURSOR_X_SCROLLED    (Buffer->cursor_rev_x > 0)
+#define BUFFER__CURSOR_Y_SCROLLED    (Buffer->cursor_rev_y > 0)
+#define BUFFER__EMPTY_LINE           (BUFFER__CURRENT_LINE_LENGTH  == 0)
+#define BUFFER__FIRST_LINE           (BUFFER__CURRENT_LINE_IDX     == 0)
+#define BUFFER__CURSOR_AT_LINE_START (Buffer->cursor_rev_x == BUFFER__CURRENT_LINE_LENGTH)
+#define BUFFER__CURSOR_AT_TOP        (Buffer->cursor_rev_y == Buffer->lines_idx)
 
 // Initializes all Buffer structure members.
 bool buffer__init(Buff_t*);

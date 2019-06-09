@@ -12,7 +12,7 @@ void ui__print_line_number(const Buff_t* const Buffer,
 {
     ui__set_color(&Config->Color_line_number);
 
-    if(line_idx == CURRENT_LINE_IDX)
+    if(line_idx == BUFFER__CURRENT_LINE_IDX)
     {
         ui__set_color(&Config->Color_line_number_current);
     }
@@ -25,9 +25,9 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
                    const Ui_t* const Ui)
 {
     ui__set_color(&Config->Color_ui);
-    printf("%*s", LEFT_PADDING, " ");
+    printf("%*s", UI__LEFT_PADDING, " ");
 
-    if(Buffer->fname_length < (size_t) (Ui->win_w - RIGHT_PADDING))
+    if(Buffer->fname_length < (size_t) (Ui->win_w - UI__RIGHT_PADDING))
     {
         puts(Buffer->fname);
     }
@@ -35,17 +35,17 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     {
         // The filename is too long to show - scroll it.
         for(size_t char_i = Buffer->fname_length - Ui->win_w
-            + HORIZONTAL_PADDING; char_i < Buffer->fname_length; char_i++)
+            + UI__HORIZONTAL_PADDING; char_i < Buffer->fname_length; char_i++)
         {
             putchar(Buffer->fname[char_i]);
         }
         WRAP_LINE();
     }
-    printf("%*s%s%*s", LEFT_PADDING, " ", Buffer->status, (int) (STATUS_MAX
-           - strlen(Buffer->status) - SPACE_SZ), GIT_LOGO);
+    printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status, (int) (STATUS_MAX
+           - strlen(Buffer->status) - SPACE_SZ), UI__GIT_LOGO);
 
     if((term_t) strlen(Buffer->git_branch)
-       < (Ui->win_w - GIT_LOGO_LENGTH - STATUS_MAX - HORIZONTAL_PADDING))
+       < (Ui->win_w - UI__GIT_LOGO_W - STATUS_MAX - UI__HORIZONTAL_PADDING))
     {
         printf("%s", Buffer->git_branch);
     }
@@ -80,29 +80,29 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
     if(Modes->lbar_toggled)
     {
-        for(size_t idx = 0; idx < (TOGGLED_PANE_SZ - LBAR_SZ); idx++)
+        for(size_t idx = 0; idx < (UI__TOGGLED_LBAR_H - UI__LBAR_SZ); idx++)
         {
             printf("%s", key_binding[idx]);
             WRAP_LINE();
         }
     }
-    printf("%.*s%*s", STATUS_MAX, key_binding[TOGGLED_PANE_SZ - LBAR_SZ],
-           STATUS_MAX - (term_t) strlen(key_binding[TOGGLED_PANE_SZ - LBAR_SZ]),
+    printf("%.*s%*s", STATUS_MAX, key_binding[UI__TOGGLED_LBAR_H - UI__LBAR_SZ],
+           STATUS_MAX - (term_t) strlen(key_binding[UI__TOGGLED_LBAR_H - UI__LBAR_SZ]),
            " ");
 
-    if((idx_t) (Ui->text_x + HORIZONTAL_PADDING) > punch_card_width)
+    if((idx_t) (Ui->textarea_w + UI__HORIZONTAL_PADDING) > punch_card_width)
     {
         printf("%*s",
                Ui->line_num_length + punch_card_width - STATUS_MAX - SPACE_SZ
                - (term_t) strlen(punch_card), " ");
 
-        if(CURSOR_X >= Ui->text_x) // Scrolling.
+        if(BUFFER__CURSOR_X >= Ui->textarea_w) // Scrolling.
         {
-            punch_card_width = CURSOR_X + IDX - Ui->text_x + tmp_width;
+            punch_card_width = BUFFER__CURSOR_X + IDX - Ui->textarea_w + tmp_width;
         }
 
-        if((CURRENT_LINE_LENGTH > punch_card_width)
-           && (CURRENT_LINE[punch_card_width] != '\n'))
+        if((BUFFER__CURRENT_LINE_LENGTH > punch_card_width)
+           && (BUFFER__CURRENT_LINE[punch_card_width] != '\n'))
         {
             ui__set_color(&Config->Color_warning);
         }

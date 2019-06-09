@@ -4,9 +4,9 @@ term_t window__get_terminal_sz(const char axis)
 {
     const int line_sz = 1;
     const int sz_max  = USHRT_MAX;
-    const int h_min   = UBAR_SZ + line_sz + TOGGLED_PANE_SZ;
-    const int w_min   = GIT_LOGO_LENGTH + SPACE_SZ + GIT_BRANCH_AREA_MIN
-                        + SPACE_SZ + STATUS_MAX + HORIZONTAL_PADDING;
+    const int h_min   = UI__UBAR_SZ + line_sz + UI__TOGGLED_LBAR_H;
+    const int w_min   = UI__GIT_LOGO_W + SPACE_SZ + UI__GIT_BRANCH_MIN_W
+                        + SPACE_SZ + STATUS_MAX + UI__HORIZONTAL_PADDING;
 
     const struct winsize terminal;
 
@@ -48,7 +48,7 @@ void window__flush(void)
     ANSI_CLEAN_WHOLE_LINE();
 
     // Then from move up and clean the next lines till the window ends.
-    for(term_t line = LBAR_SZ; line < window__get_terminal_sz('Y'); line++)
+    for(term_t line = UI__LBAR_SZ; line < window__get_terminal_sz('Y'); line++)
     {
         ANSI_CURSOR_UP(1);
         ANSI_CLEAN_WHOLE_LINE();
@@ -59,10 +59,10 @@ void window__flush(void)
 void window__fill(const Buff_t* const Buffer, const Ui_t* const Ui)
 {
     // Fill the empty area below the text to pos the lower bar.
-    if((Buffer->lines_idx + IDX) < (idx_t) Ui->text_y)
+    if((Buffer->lines_idx + IDX) < (idx_t) Ui->textarea_h)
     {
         for(idx_t line = Buffer->lines_idx;
-            line < (idx_t) (Ui->text_y - LBAR_SZ); line++)
+            line < (idx_t) (Ui->textarea_h - UI__LBAR_SZ); line++)
         {
             WRAP_LINE();
         }
@@ -74,8 +74,8 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
                             const Mod_t* const Modes, const Ui_t* const Ui)
 {
     // Set by default to a filename edit.
-    term_t move_right = (term_t) (LEFT_PADDING + Buffer->fname_length);
-    term_t move_up    = (term_t) (Ui->win_h - LBAR_SZ);
+    term_t move_right = (term_t) (UI__LEFT_PADDING + Buffer->fname_length);
+    term_t move_up    = (term_t) (Ui->win_h - UI__LBAR_SZ);
 
     if(move_right >= Ui->win_w)
     {
@@ -88,24 +88,26 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 
     if(!Modes->live_fname_edit)
     {
-        if(CURRENT_LINE_LENGTH < Ui->text_x)
+        if(BUFFER__CURRENT_LINE_LENGTH < Ui->textarea_w)
         {
             // No horizontal scrolling.
-            move_right = (term_t) (Ui->line_num_length + CURSOR_X);
+            move_right = (term_t) (Ui->line_num_length + BUFFER__CURSOR_X);
         }
-        else if((CURRENT_LINE_LENGTH - Ui->text_x) >= Buffer->cursor_rev_x)
+        else if((BUFFER__CURRENT_LINE_LENGTH - Ui->textarea_w)
+                >= Buffer->cursor_rev_x)
         {
-            /* Last Ui->text_x chars are seen. Current line is scrolled,
+            /* Last Ui->textarea_w chars are seen. Current line is scrolled,
             not cursor. */
             move_right = (term_t) (Ui->win_w - CURSOR_SZ);
         }
         else
         {
             // Text is scrolled horizontally to the start. Cursor can be moved.
-            move_right = (term_t) (Ui->line_num_length + CURSOR_X);
+            move_right = (term_t) (Ui->line_num_length + BUFFER__CURSOR_X);
         }
-        move_up = (CURRENT_LINE_IDX < Ui->text_y) ?
-        (term_t) (Ui->text_y - CURRENT_LINE_IDX - IDX + Ui->lbar_h) : Ui->lbar_h;
+        move_up = (BUFFER__CURRENT_LINE_IDX < Ui->textarea_h) ?
+        (term_t) (Ui->textarea_h - BUFFER__CURRENT_LINE_IDX - IDX + Ui->lbar_h)
+        : Ui->lbar_h;
     }
     ANSI_CURSOR_RIGHT(move_right);
     ANSI_CURSOR_UP(move_up);
@@ -119,23 +121,19 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
 
     sprintf(line_num_str, "%u", Buffer->lines_idx + IDX);
 
-    if((Ui.win_w = window__get_terminal_sz('X')) == 0)
+    if(((Ui.win_w = window__get_terminal_sz('X')) == 0)
+       || ((Ui.win_h = window__get_terminal_sz('Y')) == 0))
     {
         return false;
     }
-    if((Ui.win_h = window__get_terminal_sz('Y')) == 0)
-    {
-        return false;
-    }
-
-    Ui.pane_h = TOGGLED_PANE_SZ;
-    Ui.lbar_h = (Modes->lbar_toggled) ? Ui.pane_h : LBAR_SZ;
+    Ui.toggled_lbar_h = UI__TOGGLED_LBAR_H;
+    Ui.lbar_h = (Modes->lbar_toggled) ? Ui.toggled_lbar_h : UI__LBAR_SZ;
 
     Ui.line_num_length = (term_t) (strlen(line_num_str) + SPACE_SZ
-                         + LEFT_PADDING);
+                         + UI__LEFT_PADDING);
 
-    Ui.text_x          = (term_t) (Ui.win_w - Ui.line_num_length);
-    Ui.text_y          = (term_t) (Ui.win_h - UBAR_SZ - Ui.lbar_h);
+    Ui.textarea_w = (term_t) (Ui.win_w - Ui.line_num_length);
+    Ui.textarea_h = (term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
     ui__upper_bar(Buffer, Config, &Ui);
     print__display_text(Buffer, &Ui, Config);
