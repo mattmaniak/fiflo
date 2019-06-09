@@ -111,18 +111,21 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
     if((BUFFER__CURRENT_CHAR != ' ') && (BUFFER__CURRENT_CHAR != '\t'))
     {
         while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LENGTH)
-              && !((BUFFER__CURRENT_CHAR == ' ') || (BUFFER__CURRENT_CHAR == '\t')))
+              && !((BUFFER__CURRENT_CHAR == ' ')
+              || (BUFFER__CURRENT_CHAR == '\t')))
         {
             Buffer->cursor_rev_x++;
         }
         // Skip the tab instantly instead of 1 column char for the first time.
-        if(!BUFFER__EMPTY_LINE && ((BUFFER__CURRENT_CHAR == ' ') || (BUFFER__CURRENT_CHAR == '\t'))
+        if(!BUFFER__EMPTY_LINE && ((BUFFER__CURRENT_CHAR == ' ')
+           || (BUFFER__CURRENT_CHAR == '\t'))
            && ((BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - PREV] == ' ')
            || (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - PREV] == '\t')))
         {
             // Prevents skipping only one part of the tab.
             while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LENGTH)
-                  && ((BUFFER__CURRENT_CHAR == ' ') || (BUFFER__CURRENT_CHAR == '\t')))
+                  && ((BUFFER__CURRENT_CHAR == ' ')
+                  || (BUFFER__CURRENT_CHAR == '\t')))
             {
                 Buffer->cursor_rev_x++;
             }
@@ -135,7 +138,8 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
     else // Non-whitespace chars.
     {
         while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LENGTH)
-              && ((BUFFER__CURRENT_CHAR == ' ') || (BUFFER__CURRENT_CHAR == '\t')))
+              && ((BUFFER__CURRENT_CHAR == ' ')
+              || (BUFFER__CURRENT_CHAR == '\t')))
         {
             Buffer->cursor_rev_x++;
         }
@@ -143,7 +147,8 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
         if(!((BUFFER__CURRENT_CHAR == ' ') || (BUFFER__CURRENT_CHAR == '\t')))
         {
             while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LENGTH)
-                  && !((BUFFER__CURRENT_CHAR == ' ') || (BUFFER__CURRENT_CHAR == '\t')))
+                  && !((BUFFER__CURRENT_CHAR == ' ')
+                  || (BUFFER__CURRENT_CHAR == '\t')))
             {
                 Buffer->cursor_rev_x++;
             }

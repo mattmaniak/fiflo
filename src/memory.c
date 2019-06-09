@@ -55,7 +55,7 @@ bool memory__shrink_current_line(Buff_t* Buffer)
     {
         // Remove the newest memblock because isn't needed now.
         memblock = ((BUFFER__CURRENT_LINE_LENGTH / BUFFER__MEMBLOCK)
-                    * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
+                   * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
     }
     BUFFER__CURRENT_LINE = realloc(BUFFER__CURRENT_LINE, memblock);
     if(BUFFER__CURRENT_LINE == NULL)
@@ -85,7 +85,7 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
     {
         // Set the size of some MEMBLKs.
         memblock = ((BUFFER__PREVIOUS_LINE_LENGTH / BUFFER__MEMBLOCK)
-                    * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
+                   * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
     }
     BUFFER__PREVIOUS_LINE = realloc(BUFFER__PREVIOUS_LINE, memblock);
 
@@ -125,8 +125,7 @@ bool memory__extend_lines_array(Buff_t* Buffer)
     }
 
     // The new line is allocated with only 4 or 8 bytes bytes.
-    BUFFER__LAST_LINE = malloc(BUFFER__INITIAL_MEMBLOCK);
-    if(BUFFER__LAST_LINE == NULL)
+    if((BUFFER__LAST_LINE = malloc(BUFFER__INITIAL_MEMBLOCK)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for the new line.\n");
         return false;
@@ -149,8 +148,8 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
         return false;
     }
 
-    Buffer->lines_length = realloc(Buffer->lines_length, BUFFER__ADDR_SZ *
-                                   (Buffer->lines_idx + IDX));
+    Buffer->lines_length = realloc(Buffer->lines_length, BUFFER__ADDR_SZ
+                                   * (Buffer->lines_idx + IDX));
 
     if(Buffer->lines_length == NULL)
     {
@@ -166,8 +165,8 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
         line_idx--)
     {
         idx_t memblock = ((Buffer->lines_length[line_idx - PREV]
-                          / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
-                          + BUFFER__MEMBLOCK;
+                         / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
+                         + BUFFER__MEMBLOCK;
 
         Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 
@@ -194,8 +193,8 @@ bool memory__copy_lines_backward(Buff_t* Buffer)
         line_idx++)
     {
         idx_t memblock = ((Buffer->lines_length[line_idx + NEXT]
-                          / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
-                          + BUFFER__MEMBLOCK;
+                         / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
+                         + BUFFER__MEMBLOCK;
 
         Buffer->text[line_idx] = realloc(Buffer->text[line_idx], memblock);
 

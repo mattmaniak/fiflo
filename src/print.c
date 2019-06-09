@@ -49,7 +49,8 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
                               BUFFER__CURRENT_LINE_LENGTH);
     }
     // Chars won't fits in the horizontal space.
-    else if((BUFFER__CURRENT_LINE_LENGTH - Ui->textarea_w) >= Buffer->cursor_rev_x)
+    else if((BUFFER__CURRENT_LINE_LENGTH - Ui->textarea_w)
+            >= Buffer->cursor_rev_x)
     {
         // Render only right part of the line.
         print__scroll_line_horizontally(Buffer, Config, Ui);
@@ -198,7 +199,8 @@ void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
     if(BUFFER__CURRENT_LINE_LENGTH < Ui->textarea_w)
     {
         if((BUFFER__CURRENT_LINE_LENGTH > 0)
-        && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH - NUL_SZ] == '\n'))
+           && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH - NUL_SZ] \
+           == '\n'))
         {
             chars_end_offset--;
         }
@@ -207,7 +209,8 @@ void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
 
     }
     // Chars won't fits in the horizontal space.
-    else if((BUFFER__CURRENT_LINE_LENGTH - Ui->textarea_w) >= Buffer->cursor_rev_x)
+    else if((BUFFER__CURRENT_LINE_LENGTH - Ui->textarea_w)
+            >= Buffer->cursor_rev_x)
     {
         // Text will be scrolled. Not cursor.
         print__line_with_tabs(Buffer, Config, BUFFER__CURRENT_LINE_IDX,

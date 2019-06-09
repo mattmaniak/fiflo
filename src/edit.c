@@ -34,8 +34,8 @@ bool edit__delete_line(Buff_t* Buffer)
     {
         if(BUFFER__CURSOR_Y_SCROLLED)
         {
-            Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_START) ? next_line_length
-                                   : LF_SZ;
+            Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_START)
+                                   ? next_line_length : LF_SZ;
 
             if(!memory__copy_lines_backward(Buffer))
             {

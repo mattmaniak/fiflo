@@ -2,7 +2,7 @@
 
 void ui__set_color(const Opt_t* const Option)
 {
-    // Reset to the default color or set another.
+    // Reset to the default color or set am another one.
     printf("\033[%um", (Option == NULL) ? 0 : Option->value);
 }
 
@@ -87,8 +87,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         }
     }
     printf("%.*s%*s", STATUS_MAX, key_binding[UI__TOGGLED_LBAR_H - UI__LBAR_SZ],
-           STATUS_MAX - (term_t) strlen(key_binding[UI__TOGGLED_LBAR_H - UI__LBAR_SZ]),
-           " ");
+           STATUS_MAX - (term_t) strlen(key_binding[UI__TOGGLED_LBAR_H
+           - UI__LBAR_SZ]), " ");
 
     if((idx_t) (Ui->textarea_w + UI__HORIZONTAL_PADDING) > punch_card_width)
     {
@@ -98,7 +98,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
         if(BUFFER__CURSOR_X >= Ui->textarea_w) // Scrolling.
         {
-            punch_card_width = BUFFER__CURSOR_X + IDX - Ui->textarea_w + tmp_width;
+            punch_card_width = BUFFER__CURSOR_X + IDX - Ui->textarea_w
+                               + tmp_width;
         }
 
         if((BUFFER__CURRENT_LINE_LENGTH > punch_card_width)

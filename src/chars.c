@@ -137,9 +137,9 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
         }
 
         // Scenario when there is char at the beginning and tab at the right.
-        if((BUFFER__CURSOR_X == 1)
+        if((BUFFER__CURSOR_X == 1) && (Buffer->cursor_rev_x > 0)
            && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - NUL_SZ] != '\t')
-           && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X] == '\t') && (Buffer->cursor_rev_x > 0))
+           && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X] == '\t'))
         {
             if(!edit__delete_char(Buffer))
             {
@@ -165,7 +165,8 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
 
         // Some text and the tab(s) at the end.
         if((BUFFER__CURRENT_LINE_LENGTH > 0) && (Buffer->cursor_rev_x == 0)
-           && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH - NUL_SZ] != '\t'))
+           && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH - NUL_SZ]
+           != '\t'))
         {
             break;
         }
