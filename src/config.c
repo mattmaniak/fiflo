@@ -167,7 +167,7 @@ void config__load_custom(Conf_t* Config)
 
     while(fgets(line, 80, Config->File) != NULL)
     {
-        if((line[0] == '#') || (line[0] <= 32)) // Hash, space or unseen char.
+        if((line[0] == '#') || (line[0] <= 32)) // Hash, space, unvisible char.
         {
             continue;
         }
