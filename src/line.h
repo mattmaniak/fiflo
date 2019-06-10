@@ -9,6 +9,8 @@ typedef struct
 {
     char* text;
     idx_t length;
+
+    idx_t _padding;
 }
 Line_t;
 
