@@ -12,8 +12,7 @@ that describes the buffer. */
 #include <limits.h>
 #include <linux/limits.h>
 
-// Just the type for indexes.
-typedef uint32_t idx_t;
+#include "line.h"
 
 #define IDX       1
 #define NUL_SZ    1
@@ -51,10 +50,9 @@ typedef struct
     size_t   fname_length; // Strlen of the above array.
 
     // File's content and some indicators.
-    char**   text;         // Text buffer. E.g. text[lines_idx][chars_idx].
+    Line_t*  Lines;
     idx_t    chars_idx;    // All chars index.
     idx_t    lines_idx;    // Lines index.
-    idx_t*   lines_length; // Chars in the current line (index).
 
     // Visual shit.
     idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
@@ -64,9 +62,7 @@ typedef struct
 Buff_t;
 
 // Aligned memory blocks.
-#define BUFFER__ADDR_SZ sizeof(Buffer->text)
-
-#define BUFFER__INITIAL_MEMBLOCK (BUFFER__ADDR_SZ * sizeof(char))
+#define BUFFER__INITIAL_MEMBLOCK (sizeof(Buffer->Lines) * sizeof(char))
 
 // Must be >= 16 and dividable by 8.
 #define BUFFER__MEMBLOCK (idx_t) (128 * sizeof(char))
@@ -74,10 +70,10 @@ Buff_t;
 // Some placeholders.
 #define BUFFER__CURRENT_LINE_IDX (Buffer->lines_idx - Buffer->cursor_rev_y)
 
-#define BUFFER__CURRENT_LINE Buffer->text[BUFFER__CURRENT_LINE_IDX]
+#define BUFFER__CURRENT_LINE Buffer->Lines[BUFFER__CURRENT_LINE_IDX].text
 
 #define BUFFER__CURRENT_LINE_LENGTH  \
-Buffer->lines_length[BUFFER__CURRENT_LINE_IDX]
+Buffer->Lines[BUFFER__CURRENT_LINE_IDX].length
 
 #define BUFFER__CURSOR_X (BUFFER__CURRENT_LINE_LENGTH - Buffer->cursor_rev_x)
 
@@ -90,14 +86,14 @@ BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH]
 
 #define BUFFER__PREVIOUS_LINE_IDX (BUFFER__CURRENT_LINE_IDX - PREV)
 
-#define BUFFER__PREVIOUS_LINE Buffer->text[BUFFER__PREVIOUS_LINE_IDX]
+#define BUFFER__PREVIOUS_LINE Buffer->Lines[BUFFER__PREVIOUS_LINE_IDX].text
 
 #define BUFFER__PREVIOUS_LINE_LENGTH \
-Buffer->lines_length[BUFFER__PREVIOUS_LINE_IDX]
+Buffer->Lines[BUFFER__PREVIOUS_LINE_IDX].length
 
-#define BUFFER__LAST_LINE Buffer->text[Buffer->lines_idx]
+#define BUFFER__LAST_LINE Buffer->Lines[Buffer->lines_idx].text
 
-#define BUFFER__LAST_LINE_LENGTH Buffer->lines_length[Buffer->lines_idx]
+#define BUFFER__LAST_LINE_LENGTH Buffer->Lines[Buffer->lines_idx].length
 
 #define BUFFER__CHARS_LIMIT_NOT_EXCEEDED (Buffer->chars_idx < CHARS_MAX)
 

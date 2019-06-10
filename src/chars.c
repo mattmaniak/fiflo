@@ -89,7 +89,7 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
                 edit__shift_text_horizonally(Buffer, 'r');
             }
             BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - NUL_SZ] = ch;
-            BUFFER__LAST_CHAR_IN_LINE               = '\0';
+            BUFFER__LAST_CHAR_IN_LINE                       = '\0';
 
             // Initializing nul handler.
             if((ch == '\0') && !BUFFER__EMPTY_LINE)

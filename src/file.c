@@ -134,7 +134,7 @@ void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
     // Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
     for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_sz.value; tab_idx++)
     {
-        if(Buffer->text[line_idx][*char_idx + tab_idx] != '\t')
+        if(Buffer->Lines[line_idx].text[*char_idx + tab_idx] != '\t')
         {
             break; // No tab, so don't convert anything.
         }
@@ -160,10 +160,10 @@ bool file__save(Buff_t*Buffer, const Conf_t* const Config)
         /* Using fputs or fprintf causes use-of-uninitialized-value using
         MSan because of there is more memory allocated than is needed. */
         for(idx_t char_idx = 0;
-            char_idx < Buffer->lines_length[line_idx]; char_idx++)
+            char_idx < Buffer->Lines[line_idx].length; char_idx++)
         {
             file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
-            putc(Buffer->text[line_idx][char_idx], Textfile);
+            putc(Buffer->Lines[line_idx].text[char_idx], Textfile);
         }
     }
     if(fclose(Textfile) == EOF)

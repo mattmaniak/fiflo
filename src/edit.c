@@ -28,7 +28,7 @@ bool edit__delete_char(Buff_t* Buffer)
 bool edit__delete_line(Buff_t* Buffer)
 {
     idx_t next_line_idx    = BUFFER__CURRENT_LINE_IDX + NEXT;
-    idx_t next_line_length = Buffer->lines_length[next_line_idx];
+    idx_t next_line_length = Buffer->Lines[next_line_idx].length;
 
     if(!BUFFER__FIRST_LINE)
     {

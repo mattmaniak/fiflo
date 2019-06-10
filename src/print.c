@@ -6,13 +6,15 @@ void print__line_with_tabs(const Buff_t* const Buffer,
 {
     for(idx_t char_idx = start_char_idx; char_idx < end_char_idx; char_idx++)
     {
+        char ch = Buffer->Lines[line_idx].text[char_idx];
+
         // Whitespace highlighting.
-        if(Buffer->text[line_idx][char_idx] == '\t')
+        if(ch == '\t')
         {
             ui__set_color(&Config->Color_whitespace);
             putchar(PRINT__TAB_HIGHLIGHT);
         }
-        else if(Buffer->text[line_idx][char_idx] == ' ')
+        else if(ch == ' ')
         {
             ui__set_color(&Config->Color_whitespace);
             putchar(PRINT__SPACE_HIGHLIGHT);
@@ -20,7 +22,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         else
         {
             ui__set_color(&Config->Color_text);
-            putchar(Buffer->text[line_idx][char_idx]);
+            putchar(ch);
         }
         ui__set_color(NULL);
     }
@@ -30,7 +32,7 @@ idx_t print__set_start_line(const Buff_t* const Buffer, const Ui_t* const Ui)
 {
     idx_t scrolled_lines = 0;
 
-    if(BUFFER__CURRENT_LINE_IDX >=  Ui->textarea_h)
+    if(BUFFER__CURRENT_LINE_IDX >= Ui->textarea_h)
     {
         // Amount of lines to hide in the magic upper area.
         scrolled_lines = Buffer->lines_idx + IDX - Ui->textarea_h
@@ -74,10 +76,10 @@ void print__another_line(const Buff_t* const Buffer, const Ui_t* const Ui,
 {
     ui__print_line_number(Buffer, Config, line_idx, Ui->line_num_length);
 
-    if(Buffer->lines_length[line_idx] < Ui->textarea_w)
+    if(Buffer->Lines[line_idx].length < Ui->textarea_w)
     {
         print__line_with_tabs(Buffer, Config, line_idx, 0,
-                              Buffer->lines_length[line_idx]);
+                              Buffer->Lines[line_idx].length);
     }
     else
     {
@@ -131,10 +133,10 @@ void print__fit_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
                               Ui->line_num_length);
 
 
-        if(Buffer->lines_length[Buffer->lines_idx] < Ui->textarea_w)
+        if(Buffer->Lines[Buffer->lines_idx].length < Ui->textarea_w)
         {
             print__line_with_tabs(Buffer, Config, Buffer->lines_idx, 0,
-                                  Buffer->lines_length[Buffer->lines_idx]);
+                                  Buffer->Lines[Buffer->lines_idx].length);
         }
         else
         {
@@ -168,10 +170,10 @@ void print__shrink_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
     }
     ui__print_line_number(Buffer, Config, last_line_idx, Ui->line_num_length);
 
-    if(Buffer->lines_length[last_line_idx] < Ui->textarea_w)
+    if(Buffer->Lines[last_line_idx].length < Ui->textarea_w)
     {
         print__line_with_tabs(Buffer, Config, last_line_idx, 0,
-                              Buffer->lines_length[last_line_idx] - LF_SZ);
+                              Buffer->Lines[last_line_idx].length - LF_SZ);
     }
     else
     {

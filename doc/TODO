@@ -1,6 +1,6 @@
 fiflo - TODOs and ideas:
 - tab with the gap,
-- simplify config.c and buffer.h,
+- simplify and buffer.h,
 - all escapes and formatting control chars,
 - pre-allocation of a memory, eg. next 16 lines,
 - cut/copy/paste,
