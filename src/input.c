@@ -49,7 +49,7 @@ char input__getch(void)
 }
 
 void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
-                               const char* const sequence)
+                               const char* const sequence, size_t* file_idx)
 {
     const size_t seq_length_max = 6;
 
@@ -62,6 +62,11 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
     const char ctrl_arrow_down[]  = "\033[1;5B";
     const char ctrl_arrow_right[] = "\033[1;5C";
     const char ctrl_arrow_left[]  = "\033[1;5D";
+
+    const char ctrl_f1[]  = "\033[1;5P";
+    const char ctrl_f2[]  = "\033[1;5Q";
+    const char ctrl_f3[]  = "\033[1;5R";
+    const char ctrl_f4[]  = "\033[1;5S";
 
     if(!strcmp(sequence, arrow_up))
     {
@@ -95,6 +100,22 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
     {
         keys__ctrl_arrow_left(Buffer);
     }
+    else if(!strcmp(sequence, ctrl_f1))
+    {
+        *file_idx = 0;
+    }
+    else if(!strcmp(sequence, ctrl_f2))
+    {
+        *file_idx = 1;
+    }
+    else if(!strcmp(sequence, ctrl_f3))
+    {
+        *file_idx = 2;
+    }
+    else if(!strcmp(sequence, ctrl_f4))
+    {
+        *file_idx = 3;
+    }
     else if(strlen(sequence) >= seq_length_max)
     {
         Buffer->escape_sequence_on_input = false;
@@ -108,7 +129,7 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
 }
 
 bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
-                      const char key)
+                      size_t* file_idx, const char key)
 {
     static char  chars_sequence[INPUT__SEQ_MAX];
     static idx_t char_idx;
@@ -131,7 +152,7 @@ bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
             char_idx++;
         }
         chars_sequence[char_idx] = '\0';
-        input__recognize_sequence(Buffer, Config, chars_sequence);
+        input__recognize_sequence(Buffer, Config, chars_sequence, file_idx);
 
         if(!Buffer->escape_sequence_on_input)
         {

@@ -190,8 +190,7 @@ bool file__get_git_branch(Buff_t* Buffer)
         return true;
     }
 
-    Git_head_file = fopen(git_head_file_pathname, "r");
-    if(Git_head_file == NULL)
+    if((Git_head_file = fopen(git_head_file_pathname, "r")) == NULL)
     {
         strcpy(Buffer->git_branch, "[none]");
         return true;

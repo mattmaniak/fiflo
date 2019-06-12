@@ -42,7 +42,7 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         WRAP_LINE();
     }
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status, (int) (STATUS_MAX
-           - strlen(Buffer->status) - SPACE_SZ), UI__GIT_LOGO);
+           - strlen(Buffer->status) - SPACE_SZ + UI__GIT_LOGO_W), UI__GIT_LOGO);
 
     if((term_t) strlen(Buffer->git_branch)
        < (Ui->win_w - UI__GIT_LOGO_W - STATUS_MAX - UI__HORIZONTAL_PADDING))

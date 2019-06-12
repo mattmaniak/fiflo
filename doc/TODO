@@ -16,4 +16,6 @@ fiflo - TODOs and ideas:
 - real wrap guide,
 - distinguish an indentation type,
 - more precise Ctrl^Arrow left,
-- regex.
+- regex,
+- side pane,
+- simplify _idx-like variables,
