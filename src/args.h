@@ -5,6 +5,7 @@
 
 #include <linux/limits.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "options.h"

@@ -4,6 +4,35 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
     size_t cw_dir_length;
 
+    if(arg == NULL)
+    {
+        if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
+        {
+            fprintf(stderr, "Can't get the current directory. Too long.\n");
+            return false;
+        }
+        cw_dir_length = strlen(Buffer->pathname);
+
+        // Getcwd() returns the pathname without the slash, which is required.
+        if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
+        {
+            fprintf(stderr,
+                    "Can't insert the slash. Current direcory is too long.\n");
+
+            return false;
+        }
+        strcpy(Buffer->fname, Buffer->pathname); // Copy pathname.
+
+        Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
+        Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
+
+        // Append the basename.
+        strncpy(&Buffer->fname[cw_dir_length + SLASH_SZ], arg, NAME_MAX);
+        Buffer->fname_length = strlen(Buffer->fname);
+
+        return true;
+    }
+
     // Parent dir.
     if(!strncmp(arg, "./", 2) || !strncmp(arg, "../", 3))
     {
@@ -38,11 +67,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
             return false;
         }
 
-        if(getcwd(Buffer->pathname, PATH_MAX) != NULL)
-        {
-            Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX);
-        }
-        else
+        if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
         {
             fprintf(stderr, "Can't get the current directory. Too long.\n");
             return false;
@@ -181,7 +206,7 @@ bool file__get_git_branch(Buff_t* Buffer)
     char  git_head_file_pathname[PATH_MAX + NAME_MAX];
     FILE* Git_head_file;
 
-    strncpy(git_head_file_pathname, Buffer->pathname, PATH_MAX);
+    strcpy(git_head_file_pathname, Buffer->pathname);
     strcat(git_head_file_pathname, "/.git/HEAD");
 
     if(access(git_head_file_pathname, F_OK) == ERROR)

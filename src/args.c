@@ -12,16 +12,6 @@ bool args__parse(int argc, char** argv)
         fprintf(stderr, "Max. four additional args can be passed.\n");
         return false;
     }
-    else if(argc == 1)
-    {
-        argv = malloc(2 * sizeof(char));
-        argv[1] = malloc(8);
-
-        strcpy(argv[1], "");
-        argc++;
-
-        return true;
-    }
     for(int arg_idx = 1; arg_idx < argc; arg_idx++)
     {
         /* Can't use the "ARG_MAX", because clang 6.0.0 with "-Weverything"

@@ -2,25 +2,27 @@
 
 void fiflo__run(int argc, char** argv)
 {
+    char pressed_key        = '\0'; // Assignment as the initializer.
     size_t current_file_idx = 0;
-    char pressed_key = '\0'; // This assignment as the initializer only.
 
     Buff_t* Buffer;
     Conf_t  Config;
     Mod_t   Modes;
 
+    size_t additional_argc_idx = argc - 2;
+    char** additional_argv     = &argv[1];
+
     modes__init(&Modes);
 
-    if((Buffer = malloc((argc - IDX) * sizeof(Buff_t))) == NULL)
+    if((Buffer = malloc((additional_argc_idx + IDX) * sizeof(Buff_t))) == NULL)
     {
         fprintf(stderr, "Can't alloc the memory for the file buffers.\n");
         goto free;
     }
 
-
-    for(int fname_idx = 1; fname_idx < argc; fname_idx++)
+    for(size_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
     {
-        if(!buffer__init(&Buffer[fname_idx - IDX]))
+        if(!buffer__init(&Buffer[buff_idx]))
         {
             goto free;
         }
@@ -28,20 +30,17 @@ void fiflo__run(int argc, char** argv)
         {
             goto free;
         }
-        if(!file__set_name(&Buffer[fname_idx - IDX], argv[fname_idx]))
+        if(!file__set_name(&Buffer[buff_idx], additional_argv[buff_idx]))
         {
             goto free;
         }
-        if(!file__load(&Buffer[fname_idx - IDX], &Config))
+        if(!file__load(&Buffer[buff_idx], &Config))
         {
             goto free;
         }
-        strcpy(Buffer[fname_idx - IDX].fname_copy,
-               Buffer[fname_idx - IDX].fname);
+        strcpy(Buffer[buff_idx].fname_copy, Buffer[buff_idx].fname);
 
-        puts(Buffer[fname_idx - IDX].pathname);
-
-        if(!file__get_git_branch(&Buffer[fname_idx - IDX]))
+        if(!file__get_git_branch(&Buffer[buff_idx]))
         {
             break;
         }
@@ -58,9 +57,9 @@ void fiflo__run(int argc, char** argv)
         {
             break;
         }
-        if(current_file_idx >= (argc - 1))
+        if(current_file_idx > additional_argc_idx)
         {
-            current_file_idx = argc - 2;
+            current_file_idx = additional_argc_idx;
         }
         // Flushes and renders always after the keypress.
         if(!window__render(&Buffer[current_file_idx], &Config, &Modes))
@@ -75,9 +74,9 @@ void fiflo__run(int argc, char** argv)
     }
 
     free:
-    for(int buff_idx = 1; buff_idx < argc; buff_idx++)
+    for(size_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
     {
-        buffer__free(&Buffer[buff_idx - IDX]);
+        buffer__free(&Buffer[buff_idx]);
     }
     free(Buffer);
 }
