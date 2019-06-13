@@ -8,9 +8,9 @@ what's new in the implementation, use git-show or git-log.
 
 Versions:
 v4.0.0 (WIP):
-- vertical arrows^Ctrl scroll full paragraphs now,
+- vertical Arrows^Ctrl scroll full paragraphs now,
 - simplified text management API,
-- multiple files editing and switching.
+- possibility to edit and switch up to 4 files simultaneously.
 
 v3.2.0 (2019, April 25):
 - Ctrl^Arrow left/right skips full words,

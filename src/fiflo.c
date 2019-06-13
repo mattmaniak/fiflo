@@ -9,7 +9,7 @@ void fiflo__run(int argc, char** argv)
     Conf_t  Config;
     Mod_t   Modes;
 
-    size_t additional_argc_idx = argc - 2;
+    size_t additional_argc_idx = argc - IDX;
     char** additional_argv     = &argv[1];
 
     modes__init(&Modes);

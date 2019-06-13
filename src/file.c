@@ -4,7 +4,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
     size_t cw_dir_length;
 
-    if(arg == NULL)
+    if(arg == NULL) // Name not passed by the user.
     {
         if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
         {
@@ -26,14 +26,12 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
         Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
 
-        // Append the basename.
-        strncpy(&Buffer->fname[cw_dir_length + SLASH_SZ], arg, NAME_MAX);
         Buffer->fname_length = strlen(Buffer->fname);
 
         return true;
     }
 
-    // Parent dir.
+    // Current or parent dir.
     if(!strncmp(arg, "./", 2) || !strncmp(arg, "../", 3))
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
@@ -125,9 +123,8 @@ bool file__load(Buff_t* Buffer, const Conf_t* const Config)
         SET_STATUS("current directory set");
         return true;
     }
-    Textfile = fopen(Buffer->fname, "r");
 
-    if(Textfile == NULL)
+    if((Textfile = fopen(Buffer->fname, "r")) == NULL)
     {
         SET_STATUS("the file will be created");
         return true;
