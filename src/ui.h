@@ -16,7 +16,7 @@
 #define UI__UBAR_SZ 2
 #define UI__LBAR_SZ 1 // Must be equal 1, otherwise will break rendering a little.
 
-#define UI__TOGGLED_LBAR_H     5
+#define UI__TOGGLED_LBAR_H     6
 #define UI__LEFT_PADDING       1
 #define UI__RIGHT_PADDING      1
 #define UI__HORIZONTAL_PADDING (UI__LEFT_PADDING + UI__RIGHT_PADDING)
@@ -49,6 +49,6 @@ void ui__upper_bar(const Buff_t* const, const Conf_t* const, const Ui_t* const);
 
 // Renders the lower bar that contains keyboard info.
 void ui__lower_bar(const Buff_t* const, const Conf_t* const, const Mod_t* const,
-                   const Ui_t* const);
+                   const Ui_t* const, const idx_t);
 
 #endif

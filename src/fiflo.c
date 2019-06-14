@@ -9,7 +9,7 @@ void fiflo__run(int argc, char** argv)
     Conf_t  Config;
     Mod_t   Modes;
 
-    size_t additional_argc_idx = argc - IDX;
+    size_t additional_argc_idx = (argc > 1) ? argc - IDX - 1 : argc - IDX;
     char** additional_argv     = &argv[1];
 
     modes__init(&Modes);
@@ -20,7 +20,7 @@ void fiflo__run(int argc, char** argv)
         goto free;
     }
 
-    for(size_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
+    for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
     {
         if(!buffer__init(&Buffer[buff_idx]))
         {
@@ -62,7 +62,7 @@ void fiflo__run(int argc, char** argv)
             current_file_idx = additional_argc_idx;
         }
         // Flushes and renders always after the keypress.
-        if(!window__render(&Buffer[current_file_idx], &Config, &Modes))
+        if(!window__render(Buffer, &Config, &Modes, additional_argc_idx))
         {
             break;
         }
@@ -74,7 +74,7 @@ void fiflo__run(int argc, char** argv)
     }
 
     free:
-    for(size_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
+    for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
     {
         buffer__free(&Buffer[buff_idx]);
     }

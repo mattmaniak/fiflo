@@ -35,6 +35,6 @@ void window__set_cursor_pos(const Buff_t* const, const Mod_t* const,
 
 // Stupid wrapper for above things.
 bool window__render(const Buff_t* const, const Conf_t* const,
-                    const Mod_t* const);
+                    const Mod_t* const, const idx_t);
 
 #endif

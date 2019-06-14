@@ -17,5 +17,5 @@ fiflo - TODOs and ideas:
 - distinguish an indentation type,
 - more precise Ctrl^Arrow left,
 - regex,
-- side pane,
 - simplify _idx-like variables,
+- x, y positions indicator,

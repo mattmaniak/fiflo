@@ -57,20 +57,14 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 }
 
 void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
-                   const Mod_t* const Modes, const Ui_t* const Ui)
+                   const Mod_t* const Modes, const Ui_t* const Ui,
+                   const idx_t additional_argc_idx)
 {
     idx_t       punch_card_width = 80;
     const idx_t tmp_width        = punch_card_width;
     char        punch_card[16];
 
-    const char key_binding[8][STATUS_MAX] =
-    {
-        " CTRL^D - delete line",
-        " CTRL^O - save as",
-        " CTRL^Q - exit",
-        " CTRL^S - save",
-        " CTRL^\\ - keyboard shortcuts"
-    };
+    const char key_binding[] = " CTRL^\\ - keyboard shortcuts";
 
     sprintf(punch_card, "%u", punch_card_width);
     WRAP_LINE();
@@ -80,15 +74,22 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
     if(Modes->lbar_toggled)
     {
-        for(size_t idx = 0; idx < (UI__TOGGLED_LBAR_H - UI__LBAR_SZ); idx++)
+        printf("%*sloaded files:", UI__LEFT_PADDING, "");
+        WRAP_LINE();
+
+        for(idx_t file_idx = 0; file_idx < additional_argc_idx; file_idx++)
         {
-            printf("%s", key_binding[idx]);
+            printf("%*s%s", UI__LEFT_PADDING, "", Buffer[file_idx].fname);
+            WRAP_LINE();
+        }
+        for(idx_t newline_idx = 0; newline_idx < 4 - additional_argc_idx;
+            newline_idx++)
+        {
             WRAP_LINE();
         }
     }
-    printf("%.*s%*s", STATUS_MAX, key_binding[UI__TOGGLED_LBAR_H - UI__LBAR_SZ],
-           STATUS_MAX - (term_t) strlen(key_binding[UI__TOGGLED_LBAR_H
-           - UI__LBAR_SZ]), " ");
+    printf("%.*s%*s", STATUS_MAX, key_binding, STATUS_MAX
+           - (term_t) strlen(key_binding), " ");
 
     if((idx_t) (Ui->textarea_w + UI__HORIZONTAL_PADDING) > punch_card_width)
     {

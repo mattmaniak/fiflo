@@ -114,7 +114,7 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 }
 
 bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
-                    const Mod_t* const Modes)
+                    const Mod_t* const Modes, const idx_t additional_argc_idx)
 {
     char line_num_str[16]; // Needed to count the length of the number.
     Ui_t Ui;
@@ -139,7 +139,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     print__display_text(Buffer, &Ui, Config);
 
     window__fill(Buffer, &Ui);
-    ui__lower_bar(Buffer, Config, Modes, &Ui);
+    ui__lower_bar(Buffer, Config, Modes, &Ui, additional_argc_idx);
 
     window__set_cursor_pos(Buffer, Modes, &Ui);
 
