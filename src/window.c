@@ -136,14 +136,14 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.textarea_w = (term_t) (Ui.win_w - Ui.line_num_length);
     Ui.textarea_h = (term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
-    ui__upper_bar(Buffer, Config, &Ui);
-    print__display_text(Buffer, &Ui, Config);
+    ui__upper_bar(&Buffer[current_file_idx], Config, &Ui);
+    print__display_text(&Buffer[current_file_idx], &Ui, Config);
+    window__fill(&Buffer[current_file_idx], &Ui);
 
-    window__fill(Buffer, &Ui);
     ui__lower_bar(Buffer, Config, Modes, &Ui, additional_argc_idx,
                   current_file_idx);
 
-    window__set_cursor_pos(Buffer, Modes, &Ui);
+    window__set_cursor_pos(&Buffer[current_file_idx], Modes, &Ui);
 
     return true;
 }
