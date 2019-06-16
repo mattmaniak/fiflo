@@ -10,7 +10,8 @@ Versions:
 v4.0.0 (WIP):
 - vertical Arrows^Ctrl scroll full paragraphs now,
 - simplified text management API,
-- possibility to edit and switch up to 4 files simultaneously.
+- possibility to edit and switch up to 4 files simultaneously,
+- cursor position indicator.
 
 v3.2.0 (2019, April 25):
 - Ctrl^Arrow left/right skips full words,

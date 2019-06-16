@@ -9,6 +9,7 @@
 # Default configuration below.
 # Changes nothing because the editor has it implemented independently.
 
+color-current-line = bright-black
 color-line-number-current = bright-black
 color-line-number = white
 color-text = white

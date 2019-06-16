@@ -62,7 +62,8 @@ void fiflo__run(int argc, char** argv)
             current_file_idx = additional_argc_idx;
         }
         // Flushes and renders always after the keypress.
-        if(!window__render(Buffer, &Config, &Modes, additional_argc_idx))
+        if(!window__render(Buffer, &Config, &Modes, additional_argc_idx,
+                           current_file_idx))
         {
             break;
         }

@@ -49,6 +49,6 @@ void ui__upper_bar(const Buff_t* const, const Conf_t* const, const Ui_t* const);
 
 // Renders the lower bar that contains keyboard info.
 void ui__lower_bar(const Buff_t* const, const Conf_t* const, const Mod_t* const,
-                   const Ui_t* const, const idx_t);
+                   const Ui_t* const, const idx_t, const idx_t);
 
 #endif

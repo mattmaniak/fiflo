@@ -38,10 +38,11 @@ Opt_t;
 typedef struct
 {
     FILE* File;
-    Opt_t Color_ui;
+    Opt_t Color_current_file;
     Opt_t Color_line_number;
     Opt_t Color_line_number_current;
     Opt_t Color_text;
+    Opt_t Color_ui;
     Opt_t Color_warning;
     Opt_t Color_whitespace;
     Opt_t Tab_sz;

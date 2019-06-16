@@ -58,15 +58,18 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
 void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
                    const Mod_t* const Modes, const Ui_t* const Ui,
-                   const idx_t additional_argc_idx)
+                   const idx_t additional_argc_idx,
+                   const idx_t current_file_idx)
 {
     idx_t       punch_card_width = 80;
     const idx_t tmp_width        = punch_card_width;
     char        punch_card[16];
-
-    const char key_binding[] = " CTRL^\\ - keyboard shortcuts";
+    char        lbar_text[STATUS_MAX];
 
     sprintf(punch_card, "%u", punch_card_width);
+    sprintf(lbar_text, "[%u; %u]", Buffer->lines_idx + IDX,
+            BUFFER__CURRENT_LINE_LENGTH + IDX);
+
     WRAP_LINE();
 
     ui__set_color(NULL); // Resets the last line color.
@@ -77,19 +80,27 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         printf("%*sloaded files:", UI__LEFT_PADDING, "");
         WRAP_LINE();
 
-        for(idx_t file_idx = 0; file_idx < additional_argc_idx; file_idx++)
+        for(idx_t file_idx = 0; file_idx <= additional_argc_idx; file_idx++)
         {
+            if(file_idx == current_file_idx)
+            {
+                ui__set_color(&Config->Color_current_file);
+            }
             printf("%*s%s", UI__LEFT_PADDING, "", Buffer[file_idx].fname);
+
+            ui__set_color(NULL);
             WRAP_LINE();
         }
-        for(idx_t newline_idx = 0; newline_idx < 4 - additional_argc_idx;
+        for(idx_t newline_idx = 0; newline_idx < 4 - additional_argc_idx - IDX;
             newline_idx++)
         {
             WRAP_LINE();
         }
     }
-    printf("%.*s%*s", STATUS_MAX, key_binding, STATUS_MAX
-           - (term_t) strlen(key_binding), " ");
+
+    // Cursor position indicator (2D matrix).
+    printf("%*s%.*s%*s", UI__LEFT_PADDING, "", STATUS_MAX, lbar_text,
+           (int) (STATUS_MAX - strlen(lbar_text)), "");
 
     if((idx_t) (Ui->textarea_w + UI__HORIZONTAL_PADDING) > punch_card_width)
     {
