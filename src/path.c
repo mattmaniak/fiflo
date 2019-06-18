@@ -9,6 +9,11 @@ bool path__extract_pathname_from_arg(Buff_t* Buffer)
     {
         if(Buffer->fname[char_idx] == '/')
         {
+            if(char_idx == 0) // Cares about the absolute path.
+            {
+                last_slash_pos_idx = 1;
+                break;
+            }
             last_slash_pos_idx = char_idx;
         }
         char_idx++;
@@ -23,11 +28,7 @@ bool path__extract_pathname_from_arg(Buff_t* Buffer)
         return false;
     }
 
-    if(getcwd(Buffer->pathname, PATH_MAX) != NULL)
-    {
-        Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX);
-    }
-    else
+    if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
     {
         fprintf(stderr, "Can't get the current directory. Too long.\n");
         return false;

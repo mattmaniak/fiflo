@@ -56,6 +56,11 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
             return false;
         }
         strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
+
+        if(!path__extract_pathname_from_arg(Buffer))
+        {
+            return false;
+        }
     }
     else // Relative pathname or the basename.
     {

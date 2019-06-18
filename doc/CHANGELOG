@@ -7,11 +7,12 @@ Changelog contains only new tangible features and source code changes. To see
 what's new in the implementation, use git-show or git-log.
 
 Versions:
-v4.0.0 (WIP):
-- vertical Arrows^Ctrl scroll full paragraphs now,
+v4.0.0 (2019, June 18):
+- vertical Arrows^Ctrl scroll paragraphs now,
 - simplified text management API,
-- possibility to edit and switch up to 4 files simultaneously,
-- cursor position indicator.
+- possibility to open, edit and switch up to 4 files simultaneously,
+- cursor position indicator [x, y],
+- no delay after pressing keyboard shortcuts.
 
 v3.2.0 (2019, April 25):
 - Ctrl^Arrow left/right skips full words,

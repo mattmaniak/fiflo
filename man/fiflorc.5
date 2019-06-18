@@ -12,7 +12,10 @@ built-in in the editor. It ignores the lines that starts with a whitespace,
 with the '#' or that are just empty. If You use a one of selectors multiple
 times, the value from the last occurence in the file will be read.
 .SH SELECTORS
-Order does not matter in the file.
+The Order doesn't matter.
+.TP
+.B color-current-file
+Visible if the lower bar is toggled.
 .TP
 .B color-line-number
 Set line numbers color excluding a current one.
@@ -53,8 +56,8 @@ are wrong, default editor's configuration will be applied.
 .SH FILES
 .TP
 .B /etc/fiflorc
-The only (global) confiuguration. If doesn't exist, the default config will be
-loaded.
+The only and global confiuguration. If doesn't exist, the default config will be
+applied.
 .SH SEE ALSO
 fiflo(1)
 .SH AUTHOR

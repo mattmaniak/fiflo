@@ -57,6 +57,8 @@ sudo make uninstall
 Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 ### Source files (submodules):
+- args - passed command-line arguments handling,
+
 - buffer - initialization and deleting the main buffer which holds the text
 and it's metadata,semantic macros,
 

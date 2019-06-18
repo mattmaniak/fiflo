@@ -14,6 +14,7 @@ that describes the buffer. */
 
 #include "line.h"
 
+// Macros that makes the life a little bit more readable.
 #define IDX       1
 #define NUL_SZ    1
 #define LF_SZ     1
