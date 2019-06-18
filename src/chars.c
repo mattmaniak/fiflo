@@ -43,21 +43,21 @@ bool chars__linefeed(Buff_t* Buffer)
             return false;
         }
 
-        if(CURSOR_X_SCROLLED)
+        if(BUFFER__CURSOR_X_SCROLLED)
         {
             if(!edit__move_lines_forward(Buffer))
             {
                 return false;
             }
         }
-        else if(CURSOR_Y_SCROLLED)
+        else if(BUFFER__CURSOR_Y_SCROLLED)
         {
             if(!memory__copy_lines_forward(Buffer))
             {
                 return false;
             }
         }
-        LAST_CHAR_IN_LINE = '\0';
+        BUFFER__LAST_CHAR_IN_LINE = '\0';
     }
     return true;
 }
@@ -74,28 +74,28 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
 
     if(in_charmap)
     {
-        if(BUFFER_NOT_FULL)
+        if(BUFFER__CHARS_LIMIT_NOT_EXCEEDED)
         {
             Buffer->chars_idx++;
-            CURRENT_LINE_LENGTH++;
+            BUFFER__CURRENT_LINE_LENGTH++;
 
-            if(!memory__extend_line(Buffer, CURRENT_LINE_IDX))
+            if(!memory__extend_line(Buffer, BUFFER__CURRENT_LINE_IDX))
             {
                 return false;
             }
 
-            if(CURSOR_X_SCROLLED)
+            if(BUFFER__CURSOR_X_SCROLLED)
             {
                 edit__shift_text_horizonally(Buffer, 'r');
             }
-            CURRENT_LINE[CURSOR_X - NUL_SZ] = ch;
-            LAST_CHAR_IN_LINE                        = '\0';
+            BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - NUL_SZ] = ch;
+            BUFFER__LAST_CHAR_IN_LINE                       = '\0';
 
             // Initializing nul handler.
-            if((ch == '\0') && !EMPTY_LINE)
+            if((ch == '\0') && !BUFFER__EMPTY_LINE)
             {
                 Buffer->chars_idx--;
-                CURRENT_LINE_LENGTH--;
+                BUFFER__CURRENT_LINE_LENGTH--;
             }
             else if(ch == '\n')
             {
@@ -124,22 +124,22 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
 bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
 {
     const idx_t prev = 1;
-    idx_t       remembered_line_idx = CURRENT_LINE_IDX;
+    idx_t       remembered_line_idx = BUFFER__CURRENT_LINE_IDX;
 
-    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
+    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_sz.value; tab_idx++)
     {
         // Prevent removind char and 3 tabs from that e.g.: "\t\t\t\t".
-        if((CURSOR_X > 1)
-           && (CURRENT_LINE[CURSOR_X - NUL_SZ - prev] == '\t')
-           && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
+        if((BUFFER__CURSOR_X > 1)
+           && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - NUL_SZ - prev] == '\t')
+           && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - NUL_SZ] != '\t'))
         {
-            tab_idx = (idx_t) Config->Tab_width.value - IDX;
+            tab_idx = (idx_t) Config->Tab_sz.value - IDX;
         }
 
         // Scenario when there is char at the beginning and tab at the right.
-        if((CURSOR_X == 1) && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t')
-           && (CURRENT_LINE[CURSOR_X] == '\t')
-           && (Buffer->cursor_rev_x > 0))
+        if((BUFFER__CURSOR_X == 1) && (Buffer->cursor_rev_x > 0)
+           && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - NUL_SZ] != '\t')
+           && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X] == '\t'))
         {
             if(!edit__delete_char(Buffer))
             {
@@ -148,14 +148,14 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
             break;
         }
 
-        if(!EMPTY_LINE)
+        if(!BUFFER__EMPTY_LINE)
         {
             if(!edit__delete_char(Buffer))
             {
                 return false;
             }
         }
-        else if(!FIRST_LINE && !CURSOR_Y_SCROLLED)
+        else if(!BUFFER__FIRST_LINE && !BUFFER__CURSOR_Y_SCROLLED)
         {
             if(!edit__delete_last_empty_line(Buffer))
             {
@@ -164,27 +164,29 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
         }
 
         // Some text and the tab(s) at the end.
-        if((CURRENT_LINE_LENGTH > 0) && (Buffer->cursor_rev_x == 0)
-           && (CURRENT_LINE[CURRENT_LINE_LENGTH - NUL_SZ] != '\t'))
+        if((BUFFER__CURRENT_LINE_LENGTH > 0) && (Buffer->cursor_rev_x == 0)
+           && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH - NUL_SZ]
+           != '\t'))
         {
             break;
         }
         /* Prevent removing the line when the first char in the line has to be
         removed. */
-        else if((CURSOR_X == 0) && (CURRENT_LINE[CURSOR_X] != '\t'))
+        else if((BUFFER__CURSOR_X == 0)
+                && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X] != '\t'))
         {
             break;
         }
         // Scenario when there is the tab and some text further.
-        else if((CURSOR_X > 0) && (Buffer->cursor_rev_x > 0)
-                && (CURRENT_LINE[CURSOR_X - NUL_SZ] != '\t'))
+        else if((BUFFER__CURSOR_X > 0) && (Buffer->cursor_rev_x > 0)
+                && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - NUL_SZ] != '\t'))
         {
             break;
         }
 
         /* Prevents deleting [tab_width] lines at once with max. scrolled cursor
         in X. */
-        if(remembered_line_idx != CURRENT_LINE_IDX)
+        if(remembered_line_idx != BUFFER__CURRENT_LINE_IDX)
         {
             break;
         }
@@ -201,9 +203,9 @@ bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
     the file. */
 
     // Prevent not-full Tab insert.
-    if(Buffer->chars_idx <= (CHARS_MAX - (idx_t) Config->Tab_width.value))
+    if(Buffer->chars_idx <= (CHARS_MAX - (idx_t) Config->Tab_sz.value))
     {
-        for(int tab_sz = 0; tab_sz < Config->Tab_width.value; tab_sz++)
+        for(int tab_sz = 0; tab_sz < Config->Tab_sz.value; tab_sz++)
         {
             if(!chars__printable_char(Buffer, '\t'))
             {

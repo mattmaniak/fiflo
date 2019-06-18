@@ -9,10 +9,12 @@
 # Default configuration below.
 # Changes nothing because the editor has it implemented independently.
 
+color-current-file = bright-black
+color-current-line = bright-black
 color-line-number-current = bright-black
 color-line-number = white
 color-text = white
 color-ui = white
 color-warning = red
 color-whitespace = bright-black
-tab-width = 8
+tab-size = 8

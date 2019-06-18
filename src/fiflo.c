@@ -1,45 +1,74 @@
 #include "fiflo.h"
 
-void fiflo__run(const char* const arg)
+void fiflo__run(int argc, char** argv)
 {
-    char pressed_key = '\0'; // This assignment as the initializer only.
+    const size_t no_filename_as_arg = 1;
 
-    Buff_t Buffer;
-    Conf_t Config;
-    Mod_t  Modes;
+    char pressed_key        = '\0'; // Assignment as the initializer.
+    size_t current_file_idx = 0;
+
+    Buff_t* Buffer;
+    Conf_t  Config;
+    Mod_t   Modes;
+
+    size_t additional_argc_idx = (argc > 1)
+                                 ? (size_t) argc - IDX - no_filename_as_arg
+                                 : (size_t )argc - IDX;
+
+    char** additional_argv     = &argv[1];
 
     modes__init(&Modes);
 
-    if(!buffer__init(&Buffer))
+    if((Buffer = malloc((additional_argc_idx + IDX) * sizeof(Buff_t))) == NULL)
     {
+        fprintf(stderr, "Can't alloc the memory for the file buffers.\n");
         goto free;
     }
-    if(!config__load(&Config))
+
+    for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
     {
-        goto free;
+        if(!buffer__init(&Buffer[buff_idx]))
+        {
+            goto free;
+        }
+        if(!config__load(&Config))
+        {
+            goto free;
+        }
+        if(!file__set_name(&Buffer[buff_idx], additional_argv[buff_idx]))
+        {
+            goto free;
+        }
+        if(!file__load(&Buffer[buff_idx], &Config))
+        {
+            goto free;
+        }
+        strcpy(Buffer[buff_idx].fname_copy, Buffer[buff_idx].fname);
+
+        if(!file__get_git_branch(&Buffer[buff_idx]))
+        {
+            break;
+        }
     }
-    if(!file__set_name(&Buffer, arg))
-    {
-        goto free;
-    }
-    if(!file__load(&Buffer, &Config))
-    {
-        goto free;
-    }
-    strncpy(Buffer.fname_copy, Buffer.fname, PATH_MAX);
 
     for(;;) // The main program loop.
     {
-        if(!file__get_git_branch(&Buffer))
+        if(!file__get_git_branch(&Buffer[current_file_idx]))
         {
             break;
         }
-        if(!input__parse_key(&Buffer, &Config, &Modes, pressed_key))
+        if(!input__parse_key(&Buffer[current_file_idx], &Config, &Modes,
+                             &current_file_idx, pressed_key))
         {
             break;
+        }
+        if(current_file_idx > additional_argc_idx)
+        {
+            current_file_idx = additional_argc_idx;
         }
         // Flushes and renders always after the keypress.
-        if(!window__render(&Buffer, &Config, &Modes))
+        if(!window__render(Buffer, &Config, &Modes, (idx_t) additional_argc_idx,
+                           (idx_t) current_file_idx))
         {
             break;
         }
@@ -49,42 +78,23 @@ void fiflo__run(const char* const arg)
         }
         window__flush();
     }
+
     free:
-    buffer__free(&Buffer);
+    for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
+    {
+        buffer__free(&Buffer[buff_idx]);
+    }
+    free(Buffer);
 }
 
 int main(int argc, char** argv)
 {
-    const int argc_max = 2;
+    if(!args__parse(argc, argv))
+    {
+        goto exit;
+    }
+    fiflo__run(argc, argv);
 
-    if(argc > argc_max)
-    {
-        fprintf(stderr, "Only one additional arg can be passed.\n");
-        goto exit;
-    }
-
-    if(argv[1] == NULL) // Sets the default basename and starts.
-    {
-        fiflo__run("");
-        goto exit;
-    }
-    /* Can't use the "ARG_MAX", because clang 6.0.0 with -Weverything doesn't
-    recognize it. */
-    else if(strlen(argv[1]) < (PATH_MAX + NAME_MAX))
-    {
-        if(!options__parse_and_print(argv[1]))
-        {
-            goto exit;
-        }
-        fiflo__run(argv[1]);
-        goto exit;
-    }
-    else
-    {
-        fprintf(stderr, "Maximum parameter length is %u\n",
-                PATH_MAX + NAME_MAX);
-        goto exit;
-    }
     exit:
     fflush(NULL); // Clean both output buffers.
 

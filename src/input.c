@@ -23,7 +23,7 @@ char input__getch(void)
     new_term_params = old_term_params;
 
     // Look that the options of below flags are negated.
-    new_term_params.c_iflag &= ~(enable_xon);
+    new_term_params.c_iflag &= ~enable_xon;
     new_term_params.c_lflag &= ~(canonical_mode_on | echo_input | enable_sigs);
 
     /* Immediately set the state of the stdin to the *new_term_params. Use the
@@ -49,7 +49,7 @@ char input__getch(void)
 }
 
 void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
-                               const char* const sequence)
+                               const char* const sequence, size_t* file_idx)
 {
     const size_t seq_length_max = 6;
 
@@ -63,38 +63,72 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
     const char ctrl_arrow_right[] = "\033[1;5C";
     const char ctrl_arrow_left[]  = "\033[1;5D";
 
+    const char ctrl_f1[]  = "\033[1;5P";
+    const char ctrl_f2[]  = "\033[1;5Q";
+    const char ctrl_f3[]  = "\033[1;5R";
+    const char ctrl_f4[]  = "\033[1;5S";
+
     if(!strcmp(sequence, arrow_up))
     {
         keys__arrow_up(Buffer);
+        Buffer->escape_sequence_on_input = false;
     }
     else if(!strcmp(sequence, arrow_down))
     {
         keys__arrow_down(Buffer);
+        Buffer->escape_sequence_on_input = false;
     }
     else if(!strcmp(sequence, arrow_right))
     {
         keys__arrow_right(Buffer, Config);
+        Buffer->escape_sequence_on_input = false;
     }
     else if(!strcmp(sequence, arrow_left))
     {
         keys__arrow_left(Buffer, Config);
+        Buffer->escape_sequence_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
         keys__ctrl_arrow_up(Buffer);
+        Buffer->escape_sequence_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
         keys__ctrl_arrow_down(Buffer);
+        Buffer->escape_sequence_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_right))
     {
         keys__ctrl_arrow_right(Buffer);
+        Buffer->escape_sequence_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_left))
     {
         keys__ctrl_arrow_left(Buffer);
+        Buffer->escape_sequence_on_input = false;
     }
+    else if(!strcmp(sequence, ctrl_f1))
+    {
+        *file_idx = 0;
+        Buffer->escape_sequence_on_input = false;
+    }
+    else if(!strcmp(sequence, ctrl_f2))
+    {
+        *file_idx = 1;
+        Buffer->escape_sequence_on_input = false;
+    }
+    else if(!strcmp(sequence, ctrl_f3))
+    {
+        *file_idx = 2;
+        Buffer->escape_sequence_on_input = false;
+    }
+    else if(!strcmp(sequence, ctrl_f4))
+    {
+        *file_idx = 3;
+        Buffer->escape_sequence_on_input = false;
+    }
+    // Other cases that block the input for "seq_length_max" chars.
     else if(strlen(sequence) >= seq_length_max)
     {
         Buffer->escape_sequence_on_input = false;
@@ -108,9 +142,9 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
 }
 
 bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
-                      const char key)
+                      size_t* file_idx, const char key)
 {
-    static char  chars_sequence[SEQ_MAX];
+    static char  chars_sequence[INPUT__SEQ_MAX];
     static idx_t char_idx;
 
     if((key == CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
@@ -126,12 +160,12 @@ bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
     if(Buffer->escape_sequence_on_input)
     {
         chars_sequence[char_idx] = key;
-        if(char_idx < (SEQ_MAX - NUL_SZ))
+        if(char_idx < (INPUT__SEQ_MAX - NUL_SZ))
         {
             char_idx++;
         }
         chars_sequence[char_idx] = '\0';
-        input__recognize_sequence(Buffer, Config, chars_sequence);
+        input__recognize_sequence(Buffer, Config, chars_sequence, file_idx);
 
         if(!Buffer->escape_sequence_on_input)
         {

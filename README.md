@@ -1,10 +1,10 @@
 # fiflo
-Terminal-based text editor with Common User Access keyboard shortcuts.
+Terminal-based text editor with Windows-like (CUA) bindings.
 
 ## Abstract
-Learn C by writing in pure C. It is exercise where I've started learning
-pointers and memory management. As You can see it has grown to the text editor.
-It is inspired by the Nano's minimalism and the Atom's rich features that make
+Learn C by writing pure C. It is exercise where I've started learning pointers
+and memory management. As You can see it has grown to the text editor. It is
+inspired by the Nano's minimalism and the Atom's rich features that make
 programming easier.
 
 ## Usage
@@ -57,6 +57,8 @@ sudo make uninstall
 Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 ### Source files (submodules):
+- args - passed command-line arguments handling,
+
 - buffer - initialization and deleting the main buffer which holds the text
 and it's metadata,semantic macros,
 

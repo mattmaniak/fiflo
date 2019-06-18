@@ -4,7 +4,34 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
     size_t cw_dir_length;
 
-    // Parent dir.
+    if(arg == NULL) // Name not passed by the user.
+    {
+        if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
+        {
+            fprintf(stderr, "Can't get the current directory. Too long.\n");
+            return false;
+        }
+        cw_dir_length = strlen(Buffer->pathname);
+
+        // Getcwd() returns the pathname without the slash, which is required.
+        if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
+        {
+            fprintf(stderr,
+                    "Can't insert the slash. Current direcory is too long.\n");
+
+            return false;
+        }
+        strcpy(Buffer->fname, Buffer->pathname); // Copy pathname.
+
+        Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
+        Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
+
+        Buffer->fname_length = strlen(Buffer->fname);
+
+        return true;
+    }
+
+    // Current or parent dir.
     if(!strncmp(arg, "./", 2) || !strncmp(arg, "../", 3))
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
@@ -29,6 +56,11 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
             return false;
         }
         strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
+
+        if(!path__extract_pathname_from_arg(Buffer))
+        {
+            return false;
+        }
     }
     else // Relative pathname or the basename.
     {
@@ -38,18 +70,14 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
             return false;
         }
 
-        if(getcwd(Buffer->pathname, PATH_MAX) != NULL)
-        {
-            Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX);
-        }
-        else
+        if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
         {
             fprintf(stderr, "Can't get the current directory. Too long.\n");
             return false;
         }
         cw_dir_length = strlen(Buffer->pathname);
 
-        // Getcwd() returns the pathname without the slash, which is required here.
+        // Getcwd() returns the pathname without the slash, which is required.
         if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
@@ -57,7 +85,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 
             return false;
         }
-        strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy the pathname.
+        strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy pathname.
 
         Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
         Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
@@ -78,7 +106,7 @@ bool file__convert_tab_from_file(Buff_t* Buffer, const Conf_t* const Config,
     if(ch == '\t')
     {
         for(idx_t char_idx = 0;
-            char_idx < (idx_t) (Config->Tab_width.value - AT_LEAST_ONE_TAB);
+            char_idx < (idx_t) (Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB);
             char_idx++)
         {
             if(!chars__printable_char(Buffer, ch))
@@ -100,9 +128,8 @@ bool file__load(Buff_t* Buffer, const Conf_t* const Config)
         SET_STATUS("current directory set");
         return true;
     }
-    Textfile = fopen(Buffer->fname, "r");
 
-    if(Textfile == NULL)
+    if((Textfile = fopen(Buffer->fname, "r")) == NULL)
     {
         SET_STATUS("the file will be created");
         return true;
@@ -132,16 +159,16 @@ void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
                                const idx_t line_idx, idx_t* const char_idx)
 {
     // Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
-    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_width.value; tab_idx++)
+    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_sz.value; tab_idx++)
     {
-        if(Buffer->text[line_idx][*char_idx + tab_idx] != '\t')
+        if(Buffer->Lines[line_idx].text[*char_idx + tab_idx] != '\t')
         {
             break; // No tab, so don't convert anything.
         }
-        else if(tab_idx == (idx_t) Config->Tab_width.value - IDX)
+        else if(tab_idx == (idx_t) Config->Tab_sz.value - IDX)
         {
             // Some in-memory tabs converted
-            *char_idx += (idx_t) Config->Tab_width.value - AT_LEAST_ONE_TAB;
+            *char_idx += (idx_t) Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB;
         }
     }
 }
@@ -160,11 +187,10 @@ bool file__save(Buff_t*Buffer, const Conf_t* const Config)
         /* Using fputs or fprintf causes use-of-uninitialized-value using
         MSan because of there is more memory allocated than is needed. */
         for(idx_t char_idx = 0;
-            char_idx < Buffer->lines_length[line_idx]; char_idx++)
+            char_idx < Buffer->Lines[line_idx].length; char_idx++)
         {
             file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
-
-            putc(Buffer->text[line_idx][char_idx], Textfile);
+            putc(Buffer->Lines[line_idx].text[char_idx], Textfile);
         }
     }
     if(fclose(Textfile) == EOF)
@@ -182,7 +208,7 @@ bool file__get_git_branch(Buff_t* Buffer)
     char  git_head_file_pathname[PATH_MAX + NAME_MAX];
     FILE* Git_head_file;
 
-    strncpy(git_head_file_pathname, Buffer->pathname, PATH_MAX);
+    strcpy(git_head_file_pathname, Buffer->pathname);
     strcat(git_head_file_pathname, "/.git/HEAD");
 
     if(access(git_head_file_pathname, F_OK) == ERROR)
@@ -191,8 +217,7 @@ bool file__get_git_branch(Buff_t* Buffer)
         return true;
     }
 
-    Git_head_file = fopen(git_head_file_pathname, "r");
-    if(Git_head_file == NULL)
+    if((Git_head_file = fopen(git_head_file_pathname, "r")) == NULL)
     {
         strcpy(Buffer->git_branch, "[none]");
         return true;

@@ -8,8 +8,8 @@
 #include "modes.h"
 #include "ui.h"
 
-#define SPACE_HIGHLIGHT '.'
-#define TAB_HIGHLIGHT   '>'
+#define PRINT__SPACE_HIGHLIGHT '.'
+#define PRINT__TAB_HIGHLIGHT   '>'
 
 // Converts stupidly-implemented tabs into some renderable spaces.
 void print__line_with_tabs(const Buff_t* const, const Conf_t* const,
