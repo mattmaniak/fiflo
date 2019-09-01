@@ -2,10 +2,10 @@
 Terminal-based text editor with Windows-like (CUA) bindings.
 
 ## Abstract
-Learn C by writing pure C. It is exercise where I've started learning pointers
-and memory management. As You can see it has grown to the text editor. It is
-inspired by the Nano's minimalism and the Atom's rich features that make
-programming easier.
+Learn C. Create text editor for Linux without any dependencies. Started as the
+C pointers and memory management exercise. The goal is to create an
+terminal-based version of the Atom's rich functionality with the Nano's
+minimalism.
 
 ## Usage
 ### Check the requirements for the GNU/Linux:
@@ -14,8 +14,9 @@ programming easier.
 - gcc >= 4.9 or clang >= 3.6,
 - gzip (only for the installation),
 - sudo (only for the installation, even for the bare Debian on root).
+**It's also recommended to use a modern terminal emulator to avoid blinking.**
 
-### Clone on a desktop, compile and run.
+### Clone on a desktop, compile from source and run
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git &&
 cd fiflo &&
@@ -43,12 +44,12 @@ and it's configuration guide.
 man fiflorc
 ```
 
-### Optional cleanup - remove bin/ and obj/ after the compilation
+### Optional cleanup - remove bin/ and obj/ directories after a compilation
 ```
 make clean
 ```
 
-### Uninstall, what You have installed
+### Uninstall
 ```
 sudo make uninstall
 ```
@@ -57,36 +58,37 @@ sudo make uninstall
 Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 ### Source files (submodules):
-- args - passed command-line arguments handling,
+- **args** - passed command-line arguments handling,
 
-- buffer - initialization and deleting the main buffer which holds the text
+- **buffer** - initialization and deleting the main buffer which holds the text
 and it's metadata,semantic macros,
 
-- chars - ascii codes that are interpreted as text,
+- **chars** - ascii codes that are interpreted as text,
 
-- config - fiflorc parser and values setter,
+- **config** - fiflorc parser and values setter,
 
-- edit - more complex text editing operations that happens after the keypress,
+- **edit** - more complex text editing operations that happens after the
+keypress,
 
-- fiflo - the main file, just "main" and the execution loop,
+- **fiflo** - **the main file**, just "main" and the execution loop,
 
-- file - read/save the file, live editing the filename,
+- **file** - read/save the file, live editing the filename,
 
-- input - gets the key and parses it,
+- **input** - gets the key and parses it,
 
-- keys - keyboard bindings that don't insert chars, e.g. arrows,
+- **keys** - keyboard bindings that don't insert chars, e.g. arrows,
 
-- memory - (de)allocation of the memory for the text,
+- **memory** - real-time automatic memory management for the text buffer,
 
-- options - "--help" and friends parameters,
+- **options** - "--help" and friends parameters,
 
-- path - pathname, basename setting from arg,
+- **path** - pathname, basename setting from arg,
 
-- print - various magic that prints the text,
+- **print** - various magic that prints the text,
 
-- ui - user interface components like bars.
+- **ui** - user interface components like bars.
 
-- window - window rendering and flushing.
+- **window** - window rendering and flushing.
 
 ### Needed tools for debugging:
 - AddressSanitizer (built-in gcc and clang),
@@ -100,8 +102,8 @@ git checkout develop
 ```
 
 ### Debugging
-Link the AddressSanitizer and add support fot the gcov. Causes slowdown and huge
-memory usage.
+Link the AddressSanitizer and add support for the gcov (code coverage checker).
+Causes slowdown and huge memory usage.
 ```
 make debug
 ```
@@ -120,7 +122,7 @@ valgrind -v ./fiflo [optional args for the editor]
 ```
 Remark: fiflo must be compiled without ASan and MSan.
 
-### Install only the binary with ASan linked for debugging.
+### Install only the binary with AddressSanitizer linked for debugging.
 ```
 sudo make install_debug
 ```

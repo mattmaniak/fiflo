@@ -7,6 +7,9 @@ Changelog contains only new tangible features and source code changes. To see
 what's new in the implementation, use git-show or git-log.
 
 Versions:
+v4.1.0 (2019, WIP):
+- flexible tab - everything after it has an offset of it's iteration.
+
 v4.0.0 (2019, June 18):
 - vertical Arrows^Ctrl scroll paragraphs now,
 - simplified text management API,
