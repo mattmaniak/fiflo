@@ -9,8 +9,8 @@ bool edit__delete_char(Buff_t* Buffer)
         {
             return false;
         }
-        BUFFER__CURRENT_LINE_LENGTH--;
-        Buffer->chars_idx--;
+        BUFFER__CURRENT_LINE_LEN--;
+        Buffer->chars_amount_idx--;
     }
     // Deletes the non-empty line and copy chars to previous.
     else if(!BUFFER__FIRST_LINE)
@@ -56,16 +56,16 @@ bool edit__delete_line(Buff_t* Buffer)
 
             /* With the last line deletion there is a need to remove the
             linefeed in the previous line. */
-            BUFFER__LAST_LINE_LENGTH--;
-            BUFFER__LAST_LINE[BUFFER__LAST_LINE_LENGTH] = '\0';
+            BUFFER__LAST_LINE_LEN--;
+            BUFFER__LAST_LINE[BUFFER__LAST_LINE_LEN] = '\0';
 
             Buffer->cursor_rev_x = 0;
         }
     }
     else
     {
-        BUFFER__LAST_LINE_LENGTH = 0;
-        BUFFER__LAST_LINE[BUFFER__LAST_LINE_LENGTH] = '\0';
+        BUFFER__LAST_LINE_LEN = 0;
+        BUFFER__LAST_LINE[BUFFER__LAST_LINE_LEN] = '\0';
 
         BUFFER__LAST_LINE = realloc(BUFFER__LAST_LINE, BUFFER__INITIAL_MEMBLOCK);
         if(BUFFER__LAST_LINE == NULL)
@@ -85,14 +85,14 @@ void edit__shift_text_horizonally(Buff_t* Buffer, const char direction)
     switch(direction)
     {
     case 'l':
-        for(; char_idx <= BUFFER__CURRENT_LINE_LENGTH; char_idx++)
+        for(; char_idx <= BUFFER__CURRENT_LINE_LEN; char_idx++)
         {
             BUFFER__CURRENT_LINE[char_idx - prev] = BUFFER__CURRENT_LINE[char_idx];
         }
         break;
 
     case 'r':
-        for(char_idx = BUFFER__CURRENT_LINE_LENGTH; char_idx >= BUFFER__CURSOR_X;
+        for(char_idx = BUFFER__CURRENT_LINE_LEN; char_idx >= BUFFER__CURSOR_X;
             char_idx--)
         {
             BUFFER__CURRENT_LINE[char_idx] = BUFFER__CURRENT_LINE[char_idx - prev];
@@ -102,7 +102,7 @@ void edit__shift_text_horizonally(Buff_t* Buffer, const char direction)
 
 bool edit__move_lines_forward(Buff_t* Buffer)
 {
-    BUFFER__PREVIOUS_LINE_LENGTH -= Buffer->cursor_rev_x;
+    BUFFER__PREVIOUS_LINE_LEN -= Buffer->cursor_rev_x;
 
     // Move more lines vertically with the part of the current line.
     if(BUFFER__CURSOR_Y_SCROLLED)
@@ -111,15 +111,15 @@ bool edit__move_lines_forward(Buff_t* Buffer)
         {
             return false;
         }
-        BUFFER__CURRENT_LINE_LENGTH = 0;
+        BUFFER__CURRENT_LINE_LEN = 0;
     }
 
     // Move the right part (separated by the cursor) of the line to the next.
-    for(idx_t char_i = BUFFER__PREVIOUS_LINE_LENGTH;
-        char_i < BUFFER__PREVIOUS_LINE_LENGTH + Buffer->cursor_rev_x; char_i++)
+    for(idx_t char_i = BUFFER__PREVIOUS_LINE_LEN;
+        char_i < BUFFER__PREVIOUS_LINE_LEN + Buffer->cursor_rev_x; char_i++)
     {
         BUFFER__LAST_CHAR_IN_LINE = BUFFER__PREVIOUS_LINE[char_i];
-        BUFFER__CURRENT_LINE_LENGTH++;
+        BUFFER__CURRENT_LINE_LEN++;
         if(!memory__extend_line(Buffer, BUFFER__CURRENT_LINE_IDX))
         {
             return false;
@@ -127,7 +127,7 @@ bool edit__move_lines_forward(Buff_t* Buffer)
     }
 
     // Now the length of the upper line will be shortened after copying.
-    BUFFER__PREVIOUS_LINE[BUFFER__PREVIOUS_LINE_LENGTH] = '\0';
+    BUFFER__PREVIOUS_LINE[BUFFER__PREVIOUS_LINE_LEN] = '\0';
     if(!memory__shrink_prev_line(Buffer))
     {
         return false;
@@ -137,18 +137,18 @@ bool edit__move_lines_forward(Buff_t* Buffer)
 
 bool edit__move_lines_backward(Buff_t* Buffer)
 {
-    Buffer->chars_idx--;
-    BUFFER__PREVIOUS_LINE_LENGTH--;
+    Buffer->chars_amount_idx--;
+    BUFFER__PREVIOUS_LINE_LEN--;
 
     // Concat the previous line with the next.
-    for(idx_t char_idx = 0; char_idx <= BUFFER__CURRENT_LINE_LENGTH; char_idx++)
+    for(idx_t char_idx = 0; char_idx <= BUFFER__CURRENT_LINE_LEN; char_idx++)
     {
-        BUFFER__PREVIOUS_LINE[BUFFER__PREVIOUS_LINE_LENGTH] \
+        BUFFER__PREVIOUS_LINE[BUFFER__PREVIOUS_LINE_LEN] \
         = BUFFER__CURRENT_LINE[char_idx];
 
         if(BUFFER__CURRENT_LINE[char_idx] != '\0')
         {
-            BUFFER__PREVIOUS_LINE_LENGTH++;
+            BUFFER__PREVIOUS_LINE_LEN++;
         }
         if(!memory__extend_line(Buffer, BUFFER__PREVIOUS_LINE_IDX))
         {
@@ -174,14 +174,14 @@ bool edit__delete_last_empty_line(Buff_t* Buffer)
 {
     free(BUFFER__CURRENT_LINE);
 
-    Buffer->lines_idx--;
+    Buffer->lines_amount_idx--;
     if(!memory__shrink_current_line(Buffer))
     {
         return false;
     }
 
-    BUFFER__CURRENT_LINE_LENGTH--;
-    Buffer->chars_idx--;
+    BUFFER__CURRENT_LINE_LEN--;
+    Buffer->chars_amount_idx--;
 
     if(!memory__shrink_lines_array(Buffer))
     {
@@ -194,7 +194,7 @@ bool edit__delete_last_line(Buff_t* Buffer)
 {
     free(BUFFER__LAST_LINE);
 
-    Buffer->lines_idx--;
+    Buffer->lines_amount_idx--;
     return memory__shrink_lines_array(Buffer);
 }
 
@@ -205,16 +205,16 @@ void edit__filename(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
     const char escape = CTRL_LEFT_BRACKET;
 
     if((key >= 32) && (key != BACKSPACE)
-       && ((Buffer->fname_length + IDX) < PATH_MAX))
+       && ((Buffer->fname_len + IDX) < PATH_MAX))
     {
-        Buffer->fname[Buffer->fname_length] = key;
-        Buffer->fname_length++;
-        Buffer->fname[Buffer->fname_length] = '\0';
+        Buffer->fname[Buffer->fname_len] = key;
+        Buffer->fname_len++;
+        Buffer->fname[Buffer->fname_len] = '\0';
     }
-    else if((key == BACKSPACE) && (Buffer->fname_length > 0))
+    else if((key == BACKSPACE) && (Buffer->fname_len > 0))
     {
-        Buffer->fname_length--;
-        Buffer->fname[Buffer->fname_length] = '\0';
+        Buffer->fname_len--;
+        Buffer->fname[Buffer->fname_len] = '\0';
     }
     else if(key == enter)
     {
@@ -231,7 +231,7 @@ void edit__filename(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
     else if(key == escape)
     {
         strncpy(Buffer->fname, Buffer->fname_copy, PATH_MAX);
-        Buffer->fname_length = strlen(Buffer->fname);
+        Buffer->fname_len = strlen(Buffer->fname);
 
         Modes->live_fname_edit = false;
         SET_STATUS("filename unchanged");

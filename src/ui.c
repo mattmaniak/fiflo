@@ -27,15 +27,15 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     ui__set_color(&Config->Color_ui);
     printf("%*s", UI__LEFT_PADDING, " ");
 
-    if(Buffer->fname_length < (size_t) (Ui->win_w - UI__RIGHT_PADDING))
+    if(Buffer->fname_len < (size_t) (Ui->win_w - UI__RIGHT_PADDING))
     {
         puts(Buffer->fname);
     }
     else
     {
         // The filename is too long to show - scroll it.
-        for(size_t char_i = Buffer->fname_length - Ui->win_w
-            + UI__HORIZONTAL_PADDING; char_i < Buffer->fname_length; char_i++)
+        for(size_t char_i = Buffer->fname_len - Ui->win_w
+            + UI__HORIZONTAL_PADDING; char_i < Buffer->fname_len; char_i++)
         {
             putchar(Buffer->fname[char_i]);
         }
@@ -67,8 +67,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     char        lbar_text[STATUS_MAX];
 
     sprintf(punch_card, "%u", punch_card_width);
-    sprintf(lbar_text, "[%u; %u]", Buffer->lines_idx + IDX,
-            BUFFER__CURRENT_LINE_LENGTH + IDX);
+    sprintf(lbar_text, "[%u; %u]", Buffer->lines_amount_idx + IDX,
+            BUFFER__CURRENT_LINE_LEN + IDX);
 
     WRAP_LINE();
 
@@ -114,7 +114,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
                                + tmp_width;
         }
 
-        if((BUFFER__CURRENT_LINE_LENGTH > punch_card_width)
+        if((BUFFER__CURRENT_LINE_LEN > punch_card_width)
            && (BUFFER__CURRENT_LINE[punch_card_width] != '\n'))
         {
             ui__set_color(&Config->Color_warning);

@@ -35,7 +35,7 @@ idx_t print__set_start_line(const Buff_t* const Buffer, const Ui_t* const Ui)
     if(BUFFER__CURRENT_LINE_IDX >= Ui->textarea_h)
     {
         // Amount of lines to hide in the magic upper area.
-        scrolled_lines = Buffer->lines_idx + IDX - Ui->textarea_h
+        scrolled_lines = Buffer->lines_amount_idx + IDX - Ui->textarea_h
                          - Buffer->cursor_rev_y;
     }
     return scrolled_lines;
@@ -45,13 +45,13 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
                         const Ui_t* const Ui)
 {
     // There is small amount of chars. Horizontal scroll isn't required.
-    if(BUFFER__CURRENT_LINE_LENGTH < Ui->textarea_w)
+    if(BUFFER__CURRENT_LINE_LEN < Ui->textarea_w)
     {
         print__line_with_tabs(Buffer, Config, BUFFER__CURRENT_LINE_IDX, 0,
-                              BUFFER__CURRENT_LINE_LENGTH);
+                              BUFFER__CURRENT_LINE_LEN);
     }
     // Chars won't fits in the horizontal space.
-    else if((BUFFER__CURRENT_LINE_LENGTH - Ui->textarea_w)
+    else if((BUFFER__CURRENT_LINE_LEN - Ui->textarea_w)
             >= Buffer->cursor_rev_x)
     {
         // Render only right part of the line.
@@ -64,7 +64,7 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
 
         // Not last rendered line so wrap it.
         if(((BUFFER__CURRENT_LINE_IDX + IDX) < Ui->textarea_h)
-           && (BUFFER__CURRENT_LINE_IDX != Buffer->lines_idx))
+           && (BUFFER__CURRENT_LINE_IDX != Buffer->lines_amount_idx))
         {
             WRAP_LINE();
         }
@@ -124,23 +124,23 @@ void print__fit_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
 
     if(BUFFER__CURSOR_Y_SCROLLED)
     {
-        for(line_idx += current_line_sz; line_idx < Buffer->lines_idx;
+        for(line_idx += current_line_sz; line_idx < Buffer->lines_amount_idx;
             line_idx++)
         {
             print__another_line(Buffer, Ui, Config, line_idx);
         }
-        ui__print_line_number(Buffer, Config, Buffer->lines_idx,
+        ui__print_line_number(Buffer, Config, Buffer->lines_amount_idx,
                               Ui->line_num_length);
 
 
-        if(Buffer->Lines[Buffer->lines_idx].length < Ui->textarea_w)
+        if(Buffer->Lines[Buffer->lines_amount_idx].length < Ui->textarea_w)
         {
-            print__line_with_tabs(Buffer, Config, Buffer->lines_idx, 0,
-                                  Buffer->Lines[Buffer->lines_idx].length);
+            print__line_with_tabs(Buffer, Config, Buffer->lines_amount_idx, 0,
+                                  Buffer->Lines[Buffer->lines_amount_idx].length);
         }
         else
         {
-            print__line_with_tabs(Buffer, Config, Buffer->lines_idx, 0,
+            print__line_with_tabs(Buffer, Config, Buffer->lines_amount_idx, 0,
                                   (idx_t) Ui->textarea_w - LF_SZ);
         }
     }
@@ -185,7 +185,7 @@ void print__shrink_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
 void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
                          const Conf_t* const Config)
 {
-    idx_t chars_end_offset = BUFFER__CURRENT_LINE_LENGTH;
+    idx_t chars_end_offset = BUFFER__CURRENT_LINE_LEN;
 
     // Previous lines. If scrolled. Only beginning is shown.
     for(idx_t line_idx = print__set_start_line(Buffer, Ui);
@@ -198,10 +198,10 @@ void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
     ui__print_line_number(Buffer, Config, BUFFER__CURRENT_LINE_IDX,
                           Ui->line_num_length);
 
-    if(BUFFER__CURRENT_LINE_LENGTH < Ui->textarea_w)
+    if(BUFFER__CURRENT_LINE_LEN < Ui->textarea_w)
     {
-        if((BUFFER__CURRENT_LINE_LENGTH > 0)
-           && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH - NUL_SZ] \
+        if((BUFFER__CURRENT_LINE_LEN > 0)
+           && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LEN - NUL_SZ] \
            == '\n'))
         {
             chars_end_offset--;
@@ -211,7 +211,7 @@ void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
 
     }
     // Chars won't fits in the horizontal space.
-    else if((BUFFER__CURRENT_LINE_LENGTH - Ui->textarea_w)
+    else if((BUFFER__CURRENT_LINE_LEN - Ui->textarea_w)
             >= Buffer->cursor_rev_x)
     {
         // Text will be scrolled. Not cursor.
@@ -230,7 +230,7 @@ void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
 void print__display_text(const Buff_t* const Buffer, const Ui_t* const Ui,
                          const Conf_t* const Config)
 {
-    if(Buffer->lines_idx < Ui->textarea_h)
+    if(Buffer->lines_amount_idx < Ui->textarea_h)
     {
         print__fit_lines(Buffer, Ui, Config);
     }

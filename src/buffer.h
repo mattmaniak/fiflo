@@ -48,12 +48,12 @@ typedef struct
     const int8_t  _padding_0;
     const int16_t _padding_1;
 
-    size_t   fname_length; // Strlen of the above array.
+    size_t   fname_len; // Strlen of the above array.
 
     // File's content and some indicators.
     Line_t*  Lines;
-    idx_t    chars_idx;    // All chars index.
-    idx_t    lines_idx;    // Lines index.
+    idx_t    chars_amount_idx;    // All chars index.
+    idx_t    lines_amount_idx;    // Lines index.
 
     // Visual shit.
     idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
@@ -69,47 +69,47 @@ Buff_t;
 #define BUFFER__MEMBLOCK (idx_t) (128 * sizeof(char))
 
 // Some placeholders.
-#define BUFFER__CURRENT_LINE_IDX (Buffer->lines_idx - Buffer->cursor_rev_y)
+#define BUFFER__CURRENT_LINE_IDX (Buffer->lines_amount_idx - Buffer->cursor_rev_y)
 
 #define BUFFER__CURRENT_LINE Buffer->Lines[BUFFER__CURRENT_LINE_IDX].text
 
-#define BUFFER__CURRENT_LINE_LENGTH  \
+#define BUFFER__CURRENT_LINE_LEN  \
 Buffer->Lines[BUFFER__CURRENT_LINE_IDX].length
 
-#define BUFFER__CURSOR_X (BUFFER__CURRENT_LINE_LENGTH - Buffer->cursor_rev_x)
+#define BUFFER__CURSOR_X (BUFFER__CURRENT_LINE_LEN - Buffer->cursor_rev_x)
 
 #define BUFFER__CURRENT_CHAR BUFFER__CURRENT_LINE[BUFFER__CURSOR_X]
 
 #define BUFFER__PREVIOUS_CHAR BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - PREV]
 
 #define BUFFER__LAST_CHAR_IN_LINE \
-BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH]
+BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LEN]
 
 #define BUFFER__PREVIOUS_LINE_IDX (BUFFER__CURRENT_LINE_IDX - PREV)
 
 #define BUFFER__PREVIOUS_LINE Buffer->Lines[BUFFER__PREVIOUS_LINE_IDX].text
 
-#define BUFFER__PREVIOUS_LINE_LENGTH \
+#define BUFFER__PREVIOUS_LINE_LEN \
 Buffer->Lines[BUFFER__PREVIOUS_LINE_IDX].length
 
-#define BUFFER__LAST_LINE Buffer->Lines[Buffer->lines_idx].text
+#define BUFFER__LAST_LINE Buffer->Lines[Buffer->lines_amount_idx].text
 
-#define BUFFER__LAST_LINE_LENGTH Buffer->Lines[Buffer->lines_idx].length
+#define BUFFER__LAST_LINE_LEN Buffer->Lines[Buffer->lines_amount_idx].length
 
-#define BUFFER__CHARS_LIMIT_NOT_EXCEEDED (Buffer->chars_idx < CHARS_MAX)
+#define BUFFER__CHARS_LIMIT_NOT_EXCEEDED (Buffer->chars_amount_idx < CHARS_MAX)
 
 #define BUFFER__CURSOR_X_SCROLLED (Buffer->cursor_rev_x > 0)
 
 #define BUFFER__CURSOR_Y_SCROLLED (Buffer->cursor_rev_y > 0)
 
-#define BUFFER__EMPTY_LINE (BUFFER__CURRENT_LINE_LENGTH == 0)
+#define BUFFER__EMPTY_LINE (BUFFER__CURRENT_LINE_LEN == 0)
 
 #define BUFFER__FIRST_LINE (BUFFER__CURRENT_LINE_IDX == 0)
 
 #define BUFFER__CURSOR_AT_LINE_START \
-(Buffer->cursor_rev_x == BUFFER__CURRENT_LINE_LENGTH)
+(Buffer->cursor_rev_x == BUFFER__CURRENT_LINE_LEN)
 
-#define BUFFER__CURSOR_AT_TOP (Buffer->cursor_rev_y == Buffer->lines_idx)
+#define BUFFER__CURSOR_AT_TOP (Buffer->cursor_rev_y == Buffer->lines_amount_idx)
 
 // Initializes all Buffer structure members.
 bool buffer__init(Buff_t*);

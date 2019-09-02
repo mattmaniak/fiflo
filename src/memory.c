@@ -48,16 +48,16 @@ bool memory__shrink_current_line(Buff_t* Buffer)
 
     /* These cases are executed only when the backspace is pressed. Works in the
     same way as "extend_current_line". */
-    if((BUFFER__CURRENT_LINE_LENGTH >= BUFFER__INITIAL_MEMBLOCK)
-       && (BUFFER__CURRENT_LINE_LENGTH < BUFFER__MEMBLOCK))
+    if((BUFFER__CURRENT_LINE_LEN >= BUFFER__INITIAL_MEMBLOCK)
+       && (BUFFER__CURRENT_LINE_LEN < BUFFER__MEMBLOCK))
     {
         // Shrink to size of the BUFFER__MEMBLOCK.
         memblock = BUFFER__MEMBLOCK;
     }
-    else if(BUFFER__CURRENT_LINE_LENGTH >= BUFFER__MEMBLOCK)
+    else if(BUFFER__CURRENT_LINE_LEN >= BUFFER__MEMBLOCK)
     {
         // Remove the newest memblock because isn't needed now.
-        memblock = ((BUFFER__CURRENT_LINE_LENGTH / BUFFER__MEMBLOCK)
+        memblock = ((BUFFER__CURRENT_LINE_LEN / BUFFER__MEMBLOCK)
                    * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
     }
     BUFFER__CURRENT_LINE = realloc(BUFFER__CURRENT_LINE, memblock);
@@ -79,15 +79,15 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
 {
     idx_t memblock = BUFFER__INITIAL_MEMBLOCK;
 
-    if((BUFFER__PREVIOUS_LINE_LENGTH >= BUFFER__INITIAL_MEMBLOCK)
-       && (BUFFER__PREVIOUS_LINE_LENGTH < BUFFER__MEMBLOCK))
+    if((BUFFER__PREVIOUS_LINE_LEN >= BUFFER__INITIAL_MEMBLOCK)
+       && (BUFFER__PREVIOUS_LINE_LEN < BUFFER__MEMBLOCK))
     {
         memblock = BUFFER__MEMBLOCK;
     }
-    else if((BUFFER__PREVIOUS_LINE_LENGTH >= BUFFER__MEMBLOCK))
+    else if((BUFFER__PREVIOUS_LINE_LEN >= BUFFER__MEMBLOCK))
     {
         // Set the size of some MEMBLKs.
-        memblock = ((BUFFER__PREVIOUS_LINE_LENGTH / BUFFER__MEMBLOCK)
+        memblock = ((BUFFER__PREVIOUS_LINE_LEN / BUFFER__MEMBLOCK)
                    * BUFFER__MEMBLOCK) + BUFFER__MEMBLOCK;
     }
     BUFFER__PREVIOUS_LINE = realloc(BUFFER__PREVIOUS_LINE, memblock);
@@ -108,7 +108,7 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
 bool memory__extend_lines_array(Buff_t* Buffer)
 {
     // Enhance the array that contains pointers to lines.
-    Buffer->Lines = realloc(Buffer->Lines, (Buffer->lines_idx + IDX)
+    Buffer->Lines = realloc(Buffer->Lines, (Buffer->lines_amount_idx + IDX)
                             * LINE__TYPE_SZ);
 
     if(Buffer->Lines == NULL)
@@ -125,14 +125,14 @@ bool memory__extend_lines_array(Buff_t* Buffer)
     }
 
     // Naturally the new line doesn't contains any chars - only terminator.
-    BUFFER__LAST_LINE_LENGTH = 0;
+    BUFFER__LAST_LINE_LEN = 0;
 
     return true;
 }
 
 bool memory__shrink_lines_array(Buff_t* Buffer)
 {
-    Buffer->Lines = realloc(Buffer->Lines, (Buffer->lines_idx + IDX)
+    Buffer->Lines = realloc(Buffer->Lines, (Buffer->lines_amount_idx + IDX)
                             * LINE__TYPE_SZ);
 
     if(Buffer->Lines == NULL)
@@ -145,7 +145,7 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
 
 bool memory__copy_lines_forward(Buff_t* Buffer)
 {
-    for(idx_t line_idx = Buffer->lines_idx; line_idx > BUFFER__CURRENT_LINE_IDX;
+    for(idx_t line_idx = Buffer->lines_amount_idx; line_idx > BUFFER__CURRENT_LINE_IDX;
         line_idx--)
     {
         idx_t memblock = ((Buffer->Lines[line_idx - PREV].length
@@ -175,7 +175,7 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
 
 bool memory__copy_lines_backward(Buff_t* Buffer)
 {
-    for(idx_t line_idx = BUFFER__CURRENT_LINE_IDX; line_idx < Buffer->lines_idx;
+    for(idx_t line_idx = BUFFER__CURRENT_LINE_IDX; line_idx < Buffer->lines_amount_idx;
         line_idx++)
     {
         idx_t memblock = ((Buffer->Lines[line_idx + NEXT].length

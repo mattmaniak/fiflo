@@ -59,9 +59,9 @@ void window__flush(void)
 void window__fill(const Buff_t* const Buffer, const Ui_t* const Ui)
 {
     // Fill the empty area below the text to pos the lower bar.
-    if((Buffer->lines_idx + IDX) < (idx_t) Ui->textarea_h)
+    if((Buffer->lines_amount_idx + IDX) < (idx_t) Ui->textarea_h)
     {
-        for(idx_t line = Buffer->lines_idx;
+        for(idx_t line = Buffer->lines_amount_idx;
             line < (idx_t) (Ui->textarea_h - UI__LBAR_SZ); line++)
         {
             WRAP_LINE();
@@ -74,7 +74,7 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
                             const Mod_t* const Modes, const Ui_t* const Ui)
 {
     // Set by default to a filename edit.
-    term_t move_right = (term_t) (UI__LEFT_PADDING + Buffer->fname_length);
+    term_t move_right = (term_t) (UI__LEFT_PADDING + Buffer->fname_len);
     term_t move_up    = (term_t) (Ui->win_h - UI__LBAR_SZ);
 
     if(move_right >= Ui->win_w)
@@ -88,12 +88,12 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 
     if(!Modes->live_fname_edit)
     {
-        if(BUFFER__CURRENT_LINE_LENGTH < Ui->textarea_w)
+        if(BUFFER__CURRENT_LINE_LEN < Ui->textarea_w)
         {
             // No horizontal scrolling.
             move_right = (term_t) (Ui->line_num_length + BUFFER__CURSOR_X);
         }
-        else if((BUFFER__CURRENT_LINE_LENGTH - Ui->textarea_w)
+        else if((BUFFER__CURRENT_LINE_LEN - Ui->textarea_w)
                 >= Buffer->cursor_rev_x)
         {
             /* Last Ui->textarea_w chars are seen. Current line is scrolled,
@@ -120,7 +120,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     char line_num_str[16]; // Needed to count the length of the number.
     Ui_t Ui;
 
-    sprintf(line_num_str, "%u", Buffer->lines_idx + IDX);
+    sprintf(line_num_str, "%u", Buffer->lines_amount_idx + IDX);
 
     if(((Ui.win_w = window__get_terminal_sz('X')) == 0)
        || ((Ui.win_h = window__get_terminal_sz('Y')) == 0))

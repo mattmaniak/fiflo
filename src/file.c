@@ -26,7 +26,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
         Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
 
-        Buffer->fname_length = strlen(Buffer->fname);
+        Buffer->fname_len = strlen(Buffer->fname);
 
         return true;
     }
@@ -93,7 +93,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         // Append the basename.
         strncpy(&Buffer->fname[cw_dir_length + SLASH_SZ], arg, NAME_MAX);
     }
-    Buffer->fname_length = strlen(Buffer->fname);
+    Buffer->fname_len = strlen(Buffer->fname);
 
     return true;
 }
@@ -123,7 +123,7 @@ bool file__load(Buff_t* Buffer, const Conf_t* const Config)
     FILE* Textfile;
     char  ch;
 
-    if(Buffer->fname[Buffer->fname_length - NUL_SZ] == '/')
+    if(Buffer->fname[Buffer->fname_len - NUL_SZ] == '/')
     {
         SET_STATUS("current directory set");
         return true;
@@ -182,7 +182,7 @@ bool file__save(Buff_t*Buffer, const Conf_t* const Config)
         SET_STATUS("can't write to the file");
         return true;
     }
-    for(idx_t line_idx = 0; line_idx <= Buffer->lines_idx; line_idx++)
+    for(idx_t line_idx = 0; line_idx <= Buffer->lines_amount_idx; line_idx++)
     {
         /* Using fputs or fprintf causes use-of-uninitialized-value using
         MSan because of there is more memory allocated than is needed. */

@@ -3,7 +3,7 @@
 
 void keys__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
 {
-    bool more_than_one_line = Buffer->lines_idx > 0;
+    bool more_than_one_line = Buffer->lines_amount_idx > 0;
 
     if(!BUFFER__CURSOR_AT_LINE_START)
     {
@@ -53,7 +53,7 @@ void keys__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
         if(!BUFFER__CURSOR_X_SCROLLED && BUFFER__CURSOR_Y_SCROLLED)
         {
             Buffer->cursor_rev_y--;
-            Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LENGTH;
+            Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LEN;
         }
         /* Last line doesn't contain keys__linefeed so ignoring that isn't
         necessary. */
@@ -72,7 +72,7 @@ void keys__arrow_up(Buff_t* Buffer)
         /* Cursor at the left side: doesn't go at the end of a line. Always
         at the beginning or ignore the linefeed. */
         Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_START)
-                               ? BUFFER__PREVIOUS_LINE_LENGTH : LF_SZ;
+                               ? BUFFER__PREVIOUS_LINE_LEN : LF_SZ;
         Buffer->cursor_rev_y++;
     }
     Buffer->escape_sequence_on_input = false;
@@ -89,7 +89,7 @@ void keys__arrow_down(Buff_t* Buffer)
         {
             /* Cursor at the left side: doesn't go at the end of a line. Always
             at the beginning. */
-            Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LENGTH;
+            Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LEN;
         }
         else
         {
@@ -103,14 +103,14 @@ void keys__arrow_down(Buff_t* Buffer)
 void keys__ctrl_arrow_left(Buff_t* Buffer)
 {
     // Go to the previous line.
-    if((BUFFER__CURSOR_X == 0) && (Buffer->cursor_rev_y < Buffer->lines_idx))
+    if((BUFFER__CURSOR_X == 0) && (Buffer->cursor_rev_y < Buffer->lines_amount_idx))
     {
         Buffer->cursor_rev_y++;
         Buffer->cursor_rev_x = LF_SZ;
     }
     if((BUFFER__CURRENT_CHAR != ' ') && (BUFFER__CURRENT_CHAR != '\t'))
     {
-        while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LENGTH)
+        while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LEN)
               && !((BUFFER__CURRENT_CHAR == ' ')
               || (BUFFER__CURRENT_CHAR == '\t')))
         {
@@ -123,7 +123,7 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
            || (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X - PREV] == '\t')))
         {
             // Prevents skipping only one part of the tab.
-            while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LENGTH)
+            while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LEN)
                   && ((BUFFER__CURRENT_CHAR == ' ')
                   || (BUFFER__CURRENT_CHAR == '\t')))
             {
@@ -137,7 +137,7 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
     }
     else // Non-whitespace chars.
     {
-        while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LENGTH)
+        while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LEN)
               && ((BUFFER__CURRENT_CHAR == ' ')
               || (BUFFER__CURRENT_CHAR == '\t')))
         {
@@ -146,7 +146,7 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
         // Skip the whole word at once instead of 1 char for the first time.
         if(!((BUFFER__CURRENT_CHAR == ' ') || (BUFFER__CURRENT_CHAR == '\t')))
         {
-            while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LENGTH)
+            while((Buffer->cursor_rev_x < BUFFER__CURRENT_LINE_LEN)
                   && !((BUFFER__CURRENT_CHAR == ' ')
                   || (BUFFER__CURRENT_CHAR == '\t')))
             {
@@ -163,7 +163,7 @@ void keys__ctrl_arrow_right(Buff_t* Buffer)
     if((Buffer->cursor_rev_x == 1) && BUFFER__CURSOR_Y_SCROLLED)
     {
         Buffer->cursor_rev_y--;
-        Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LENGTH;
+        Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LEN;
     }
     if((BUFFER__CURRENT_CHAR != ' ') && (BUFFER__CURRENT_CHAR != '\t'))
     {
@@ -203,7 +203,7 @@ void keys__ctrl_arrow_up(Buff_t* Buffer)
             }
         }
     }
-    Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LENGTH;
+    Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LEN;
 
     Buffer->escape_sequence_on_input = false;
 }
@@ -222,7 +222,7 @@ void keys__ctrl_arrow_down(Buff_t* Buffer)
             }
         }
     }
-    Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LENGTH;
+    Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LEN;
 
     Buffer->escape_sequence_on_input = false;
 }

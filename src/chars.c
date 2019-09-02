@@ -35,9 +35,9 @@ bool chars__parse_char(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
 
 bool chars__linefeed(Buff_t* Buffer)
 {
-    if(Buffer->lines_idx < CHARS_MAX)
+    if(Buffer->lines_amount_idx < CHARS_MAX)
     {
-        Buffer->lines_idx++;
+        Buffer->lines_amount_idx++;
         if(!memory__extend_lines_array(Buffer))
         {
             return false;
@@ -76,8 +76,8 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
     {
         if(BUFFER__CHARS_LIMIT_NOT_EXCEEDED)
         {
-            Buffer->chars_idx++;
-            BUFFER__CURRENT_LINE_LENGTH++;
+            Buffer->chars_amount_idx++;
+            BUFFER__CURRENT_LINE_LEN++;
 
             if(!memory__extend_line(Buffer, BUFFER__CURRENT_LINE_IDX))
             {
@@ -94,8 +94,8 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
             // Initializing nul handler.
             if((ch == '\0') && !BUFFER__EMPTY_LINE)
             {
-                Buffer->chars_idx--;
-                BUFFER__CURRENT_LINE_LENGTH--;
+                Buffer->chars_amount_idx--;
+                BUFFER__CURRENT_LINE_LEN--;
             }
             else if(ch == '\n')
             {
@@ -164,8 +164,8 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
         }
 
         // Some text and the tab(s) at the end.
-        if((BUFFER__CURRENT_LINE_LENGTH > 0) && (Buffer->cursor_rev_x == 0)
-           && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LENGTH - NUL_SZ]
+        if((BUFFER__CURRENT_LINE_LEN > 0) && (Buffer->cursor_rev_x == 0)
+           && (BUFFER__CURRENT_LINE[BUFFER__CURRENT_LINE_LEN - NUL_SZ]
            != '\t'))
         {
             break;
@@ -203,7 +203,7 @@ bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
     the file. */
 
     // Prevent not-full Tab insert.
-    if(Buffer->chars_idx <= (CHARS_MAX - (idx_t) Config->Tab_sz.value))
+    if(Buffer->chars_amount_idx <= (CHARS_MAX - (idx_t) Config->Tab_sz.value))
     {
         for(int tab_sz = 0; tab_sz < Config->Tab_sz.value; tab_sz++)
         {
