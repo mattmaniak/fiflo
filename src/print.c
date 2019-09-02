@@ -4,9 +4,11 @@ void print__line_with_tabs(const Buff_t* const Buffer,
                            const Conf_t* const Config, const idx_t line_idx,
                            const idx_t start_char_idx, const idx_t end_char_idx)
 {
+    idx_t flexed_tab_end_offset = 0;
+
     for(idx_t char_idx = start_char_idx; char_idx < end_char_idx; char_idx++)
     {
-        char ch = Buffer->Lines[line_idx].text[char_idx];
+        const char ch = Buffer->Lines[line_idx].text[char_idx];
 
         // if(char_idx < end_char_idx)
         // {
@@ -23,20 +25,20 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         // Whitespace highlighting.
         if(ch == '\t')
         {
-            if((char_idx <= Buffer->Lines[line_idx].flexed_tab_end_offset)
-               || (Buffer->Lines[line_idx].flexed_tab_end_offset == 0))
+            if((char_idx <= flexed_tab_end_offset)
+               || (flexed_tab_end_offset == 0))
             {
                 ui__set_color(&Config->Color_whitespace);
                 putchar(PRINT__TAB_HIGHLIGHT);
 
-                if(char_idx <= Buffer->Lines[line_idx].flexed_tab_end_offset)
+                if(char_idx <= flexed_tab_end_offset)
                 {
-                    Buffer->Lines[line_idx].flexed_tab_end_offset = 0;
+                    flexed_tab_end_offset = 0;
                 }
             }
             if(((char_idx + IDX) % Config->Tab_sz.value) == 0)
             {
-                Buffer->Lines[line_idx].flexed_tab_end_offset = char_idx;
+                flexed_tab_end_offset = char_idx;
             }
         }
         else if(ch == ' ')
