@@ -8,11 +8,36 @@ void print__line_with_tabs(const Buff_t* const Buffer,
     {
         char ch = Buffer->Lines[line_idx].text[char_idx];
 
+        // if(char_idx < end_char_idx)
+        // {
+        //     if(Buffer->Lines[line_idx].text[char_idx + 1] == '\t')
+        //     {
+        //         if(((char_idx % Config->Tab_sz.value) != 0)
+        //            || ((char_idx % Config->Tab_sz.value) != 1))
+        //         {
+        //             printf(".");
+        //         }
+        //     }
+        // }
+
         // Whitespace highlighting.
         if(ch == '\t')
         {
-            ui__set_color(&Config->Color_whitespace);
-            putchar(PRINT__TAB_HIGHLIGHT);
+            if((char_idx <= Buffer->Lines[line_idx].flexed_tab_end_offset)
+               || (Buffer->Lines[line_idx].flexed_tab_end_offset == 0))
+            {
+                ui__set_color(&Config->Color_whitespace);
+                putchar(PRINT__TAB_HIGHLIGHT);
+
+                if(char_idx <= Buffer->Lines[line_idx].flexed_tab_end_offset)
+                {
+                    Buffer->Lines[line_idx].flexed_tab_end_offset = 0;
+                }
+            }
+            if(((char_idx + IDX) % Config->Tab_sz.value) == 0)
+            {
+                Buffer->Lines[line_idx].flexed_tab_end_offset = char_idx;
+            }
         }
         else if(ch == ' ')
         {

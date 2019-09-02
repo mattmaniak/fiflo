@@ -58,6 +58,8 @@ bool chars__linefeed(Buff_t* Buffer)
             }
         }
         BUFFER__LAST_CHAR_IN_LINE = '\0';
+
+        Buffer->Lines[BUFFER__CURRENT_LINE_IDX].flexed_tab_end_offset = 0;
     }
     return true;
 }

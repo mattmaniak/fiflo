@@ -20,6 +20,8 @@ bool buffer__init(Buff_t* Buffer)
     Buffer->cursor_rev_y         = 0;
     BUFFER__CURRENT_LINE_LEN     = 0;
 
+    Buffer->Lines[BUFFER__CURRENT_LINE_IDX].flexed_tab_end_offset = 0;
+
     Buffer->escape_sequence_on_input = false;
 
     if((BUFFER__CURRENT_LINE = malloc(BUFFER__INITIAL_MEMBLOCK)) == NULL)

@@ -9,8 +9,7 @@ typedef struct
 {
     char* text;
     idx_t length;
-
-    idx_t _padding;
+    idx_t flexed_tab_end_offset;
 }
 Line_t;
 
