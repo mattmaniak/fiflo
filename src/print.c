@@ -21,8 +21,29 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         }
         else
         {
-            ui__set_color(&Config->Color_text);
-            putchar(ch);
+            char  keyword[8]      = "void";
+            char* found_word_addr = strstr(&Buffer->Lines[line_idx].text[char_idx],
+                                           keyword);
+
+            // printf("%ld", found_word_addr - Buffer->Lines[line_idx].text);
+            // printf("[%p %p]", found_word_addr, Buffer->Lines[line_idx].text);
+
+            if(found_word_addr != NULL)
+            {
+                idx_t end_color_offset = char_idx + (idx_t) strlen(keyword);
+
+                ui__set_color(&Config->Color_warning);
+
+                for(; char_idx <= end_color_offset; char_idx++)
+                {
+                    putchar(Buffer->Lines[line_idx].text[char_idx]);
+                }
+            }
+            else
+            {
+                ui__set_color(&Config->Color_text);
+                putchar(ch);
+            }
         }
         ui__set_color(NULL);
     }

@@ -3,6 +3,8 @@
 
 // Renders the text itself. Cares about scrolling.
 
+#include <string.h>
+
 #include "buffer.h"
 #include "config.h"
 #include "modes.h"
