@@ -1,5 +1,4 @@
 fiflo - TODOs and ideas:
-- tab with the gap,
 - simplify and buffer.h,
 - all escapes and formatting control chars,
 - pre-allocation of a memory, eg. next 16 lines,
