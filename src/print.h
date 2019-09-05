@@ -7,6 +7,7 @@
 
 #include "buffer.h"
 #include "config.h"
+#include "highlighter.h"
 #include "modes.h"
 #include "ui.h"
 
