@@ -21,33 +21,16 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         }
         else
         {
-            // if(!highlighter__paint_word(Buffer->Lines[line_idx].text[char_idx],
-            //                             &char_idx))
-            // {
+            const idx_t char_idx_after_highlighting = highlighter__paint_word(&Buffer->Lines[line_idx], char_idx);
 
-            const char* const str_to_print_addr = &Buffer->Lines[line_idx].
-                                                  text[char_idx];
-
-            const char        keyword[]       = "void";
-            const char* const found_word_addr = strstr(str_to_print_addr,
-                                                       keyword);
-
-            if(found_word_addr == str_to_print_addr)
-            {
-                const idx_t end_color_offset = (const idx_t) strlen(keyword)
-                                               + char_idx;
-
-                ui__set_color(&Config->Color_warning);
-                for(; char_idx < end_color_offset; char_idx++)
-                {
-                    putchar(Buffer->Lines[line_idx].text[char_idx]);
-                }
-                char_idx--;
-            }
-            else
+            if(char_idx == char_idx_after_highlighting)
             {
                 ui__set_color(&Config->Color_text);
                 putchar(ch);
+            }
+            else // Word printed and highlighted. Shift the index to the next.
+            {
+                char_idx = char_idx_after_highlighting;
             }
         }
         ui__set_color(NULL);
@@ -175,8 +158,8 @@ void print__fit_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
 void print__shrink_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
                          const Conf_t* const Config)
 {
-    idx_t last_line_idx = (idx_t) Ui->textarea_h - IDX;
-    idx_t line_idx      = 0;
+    const idx_t last_line_idx = (const idx_t) Ui->textarea_h - IDX;
+    idx_t       line_idx      = 0;
 
     // Previous lines. If scrolled. Only beginning is shown.
     for(; line_idx < BUFFER__CURRENT_LINE_IDX; line_idx++)

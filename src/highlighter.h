@@ -6,6 +6,6 @@
 
 #include "buffer.h"
 
-bool highlighter__paint_word(Line_t*, idx_t*);
+idx_t highlighter__paint_word(Line_t*, idx_t);
 
 #endif
