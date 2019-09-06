@@ -4,7 +4,7 @@ void fiflo__run(int argc, char** argv)
 {
     const size_t no_filename_as_arg = 1;
 
-    char pressed_key        = '\0'; // Assignment as the initializer.
+    char pressed_key        = '\0'; // Assignet for the initialization only.
     size_t current_file_idx = 0;
 
     Buff_t* Buffer;
@@ -53,7 +53,8 @@ void fiflo__run(int argc, char** argv)
 
     for(;;) // The main program loop.
     {
-        fformats__recognize_extension(Buffer->basename);
+        Buffer->extension = fextension__recognize_extension(Buffer->basename);
+
         if(!file__get_git_branch(&Buffer[current_file_idx]))
         {
             break;
@@ -68,7 +69,8 @@ void fiflo__run(int argc, char** argv)
             current_file_idx = additional_argc_idx;
         }
         // Flushes and renders always after the keypress.
-        if(!window__render(Buffer, &Config, &Modes, (idx_t) additional_argc_idx,
+        if(!window__render(Buffer, &Config, &Modes,
+                           (idx_t) additional_argc_idx,
                            (idx_t) current_file_idx))
         {
             break;
@@ -81,11 +83,11 @@ void fiflo__run(int argc, char** argv)
     }
 
     free:
-    for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
-    {
-        buffer__free(&Buffer[buff_idx]);
-    }
-    free(Buffer);
+        for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
+        {
+            buffer__free(&Buffer[buff_idx]);
+        }
+        free(Buffer);
 }
 
 int main(int argc, char** argv)
@@ -97,7 +99,6 @@ int main(int argc, char** argv)
     fiflo__run(argc, argv);
 
     exit:
-    fflush(NULL); // Clean both output buffers.
-
-    return 0;
+        fflush(NULL); // Clean both output buffers.
+        return 0;
 }

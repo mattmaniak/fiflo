@@ -1,7 +1,7 @@
 #include "chars.h"
 
-bool chars__parse_char(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
-                       const char ch)
+bool chars__parse_char(Buff_t* Buffer, const Conf_t* const Config,
+                       Mod_t* Modes, const char ch)
 {
     switch(ch)
     {
@@ -21,7 +21,7 @@ bool chars__parse_char(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
         return file__save(Buffer, Config);
 
     case CTRL_BACKSLASH:
-        Modes->lbar_toggled = !Modes->lbar_toggled;
+        Modes->lbar_expanded = !Modes->lbar_expanded;
         break;
 
     case CTRL_D:
@@ -171,7 +171,7 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
             break;
         }
         /* Prevent removing the line when the first char in the line has to be
-        removed. */
+           removed. */
         else if((BUFFER__CURSOR_X == 0)
                 && (BUFFER__CURRENT_LINE[BUFFER__CURSOR_X] != '\t'))
         {
@@ -184,8 +184,8 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
             break;
         }
 
-        /* Prevents deleting [tab_width] lines at once with max. scrolled cursor
-        in X. */
+        /* Prevents deleting [tab_width] lines at once with max. scrolled
+           cursor in X. */
         if(remembered_line_idx != BUFFER__CURRENT_LINE_IDX)
         {
             break;
@@ -199,8 +199,8 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
 bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
 {
     /* When the TAB key is pressed, it will insert e.g. 4 '\t' into the
-    buffer. They will be converted during the rendering, loading and saving
-    the file. */
+       buffer. They will be converted during the rendering, loading and saving
+       the file. */
 
     // Prevent not-full Tab insert.
     if(Buffer->chars_amount_idx <= (CHARS_MAX - (idx_t) Config->Tab_sz.value))

@@ -16,11 +16,11 @@ bool options__parse_and_print(const char* const arg)
     else if(!strcmp(arg, "-v") || !strcmp(arg, "--version"))
     {
         printf("%s\n%s\n%s\n%s\n%s\n",
-        "|``",
-        "|``",
-        RELEASE__VERSION,
-        RELEASE__COPYRIGHT,
-        RELEASE__REPO);
+               "|``",
+               "|``",
+               RELEASE__VERSION,
+               RELEASE__COPYRIGHT,
+               RELEASE__REPO);
 
         return false;
     }

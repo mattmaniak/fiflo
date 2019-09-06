@@ -128,7 +128,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
         return false;
     }
     Ui.toggled_lbar_h = UI__TOGGLED_LBAR_H;
-    Ui.lbar_h = (Modes->lbar_toggled) ? Ui.toggled_lbar_h : UI__LBAR_SZ;
+    Ui.lbar_h = (Modes->lbar_expanded) ? Ui.toggled_lbar_h : UI__LBAR_SZ;
 
     Ui.line_num_length = (term_t) (strlen(line_num_str) + SPACE_SZ
                          + UI__LEFT_PADDING);

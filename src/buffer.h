@@ -2,7 +2,7 @@
 #define BUFFER_H
 
 /* This file is included in every source file to provide the main structure
-that describes the buffer. */
+   that describes the buffer. */
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -33,9 +33,13 @@ that describes the buffer. */
 
 typedef struct
 {
+    int      extension;
+
     // True if pressed key is ANSI escape code.
     bool     escape_sequence_on_input;
     char     git_branch[NAME_MAX]; // Max size is 250 defined by Git.
+
+    const int32_t _padding_0;
 
     // Filename.
     char*    pathname; // Doesn't include the trailing slash.
@@ -45,8 +49,8 @@ typedef struct
     char     fname[PATH_MAX + NAME_MAX];
     char     fname_copy[PATH_MAX + NAME_MAX];
 
-    const int8_t  _padding_0;
-    const int16_t _padding_1;
+    const int8_t  _padding_1;
+    const int16_t _padding_2;
 
     size_t   fname_len; // Strlen of the above array.
 
@@ -69,7 +73,8 @@ Buff_t;
 #define BUFFER__MEMBLOCK (idx_t) (128 * sizeof(char))
 
 // Some placeholders.
-#define BUFFER__CURRENT_LINE_IDX (Buffer->lines_amount_idx - Buffer->cursor_rev_y)
+#define BUFFER__CURRENT_LINE_IDX \
+(Buffer->lines_amount_idx - Buffer->cursor_rev_y)
 
 #define BUFFER__CURRENT_LINE Buffer->Lines[BUFFER__CURRENT_LINE_IDX].text
 
@@ -109,7 +114,8 @@ Buffer->Lines[BUFFER__PREVIOUS_LINE_IDX].length
 #define BUFFER__CURSOR_AT_LINE_START \
 (Buffer->cursor_rev_x == BUFFER__CURRENT_LINE_LEN)
 
-#define BUFFER__CURSOR_AT_TOP (Buffer->cursor_rev_y == Buffer->lines_amount_idx)
+#define BUFFER__CURSOR_AT_TOP \
+(Buffer->cursor_rev_y == Buffer->lines_amount_idx)
 
 // Initializes all Buffer structure members.
 bool buffer__init(Buff_t*);

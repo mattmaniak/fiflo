@@ -70,7 +70,7 @@ void keys__arrow_up(Buff_t* Buffer)
     if(!BUFFER__CURSOR_AT_TOP)
     {
         /* Cursor at the left side: doesn't go at the end of a line. Always
-        at the beginning or ignore the linefeed. */
+           at the beginning or ignore the linefeed. */
         Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_START)
                                ? BUFFER__PREVIOUS_LINE_LEN : LF_SZ;
         Buffer->cursor_rev_y++;
@@ -88,7 +88,7 @@ void keys__arrow_down(Buff_t* Buffer)
         if(cursor_at_previous_line_start)
         {
             /* Cursor at the left side: doesn't go at the end of a line. Always
-            at the beginning. */
+               at the beginning. */
             Buffer->cursor_rev_x = BUFFER__CURRENT_LINE_LEN;
         }
         else
@@ -216,7 +216,8 @@ void keys__ctrl_arrow_down(Buff_t* Buffer)
         {
             Buffer->cursor_rev_y--;
 
-            if((BUFFER__CURRENT_LINE[0] == '\n') || (Buffer->cursor_rev_y == 0))
+            if((BUFFER__CURRENT_LINE[0] == '\n')
+               || (Buffer->cursor_rev_y == 0))
             {
                 break;
             }

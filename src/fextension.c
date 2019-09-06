@@ -1,8 +1,6 @@
-#include "fformats.h"
+#include "fextension.h"
 
-const int FFORMATS_EXTENSION;
-
-void fformats__recognize_extension(const char* const basename)
+int fextension__recognize_extension(const char* const basename)
 {
     idx_t char_idx = 0;
 
@@ -17,7 +15,11 @@ void fformats__recognize_extension(const char* const basename)
             const idx_t       dot_sz = 1;
             const char* const extension = &basename[char_idx + dot_sz];
 
-            puts(extension);
+            if(!strcmp(extension, "c"))
+            {
+                return C;
+            }
         }
     }
+    return NONE;
 }

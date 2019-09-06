@@ -102,7 +102,7 @@ bool file__convert_tab_from_file(Buff_t* Buffer, const Conf_t* const Config,
                                  const char ch)
 {
     /* Converts in-file '\t' in to sequence of e.g. "\t\t\t\t" if the tab width
-    is set to 4. */
+       is set to 4. */
     if(ch == '\t')
     {
         for(idx_t char_idx = 0;

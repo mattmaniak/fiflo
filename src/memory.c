@@ -46,8 +46,8 @@ bool memory__shrink_current_line(Buff_t* Buffer)
 {
     idx_t memblock = BUFFER__INITIAL_MEMBLOCK;
 
-    /* These cases are executed only when the backspace is pressed. Works in the
-    same way as "extend_current_line". */
+    /* These cases are executed only when the backspace is pressed. Works in
+       the same way as "extend_current_line". */
     if((BUFFER__CURRENT_LINE_LEN >= BUFFER__INITIAL_MEMBLOCK)
        && (BUFFER__CURRENT_LINE_LEN < BUFFER__MEMBLOCK))
     {
@@ -145,8 +145,8 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
 
 bool memory__copy_lines_forward(Buff_t* Buffer)
 {
-    for(idx_t line_idx = Buffer->lines_amount_idx; line_idx > BUFFER__CURRENT_LINE_IDX;
-        line_idx--)
+    for(idx_t line_idx = Buffer->lines_amount_idx;
+        line_idx > BUFFER__CURRENT_LINE_IDX; line_idx--)
     {
         idx_t memblock = ((Buffer->Lines[line_idx - PREV].length
                          / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)
@@ -175,8 +175,8 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
 
 bool memory__copy_lines_backward(Buff_t* Buffer)
 {
-    for(idx_t line_idx = BUFFER__CURRENT_LINE_IDX; line_idx < Buffer->lines_amount_idx;
-        line_idx++)
+    for(idx_t line_idx = BUFFER__CURRENT_LINE_IDX;
+        line_idx < Buffer->lines_amount_idx; line_idx++)
     {
         idx_t memblock = ((Buffer->Lines[line_idx + NEXT].length
                          / BUFFER__MEMBLOCK) * BUFFER__MEMBLOCK)

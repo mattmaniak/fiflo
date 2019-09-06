@@ -2,7 +2,8 @@
 
 void print__line_with_tabs(const Buff_t* const Buffer,
                            const Conf_t* const Config, const idx_t line_idx,
-                           const idx_t start_char_idx, const idx_t end_char_idx)
+                           const idx_t start_char_idx,
+                           const idx_t end_char_idx)
 {
     for(idx_t char_idx = start_char_idx; char_idx < end_char_idx; char_idx++)
     {
@@ -21,7 +22,8 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         }
         else
         {
-            const idx_t char_idx_after_highlighting = highlighter__paint_word(&Buffer->Lines[line_idx], char_idx);
+            const idx_t char_idx_after_highlighting =
+            highlighter__paint_word(&Buffer->Lines[line_idx], char_idx);
 
             if(char_idx == char_idx_after_highlighting)
             {
@@ -145,7 +147,8 @@ void print__fit_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
         if(Buffer->Lines[Buffer->lines_amount_idx].length < Ui->textarea_w)
         {
             print__line_with_tabs(Buffer, Config, Buffer->lines_amount_idx, 0,
-                                  Buffer->Lines[Buffer->lines_amount_idx].length);
+                                  Buffer->Lines[Buffer->lines_amount_idx].
+                                  length);
         }
         else
         {

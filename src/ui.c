@@ -42,7 +42,8 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         WRAP_LINE();
     }
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status, (int) (STATUS_MAX
-           - strlen(Buffer->status) - SPACE_SZ + UI__GIT_LOGO_W), UI__GIT_LOGO);
+           - strlen(Buffer->status) - SPACE_SZ + UI__GIT_LOGO_W),
+           UI__GIT_LOGO);
 
     if((term_t) strlen(Buffer->git_branch)
        < (Ui->win_w - UI__GIT_LOGO_W - STATUS_MAX - UI__HORIZONTAL_PADDING))
@@ -75,7 +76,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     ui__set_color(NULL); // Resets the last line color.
     ui__set_color(&Config->Color_ui);
 
-    if(Modes->lbar_toggled)
+    if(Modes->lbar_expanded)
     {
         printf("%*sloaded files:", UI__LEFT_PADDING, "");
         WRAP_LINE();

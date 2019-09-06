@@ -13,7 +13,7 @@ bool memory__extend_line(Buff_t*, const idx_t);
 // Works as the function above but shrinks memblocks.
 bool memory__shrink_current_line(Buff_t*);
 
-// When the enter is hitted with shifted cursor, previous line will be shrinked.
+// When the enter is hit with a shifted cursor, previous line will be shrinked.
 bool memory__shrink_prev_line(Buff_t*);
 
 // Allocs memory for the next line.

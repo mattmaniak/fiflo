@@ -27,7 +27,7 @@ char input__getch(void)
     new_term_params.c_lflag &= ~(canonical_mode_on | echo_input | enable_sigs);
 
     /* Immediately set the state of the stdin to the *new_term_params. Use the
-    new terminal I/O settings. */
+       new terminal I/O settings. */
     if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == ERROR)
     {
         window__flush();

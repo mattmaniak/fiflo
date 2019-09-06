@@ -14,7 +14,7 @@
 #define UI__GIT_BRANCH_MIN_W 10
 
 #define UI__UBAR_SZ 2
-#define UI__LBAR_SZ 1 // Must be equal 1, otherwise will break rendering a little.
+#define UI__LBAR_SZ 1 // Must be equal 1, otherwise will break rendering.
 
 #define UI__TOGGLED_LBAR_H     6
 #define UI__LEFT_PADDING       1

@@ -164,16 +164,17 @@ void config__set_default(Conf_t* Config)
 
 void config__load_custom(Conf_t* Config)
 {
-    int  parsed_value = 0;
-    char line[80];
-    char selector[48];
-    char value[32];
+    const char space_or_control_char = 32;
+    int        parsed_value = 0;
+    char       line[80];
+    char       selector[48];
+    char       value[32];
 
     config__init_selectors(Config);
 
     while(fgets(line, 80, Config->File) != NULL)
     {
-        if((line[0] == '#') || (line[0] <= 32)) // Hash, space, unvisible char.
+        if((line[0] == '#') || (line[0] <= space_or_control_char))
         {
             continue;
         }

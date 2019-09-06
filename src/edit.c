@@ -55,7 +55,7 @@ bool edit__delete_line(Buff_t* Buffer)
             }
 
             /* With the last line deletion there is a need to remove the
-            linefeed in the previous line. */
+               linefeed in the previous line. */
             BUFFER__LAST_LINE_LEN--;
             BUFFER__LAST_LINE[BUFFER__LAST_LINE_LEN] = '\0';
 

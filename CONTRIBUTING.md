@@ -7,20 +7,19 @@ before making a change.
 ## Workflow
 ### Branching
 [V. Driessen's model](https://nvie.com/posts/a-successful-git-branching-model/)
-As described but only with: master, develop, hotifx branches.
+Only with: master, develop and hotifx branches.
 
 ### Version scheme
 [SemVer](https://semver.org/)
 
 ### Coding rules:
-- Allman-like brace style,
-- indentation: 4 spaces,
+- Allman-like indentation with 4 spaces,
 - line ending: LF,
-- only snake_case is allowed,
+- snake_case only,
 - visually align: defines, types, names, assignments etc,
-- single line should not exceed 80 chars printable chars,
-- e,g function "f_name" in the file asdf.c should be named "asdf__f_name","
-- insert short TODOs near thing to fix as uppercase comments,
+- single line should not exceed 79 chars printable chars,
+- e.g. function "fun()" in the file asdf.c should be prefixed: "asdf__fun()",
+- insert short TODOs near things to fix as uppercase comments,
 - write documentation comments,
 - keep docs up-to-date with the code in stable releases,
 

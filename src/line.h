@@ -1,6 +1,8 @@
 #ifndef LINE_H
 #define LINE_H
 
+// The structure that represents a line of a text.
+
 #include <stdint.h>
 
 typedef uint32_t idx_t;
