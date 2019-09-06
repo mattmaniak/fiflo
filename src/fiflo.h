@@ -9,6 +9,7 @@
 #include "buffer.h"
 #include "config.h"
 #include "file.h"
+#include "fformats.h"
 #include "modes.h"
 #include "input.h"
 #include "window.h"

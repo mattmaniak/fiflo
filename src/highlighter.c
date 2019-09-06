@@ -1,5 +1,11 @@
 #include "highlighter.h"
 
+// bool highlighter__load()
+// {
+//     const char fname[] = "/usr/share/nano/";
+//     return true;
+// }
+
 idx_t highlighter__paint_word(Line_t* Line, idx_t char_idx)
 {
     const char        keyword[]         = "void";

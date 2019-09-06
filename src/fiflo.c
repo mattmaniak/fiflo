@@ -53,6 +53,7 @@ void fiflo__run(int argc, char** argv)
 
     for(;;) // The main program loop.
     {
+        fformats__recognize_extension(Buffer->basename);
         if(!file__get_git_branch(&Buffer[current_file_idx]))
         {
             break;
