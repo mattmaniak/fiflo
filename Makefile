@@ -18,10 +18,12 @@ BIN_DIR = bin
 COV_DIR = cov
 MAN_DIR = man
 DOC_DIR = doc
+SYN_DIR = syntax
 
 USR_INS_DIR = /usr/bin
 DOC_INS_DIR = /usr/share/doc/$(TARGET)
 MAN_INS_DIR = /usr/share/man/man
+SYN_INS_DIR = /usr/share/fiflo
 CONF_DIR = /etc
 
 # All in the ./obj depending on the ./src.
@@ -84,13 +86,16 @@ install:
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
 	sudo $(RM) $(MAN_INS_DIR)1/$(TARGET).1.gz
-	sudo $(RM) $(MAN_INS_DIR)5/$(TARGET)rc.5.gz
+	sudo $(RM) $(MAN_INS_DIR)5/$(TARGET).conf.5.gz
 
 	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)1
-	sudo cp $(MAN_DIR)/$(TARGET)rc.5 $(MAN_INS_DIR)5
+	sudo cp $(MAN_DIR)/$(TARGET).conf.5 $(MAN_INS_DIR)5
+
+	sudo mkdir $(SYN_INS_DIR)
+	sudo cp $(SYN_DIR)/c.$(TARGET)rc $(SYN_INS_DIR)/c.$(TARGET)rc
 
 	sudo gzip $(MAN_INS_DIR)1/$(TARGET).1
-	sudo gzip $(MAN_INS_DIR)5/$(TARGET)rc.5
+	sudo gzip $(MAN_INS_DIR)5/$(TARGET).conf.5
 
 	sudo $(RM) -r $(DOC_INS_DIR)
 	sudo mkdir $(DOC_INS_DIR)
@@ -107,6 +112,9 @@ install_debug:
 	@echo " "
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
+	sudo mkdir $(SYN_INS_DIR)
+	sudo cp $(SYN_DIR)/c.$(TARGET)rc $(SYN_INS_DIR)/c.$(TARGET)rc
+
 	@echo " "
 	@echo "Binary only installation with ASan and gcov support finished."
 
@@ -116,8 +124,9 @@ uninstall:
 
 	sudo $(RM) -r \
 	$(MAN_INS_DIR)1/$(TARGET).1.gz \
-	$(MAN_INS_DIR)5/$(TARGET)rc.5.gz \
+	$(MAN_INS_DIR)5/$(TARGET).conf.5.gz \
 	$(DOC_INS_DIR) \
+	$(SYN_INS_DIR)
 	$(CONF_DIR)/$(TARGET)rc
 
 	@echo " "

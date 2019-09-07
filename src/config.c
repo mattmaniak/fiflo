@@ -40,7 +40,7 @@ bool config__parse_selector(Conf_t* Config, const char* const selector,
                             const int value)
 {
     // Adds the value to the found selector in the configuration.
-    if(value >= CONFIG__RED)
+    if(value >= RED)
     {
         if(!strcmp(Config->Color_ui.selector, selector))
         {
@@ -89,76 +89,76 @@ int config__parse_value(const char* const read_value)
 {
     if(!strcmp(read_value, "red\n"))
     {
-        return CONFIG__RED;
+        return RED;
     }
     else if(!strcmp(read_value, "green\n"))
     {
-        return CONFIG__GREEN;
+        return GREEN;
     }
     else if(!strcmp(read_value, "yellow\n"))
     {
-        return CONFIG__YELLOW;
+        return YELLOW;
     }
     else if(!strcmp(read_value, "blue\n"))
     {
-        return CONFIG__BLUE;
+        return BLUE;
     }
     else if(!strcmp(read_value, "magenta\n"))
     {
-        return CONFIG__MAGENTA;
+        return MAGENTA;
     }
     else if(!strcmp(read_value, "cyan\n"))
     {
-        return CONFIG__CYAN;
+        return CYAN;
     }
     else if(!strcmp(read_value, "white\n"))
     {
-        return CONFIG__WHITE;
+        return WHITE;
     }
     else if(!strcmp(read_value, "bright-black\n"))
     {
-        return CONFIG__BRIGHT_BLACK;
+        return BRIGHT_BLACK;
     }
     else if(!strcmp(read_value, "bright-red\n"))
     {
-        return CONFIG__BRIGHT_RED;
+        return BRIGHT_RED;
     }
     else if(!strcmp(read_value, "bright-green\n"))
     {
-        return CONFIG__BRIGHT_GREEN;
+        return BRIGHT_GREEN;
     }
     else if(!strcmp(read_value, "bright-yellow\n"))
     {
-        return CONFIG__BRIGHT_YELLOW;
+        return BRIGHT_YELLOW;
     }
     else if(!strcmp(read_value, "bright-blue\n"))
     {
-        return CONFIG__BRIGHT_BLUE;
+        return BRIGHT_BLUE;
     }
     else if(!strcmp(read_value, "bright-magenta\n"))
     {
-        return CONFIG__BRIGHT_MAGENTA;
+        return BRIGHT_MAGENTA;
     }
     else if(!strcmp(read_value, "bright-cyan\n"))
     {
-        return CONFIG__BRIGHT_CYAN;
+        return BRIGHT_CYAN;
     }
     else if(!strcmp(read_value, "bright-white\n"))
     {
-        return CONFIG__BRIGHT_WHITE;
+        return BRIGHT_WHITE;
     }
     return atoi(read_value); // Seems like linefeed removal too.
 }
 
 void config__set_default(Conf_t* Config)
 {
-    Config->Color_current_file.value        = CONFIG__BRIGHT_BLACK;
-    Config->Color_line_number.value         = CONFIG__WHITE;
-    Config->Color_line_number_current.value = CONFIG__BRIGHT_BLACK;
-    Config->Color_text.value                = CONFIG__WHITE;
-    Config->Color_ui.value                  = CONFIG__WHITE;
-    Config->Color_warning.value             = CONFIG__RED;
-    Config->Color_whitespace.value          = CONFIG__BRIGHT_BLACK;
+    Config->Color_current_file.value        = BRIGHT_BLACK;
+    Config->Color_line_number.value         = WHITE;
+    Config->Color_line_number_current.value = BRIGHT_BLACK;
+    Config->Color_text.value                = WHITE;
+    Config->Color_ui.value                  = WHITE;
+    Config->Color_warning.value             = RED;
+    Config->Color_whitespace.value          = BRIGHT_BLACK;
     Config->Tab_sz.value                    = CONFIG__MAX_TAB_SZ;
 }
 

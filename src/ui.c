@@ -1,20 +1,20 @@
 #include "ui.h"
 
-void ui__set_color(const Opt_t* const Option)
+void ui__set_color(const int* const value)
 {
     // Reset to the default color or set am another one.
-    printf("\033[%um", (Option == NULL) ? 0 : Option->value);
+    printf("\033[%um", (value == NULL) ? 0 : *value);
 }
 
 void ui__print_line_number(const Buff_t* const Buffer,
                            const Conf_t* const Config, const idx_t line_idx,
                            const term_t line_num_length)
 {
-    ui__set_color(&Config->Color_line_number);
+    ui__set_color(&Config->Color_line_number.value);
 
     if(line_idx == BUFFER__CURRENT_LINE_IDX)
     {
-        ui__set_color(&Config->Color_line_number_current);
+        ui__set_color(&Config->Color_line_number_current.value);
     }
     printf("%*u ", line_num_length - SPACE_SZ, line_idx + IDX);
 
@@ -24,7 +24,7 @@ void ui__print_line_number(const Buff_t* const Buffer,
 void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
                    const Ui_t* const Ui)
 {
-    ui__set_color(&Config->Color_ui);
+    ui__set_color(&Config->Color_ui.value);
     printf("%*s", UI__LEFT_PADDING, " ");
 
     if(Buffer->fname_len < (size_t) (Ui->win_w - UI__RIGHT_PADDING))
@@ -74,7 +74,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     WRAP_LINE();
 
     ui__set_color(NULL); // Resets the last line color.
-    ui__set_color(&Config->Color_ui);
+    ui__set_color(&Config->Color_ui.value);
 
     if(Modes->lbar_expanded)
     {
@@ -85,7 +85,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         {
             if(file_idx == current_file_idx)
             {
-                ui__set_color(&Config->Color_current_file);
+                ui__set_color(&Config->Color_current_file.value);
             }
             printf("%*s%s", UI__LEFT_PADDING, "", Buffer[file_idx].fname);
 
@@ -118,9 +118,9 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         if((BUFFER__CURRENT_LINE_LEN > punch_card_width)
            && (BUFFER__CURRENT_LINE[punch_card_width] != '\n'))
         {
-            ui__set_color(&Config->Color_warning);
+            ui__set_color(&Config->Color_warning.value);
         }
         printf("%d^", punch_card_width);
     }
-    ui__set_color(NULL);;
+    ui__set_color(NULL);
 }

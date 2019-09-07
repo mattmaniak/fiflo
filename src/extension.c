@@ -1,8 +1,9 @@
-#include "fextension.h"
+#include "extension.h"
 
-int fextension__recognize_extension(const char* const basename)
+int extension__recognize(const char* const basename)
 {
-    idx_t char_idx = 0;
+    const idx_t dot_sz = 1;
+    idx_t       char_idx = 0;
 
     if(basename != NULL)
     {
@@ -12,10 +13,9 @@ int fextension__recognize_extension(const char* const basename)
         }
         if(char_idx != strlen(basename))
         {
-            const idx_t       dot_sz = 1;
             const char* const extension = &basename[char_idx + dot_sz];
 
-            if(!strcmp(extension, "c"))
+            if(!strcmp(extension, "c") || !strcmp(extension, "h"))
             {
                 return C;
             }

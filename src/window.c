@@ -114,7 +114,8 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 }
 
 bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
-                    const Mod_t* const Modes, const idx_t additional_argc_idx,
+                    const Mod_t* const Modes, const Syntax_t* const Syntax,
+                    const idx_t additional_argc_idx,
                     const idx_t current_file_idx)
 {
     char line_num_str[16]; // Needed to count the length of the number.
@@ -137,7 +138,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.textarea_h = (term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
     ui__upper_bar(&Buffer[current_file_idx], Config, &Ui);
-    print__display_text(&Buffer[current_file_idx], &Ui, Config);
+    print__display_text(&Buffer[current_file_idx], Config, Syntax, &Ui);
     window__fill(&Buffer[current_file_idx], &Ui);
 
     ui__lower_bar(Buffer, Config, Modes, &Ui, additional_argc_idx,

@@ -1,7 +1,8 @@
 #include "print.h"
 
 void print__line_with_tabs(const Buff_t* const Buffer,
-                           const Conf_t* const Config, const idx_t line_idx,
+                           const Conf_t* const Config,
+                           const Syntax_t* const Syntax, const idx_t line_idx,
                            const idx_t start_char_idx,
                            const idx_t end_char_idx)
 {
@@ -12,22 +13,22 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         // Whitespace highlighting.
         if(ch == '\t')
         {
-            ui__set_color(&Config->Color_whitespace);
+            ui__set_color(&Config->Color_whitespace.value);
             putchar(PRINT__TAB_HIGHLIGHT);
         }
         else if(ch == ' ')
         {
-            ui__set_color(&Config->Color_whitespace);
+            ui__set_color(&Config->Color_whitespace.value);
             putchar(PRINT__SPACE_HIGHLIGHT);
         }
         else
         {
             const idx_t char_idx_after_highlighting =
-            highlighter__paint_word(&Buffer->Lines[line_idx], char_idx);
+            syntax__paint_word(Syntax, &Buffer->Lines[line_idx], char_idx);
 
             if(char_idx == char_idx_after_highlighting)
             {
-                ui__set_color(&Config->Color_text);
+                ui__set_color(&Config->Color_text.value);
                 putchar(ch);
             }
             else // Word printed and highlighted. Shift the index to the next.
@@ -53,12 +54,12 @@ idx_t print__set_start_line(const Buff_t* const Buffer, const Ui_t* const Ui)
 }
 
 void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
-                        const Ui_t* const Ui)
+                        const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
     // There is small amount of chars. Horizontal scroll isn't required.
     if(BUFFER__CURRENT_LINE_LEN < Ui->textarea_w)
     {
-        print__line_with_tabs(Buffer, Config, BUFFER__CURRENT_LINE_IDX, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, BUFFER__CURRENT_LINE_IDX, 0,
                               BUFFER__CURRENT_LINE_LEN);
     }
     // Chars won't fits in the horizontal space.
@@ -66,11 +67,11 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
             >= Buffer->cursor_rev_x)
     {
         // Render only right part of the line.
-        print__scroll_line_horizontally(Buffer, Config, Ui);
+        print__scroll_line_horizontally(Buffer, Config, Syntax, Ui);
     }
     else // Shrink the line.
     {
-        print__line_with_tabs(Buffer, Config, BUFFER__CURRENT_LINE_IDX, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, BUFFER__CURRENT_LINE_IDX, 0,
                               (idx_t) Ui->textarea_w - LF_SZ);
 
         // Not last rendered line so wrap it.
@@ -82,19 +83,21 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
     }
 }
 
-void print__another_line(const Buff_t* const Buffer, const Ui_t* const Ui,
-                         const Conf_t* const Config, const idx_t line_idx)
+void print__another_line(const Buff_t* const Buffer,
+                         const Conf_t* const Config,
+                         const Syntax_t* const Syntax, const Ui_t* const Ui,
+                         const idx_t line_idx)
 {
     ui__print_line_number(Buffer, Config, line_idx, Ui->line_num_length);
 
     if(Buffer->Lines[line_idx].length < Ui->textarea_w)
     {
-        print__line_with_tabs(Buffer, Config, line_idx, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, line_idx, 0,
                               Buffer->Lines[line_idx].length);
     }
     else
     {
-        print__line_with_tabs(Buffer, Config, line_idx, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, line_idx, 0,
                               (idx_t) Ui->textarea_w - LF_SZ);
         WRAP_LINE();
     }
@@ -102,10 +105,11 @@ void print__another_line(const Buff_t* const Buffer, const Ui_t* const Ui,
 
 void print__scroll_line_horizontally(const Buff_t* const Buffer,
                                      const Conf_t* const Config,
+                                     const Syntax_t* const Syntax,
                                      const Ui_t* const Ui)
 {
     // Text will be scrolled. Not cursor.
-    print__line_with_tabs(Buffer, Config, BUFFER__CURRENT_LINE_IDX,
+    print__line_with_tabs(Buffer, Config, Syntax, BUFFER__CURRENT_LINE_IDX,
                           BUFFER__CURSOR_X + CURSOR_SZ - Ui->textarea_w,
                           BUFFER__CURSOR_X);
 
@@ -118,27 +122,27 @@ void print__scroll_line_horizontally(const Buff_t* const Buffer,
     }
 }
 
-void print__fit_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
-                      const Conf_t* const Config)
+void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
+                      const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
     const idx_t current_line_sz = 1;
     idx_t       line_idx;
 
     for(line_idx = 0; line_idx < BUFFER__CURRENT_LINE_IDX; line_idx++)
     {
-        print__another_line(Buffer, Ui, Config, line_idx);
+        print__another_line(Buffer, Config, Syntax, Ui, line_idx);
     }
     ui__print_line_number(Buffer, Config, BUFFER__CURRENT_LINE_IDX,
                           Ui->line_num_length);
 
-    print__actual_line(Buffer, Config, Ui);
+    print__actual_line(Buffer, Config, Syntax, Ui);
 
     if(BUFFER__CURSOR_Y_SCROLLED)
     {
         for(line_idx += current_line_sz; line_idx < Buffer->lines_amount_idx;
             line_idx++)
         {
-            print__another_line(Buffer, Ui, Config, line_idx);
+            print__another_line(Buffer, Config, Syntax, Ui, line_idx);
         }
         ui__print_line_number(Buffer, Config, Buffer->lines_amount_idx,
                               Ui->line_num_length);
@@ -146,20 +150,23 @@ void print__fit_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
 
         if(Buffer->Lines[Buffer->lines_amount_idx].length < Ui->textarea_w)
         {
-            print__line_with_tabs(Buffer, Config, Buffer->lines_amount_idx, 0,
+            print__line_with_tabs(Buffer, Config, Syntax,
+                                  Buffer->lines_amount_idx, 0,
                                   Buffer->Lines[Buffer->lines_amount_idx].
                                   length);
         }
         else
         {
-            print__line_with_tabs(Buffer, Config, Buffer->lines_amount_idx, 0,
+            print__line_with_tabs(Buffer, Config, Syntax,
+                                  Buffer->lines_amount_idx, 0,
                                   (idx_t) Ui->textarea_w - LF_SZ);
         }
     }
 }
 
-void print__shrink_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
-                         const Conf_t* const Config)
+void print__shrink_lines(const Buff_t* const Buffer,
+                         const Conf_t* const Config,
+                         const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
     const idx_t last_line_idx = (const idx_t) Ui->textarea_h - IDX;
     idx_t       line_idx      = 0;
@@ -167,35 +174,36 @@ void print__shrink_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
     // Previous lines. If scrolled. Only beginning is shown.
     for(; line_idx < BUFFER__CURRENT_LINE_IDX; line_idx++)
     {
-        print__another_line(Buffer, Ui, Config, line_idx);
+        print__another_line(Buffer, Config, Syntax, Ui, line_idx);
     }
     ui__print_line_number(Buffer, Config, BUFFER__CURRENT_LINE_IDX,
                           Ui->line_num_length);
 
-    print__actual_line(Buffer, Config, Ui);
+    print__actual_line(Buffer, Config, Syntax, Ui);
 
     // Next lines. If scrolled. Only beginning is shown.
     for(line_idx = BUFFER__CURRENT_LINE_IDX + IDX; line_idx < last_line_idx;
         line_idx++)
     {
-        print__another_line(Buffer, Ui, Config, line_idx);
+        print__another_line(Buffer, Config, Syntax, Ui, line_idx);
     }
     ui__print_line_number(Buffer, Config, last_line_idx, Ui->line_num_length);
 
     if(Buffer->Lines[last_line_idx].length < Ui->textarea_w)
     {
-        print__line_with_tabs(Buffer, Config, last_line_idx, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, last_line_idx, 0,
                               Buffer->Lines[last_line_idx].length - LF_SZ);
     }
     else
     {
-        print__line_with_tabs(Buffer, Config, last_line_idx, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, last_line_idx, 0,
                               (idx_t) Ui->textarea_w - LF_SZ);
     }
 }
 
-void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
-                         const Conf_t* const Config)
+void print__scroll_lines(const Buff_t* const Buffer,
+                         const Conf_t* const Config,
+                         const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
     idx_t chars_end_offset = BUFFER__CURRENT_LINE_LEN;
 
@@ -203,7 +211,7 @@ void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
     for(idx_t line_idx = print__set_start_line(Buffer, Ui);
         line_idx < BUFFER__CURRENT_LINE_IDX; line_idx++)
     {
-        print__another_line(Buffer, Ui, Config, line_idx);
+        print__another_line(Buffer, Config, Syntax, Ui, line_idx);
     }
 
     // Display the last line without the linefeed.
@@ -218,7 +226,7 @@ void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
         {
             chars_end_offset--;
         }
-        print__line_with_tabs(Buffer, Config, BUFFER__CURRENT_LINE_IDX, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, BUFFER__CURRENT_LINE_IDX, 0,
                               chars_end_offset);
 
     }
@@ -227,32 +235,33 @@ void print__scroll_lines(const Buff_t* const Buffer, const Ui_t* const Ui,
             >= Buffer->cursor_rev_x)
     {
         // Text will be scrolled. Not cursor.
-        print__line_with_tabs(Buffer, Config, BUFFER__CURRENT_LINE_IDX,
+        print__line_with_tabs(Buffer, Config, Syntax, BUFFER__CURRENT_LINE_IDX,
                               BUFFER__CURSOR_X + CURSOR_SZ - Ui->textarea_w,
                               BUFFER__CURSOR_X);
     }
     else
     {
         // Render only left part of the line. Cursor can scrolled.
-        print__line_with_tabs(Buffer, Config, BUFFER__CURRENT_LINE_IDX, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, BUFFER__CURRENT_LINE_IDX, 0,
                               (idx_t) Ui->textarea_w - LF_SZ);
     }
 }
 
-void print__display_text(const Buff_t* const Buffer, const Ui_t* const Ui,
-                         const Conf_t* const Config)
+void print__display_text(const Buff_t* const Buffer,
+                         const Conf_t* const Config,
+                         const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
     if(Buffer->lines_amount_idx < Ui->textarea_h)
     {
-        print__fit_lines(Buffer, Ui, Config);
+        print__fit_lines(Buffer, Config, Syntax, Ui);
     }
     else if((BUFFER__CURRENT_LINE_IDX + IDX) < Ui->textarea_h)
     {
-        print__shrink_lines(Buffer, Ui, Config);
+        print__shrink_lines(Buffer, Config, Syntax, Ui);
     }
     else
     {
         // first_rendered_line_idx = ;
-        print__scroll_lines(Buffer, Ui, Config);
+        print__scroll_lines(Buffer, Config, Syntax, Ui);
     }
 }

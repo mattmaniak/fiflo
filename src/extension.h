@@ -18,6 +18,7 @@ enum
     PYTHON3
 };
 
-int fextension__recognize_extension(const char* const);
+// Recognizes the extension of the current file.
+int extension__recognize(const char* const);
 
 #endif

@@ -9,21 +9,25 @@
 
 #include "buffer.h"
 
-#define CONFIG__RED            31
-#define CONFIG__GREEN          32
-#define CONFIG__YELLOW         33
-#define CONFIG__BLUE           34
-#define CONFIG__MAGENTA        35
-#define CONFIG__CYAN           36
-#define CONFIG__WHITE          37
-#define CONFIG__BRIGHT_BLACK   90
-#define CONFIG__BRIGHT_RED     91
-#define CONFIG__BRIGHT_GREEN   92
-#define CONFIG__BRIGHT_YELLOW  93
-#define CONFIG__BRIGHT_BLUE    94
-#define CONFIG__BRIGHT_MAGENTA 95
-#define CONFIG__BRIGHT_CYAN    96
-#define CONFIG__BRIGHT_WHITE   97
+typedef enum
+{
+    RED            = 31,
+    GREEN          = 32,
+    YELLOW         = 33,
+    BLUE           = 34,
+    MAGENTA        = 35,
+    CYAN           = 36,
+    WHITE          = 37,
+    BRIGHT_BLACK   = 90,
+    BRIGHT_RED     = 91,
+    BRIGHT_GREEN   = 92,
+    BRIGHT_YELLOW  = 93,
+    BRIGHT_BLUE    = 94,
+    BRIGHT_MAGENTA = 95,
+    BRIGHT_CYAN    = 96,
+    BRIGHT_WHITE   = 97
+}
+Config__color_t;
 
 #define CONFIG__MIN_TAB_SZ 2
 #define CONFIG__MAX_TAB_SZ 8

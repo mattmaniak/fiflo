@@ -7,9 +7,12 @@ void fiflo__run(int argc, char** argv)
     char pressed_key        = '\0'; // Assignet for the initialization only.
     size_t current_file_idx = 0;
 
-    Buff_t* Buffer;
-    Conf_t  Config;
-    Mod_t   Modes;
+    Buff_t*  Buffer;
+    Conf_t   Config;
+    Mod_t    Modes;
+    Syntax_t Syntax;
+
+    Syntax.kwrds_idx = 0;
 
     size_t additional_argc_idx = (argc > 1)
                                  ? (size_t) argc - IDX - no_filename_as_arg
@@ -24,6 +27,7 @@ void fiflo__run(int argc, char** argv)
         fprintf(stderr, "Can't alloc the memory for the file buffers.\n");
         goto free;
     }
+    Buffer->extension = NONE;
 
     for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
     {
@@ -53,8 +57,13 @@ void fiflo__run(int argc, char** argv)
 
     for(;;) // The main program loop.
     {
-        Buffer->extension = fextension__recognize_extension(Buffer->basename);
+        int recognized_extension = extension__recognize(Buffer->basename);
 
+        if(Buffer->extension != recognized_extension)
+        {
+            syntax__load(&Syntax, recognized_extension);
+            Buffer->extension = recognized_extension;
+        }
         if(!file__get_git_branch(&Buffer[current_file_idx]))
         {
             break;
@@ -69,9 +78,9 @@ void fiflo__run(int argc, char** argv)
             current_file_idx = additional_argc_idx;
         }
         // Flushes and renders always after the keypress.
-        if(!window__render(Buffer, &Config, &Modes,
-                           (idx_t) additional_argc_idx,
-                           (idx_t) current_file_idx))
+        if(!window__render(Buffer, &Config, &Modes, &Syntax,
+                           (const idx_t) additional_argc_idx,
+                           (const idx_t) current_file_idx))
         {
             break;
         }

@@ -9,9 +9,10 @@
 #include "buffer.h"
 #include "config.h"
 #include "file.h"
-#include "fextension.h"
+#include "extension.h"
 #include "modes.h"
 #include "input.h"
+#include "syntax.h"
 #include "window.h"
 #include "options.h"
 

@@ -6,7 +6,6 @@ fiflo - TODOs and ideas:
 - improve vertical scroll - hard or soft with prev/next line preview,
 - fully adaptive cursor during the vertical scroll,
 - load only part of a file (nearly-infinite buffer),
-- syntax highlighting,
 - search option,
 - hex mode,
 - CRLF support,

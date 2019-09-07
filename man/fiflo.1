@@ -4,12 +4,12 @@ fiflo - terminal-based text editor with Common User Access keyboard shortcuts
 .SH SYNOPSIS
 fiflo [basename/filename/option]
 .SH DESCRIPTION
-Currently supports only all ASCII printable chars, space and horizontal tab.
-It has got dynamically allocated buffer which can hold up to 16 MB - 1 chars.
-Implementation considers that newline char is equal to the linefeed. The tab
-char needs as many bytes as it's width in the editor: from 2, 4 or 8. Also it
-supports the paste option from outside the terminal but it probably depends from
-the terminal.
+Currently supports only all ASCII printable chars, space and the horizontal
+tab. It has got dynamically allocated buffer which can hold up to
+16 MB - 1 chars. Implementation considers that newline char is equal to the
+linefeed. The tab char needs as many bytes as it's width in the editor:
+from 2, 4 or 8. Also it supports the paste option from outside a terminal but
+it probably depends from a terminal.
 .SH OPTIONS
 .TP
 .B -h, --help
@@ -50,7 +50,7 @@ Quickly save the file with the filename displayed in the upper bar.
 .B Ctrl^F1-F4
 Switch between the first and the last (forth) loaded file.
 .SH SEE ALSO
-fiflorc(5)
+fiflo.conf(5)
 .SH BUGS
 .TP
 .B Blinking
