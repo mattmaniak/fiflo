@@ -4,16 +4,16 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 {
     size_t cw_dir_length;
 
-    if(arg == NULL) // Name not passed by the user.
+    if(arg == NULL) // Name not passed by an user.
     {
         if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
         {
-            fprintf(stderr, "Can't get the current directory. Too long.\n");
+            fprintf(stderr, "Can't get a current directory. Too long.\n");
             return false;
         }
         cw_dir_length = strlen(Buffer->pathname);
 
-        // Getcwd() returns the pathname without the slash, which is required.
+        // Getcwd() returns a pathname without the slash, which is required.
         if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
@@ -31,7 +31,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         return true;
     }
 
-    // Current or parent dir.
+    // A current or a parent directory.
     if(!strncmp(arg, "./", 2) || !strncmp(arg, "../", 3))
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
@@ -48,7 +48,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         path__extract_basename_from_arg(Buffer);
         path__merge_pathname_and_basename(Buffer);
     }
-    else if(arg[0] == '/') // Absolute dir.
+    else if(arg[0] == '/') // An absolute dir.
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
@@ -62,7 +62,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
             return false;
         }
     }
-    else // Relative pathname or the basename.
+    else // A relative pathname or a basename.
     {
         if(strlen(arg) >= NAME_MAX)
         {
@@ -72,12 +72,12 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 
         if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
         {
-            fprintf(stderr, "Can't get the current directory. Too long.\n");
+            fprintf(stderr, "Can't get a current directory. Too long.\n");
             return false;
         }
         cw_dir_length = strlen(Buffer->pathname);
 
-        // Getcwd() returns the pathname without the slash, which is required.
+        // Getcwd() returns a pathname without the slash, which is required.
         if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
@@ -90,7 +90,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
         Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
 
-        // Append the basename.
+        // Append a basename.
         strncpy(&Buffer->fname[cw_dir_length + SLASH_SZ], arg, NAME_MAX);
     }
     Buffer->fname_len = strlen(Buffer->fname);
@@ -101,13 +101,12 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
 bool file__convert_tab_from_file(Buff_t* Buffer, const Conf_t* const Config,
                                  const char ch)
 {
-    /* Converts in-file '\t' in to sequence of e.g. "\t\t\t\t" if the tab width
-       is set to 4. */
+    /* Converts in-file '\t' in to a sequence of e.g. "\t\t\t\t" if the Tab
+       width is set to 4. */
     if(ch == '\t')
     {
-        for(idx_t char_idx = 0;
-            char_idx < (idx_t) (Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB);
-            char_idx++)
+        for(idx_t ch_idx = 0; ch_idx < (const idx_t)
+            (Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB); ch_idx++)
         {
             if(!chars__printable_char(Buffer, ch))
             {
@@ -147,33 +146,35 @@ bool file__load(Buff_t* Buffer, const Conf_t* const Config)
     }
     if(fclose(Textfile) == EOF)
     {
-        fprintf(stderr, "Can't close the textfile after load.\n");
+        fprintf(stderr, "Can't close a textfile after load.\n");
         return false;
     }
-    SET_STATUS("read the file");
+    SET_STATUS("read a file");
 
     return true;
 }
 
 void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
-                               const idx_t line_idx, idx_t* const char_idx)
+                               const idx_t line_idx, idx_t* const ch_idx)
 {
-    // Converts editor-friendly e.g. "\t\t\t\t" into the file-friendly '\t'.
-    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_sz.value; tab_idx++)
+    // Convert editor-friendly Tab, e.g. "\t\t\t\t" into a file-friendly '\t'.
+    for(idx_t tab_idx = 0;
+        tab_idx < (const idx_t) Config->Tab_sz.value; tab_idx++)
     {
-        if(Buffer->Lines[line_idx].text[*char_idx + tab_idx] != '\t')
+        if(Buffer->Lines[line_idx].text[*ch_idx + tab_idx] != '\t')
         {
-            break; // No tab, so don't convert anything.
+            break; // No Tab, so don't convert anything.
         }
-        else if(tab_idx == (idx_t) Config->Tab_sz.value - IDX)
+        else if(tab_idx == (const idx_t) Config->Tab_sz.value - IDX)
         {
-            // Some in-memory tabs converted
-            *char_idx += (idx_t) Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB;
+            // Some in-memory Tabs converted
+            *ch_idx += (const idx_t) Config->Tab_sz.value
+                                     - FILE__AT_LEAST_ONE_TAB;
         }
     }
 }
 
-bool file__save(Buff_t*Buffer, const Conf_t* const Config)
+bool file__save(Buff_t* Buffer, const Conf_t* const Config)
 {
     FILE* Textfile = fopen(Buffer->fname, "w");
 
@@ -184,13 +185,13 @@ bool file__save(Buff_t*Buffer, const Conf_t* const Config)
     }
     for(idx_t line_idx = 0; line_idx <= Buffer->lines_amount_idx; line_idx++)
     {
-        /* Using fputs or fprintf causes use-of-uninitialized-value using
-        MSan because of there is more memory allocated than is needed. */
-        for(idx_t char_idx = 0;
-            char_idx < Buffer->Lines[line_idx].length; char_idx++)
+        /* Using fputs or fprintf causes an use-of-uninitialized-value using
+           MSan because of there is a more memory allocated than is needed. */
+        for(idx_t ch_idx = 0;
+            ch_idx < Buffer->Lines[line_idx].length; ch_idx++)
         {
-            file__convert_tab_to_file(Buffer, Config, line_idx, &char_idx);
-            putc(Buffer->Lines[line_idx].text[char_idx], Textfile);
+            file__convert_tab_to_file(Buffer, Config, line_idx, &ch_idx);
+            putc(Buffer->Lines[line_idx].text[ch_idx], Textfile);
         }
     }
     if(fclose(Textfile) == EOF)
@@ -223,14 +224,15 @@ bool file__get_git_branch(Buff_t* Buffer)
         return true;
     }
 
-    // Ignore the passed string in the file, to get the branch after the slash.
-    if(fseek(Git_head_file, (long) strlen("ref: refs/heads/"), 0) == ERROR)
+    // Ignore a passed string in a file to get a branch after the slash.
+    if(fseek(Git_head_file, (const long) strlen("ref: refs/heads/"), 0)
+       == ERROR)
     {
         strcpy(Buffer->git_branch, "[none]");
         return true;
     }
 
-    // Read the content of the file.
+    // Read a contents of the file.
     while(fgets(Buffer->git_branch, NAME_MAX, Git_head_file) != NULL)
 
     // Delete the linefeed from the name.

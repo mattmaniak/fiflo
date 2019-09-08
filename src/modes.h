@@ -6,11 +6,11 @@
 typedef struct
 {
     bool live_fname_edit; // A filename is edited, not a text.
-    bool lbar_expanded;   // The extended lower bar is displayed.
+    bool lbar_expanded;   // An extended lower bar is displayed.
 }
 Mod_t;
 
-// Set the runtime parameters of the editor.
-void modes__init(Mod_t* Modes);
+// Initialize runtime parameters of the editor.
+void modes__init(Mod_t*);
 
 #endif

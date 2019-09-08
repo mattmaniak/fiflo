@@ -2,7 +2,7 @@
 #define BUFFER_H
 
 /* This file is included in every source file to provide the main structure
-   that describes the buffer. */
+   that describes a buffer. */
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -14,7 +14,7 @@
 
 #include "line.h"
 
-// Macros that makes the life a little bit more readable.
+// Macros that makes a life a little bit more readable.
 #define IDX       1
 #define NUL_SZ    1
 #define LF_SZ     1
@@ -25,7 +25,7 @@
 #define NEXT      1
 #define ERROR     -1
 
-// Max amount of chars: (16 MB - 1). Newline is also the char.
+// Max amount of chars: (16 MB - 1). Newline is also a char.
 #define CHARS_MAX (UINT_MAX / 256)
 
 #define STATUS_MAX      32
@@ -62,7 +62,7 @@ typedef struct
     // Visual shit.
     idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
     idx_t    cursor_rev_y;       // As above but in Y-axis.
-    char     status[STATUS_MAX]; // Message displayed in the upper bar.
+    char     status[STATUS_MAX]; // Message displayed in a upper bar.
 }
 Buff_t;
 

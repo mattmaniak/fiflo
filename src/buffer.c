@@ -4,14 +4,14 @@ bool buffer__init(Buff_t* Buffer)
 {
     if((Buffer->pathname = malloc(PATH_MAX)) == NULL)
     {
-        fprintf(stderr, "Can't alloc a memory for the directory.\n");
+        fprintf(stderr, "Can't alloc a memory for a directory.\n");
         return false;
     }
 
-    // Pointer to pointers, so the address size is needed.
-    if((Buffer->Lines = malloc(LINE__TYPE_SZ)) == NULL)
+    // Pointer to pointers, so a address size is needed.
+    if((Buffer->Lines = malloc(sizeof(Line_t))) == NULL)
     {
-        fprintf(stderr, "Can't alloc a memory the array with lines.\n");
+        fprintf(stderr, "Can't alloc a memory a array with lines.\n");
         return false;
     }
     Buffer->chars_amount_idx = 0;
@@ -24,7 +24,7 @@ bool buffer__init(Buff_t* Buffer)
 
     if((BUFFER__CURRENT_LINE = malloc(BUFFER__INITIAL_MEMBLOCK)) == NULL)
     {
-        fprintf(stderr, "Can't alloc a memory for the first line.\n");
+        fprintf(stderr, "Can't alloc a memory for a first line.\n");
         return false;
     }
     return true;

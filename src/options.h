@@ -1,7 +1,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-// Command-line arguments prefixed with '-' or "--" handling.
+// Handling command-line arguments prefixed with '-' or "--".
 
 #include <stdbool.h>
 #include <stdio.h>

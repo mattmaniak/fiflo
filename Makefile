@@ -91,7 +91,7 @@ install:
 	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)1
 	sudo cp $(MAN_DIR)/$(TARGET).conf.5 $(MAN_INS_DIR)5
 
-	sudo mkdir $(SYN_INS_DIR)
+	sudo mkdir -p $(SYN_INS_DIR)
 	sudo cp $(SYN_DIR)/c.$(TARGET)rc $(SYN_INS_DIR)/c.$(TARGET)rc
 
 	sudo gzip $(MAN_INS_DIR)1/$(TARGET).1
@@ -112,7 +112,7 @@ install_debug:
 	@echo " "
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
-	sudo mkdir $(SYN_INS_DIR)
+	sudo mkdir -p $(SYN_INS_DIR)
 	sudo cp $(SYN_DIR)/c.$(TARGET)rc $(SYN_INS_DIR)/c.$(TARGET)rc
 
 	@echo " "
@@ -126,8 +126,8 @@ uninstall:
 	$(MAN_INS_DIR)1/$(TARGET).1.gz \
 	$(MAN_INS_DIR)5/$(TARGET).conf.5.gz \
 	$(DOC_INS_DIR) \
-	$(SYN_INS_DIR)
-	$(CONF_DIR)/$(TARGET)rc
+	$(SYN_INS_DIR) \
+	$(CONF_DIR)/$(TARGET).conf
 
 	@echo " "
 	@echo "Fiflo uninstalled."

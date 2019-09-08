@@ -109,7 +109,7 @@ bool memory__extend_lines_array(Buff_t* Buffer)
 {
     // Enhance the array that contains pointers to lines.
     Buffer->Lines = realloc(Buffer->Lines, (Buffer->lines_amount_idx + IDX)
-                            * LINE__TYPE_SZ);
+                            * sizeof(Line_t));
 
     if(Buffer->Lines == NULL)
     {
@@ -133,7 +133,7 @@ bool memory__extend_lines_array(Buff_t* Buffer)
 bool memory__shrink_lines_array(Buff_t* Buffer)
 {
     Buffer->Lines = realloc(Buffer->Lines, (Buffer->lines_amount_idx + IDX)
-                            * LINE__TYPE_SZ);
+                            * sizeof(Line_t));
 
     if(Buffer->Lines == NULL)
     {

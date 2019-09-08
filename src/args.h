@@ -1,7 +1,7 @@
 #ifndef ARGS_H
 #define ARGS_H
 
-// Dealing with the command line arguments.
+// Dealing with a command line arguments.
 
 #include <linux/limits.h>
 #include <stdbool.h>

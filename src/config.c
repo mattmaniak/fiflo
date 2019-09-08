@@ -2,20 +2,20 @@
 
 bool config__load(Conf_t* Config)
 {
-    char config_fname[] = "/etc/fiflorc";
+    char conf_fname[] = "/etc/fiflorc";
 
-    if(access(config_fname, F_OK) == ERROR) // There is no config file.
+    if(access(conf_fname, F_OK) == ERROR) // There is no config file.
     {
         config__set_default(Config);
         return true;
     }
-    if((Config->File = fopen(config_fname, "r")) != NULL)
+    if((Config->File = fopen(conf_fname, "r")) != NULL)
     {
         config__load_custom(Config);
 
         if(fclose(Config->File) == EOF)
         {
-            fprintf(stderr, "Can't close the config file.\n");
+            fprintf(stderr, "Can't close a config file.\n");
             return false;
         }
     }
@@ -39,7 +39,7 @@ void config__init_selectors(Conf_t* Config)
 bool config__parse_selector(Conf_t* Config, const char* const selector,
                             const int value)
 {
-    // Adds the value to the found selector in the configuration.
+    // Adds a value to a found selector in a configuration structure.
     if(value >= RED)
     {
         if(!strcmp(Config->Color_ui.selector, selector))
@@ -147,7 +147,7 @@ int config__parse_value(const char* const read_value)
     {
         return BRIGHT_WHITE;
     }
-    return atoi(read_value); // Seems like linefeed removal too.
+    return atoi(read_value); // Seems like the linefeed removal too.
 }
 
 void config__set_default(Conf_t* Config)
@@ -178,7 +178,7 @@ void config__load_custom(Conf_t* Config)
         {
             continue;
         }
-        // Splits the string around the " = ".
+        // Splits a string around the " = ".
         strncpy(selector, strtok(line, " = "), 48);
         strncpy(value,    strtok(NULL, " = "), 32);
 
@@ -190,7 +190,7 @@ void config__load_custom(Conf_t* Config)
             break;
         }
     }
-    if(parsed_value == 0) // If the whole file is commented out.
+    if(parsed_value == 0) // If a whole file is commented out.
     {
         config__set_default(Config);
     }

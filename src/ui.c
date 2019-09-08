@@ -2,7 +2,7 @@
 
 void ui__set_color(const int* const value)
 {
-    // Reset to the default color or set am another one.
+    // Reset to a default color or set am another one.
     printf("\033[%um", (value == NULL) ? 0 : *value);
 }
 
@@ -73,7 +73,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
     WRAP_LINE();
 
-    ui__set_color(NULL); // Resets the last line color.
+    ui__set_color(NULL); // Resets a last line color.
     ui__set_color(&Config->Color_ui.value);
 
     if(Modes->lbar_expanded)

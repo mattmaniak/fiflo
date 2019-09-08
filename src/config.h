@@ -53,22 +53,22 @@ typedef struct
 }
 Conf_t;
 
-// Opens the "~/.config/fiflorc"
+// Open the "~/.config/fiflorc"
 bool config__load(Conf_t*);
 
-// Sets the selectors names.
+// Set selectors names.
 void config__init_selectors(Conf_t*);
 
-// Check if selector_in_file == expected_selector.
+// Check if a selector_in_file == expected_selector.
 bool config__parse_selector(Conf_t*, const char* const, const int);
 
 // Convert a word into an ASCII escape code.
 int config__parse_value(const char* const);
 
-// As in the name. Wow.
+// As in the name.
 void config__set_default(Conf_t*);
 
-// As above but read from the file.
+// As above but read from a file.
 void config__load_custom(Conf_t*);
 
 #endif

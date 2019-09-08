@@ -1,7 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-// Contains all the elements that will be rendered.
+// Contains all elements that will be rendered.
 
 #include <sys/ioctl.h>
 
@@ -23,13 +23,13 @@
 // Returns current terminal width and height and exits if is wrong.
 term_t window__get_terminal_sz(const char);
 
-// Clean the whole rendered window.
+// Clean a whole rendered window.
 void window__flush(void);
 
-// Vertical fill between the text and lower bar. If there isn't many lines.
+// Vertical fill between a text and lower bar. If there isn't many lines.
 void window__fill(const Buff_t* const, const Ui_t* const);
 
-// Sets the a cursor position starting from the left bottom.
+// Sets the cursor position starting from a left bottom.
 void window__set_cursor_pos(const Buff_t* const, const Mod_t* const,
                             const Ui_t* const);
 

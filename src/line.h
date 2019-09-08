@@ -16,6 +16,4 @@ typedef struct
 }
 Line_t;
 
-#define LINE__TYPE_SZ sizeof(Line_t)
-
 #endif

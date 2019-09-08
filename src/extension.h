@@ -14,11 +14,10 @@ enum
 {
     NONE,
     C,
-    CPP,
-    PYTHON3
+    PYTHON,
 };
 
-// Recognizes the extension of the current file.
+// Recognizes an extension of a current file.
 int extension__recognize(const char* const);
 
 #endif

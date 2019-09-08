@@ -4,7 +4,7 @@ void fiflo__run(int argc, char** argv)
 {
     const size_t no_filename_as_arg = 1;
 
-    char pressed_key        = '\0'; // Assignet for the initialization only.
+    char pressed_key        = '\0'; // Assignet for an initialization only.
     size_t current_file_idx = 0;
 
     Buff_t*  Buffer;
@@ -24,7 +24,7 @@ void fiflo__run(int argc, char** argv)
 
     if((Buffer = malloc((additional_argc_idx + IDX) * sizeof(Buff_t))) == NULL)
     {
-        fprintf(stderr, "Can't alloc the memory for the file buffers.\n");
+        fprintf(stderr, "Can't alloc a memory for file buffers.\n");
         goto free;
     }
     Buffer->extension = NONE;

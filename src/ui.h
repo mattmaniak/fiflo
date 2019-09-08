@@ -21,15 +21,15 @@
 #define UI__RIGHT_PADDING      1
 #define UI__HORIZONTAL_PADDING (UI__LEFT_PADDING + UI__RIGHT_PADDING)
 
-#define WRAP_LINE() putchar('\n') // Not the text. Needed to rendering.
+#define WRAP_LINE() putchar('\n') // Not a text. Needed to rendering.
 
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
 typedef struct
 {
-    term_t line_num_length; // Dynamic width of the lines numbers.
-    term_t textarea_w;          // Horizontal space for the text (width: chars).
-    term_t textarea_h;          // Vertical space for the text (lines).
+    term_t line_num_length; // Dynamic width of line numbers.
+    term_t textarea_w;      // Horizontal space for a text (width: chars).
+    term_t textarea_h;      // Vertical space for a text (lines).
     term_t lbar_h;          // Lower bar height (lines).
     term_t toggled_lbar_h;  // As above but toggled.
     term_t win_w;
@@ -37,10 +37,10 @@ typedef struct
 }
 Ui_t;
 
-// Used to style the UI.
+// Used to style a UI.
 void ui__set_color(const int* const);
 
-// Prints the line number.
+// Prints a line number.
 void ui__print_line_number(const Buff_t* const, const Conf_t* const,
                            const idx_t, const term_t);
 

@@ -12,7 +12,7 @@ char input__getch(void)
 
     char key;
 
-    // Get the state of the standard input.
+    // Get a state of the standard input.
     if(tcgetattr(STDIN_FILENO, &old_term_params) == ERROR)
     {
         window__flush();
@@ -22,16 +22,16 @@ char input__getch(void)
     }
     new_term_params = old_term_params;
 
-    // Look that the options of below flags are negated.
+    // Notice that options of below flags are negated.
     new_term_params.c_iflag &= ~enable_xon;
     new_term_params.c_lflag &= ~(canonical_mode_on | echo_input | enable_sigs);
 
-    /* Immediately set the state of the stdin to the *new_term_params. Use the
+    /* Immediately set a state of the stdin to the *new_term_params. Use the
        new terminal I/O settings. */
     if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == ERROR)
     {
         window__flush();
-        fprintf(stderr, "Can't set the terminal's raw mode. Type \"reset\".\n");
+        fprintf(stderr, "Can't set a terminal's raw mode. Type \"reset\".\n");
 
         return ERROR;
     }
@@ -42,7 +42,7 @@ char input__getch(void)
     {
         window__flush();
         fprintf(stderr,
-                "Can't restore the terminal's normal mode. Type \"reset\".\n");
+                "Can't restore a terminal's normal mode. Type \"reset\".\n");
         return ERROR;
     }
     return key;
@@ -128,7 +128,7 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
         *file_idx = 3;
         Buffer->escape_sequence_on_input = false;
     }
-    // Other cases that block the input for "seq_length_max" chars.
+    // Other cases that block an input for "seq_length_max" chars.
     else if(strlen(sequence) >= seq_length_max)
     {
         Buffer->escape_sequence_on_input = false;

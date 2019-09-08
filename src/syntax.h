@@ -9,26 +9,31 @@
 #include "extension.h"
 #include "ui.h"
 
-#define SYNTAX__MAX_KEYWORDS 256
+#define SYNTAX__MAX_KWRDS_IN_FILE 256
+#define SYNTAX__MAX_KWRD_LEN      16
 
 typedef struct
 {
-    char keyword[16];
+    char keyword[SYNTAX__MAX_KWRD_LEN];
     int  color;
 }
 Syntax__Kwrd_t;
 
 typedef struct
 {
-    Syntax__Kwrd_t Keywords[256];
+    Syntax__Kwrd_t Keywords[SYNTAX__MAX_KWRDS_IN_FILE];
     idx_t          kwrds_idx;
 }
 Syntax_t;
 
-// Loads the file with defined syntax highlighting colors.
+// Loads a file with defined syntax highlighting colors.
 bool syntax__load(Syntax_t*, const int);
 
-// Checks and renders the word if it's color should change.
+/* Sorts words descending by a length. It prevents glitching words if there is
+   e.g "int" before "int32_t" by wrong double painting. */
+void syntax__sort(Syntax_t*);
+
+// Checks and renders a word if it's color should change.
 idx_t syntax__paint_word(const Syntax_t* const, Line_t*, idx_t);
 
 #endif

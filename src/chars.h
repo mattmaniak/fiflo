@@ -11,19 +11,19 @@
 #include "memory.h"
 #include "edit.h"
 
-// Knows what to do next with pressed key or combination. Based on ASCII.
+// Know what to do next with a pressed key or a combination. Based on ASCII.
 bool chars__parse_char(Buff_t*, const Conf_t* const, Mod_t*, const char);
 
-// Adds char when the pressed key is a printable one.
+// Add a char when a pressed key is a printable one.
 bool chars__printable_char(Buff_t*, const char);
 
-// Initialize the new line.
+// Initialize a new line.
 bool chars__linefeed(Buff_t*);
 
-// Removes a last char and optionally deletes the last line.
+// Remove a last char and optionally delete a last line.
 bool chars__backspace(Buff_t*, const Conf_t* const);
 
-// Inserts specified amount of '\t' to emulate the Tab.
+// Insert a specified amount of the '\t' to emulate the Tab.
 bool chars__tab(Buff_t*, const Conf_t* const);
 
 #endif

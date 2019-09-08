@@ -14,7 +14,7 @@ term_t window__get_terminal_sz(const char axis)
     specific device (stdout). */
     if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == ERROR)
     {
-        fprintf(stderr, "Can't get the terminal's size.\n");
+        fprintf(stderr, "Can't get a terminal's size.\n");
         return 0;
     }
 
@@ -43,12 +43,14 @@ term_t window__get_terminal_sz(const char axis)
 
 void window__flush(void)
 {
-    // Restore to the left lower corner and clean the lowest line.
+    const term_t terminal_y_sz = window__get_terminal_sz('Y');
+
+    // Restore to a lowest left corner and clean a lowest line.
     ANSI_RESTORE_CURSOR_POS();
     ANSI_CLEAN_WHOLE_LINE();
 
-    // Then from move up and clean the next lines till the window ends.
-    for(term_t line = UI__LBAR_SZ; line < window__get_terminal_sz('Y'); line++)
+    // Then from move up and clean next lines till a window ends.
+    for(term_t line = UI__LBAR_SZ; line < terminal_y_sz; line++)
     {
         ANSI_CURSOR_UP(1);
         ANSI_CLEAN_WHOLE_LINE();
@@ -58,7 +60,7 @@ void window__flush(void)
 
 void window__fill(const Buff_t* const Buffer, const Ui_t* const Ui)
 {
-    // Fill the empty area below the text to pos the lower bar.
+    // Fill an empty area below a text to adjust a position the lower bar.
     if((Buffer->lines_amount_idx + IDX) < (idx_t) Ui->textarea_h)
     {
         for(idx_t line = Buffer->lines_amount_idx;
@@ -67,19 +69,19 @@ void window__fill(const Buff_t* const Buffer, const Ui_t* const Ui)
             WRAP_LINE();
         }
     }
-    // Else the lower bar will by posed by the text.
+    // Else the lower bar will by posed by a text.
 }
 
 void window__set_cursor_pos(const Buff_t* const Buffer,
                             const Mod_t* const Modes, const Ui_t* const Ui)
 {
     // Set by default to a filename edit.
-    term_t move_right = (term_t) (UI__LEFT_PADDING + Buffer->fname_len);
-    term_t move_up    = (term_t) (Ui->win_h - UI__LBAR_SZ);
+    term_t move_right = (const term_t) (UI__LEFT_PADDING + Buffer->fname_len);
+    term_t move_up    = (const term_t) (Ui->win_h - UI__LBAR_SZ);
 
     if(move_right >= Ui->win_w)
     {
-        move_right = (term_t) (Ui->win_w - CURSOR_SZ);
+        move_right = (const term_t) (Ui->win_w - CURSOR_SZ);
     }
 
     // Cursor is pushed right by the lower bar. Move it back.
@@ -91,23 +93,26 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
         if(BUFFER__CURRENT_LINE_LEN < Ui->textarea_w)
         {
             // No horizontal scrolling.
-            move_right = (term_t) (Ui->line_num_length + BUFFER__CURSOR_X);
+            move_right = (const term_t)
+                         (Ui->line_num_length + BUFFER__CURSOR_X);
         }
         else if((BUFFER__CURRENT_LINE_LEN - Ui->textarea_w)
                 >= Buffer->cursor_rev_x)
         {
             /* Last Ui->textarea_w chars are seen. Current line is scrolled,
-            not cursor. */
-            move_right = (term_t) (Ui->win_w - CURSOR_SZ);
+               not cursor. */
+            move_right = (const term_t) (Ui->win_w - CURSOR_SZ);
         }
         else
         {
-            // Text is scrolled horizontally to the start. Cursor can be moved.
-            move_right = (term_t) (Ui->line_num_length + BUFFER__CURSOR_X);
+            // Text is scrolled horizontally to a start. Cursor can be moved.
+            move_right = (const term_t)
+                         (Ui->line_num_length + BUFFER__CURSOR_X);
         }
         move_up = (BUFFER__CURRENT_LINE_IDX < Ui->textarea_h) ?
-        (term_t) (Ui->textarea_h - BUFFER__CURRENT_LINE_IDX - IDX + Ui->lbar_h)
-        : Ui->lbar_h;
+                  (const term_t)
+                  (Ui->textarea_h - BUFFER__CURRENT_LINE_IDX - IDX + Ui->lbar_h)
+                  : Ui->lbar_h;
     }
     ANSI_CURSOR_RIGHT(move_right);
     ANSI_CURSOR_UP(move_up);
@@ -118,7 +123,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
                     const idx_t additional_argc_idx,
                     const idx_t current_file_idx)
 {
-    char line_num_str[16]; // Needed to count the length of the number.
+    char line_num_str[16]; // Needed to count a length of a number.
     Ui_t Ui;
 
     sprintf(line_num_str, "%u", Buffer->lines_amount_idx + IDX);
@@ -131,13 +136,14 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.toggled_lbar_h = UI__TOGGLED_LBAR_H;
     Ui.lbar_h = (Modes->lbar_expanded) ? Ui.toggled_lbar_h : UI__LBAR_SZ;
 
-    Ui.line_num_length = (term_t) (strlen(line_num_str) + SPACE_SZ
+    Ui.line_num_length = (const term_t) (strlen(line_num_str) + SPACE_SZ
                          + UI__LEFT_PADDING);
 
-    Ui.textarea_w = (term_t) (Ui.win_w - Ui.line_num_length);
-    Ui.textarea_h = (term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
+    Ui.textarea_w = (const term_t) (Ui.win_w - Ui.line_num_length);
+    Ui.textarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
     ui__upper_bar(&Buffer[current_file_idx], Config, &Ui);
+
     print__display_text(&Buffer[current_file_idx], Config, Syntax, &Ui);
     window__fill(&Buffer[current_file_idx], &Ui);
 
