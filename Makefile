@@ -92,7 +92,7 @@ install:
 	sudo cp $(MAN_DIR)/$(TARGET).conf.5 $(MAN_INS_DIR)5
 
 	sudo mkdir -p $(SYN_INS_DIR)
-	sudo cp $(SYN_DIR)/c.$(TARGET)rc $(SYN_INS_DIR)/c.$(TARGET)rc
+	sudo cp $(SYN_DIR)/*.$(TARGET)rc $(SYN_INS_DIR)
 
 	sudo gzip $(MAN_INS_DIR)1/$(TARGET).1
 	sudo gzip $(MAN_INS_DIR)5/$(TARGET).conf.5
@@ -102,7 +102,7 @@ install:
 	sudo cp LICENSE $(DOC_INS_DIR)
 	sudo cp $(DOC_DIR)/* $(DOC_INS_DIR)
 
-	sudo cp -i $(TARGET)rc $(CONF_DIR)
+	sudo cp -n $(TARGET).conf $(CONF_DIR)
 
 	@echo " "
 	@echo "Fiflo installed."
@@ -113,7 +113,7 @@ install_debug:
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
 	sudo mkdir -p $(SYN_INS_DIR)
-	sudo cp $(SYN_DIR)/c.$(TARGET)rc $(SYN_INS_DIR)/c.$(TARGET)rc
+	sudo cp $(SYN_DIR)/*.$(TARGET)rc $(SYN_INS_DIR)
 
 	@echo " "
 	@echo "Binary only installation with ASan and gcov support finished."

@@ -4,7 +4,7 @@ void fiflo__run(int argc, char** argv)
 {
     const size_t no_filename_as_arg = 1;
 
-    char pressed_key        = '\0'; // Assignet for an initialization only.
+    char pressed_key        = '\0'; // For an initialization purpose only.
     size_t current_file_idx = 0;
 
     Buff_t*  Buffer;

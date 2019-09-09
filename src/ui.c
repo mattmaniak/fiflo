@@ -68,8 +68,9 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     char        lbar_text[STATUS_MAX];
 
     sprintf(punch_card, "%u", punch_card_width);
-    sprintf(lbar_text, "[%u; %u]", Buffer->lines_amount_idx + IDX,
-            BUFFER__CURRENT_LINE_LEN + IDX);
+    sprintf(lbar_text, "[%u; %u]",
+            Buffer->lines_amount_idx - Buffer->cursor_rev_y + IDX,
+            BUFFER__CURSOR_X + IDX);
 
     WRAP_LINE();
 
@@ -103,7 +104,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     printf("%*s%.*s%*s", UI__LEFT_PADDING, "", STATUS_MAX, lbar_text,
            (int) (STATUS_MAX - strlen(lbar_text)), "");
 
-    if((idx_t) (Ui->textarea_w + UI__HORIZONTAL_PADDING) > punch_card_width)
+    if((const idx_t) (Ui->textarea_w + UI__HORIZONTAL_PADDING)
+       > punch_card_width)
     {
         printf("%*s",
                Ui->line_num_length + punch_card_width - STATUS_MAX - SPACE_SZ

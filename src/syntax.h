@@ -33,7 +33,13 @@ bool syntax__load(Syntax_t*, const int);
    e.g "int" before "int32_t" by wrong double painting. */
 void syntax__sort(Syntax_t*);
 
+int syntax__parse_color(const char* const);
+
 // Checks and renders a word if it's color should change.
 idx_t syntax__paint_word(const Syntax_t* const, Line_t*, idx_t);
+
+// Checks if a word should be painted. It can't be a substring.
+idx_t syntax__check_word_to_paint(const Syntax_t* const, const Line_t* const,
+                                  const idx_t, const idx_t);
 
 #endif

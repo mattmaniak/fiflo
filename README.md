@@ -14,6 +14,7 @@ minimalism.
 - gcc >= 4.9 or clang >= 3.6,
 - gzip (only for the installation),
 - sudo (only for the installation, even for the bare Debian on root).
+
 **It's also recommended to use a modern terminal emulator to avoid blinking.**
 
 ### Clone on a desktop, compile from source and run

@@ -26,14 +26,9 @@ bool syntax__load(Syntax_t* Syntax, const int extension)
             strncpy(Syntax->Keywords[Syntax->kwrds_idx].keyword, keyword,
                     SYNTAX__MAX_KWRD_LEN);
 
-            if(!(strcmp(color, "magenta")))
-            {
-                Syntax->Keywords[Syntax->kwrds_idx].color = MAGENTA;
-            }
-            else
-            {
-                Syntax->Keywords[Syntax->kwrds_idx].color = 0;
-            }
+            Syntax->Keywords[Syntax->kwrds_idx].color =
+            syntax__parse_color(color);
+
             if(Syntax->kwrds_idx++ >= SYNTAX__MAX_KWRDS_IN_FILE)
             {
                 break;
@@ -51,8 +46,75 @@ bool syntax__load(Syntax_t* Syntax, const int extension)
     return true;
 }
 
+int syntax__parse_color(const char* const color)
+{
+    if(!strcmp(color, "red"))
+    {
+        return RED;
+    }
+    else if(!strcmp(color, "green"))
+    {
+        return GREEN;
+    }
+    else if(!strcmp(color, "yellow"))
+    {
+        return YELLOW;
+    }
+    else if(!strcmp(color, "blue"))
+    {
+        return BLUE;
+    }
+    else if(!strcmp(color, "magenta"))
+    {
+        return MAGENTA;
+    }
+    else if(!strcmp(color, "cyan"))
+    {
+        return CYAN;
+    }
+    else if(!strcmp(color, "white"))
+    {
+        return WHITE;
+    }
+    else if(!strcmp(color, "bright-black"))
+    {
+        return BRIGHT_BLACK;
+    }
+    else if(!strcmp(color, "bright-red"))
+    {
+        return BRIGHT_RED;
+    }
+    else if(!strcmp(color, "bright-green"))
+    {
+        return BRIGHT_GREEN;
+    }
+    else if(!strcmp(color, "bright-yellow"))
+    {
+        return BRIGHT_YELLOW;
+    }
+    else if(!strcmp(color, "bright-blue"))
+    {
+        return BRIGHT_BLUE;
+    }
+    else if(!strcmp(color, "bright-magenta"))
+    {
+        return BRIGHT_MAGENTA;
+    }
+    else if(!strcmp(color, "bright-cyan"))
+    {
+        return BRIGHT_CYAN;
+    }
+    else if(!strcmp(color, "bright-white"))
+    {
+        return BRIGHT_WHITE;
+    }
+    return 0;
+}
+
 void syntax__sort(Syntax_t* Syntax)
 {
+    Syntax__Kwrd_t Temp_kwrd;
+
     // Iterate through all keywords.
     for(idx_t kwrd_idx = 0; kwrd_idx < Syntax->kwrds_idx; kwrd_idx++)
     {
@@ -64,42 +126,66 @@ void syntax__sort(Syntax_t* Syntax)
             if(strlen(Syntax->Keywords[kwrd_idx].keyword)
                < strlen(Syntax->Keywords[shift_idx].keyword))
             {
-                const Syntax__Kwrd_t Temp_keyword = Syntax->Keywords[kwrd_idx];
+                Temp_kwrd = Syntax->Keywords[kwrd_idx];
 
                 Syntax->Keywords[kwrd_idx]  = Syntax->Keywords[shift_idx];
-                Syntax->Keywords[shift_idx] = Temp_keyword;
+                Syntax->Keywords[shift_idx] = Temp_kwrd;
             }
         }
-        puts(Syntax->Keywords[kwrd_idx].keyword);
     }
 }
 
 idx_t syntax__paint_word(const Syntax_t* const Syntax, Line_t* Line,
-                         idx_t char_idx)
+                         idx_t ch_idx)
 {
-    const char* const str_to_print_addr = &Line->text[char_idx];
+    const char* const str_to_print_addr = &Line->text[ch_idx];
+    idx_t             end_paint_offset;
 
     if(Syntax->kwrds_idx <= 0)
     {
-        return char_idx;
+        return ch_idx;
     }
     for(idx_t kwrd_idx = 0; kwrd_idx <= Syntax->kwrds_idx; kwrd_idx++)
     {
         if(strstr(str_to_print_addr, Syntax->Keywords[kwrd_idx].keyword)
            == str_to_print_addr)
         {
-            const idx_t end_color_offset = char_idx
-            + (const idx_t) strlen(Syntax->Keywords[kwrd_idx].keyword);
+            end_paint_offset = syntax__check_word_to_paint(Syntax, Line,
+                                                           ch_idx, kwrd_idx);
 
-            ui__set_color(&Syntax->Keywords[kwrd_idx].color);
-            for(; char_idx < end_color_offset; char_idx++)
+            for(; ch_idx < end_paint_offset; ch_idx++)
             {
-                putchar(Line->text[char_idx]);
+                putchar(Line->text[ch_idx]);
             }
-            char_idx--;
+            ch_idx--;
 
             break;
         }
     }
-    return char_idx;
+    return ch_idx;
+}
+
+idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
+                                 const Line_t* const Line, const idx_t ch_idx,
+                                 const idx_t kwrd_idx)
+{
+    const idx_t end_paint_offset = ch_idx
+    + (const idx_t) strlen(Syntax->Keywords[kwrd_idx].keyword);
+
+    // A word at the beginning of the line.
+    if((ch_idx == 0) && ((Line->text[end_paint_offset] == ' ')
+                         || (Line->text[end_paint_offset] == '\n')))
+    {
+        ui__set_color(&Syntax->Keywords[kwrd_idx].color);
+    }
+    // Another word somewhere in a text.
+    else if(((Line->text[ch_idx - PREV] == ' ')
+             || (Line->text[ch_idx - PREV] == '('))
+            && ((Line->text[end_paint_offset] == ' ')
+             || (Line->text[end_paint_offset] == ')')
+             || (Line->text[end_paint_offset] == '\n')))
+    {
+        ui__set_color(&Syntax->Keywords[kwrd_idx].color);
+    }
+    return end_paint_offset;
 }
