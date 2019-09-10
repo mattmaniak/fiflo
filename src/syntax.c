@@ -27,7 +27,7 @@ bool syntax__load(Syntax_t* Syntax, const int extension)
                     SYNTAX__MAX_KWRD_LEN);
 
             Syntax->Keywords[Syntax->kwrds_idx].color =
-            syntax__parse_color(color);
+            config__parse_value(color);
 
             if(Syntax->kwrds_idx++ >= SYNTAX__MAX_KWRDS_IN_FILE)
             {
@@ -44,71 +44,6 @@ bool syntax__load(Syntax_t* Syntax, const int extension)
         }
     }
     return true;
-}
-
-int syntax__parse_color(const char* const color)
-{
-    if(!strcmp(color, "red"))
-    {
-        return RED;
-    }
-    else if(!strcmp(color, "green"))
-    {
-        return GREEN;
-    }
-    else if(!strcmp(color, "yellow"))
-    {
-        return YELLOW;
-    }
-    else if(!strcmp(color, "blue"))
-    {
-        return BLUE;
-    }
-    else if(!strcmp(color, "magenta"))
-    {
-        return MAGENTA;
-    }
-    else if(!strcmp(color, "cyan"))
-    {
-        return CYAN;
-    }
-    else if(!strcmp(color, "white"))
-    {
-        return WHITE;
-    }
-    else if(!strcmp(color, "bright-black"))
-    {
-        return BRIGHT_BLACK;
-    }
-    else if(!strcmp(color, "bright-red"))
-    {
-        return BRIGHT_RED;
-    }
-    else if(!strcmp(color, "bright-green"))
-    {
-        return BRIGHT_GREEN;
-    }
-    else if(!strcmp(color, "bright-yellow"))
-    {
-        return BRIGHT_YELLOW;
-    }
-    else if(!strcmp(color, "bright-blue"))
-    {
-        return BRIGHT_BLUE;
-    }
-    else if(!strcmp(color, "bright-magenta"))
-    {
-        return BRIGHT_MAGENTA;
-    }
-    else if(!strcmp(color, "bright-cyan"))
-    {
-        return BRIGHT_CYAN;
-    }
-    else if(!strcmp(color, "bright-white"))
-    {
-        return BRIGHT_WHITE;
-    }
-    return 0;
 }
 
 void syntax__sort(Syntax_t* Syntax)
@@ -166,14 +101,15 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax, Line_t* Line,
 }
 
 idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
-                                 const Line_t* const Line, const idx_t ch_idx,
-                                 const idx_t kwrd_idx)
+                                  const Line_t* const Line, const idx_t ch_idx,
+                                  const idx_t kwrd_idx)
 {
     const idx_t end_paint_offset = ch_idx
     + (const idx_t) strlen(Syntax->Keywords[kwrd_idx].keyword);
 
     // A word at the beginning of the line.
     if((ch_idx == 0) && ((Line->text[end_paint_offset] == ' ')
+                         || (Line->text[end_paint_offset] == ':')
                          || (Line->text[end_paint_offset] == '\n')))
     {
         ui__set_color(&Syntax->Keywords[kwrd_idx].color);

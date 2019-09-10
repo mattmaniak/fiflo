@@ -2,7 +2,7 @@
 
 bool config__load(Conf_t* Config)
 {
-    char conf_fname[] = "/etc/fiflorc";
+    char conf_fname[] = "/etc/fiflo.conf";
 
     if(access(conf_fname, F_OK) == ERROR) // There is no config file.
     {
@@ -87,67 +87,67 @@ bool config__parse_selector(Conf_t* Config, const char* const selector,
 
 int config__parse_value(const char* const read_value)
 {
-    if(!strcmp(read_value, "red\n"))
+    if(!strcmp(read_value, "red"))
     {
         return RED;
     }
-    else if(!strcmp(read_value, "green\n"))
+    else if(!strcmp(read_value, "green"))
     {
         return GREEN;
     }
-    else if(!strcmp(read_value, "yellow\n"))
+    else if(!strcmp(read_value, "yellow"))
     {
         return YELLOW;
     }
-    else if(!strcmp(read_value, "blue\n"))
+    else if(!strcmp(read_value, "blue"))
     {
         return BLUE;
     }
-    else if(!strcmp(read_value, "magenta\n"))
+    else if(!strcmp(read_value, "magenta"))
     {
         return MAGENTA;
     }
-    else if(!strcmp(read_value, "cyan\n"))
+    else if(!strcmp(read_value, "cyan"))
     {
         return CYAN;
     }
-    else if(!strcmp(read_value, "white\n"))
+    else if(!strcmp(read_value, "white"))
     {
         return WHITE;
     }
-    else if(!strcmp(read_value, "bright-black\n"))
+    else if(!strcmp(read_value, "bright-black"))
     {
         return BRIGHT_BLACK;
     }
-    else if(!strcmp(read_value, "bright-red\n"))
+    else if(!strcmp(read_value, "bright-red"))
     {
         return BRIGHT_RED;
     }
-    else if(!strcmp(read_value, "bright-green\n"))
+    else if(!strcmp(read_value, "bright-green"))
     {
         return BRIGHT_GREEN;
     }
-    else if(!strcmp(read_value, "bright-yellow\n"))
+    else if(!strcmp(read_value, "bright-yellow"))
     {
         return BRIGHT_YELLOW;
     }
-    else if(!strcmp(read_value, "bright-blue\n"))
+    else if(!strcmp(read_value, "bright-blue"))
     {
         return BRIGHT_BLUE;
     }
-    else if(!strcmp(read_value, "bright-magenta\n"))
+    else if(!strcmp(read_value, "bright-magenta"))
     {
         return BRIGHT_MAGENTA;
     }
-    else if(!strcmp(read_value, "bright-cyan\n"))
+    else if(!strcmp(read_value, "bright-cyan"))
     {
         return BRIGHT_CYAN;
     }
-    else if(!strcmp(read_value, "bright-white\n"))
+    else if(!strcmp(read_value, "bright-white"))
     {
         return BRIGHT_WHITE;
     }
-    return atoi(read_value); // Seems like the linefeed removal too.
+    return 0;
 }
 
 void config__set_default(Conf_t* Config)
