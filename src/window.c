@@ -94,7 +94,7 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
         {
             // No horizontal scrolling.
             move_right = (const term_t)
-                         (Ui->line_num_length + BUFFER__CURSOR_X);
+                         (Ui->line_num_len + BUFFER__CURSOR_X);
         }
         else if((BUFFER__ACTUAL_LINE_LEN - Ui->textarea_w)
                 >= Buffer->cursor_rev_x)
@@ -107,7 +107,7 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
         {
             // Text is scrolled horizontally to a start. Cursor can be moved.
             move_right = (const term_t)
-                         (Ui->line_num_length + BUFFER__CURSOR_X);
+                         (Ui->line_num_len + BUFFER__CURSOR_X);
         }
         move_up = (BUFFER__ACTUAL_LINE_IDX < Ui->textarea_h) ?
                   (const term_t)
@@ -134,12 +134,13 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
         return false;
     }
     Ui.toggled_lbar_h = UI__TOGGLED_LBAR_H;
-    Ui.lbar_h = (Modes->lbar_expanded) ? Ui.toggled_lbar_h : UI__LBAR_SZ;
+    Ui.lbar_h         = (Modes->lbar_expanded) ? Ui.toggled_lbar_h
+                        : UI__LBAR_SZ;
 
-    Ui.line_num_length = (const term_t) (strlen(line_num_str) + SPACE_SZ
-                                         + UI__LEFT_PADDING);
+    Ui.line_num_len = (const term_t) (strlen(line_num_str) + SPACE_SZ
+                      + UI__LEFT_PADDING);
 
-    Ui.textarea_w = (const term_t) (Ui.win_w - Ui.line_num_length);
+    Ui.textarea_w = (const term_t) (Ui.win_w - Ui.line_num_len);
     Ui.textarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
     ui__upper_bar(&Buffer[actual_file_idx], Config, &Ui);

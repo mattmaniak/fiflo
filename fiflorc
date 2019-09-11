@@ -7,14 +7,15 @@
 # Remark: " = " (excluding quotation marks) is the only correct assignment.
 #
 # Default configuration below.
-# Changes nothing because the editor has it implemented independently.
+# It changes nothing because the editor has it implemented independently.
+# If You change anything it will be applied.
 
-color-current-file = bright-black
-color-current-line = bright-black
-color-line-number-current = bright-black
-color-line-number = white
-color-text = white
-color-ui = white
-color-warning = red
-color-whitespace = bright-black
-tab-size = 8
+color_actual_file = bright_black
+color_actual_line = bright_black
+color_line_number_actual = bright_black
+color_line_number = white
+color_text = white
+color_ui = white
+color_warning = red
+color_whitespace = bright_black
+tab_size = 8

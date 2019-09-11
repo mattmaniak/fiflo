@@ -8,7 +8,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
     {
         if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
         {
-            fprintf(stderr, "Can't get a current directory. Too long.\n");
+            fprintf(stderr, "Can't get the current directory. Too long.\n");
             return false;
         }
         cw_dir_length = strlen(Buffer->pathname);
@@ -17,7 +17,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
-                    "Can't insert the slash. Current direcory is too long.\n");
+                    "Can't insert the slash. The Current dir is too long.\n");
 
             return false;
         }
@@ -36,7 +36,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
-            fprintf(stderr, "Passed filename is too long.\n");
+            fprintf(stderr, "The passed filename is too long.\n");
             return false;
         }
         strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
@@ -52,7 +52,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
-            fprintf(stderr, "Passed filename is too long.\n");
+            fprintf(stderr, "The passed filename is too long.\n");
             return false;
         }
         strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
@@ -66,7 +66,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
     {
         if(strlen(arg) >= NAME_MAX)
         {
-            fprintf(stderr, "Passed filename is too long.\n");
+            fprintf(stderr, "The passed filename is too long.\n");
             return false;
         }
 
@@ -81,7 +81,7 @@ bool file__set_name(Buff_t* Buffer, const char* const arg)
         if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
-                    "Can't insert the slash. Current direcory is too long.\n");
+                    "Can't insert the slash. The current dir is too long.\n");
 
             return false;
         }
@@ -169,7 +169,7 @@ void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
         {
             // Some in-memory Tabs converted
             *ch_idx += (const idx_t) Config->Tab_sz.value
-                                     - FILE__AT_LEAST_ONE_TAB;
+                       - FILE__AT_LEAST_ONE_TAB;
         }
     }
 }
@@ -224,7 +224,7 @@ bool file__get_git_branch(Buff_t* Buffer)
     }
 
     // Ignore a passed string in a file to get a branch after the slash.
-    if(fseek(Git_head_file, (const long) strlen("ref: refs/heads/"), 0)
+    if(fseek(Git_head_file, (const long int) strlen("ref: refs/heads/"), 0)
        == ERROR)
     {
         strcpy(Buffer->git_branch, "[none]");
@@ -243,7 +243,7 @@ bool file__get_git_branch(Buff_t* Buffer)
     if(fclose(Git_head_file) == EOF)
     {
         fprintf(stderr,
-                "Can't close the git \".git/HEAD\" file to get the branch.\n");
+                "Can't close the git \".git/HEAD\" file to get a branch.\n");
         return false;
     }
     return true;

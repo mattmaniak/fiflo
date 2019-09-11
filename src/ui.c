@@ -8,15 +8,15 @@ void ui__set_color(const int* const value)
 
 void ui__print_line_number(const Buff_t* const Buffer,
                            const Conf_t* const Config, const idx_t ln_idx,
-                           const term_t line_num_length)
+                           const term_t line_num_len)
 {
     ui__set_color(&Config->Color_line_number.value);
 
     if(ln_idx == BUFFER__ACTUAL_LINE_IDX)
     {
-        ui__set_color(&Config->Color_line_number_current.value);
+        ui__set_color(&Config->Color_line_number_actual.value);
     }
-    printf("%*u ", line_num_length - SPACE_SZ, ln_idx + IDX);
+    printf("%*u ", line_num_len - SPACE_SZ, ln_idx + IDX);
 
     ui__set_color(NULL);
 }
@@ -41,9 +41,9 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         }
         WRAP_LINE();
     }
-    printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status, (int) (STATUS_MAX
-           - strlen(Buffer->status) - SPACE_SZ + UI__GIT_LOGO_W),
-           UI__GIT_LOGO);
+    printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status,
+           (const int) (STATUS_MAX - strlen(Buffer->status) - SPACE_SZ
+           + UI__GIT_LOGO_W), UI__GIT_LOGO);
 
     if((term_t) strlen(Buffer->git_branch)
        < (Ui->win_w - UI__GIT_LOGO_W - STATUS_MAX - UI__HORIZONTAL_PADDING))
@@ -60,7 +60,7 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
                    const Mod_t* const Modes, const Ui_t* const Ui,
                    const idx_t additional_argc_idx,
-                   const idx_t current_file_idx)
+                   const idx_t actual_file_idx)
 {
     idx_t       punch_card_width = 80;
     const idx_t tmp_width        = punch_card_width;
@@ -84,9 +84,9 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
         for(idx_t file_idx = 0; file_idx <= additional_argc_idx; file_idx++)
         {
-            if(file_idx == current_file_idx)
+            if(file_idx == actual_file_idx)
             {
-                ui__set_color(&Config->Color_current_file.value);
+                ui__set_color(&Config->Color_actual_file.value);
             }
             printf("%*s%s", UI__LEFT_PADDING, "", Buffer[file_idx].fname);
 
@@ -107,7 +107,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
        > punch_card_width)
     {
         printf("%*s",
-               Ui->line_num_length + punch_card_width - STATUS_MAX - SPACE_SZ
+               Ui->line_num_len + punch_card_width - STATUS_MAX - SPACE_SZ
                - (term_t) strlen(punch_card), " ");
 
         if(BUFFER__CURSOR_X >= Ui->textarea_w) // Scrolling.

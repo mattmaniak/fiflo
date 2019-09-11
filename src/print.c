@@ -13,12 +13,22 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         if(ch == '\t')
         {
             ui__set_color(&Config->Color_whitespace.value);
+            if(ch_idx == 79)
+            {
+                printf("\033[7m");
+            }
             putchar(PRINT__TAB_HIGHLIGHT);
+            printf("\033[0m");
         }
         else if(ch == ' ')
         {
             ui__set_color(&Config->Color_whitespace.value);
+            if(ch_idx == 79)
+            {
+                printf("\033[7m");
+            }
             putchar(PRINT__SPACE_HIGHLIGHT);
+            printf("\033[0m");
         }
         else // Print words.
         {
@@ -28,7 +38,12 @@ void print__line_with_tabs(const Buff_t* const Buffer,
             if(ch_idx == ch_idx_after_highlighting)
             {
                 ui__set_color(&Config->Color_text.value);
+                if(ch_idx == 79)
+                {
+                    printf("\033[7m");
+                }
                 putchar(ch);
+                printf("\033[0m");
             }
             else // Word printed and highlighted. Shift the index to the next.
             {
@@ -87,7 +102,7 @@ void print__another_line(const Buff_t* const Buffer,
                          const Syntax_t* const Syntax, const Ui_t* const Ui,
                          const idx_t ln_idx)
 {
-    ui__print_line_number(Buffer, Config, ln_idx, Ui->line_num_length);
+    ui__print_line_number(Buffer, Config, ln_idx, Ui->line_num_len);
 
     if(Buffer->Lines[ln_idx].length < Ui->textarea_w)
     {
@@ -132,7 +147,7 @@ void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
         print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
     }
     ui__print_line_number(Buffer, Config, BUFFER__ACTUAL_LINE_IDX,
-                          Ui->line_num_length);
+                          Ui->line_num_len);
 
     print__actual_line(Buffer, Config, Syntax, Ui);
 
@@ -143,7 +158,7 @@ void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
             print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
         }
         ui__print_line_number(Buffer, Config, Buffer->lines_amount,
-                              Ui->line_num_length);
+                              Ui->line_num_len);
 
 
         if(Buffer->Lines[Buffer->lines_amount].length < Ui->textarea_w)
@@ -174,7 +189,7 @@ void print__shrink_lines(const Buff_t* const Buffer,
         print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
     }
     ui__print_line_number(Buffer, Config, BUFFER__ACTUAL_LINE_IDX,
-                          Ui->line_num_length);
+                          Ui->line_num_len);
 
     print__actual_line(Buffer, Config, Syntax, Ui);
 
@@ -183,7 +198,7 @@ void print__shrink_lines(const Buff_t* const Buffer,
     {
         print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
     }
-    ui__print_line_number(Buffer, Config, last_ln_idx, Ui->line_num_length);
+    ui__print_line_number(Buffer, Config, last_ln_idx, Ui->line_num_len);
 
     if(Buffer->Lines[last_ln_idx].length < Ui->textarea_w)
     {
@@ -212,7 +227,7 @@ void print__scroll_lines(const Buff_t* const Buffer,
 
     // Display a last line without the linefeed to prevent a lbar breaking.
     ui__print_line_number(Buffer, Config, BUFFER__ACTUAL_LINE_IDX,
-                          Ui->line_num_length);
+                          Ui->line_num_len);
 
     if(BUFFER__ACTUAL_LINE_LEN < Ui->textarea_w)
     {

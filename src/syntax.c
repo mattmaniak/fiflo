@@ -90,7 +90,16 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax, Line_t* Line,
 
             for(; ch_idx < end_paint_offset; ch_idx++)
             {
+                if(ch_idx == 79)
+                {
+                    printf("\033[7m");
+                }
                 putchar(Line->text[ch_idx]);
+                if(ch_idx == 79)
+                {
+                    printf("\033[0m");
+                    ui__set_color(&Syntax->Keywords[kwrd_idx].color);
+                }
             }
             ch_idx--;
 
@@ -107,19 +116,21 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
     const idx_t end_paint_offset = ch_idx
     + (const idx_t) strlen(Syntax->Keywords[kwrd_idx].keyword);
 
+    const bool allowed_sufix = (Line->text[end_paint_offset] == ' ')
+                               || (Line->text[end_paint_offset] == '\n')
+                               || (Line->text[end_paint_offset] == '*');
+
     // A word at the beginning of the line.
-    if((ch_idx == 0) && ((Line->text[end_paint_offset] == ' ')
-                         || (Line->text[end_paint_offset] == ':')
-                         || (Line->text[end_paint_offset] == '\n')))
+    if((ch_idx == 0) && (allowed_sufix
+                         || (Line->text[end_paint_offset] == ':')))
     {
         ui__set_color(&Syntax->Keywords[kwrd_idx].color);
     }
     // Another word somewhere in a text.
     else if(((Line->text[ch_idx - PREV] == ' ')
+             || (Line->text[ch_idx - PREV] == '\t')
              || (Line->text[ch_idx - PREV] == '('))
-            && ((Line->text[end_paint_offset] == ' ')
-             || (Line->text[end_paint_offset] == ')')
-             || (Line->text[end_paint_offset] == '\n')))
+            && (allowed_sufix || (Line->text[end_paint_offset] == ')')))
     {
         ui__set_color(&Syntax->Keywords[kwrd_idx].color);
     }

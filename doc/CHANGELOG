@@ -10,7 +10,10 @@ Versions:
 v4.1.0 (2019, WIP):
 - cursor position indicator shows it's x-pos instead of a current line length,
 - file extension recognition,
-- syntax highlighting.
+- syntax highlighting,
+- visible vertical punch card,
+- horizontal scroll rendering fix,
+- selectors' names in the configuration file.
 
 v4.0.0 (2019, June 18):
 - vertical Arrows^Ctrl scroll paragraphs now,

@@ -44,9 +44,9 @@ Opt_t;
 typedef struct
 {
     FILE* File;
-    Opt_t Color_current_file;
+    Opt_t Color_actual_file;
     Opt_t Color_line_number;
-    Opt_t Color_line_number_current;
+    Opt_t Color_line_number_actual;
     Opt_t Color_text;
     Opt_t Color_ui;
     Opt_t Color_warning;

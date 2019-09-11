@@ -24,15 +24,15 @@ bool config__load(Conf_t* Config)
 
 void config__init_selectors(Conf_t* Config)
 {
-    strcpy(Config->Color_current_file.selector, "color-current-file");
-    strcpy(Config->Color_line_number.selector,  "color-line-number");
-    strcpy(Config->Color_text.selector,         "color-text");
-    strcpy(Config->Color_ui.selector,           "color-ui");
-    strcpy(Config->Color_warning.selector,      "color-warning");
-    strcpy(Config->Color_whitespace.selector,   "color-whitespace");
-    strcpy(Config->Tab_sz.selector,             "tab-size");
-    strcpy(Config->Color_line_number_current.selector,
-           "color-line-number-current");
+    strcpy(Config->Color_actual_file.selector, "color_actual_file");
+    strcpy(Config->Color_line_number.selector, "color_line_number");
+    strcpy(Config->Color_text.selector,        "color_text");
+    strcpy(Config->Color_ui.selector,          "color_ui");
+    strcpy(Config->Color_warning.selector,     "color_warning");
+    strcpy(Config->Color_whitespace.selector,  "color_whitespace");
+    strcpy(Config->Tab_sz.selector,            "tab_size");
+    strcpy(Config->Color_line_number_actual.selector,
+           "color_line_number_actual");
 }
 
 bool config__parse_selector(Conf_t* Config, const char* const selector,
@@ -45,13 +45,13 @@ bool config__parse_selector(Conf_t* Config, const char* const selector,
         {
             Config->Color_ui.value = value;
         }
-        else if(!strcmp(Config->Color_current_file.selector, selector))
+        else if(!strcmp(Config->Color_actual_file.selector, selector))
         {
-            Config->Color_current_file.value = value;
+            Config->Color_actual_file.value = value;
         }
-        else if(!strcmp(Config->Color_line_number_current.selector, selector))
+        else if(!strcmp(Config->Color_line_number_actual.selector, selector))
         {
-            Config->Color_line_number_current.value = value;
+            Config->Color_line_number_actual.value = value;
         }
         else if(!strcmp(Config->Color_line_number.selector, selector))
         {
@@ -151,14 +151,14 @@ int config__parse_value(const char* const read_value)
 
 void config__set_default(Conf_t* Config)
 {
-    Config->Color_current_file.value        = BRIGHT_BLACK;
-    Config->Color_line_number.value         = WHITE;
-    Config->Color_line_number_current.value = BRIGHT_BLACK;
-    Config->Color_text.value                = WHITE;
-    Config->Color_ui.value                  = WHITE;
-    Config->Color_warning.value             = RED;
-    Config->Color_whitespace.value          = BRIGHT_BLACK;
-    Config->Tab_sz.value                    = CONFIG__MAX_TAB_SZ;
+    Config->Color_actual_file.value        = BRIGHT_BLACK;
+    Config->Color_line_number.value        = WHITE;
+    Config->Color_line_number_actual.value = BRIGHT_BLACK;
+    Config->Color_text.value               = WHITE;
+    Config->Color_ui.value                 = WHITE;
+    Config->Color_warning.value            = RED;
+    Config->Color_whitespace.value         = BRIGHT_BLACK;
+    Config->Tab_sz.value                   = CONFIG__MAX_TAB_SZ;
 }
 
 void config__load_custom(Conf_t* Config)

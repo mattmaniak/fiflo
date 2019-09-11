@@ -1,5 +1,6 @@
 _Bool = magenta
 _Noreturn = magenta
+FILE = magenta
 auto = magenta
 bool = magenta
 break = magenta
