@@ -2,15 +2,15 @@
 
 bool edit__delete_char(Buff_t* Buffer)
 {
-    if(!BUFFER__CURSOR_AT_LINE_START)
+    if(!BUFFER__CURSOR_AT_LINE_BEGINNING)
     {
         edit__shift_text_horizonally(Buffer, 'l');
         if(!memory__shrink_current_line(Buffer))
         {
             return false;
         }
-        BUFFER__CURRENT_LINE_LEN--;
-        Buffer->chars_amount_idx--;
+        BUFFER__ACTUAL_LINE_LEN--;
+        Buffer->chars_amount--;
     }
     // Deletes a non-empty line and copy chars to previous.
     else if(!BUFFER__FIRST_LINE)
@@ -27,14 +27,14 @@ bool edit__delete_char(Buff_t* Buffer)
 
 bool edit__delete_line(Buff_t* Buffer)
 {
-    idx_t next_line_idx    = BUFFER__CURRENT_LINE_IDX + NEXT;
+    idx_t next_line_idx    = BUFFER__ACTUAL_LINE_IDX + NEXT;
     idx_t next_line_length = Buffer->Lines[next_line_idx].length;
 
     if(!BUFFER__FIRST_LINE)
     {
         if(BUFFER__CURSOR_Y_SCROLLED)
         {
-            Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_START)
+            Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_BEGINNING)
                                    ? next_line_length : LF_SZ;
 
             if(!memory__copy_lines_backward(Buffer))
@@ -67,7 +67,7 @@ bool edit__delete_line(Buff_t* Buffer)
         BUFFER__LAST_LINE_LEN = 0;
         BUFFER__LAST_LINE[BUFFER__LAST_LINE_LEN] = '\0';
 
-        BUFFER__LAST_LINE = realloc(BUFFER__LAST_LINE, BUFFER__INITIAL_MEMBLOCK);
+        BUFFER__LAST_LINE = realloc(BUFFER__LAST_LINE, BUFFER__BASIC_MEMBLK);
         if(BUFFER__LAST_LINE == NULL)
         {
             fprintf(stderr, "Can't realloc a memory in a first line.\n");
@@ -79,30 +79,30 @@ bool edit__delete_line(Buff_t* Buffer)
 
 void edit__shift_text_horizonally(Buff_t* Buffer, const char direction)
 {
-    const size_t prev     = 1;
-    idx_t        ch_idx = BUFFER__CURSOR_X;
+    idx_t ch_idx;
 
     switch(direction)
     {
     case 'l':
-        for(; ch_idx <= BUFFER__CURRENT_LINE_LEN; ch_idx++)
+        for(ch_idx = BUFFER__CURSOR_X; ch_idx <= BUFFER__ACTUAL_LINE_LEN;
+            ch_idx++)
         {
-            BUFFER__CURRENT_LINE[ch_idx - prev] = BUFFER__CURRENT_LINE[ch_idx];
+            BUFFER__ACTUAL_LINE[ch_idx - PREV] = BUFFER__ACTUAL_LINE[ch_idx];
         }
         break;
 
     case 'r':
-        for(ch_idx = BUFFER__CURRENT_LINE_LEN; ch_idx >= BUFFER__CURSOR_X;
+        for(ch_idx = BUFFER__ACTUAL_LINE_LEN; ch_idx >= BUFFER__CURSOR_X;
             ch_idx--)
         {
-            BUFFER__CURRENT_LINE[ch_idx] = BUFFER__CURRENT_LINE[ch_idx - prev];
+            BUFFER__ACTUAL_LINE[ch_idx] = BUFFER__ACTUAL_LINE[ch_idx - PREV];
         }
     }
 }
 
 bool edit__move_lines_forward(Buff_t* Buffer)
 {
-    BUFFER__PREVIOUS_LINE_LEN -= Buffer->cursor_rev_x;
+    BUFFER__PREV_LINE_LEN -= Buffer->cursor_rev_x;
 
     // Move more lines vertically with a part of a current line.
     if(BUFFER__CURSOR_Y_SCROLLED)
@@ -111,23 +111,23 @@ bool edit__move_lines_forward(Buff_t* Buffer)
         {
             return false;
         }
-        BUFFER__CURRENT_LINE_LEN = 0;
+        BUFFER__ACTUAL_LINE_LEN = 0;
     }
 
     // Move a right part (separated by the cursor) of a line to a next.
-    for(idx_t ch_idx = BUFFER__PREVIOUS_LINE_LEN;
-        ch_idx < BUFFER__PREVIOUS_LINE_LEN + Buffer->cursor_rev_x; ch_idx++)
+    for(idx_t ch_idx = BUFFER__PREV_LINE_LEN;
+        ch_idx < BUFFER__PREV_LINE_LEN + Buffer->cursor_rev_x; ch_idx++)
     {
-        BUFFER__LAST_CHAR_IN_LINE = BUFFER__PREVIOUS_LINE[ch_idx];
-        BUFFER__CURRENT_LINE_LEN++;
-        if(!memory__extend_line(Buffer, BUFFER__CURRENT_LINE_IDX))
+        BUFFER__LAST_CHAR_IN_LINE = BUFFER__PREV_LINE[ch_idx];
+        BUFFER__ACTUAL_LINE_LEN++;
+        if(!memory__extend_line(Buffer, BUFFER__ACTUAL_LINE_IDX))
         {
             return false;
         }
     }
 
-    // Now a length of an upper line will be shortened after copying.
-    BUFFER__PREVIOUS_LINE[BUFFER__PREVIOUS_LINE_LEN] = '\0';
+    // Now a length of an upper line will be shrinked after copying.
+    BUFFER__PREV_LINE[BUFFER__PREV_LINE_LEN] = '\0';
     if(!memory__shrink_prev_line(Buffer))
     {
         return false;
@@ -137,20 +137,18 @@ bool edit__move_lines_forward(Buff_t* Buffer)
 
 bool edit__move_lines_backward(Buff_t* Buffer)
 {
-    Buffer->chars_amount_idx--;
-    BUFFER__PREVIOUS_LINE_LEN--;
+    Buffer->chars_amount--;
+    BUFFER__PREV_LINE_LEN--;
 
     // Merge a previous line with a next.
-    for(idx_t ch_idx = 0; ch_idx <= BUFFER__CURRENT_LINE_LEN; ch_idx++)
+    for(idx_t ch_idx = 0; ch_idx <= BUFFER__ACTUAL_LINE_LEN; ch_idx++)
     {
-        BUFFER__PREVIOUS_LINE[BUFFER__PREVIOUS_LINE_LEN] \
-        = BUFFER__CURRENT_LINE[ch_idx];
-
-        if(BUFFER__CURRENT_LINE[ch_idx] != '\0')
+        BUFFER__PREV_LINE[BUFFER__PREV_LINE_LEN] = BUFFER__ACTUAL_LINE[ch_idx];
+        if(BUFFER__ACTUAL_LINE[ch_idx] != '\0')
         {
-            BUFFER__PREVIOUS_LINE_LEN++;
+            BUFFER__PREV_LINE_LEN++;
         }
-        if(!memory__extend_line(Buffer, BUFFER__PREVIOUS_LINE_IDX))
+        if(!memory__extend_line(Buffer, BUFFER__PREV_LINE_IDX))
         {
             return false;
         }
@@ -172,16 +170,16 @@ bool edit__move_lines_backward(Buff_t* Buffer)
 
 bool edit__delete_last_empty_line(Buff_t* Buffer)
 {
-    free(BUFFER__CURRENT_LINE);
+    free(BUFFER__ACTUAL_LINE);
 
-    Buffer->lines_amount_idx--;
+    Buffer->lines_amount--;
     if(!memory__shrink_current_line(Buffer))
     {
         return false;
     }
 
-    BUFFER__CURRENT_LINE_LEN--;
-    Buffer->chars_amount_idx--;
+    BUFFER__ACTUAL_LINE_LEN--;
+    Buffer->chars_amount--;
 
     if(!memory__shrink_lines_array(Buffer))
     {
@@ -194,7 +192,7 @@ bool edit__delete_last_line(Buff_t* Buffer)
 {
     free(BUFFER__LAST_LINE);
 
-    Buffer->lines_amount_idx--;
+    Buffer->lines_amount--;
     return memory__shrink_lines_array(Buffer);
 }
 
@@ -202,24 +200,22 @@ void edit__filename(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
                     const char key)
 {
     const char enter  = '\n';
-    const char escape = CTRL_LEFT_BRACKET;
+    const char escape = KEYS__CTRL_LEFT_BRACKET;
 
-    if((key >= 32) && (key != BACKSPACE)
+    if((key >= 32) && (key != KEYS__BACKSPACE)
        && ((Buffer->fname_len + IDX) < PATH_MAX))
     {
         Buffer->fname[Buffer->fname_len] = key;
-        Buffer->fname_len++;
-        Buffer->fname[Buffer->fname_len] = '\0';
+        Buffer->fname[++Buffer->fname_len] = '\0';
     }
-    else if((key == BACKSPACE) && (Buffer->fname_len > 0))
+    else if((key == KEYS__BACKSPACE) && (Buffer->fname_len > 0))
     {
-        Buffer->fname_len--;
-        Buffer->fname[Buffer->fname_len] = '\0';
+        Buffer->fname[--Buffer->fname_len] = '\0';
     }
     else if(key == enter)
     {
         Modes->live_fname_edit = false;
-        SET_STATUS("filename edited and saved as");
+        SET_STATUS("saved as with a different name");
 
         if(!strcmp(Buffer->fname, Buffer->fname_copy))
         {

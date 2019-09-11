@@ -12,9 +12,9 @@
 
 enum
 {
-    NONE,
-    C,
-    PYTHON,
+    EXTENSION__NONE,
+    EXTENSION__C,
+    EXTENSION__PYTHON,
 };
 
 // Recognizes an extension of a current file.

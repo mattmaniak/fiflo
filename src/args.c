@@ -3,16 +3,16 @@
 bool args__parse(int argc, char** argv)
 {
     // Notice: argv[0] is the program name.
-
-    const int max_files = 4;
-    const int argc_max  = 1 + max_files;
+    const int fname_arg_sz = 1;
+    const int max_files    = 4;
+    const int argc_max     = fname_arg_sz + max_files;
 
     if(argc > argc_max)
     {
-        fprintf(stderr, "Max. four additional args can be passed.\n");
+        fprintf(stderr, "Maximum four additional args can be passed.\n");
         return false;
     }
-    for(int arg_idx = 1; arg_idx < argc; arg_idx++)
+    for(int arg_idx = fname_arg_sz; arg_idx < argc; arg_idx++)
     {
         /* Can't use the "ARG_MAX", because clang 6.0.0 with "-Weverything"
            doesn't recognize it. */
@@ -25,7 +25,7 @@ bool args__parse(int argc, char** argv)
         }
         else
         {
-            fprintf(stderr, "Max. argument length: %u.\n",
+            fprintf(stderr, "A maximum argument's length is %u.\n",
                     PATH_MAX + NAME_MAX);
             return false;
         }

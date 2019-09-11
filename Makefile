@@ -12,6 +12,8 @@ ASAN_FLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 MSAN_FLAGS = -fsanitize=memory -fPIE -fno-omit-frame-pointer \
 -fsanitize-memory-track-origins
 
+CONF_FILE = $(TARGET)rc
+
 SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
@@ -86,23 +88,23 @@ install:
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
 	sudo $(RM) $(MAN_INS_DIR)1/$(TARGET).1.gz
-	sudo $(RM) $(MAN_INS_DIR)5/$(TARGET).conf.5.gz
+	sudo $(RM) $(MAN_INS_DIR)5/CONF_FILE.5.gz
 
 	sudo cp $(MAN_DIR)/$(TARGET).1 $(MAN_INS_DIR)1
-	sudo cp $(MAN_DIR)/$(TARGET).conf.5 $(MAN_INS_DIR)5
+	sudo cp $(MAN_DIR)/CONF_FILE.5 $(MAN_INS_DIR)5
 
 	sudo mkdir -p $(SYN_INS_DIR)
-	sudo cp $(SYN_DIR)/*.$(TARGET)rc $(SYN_INS_DIR)
+	sudo cp $(SYN_DIR)/*.CONF_FILE $(SYN_INS_DIR)
 
 	sudo gzip $(MAN_INS_DIR)1/$(TARGET).1
-	sudo gzip $(MAN_INS_DIR)5/$(TARGET).conf.5
+	sudo gzip $(MAN_INS_DIR)5/CONF_FILE.5
 
 	sudo $(RM) -r $(DOC_INS_DIR)
 	sudo mkdir $(DOC_INS_DIR)
 	sudo cp LICENSE $(DOC_INS_DIR)
 	sudo cp $(DOC_DIR)/* $(DOC_INS_DIR)
 
-	sudo cp -n $(TARGET).conf $(CONF_DIR)
+	sudo cp -n CONF_FILE $(CONF_DIR)
 
 	@echo " "
 	@echo "Fiflo installed."
@@ -113,7 +115,7 @@ install_debug:
 	sudo cp $(BIN_DIR)/$(TARGET) $(USR_INS_DIR)/$(TARGET)
 
 	sudo mkdir -p $(SYN_INS_DIR)
-	sudo cp $(SYN_DIR)/*.$(TARGET)rc $(SYN_INS_DIR)
+	sudo cp $(SYN_DIR)/*.CONF_FILE $(SYN_INS_DIR)
 
 	@echo " "
 	@echo "Binary only installation with ASan and gcov support finished."
@@ -124,10 +126,10 @@ uninstall:
 
 	sudo $(RM) -r \
 	$(MAN_INS_DIR)1/$(TARGET).1.gz \
-	$(MAN_INS_DIR)5/$(TARGET).conf.5.gz \
+	$(MAN_INS_DIR)5/CONF_FILE.5.gz \
 	$(DOC_INS_DIR) \
 	$(SYN_INS_DIR) \
-	$(CONF_DIR)/$(TARGET).conf
+	$(CONF_DIR)/CONF_FILE
 
 	@echo " "
 	@echo "Fiflo uninstalled."

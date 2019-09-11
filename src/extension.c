@@ -11,19 +11,19 @@ int extension__recognize(const char* const basename)
         {
             ch_idx++;
         }
-        if(ch_idx != strlen(basename))
+        if(ch_idx != strlen(basename)) // Not at the end of the extension.
         {
             const char* const extension = &basename[ch_idx + dot_sz];
 
             if(!strcmp(extension, "c") || !strcmp(extension, "h"))
             {
-                return C;
+                return EXTENSION__C;
             }
             else if(!strcmp(extension, "py"))
             {
-                return PYTHON;
+                return EXTENSION__PYTHON;
             }
         }
     }
-    return NONE;
+    return EXTENSION__NONE;
 }

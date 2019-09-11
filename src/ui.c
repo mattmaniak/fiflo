@@ -7,16 +7,16 @@ void ui__set_color(const int* const value)
 }
 
 void ui__print_line_number(const Buff_t* const Buffer,
-                           const Conf_t* const Config, const idx_t line_idx,
+                           const Conf_t* const Config, const idx_t ln_idx,
                            const term_t line_num_length)
 {
     ui__set_color(&Config->Color_line_number.value);
 
-    if(line_idx == BUFFER__CURRENT_LINE_IDX)
+    if(ln_idx == BUFFER__ACTUAL_LINE_IDX)
     {
         ui__set_color(&Config->Color_line_number_current.value);
     }
-    printf("%*u ", line_num_length - SPACE_SZ, line_idx + IDX);
+    printf("%*u ", line_num_length - SPACE_SZ, ln_idx + IDX);
 
     ui__set_color(NULL);
 }
@@ -69,7 +69,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
     sprintf(punch_card, "%u", punch_card_width);
     sprintf(lbar_text, "[%u; %u]",
-            Buffer->lines_amount_idx - Buffer->cursor_rev_y + IDX,
+            Buffer->lines_amount - Buffer->cursor_rev_y + IDX,
             BUFFER__CURSOR_X + IDX);
 
     WRAP_LINE();
@@ -93,8 +93,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
             ui__set_color(NULL);
             WRAP_LINE();
         }
-        for(idx_t newline_idx = 0; newline_idx < 4 - additional_argc_idx - IDX;
-            newline_idx++)
+        for(idx_t ln_idx = 0; ln_idx < 4 - additional_argc_idx - IDX; ln_idx++)
         {
             WRAP_LINE();
         }
@@ -117,8 +116,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
                                + tmp_width;
         }
 
-        if((BUFFER__CURRENT_LINE_LEN > punch_card_width)
-           && (BUFFER__CURRENT_LINE[punch_card_width] != '\n'))
+        if((BUFFER__ACTUAL_LINE_LEN > punch_card_width)
+           && (BUFFER__ACTUAL_LINE[punch_card_width] != '\n'))
         {
             ui__set_color(&Config->Color_warning.value);
         }

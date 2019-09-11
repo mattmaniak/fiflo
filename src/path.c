@@ -2,8 +2,8 @@
 
 bool path__extract_pathname_from_arg(Buff_t* Buffer)
 {
-    size_t ch_idx             = 0;
-    size_t last_slash_pos_idx = 0;
+    size_t ch_idx         = 0;
+    size_t last_slash_pos = 0;
 
     while(Buffer->fname[ch_idx] != '\0')
     {
@@ -11,15 +11,15 @@ bool path__extract_pathname_from_arg(Buff_t* Buffer)
         {
             if(ch_idx == 0) // Cares about the absolute path.
             {
-                last_slash_pos_idx = 1;
+                last_slash_pos = 1;
                 break;
             }
-            last_slash_pos_idx = ch_idx;
+            last_slash_pos = ch_idx;
         }
         ch_idx++;
     }
-    strncpy(Buffer->pathname, Buffer->fname, last_slash_pos_idx);
-    Buffer->pathname[last_slash_pos_idx] = '\0';
+    strncpy(Buffer->pathname, Buffer->fname, last_slash_pos);
+    Buffer->pathname[last_slash_pos] = '\0';
 
     if(chdir(Buffer->pathname) == ERROR)
     {
@@ -38,19 +38,19 @@ bool path__extract_pathname_from_arg(Buff_t* Buffer)
 
 void path__extract_basename_from_arg(Buff_t* Buffer)
 {
-    size_t ch_idx             = strlen(Buffer->fname);
-    size_t last_slash_pos_idx = 0;
+    size_t ch_idx         = strlen(Buffer->fname);
+    size_t last_slash_pos = 0;
 
     while(ch_idx > 0)
     {
         if(Buffer->fname[ch_idx] == '/')
         {
-            last_slash_pos_idx = ch_idx + SLASH_SZ;
+            last_slash_pos = ch_idx + SLASH_SZ;
             break;
         }
         ch_idx--;
     }
-    strcpy(Buffer->basename, &Buffer->fname[last_slash_pos_idx]);
+    strcpy(Buffer->basename, &Buffer->fname[last_slash_pos]);
 }
 
 void path__merge_pathname_and_basename(Buff_t* Buffer)

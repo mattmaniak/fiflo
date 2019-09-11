@@ -147,7 +147,7 @@ bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
     static char  chars_sequence[INPUT__SEQ_MAX];
     static idx_t char_idx;
 
-    if((key == CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
+    if((key == KEYS__CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
     {
         Buffer->escape_sequence_on_input = true;
 

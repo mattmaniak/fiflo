@@ -11,11 +11,11 @@ bool syntax__load(Syntax_t* Syntax, const int extension)
 
     switch(extension)
     {
-    case C:
+    case EXTENSION__C:
         strcpy(fname, "/usr/share/fiflo/c.fiflorc");
         break;
 
-    case PYTHON:
+    case EXTENSION__PYTHON:
         strcpy(fname, "/usr/share/fiflo/python.fiflorc");
     }
 
@@ -48,7 +48,7 @@ bool syntax__load(Syntax_t* Syntax, const int extension)
 
 void syntax__sort(Syntax_t* Syntax)
 {
-    Syntax__Kwrd_t Temp_kwrd;
+    Syntax__Kwrd_t Tmp_kwrd;
 
     // Iterate through all keywords.
     for(idx_t kwrd_idx = 0; kwrd_idx < Syntax->kwrds_idx; kwrd_idx++)
@@ -61,10 +61,10 @@ void syntax__sort(Syntax_t* Syntax)
             if(strlen(Syntax->Keywords[kwrd_idx].keyword)
                < strlen(Syntax->Keywords[shift_idx].keyword))
             {
-                Temp_kwrd = Syntax->Keywords[kwrd_idx];
+                Tmp_kwrd = Syntax->Keywords[kwrd_idx];
 
                 Syntax->Keywords[kwrd_idx]  = Syntax->Keywords[shift_idx];
-                Syntax->Keywords[shift_idx] = Temp_kwrd;
+                Syntax->Keywords[shift_idx] = Tmp_kwrd;
             }
         }
     }

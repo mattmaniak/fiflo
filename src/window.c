@@ -61,9 +61,9 @@ void window__flush(void)
 void window__fill(const Buff_t* const Buffer, const Ui_t* const Ui)
 {
     // Fill an empty area below a text to adjust a position the lower bar.
-    if((Buffer->lines_amount_idx + IDX) < (idx_t) Ui->textarea_h)
+    if((Buffer->lines_amount + IDX) < (idx_t) Ui->textarea_h)
     {
-        for(idx_t line = Buffer->lines_amount_idx;
+        for(idx_t line = Buffer->lines_amount;
             line < (idx_t) (Ui->textarea_h - UI__LBAR_SZ); line++)
         {
             WRAP_LINE();
@@ -90,13 +90,13 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 
     if(!Modes->live_fname_edit)
     {
-        if(BUFFER__CURRENT_LINE_LEN < Ui->textarea_w)
+        if(BUFFER__ACTUAL_LINE_LEN < Ui->textarea_w)
         {
             // No horizontal scrolling.
             move_right = (const term_t)
                          (Ui->line_num_length + BUFFER__CURSOR_X);
         }
-        else if((BUFFER__CURRENT_LINE_LEN - Ui->textarea_w)
+        else if((BUFFER__ACTUAL_LINE_LEN - Ui->textarea_w)
                 >= Buffer->cursor_rev_x)
         {
             /* Last Ui->textarea_w chars are seen. Current line is scrolled,
@@ -109,9 +109,9 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
             move_right = (const term_t)
                          (Ui->line_num_length + BUFFER__CURSOR_X);
         }
-        move_up = (BUFFER__CURRENT_LINE_IDX < Ui->textarea_h) ?
+        move_up = (BUFFER__ACTUAL_LINE_IDX < Ui->textarea_h) ?
                   (const term_t)
-                  (Ui->textarea_h - BUFFER__CURRENT_LINE_IDX - IDX + Ui->lbar_h)
+                  (Ui->textarea_h - BUFFER__ACTUAL_LINE_IDX - IDX + Ui->lbar_h)
                   : Ui->lbar_h;
     }
     ANSI_CURSOR_RIGHT(move_right);
@@ -121,12 +121,12 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
                     const Mod_t* const Modes, const Syntax_t* const Syntax,
                     const idx_t additional_argc_idx,
-                    const idx_t current_file_idx)
+                    const idx_t actual_file_idx)
 {
     char line_num_str[16]; // Needed to count a length of a number.
     Ui_t Ui;
 
-    sprintf(line_num_str, "%u", Buffer->lines_amount_idx + IDX);
+    sprintf(line_num_str, "%u", Buffer->lines_amount + IDX);
 
     if(((Ui.win_w = window__get_terminal_sz('X')) == 0)
        || ((Ui.win_h = window__get_terminal_sz('Y')) == 0))
@@ -137,20 +137,20 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.lbar_h = (Modes->lbar_expanded) ? Ui.toggled_lbar_h : UI__LBAR_SZ;
 
     Ui.line_num_length = (const term_t) (strlen(line_num_str) + SPACE_SZ
-                         + UI__LEFT_PADDING);
+                                         + UI__LEFT_PADDING);
 
     Ui.textarea_w = (const term_t) (Ui.win_w - Ui.line_num_length);
     Ui.textarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
-    ui__upper_bar(&Buffer[current_file_idx], Config, &Ui);
+    ui__upper_bar(&Buffer[actual_file_idx], Config, &Ui);
 
-    print__display_text(&Buffer[current_file_idx], Config, Syntax, &Ui);
-    window__fill(&Buffer[current_file_idx], &Ui);
+    print__display_text(&Buffer[actual_file_idx], Config, Syntax, &Ui);
+    window__fill(&Buffer[actual_file_idx], &Ui);
 
     ui__lower_bar(Buffer, Config, Modes, &Ui, additional_argc_idx,
-                  current_file_idx);
+                  actual_file_idx);
 
-    window__set_cursor_pos(&Buffer[current_file_idx], Modes, &Ui);
+    window__set_cursor_pos(&Buffer[actual_file_idx], Modes, &Ui);
 
     return true;
 }

@@ -2,7 +2,7 @@
 
 bool config__load(Conf_t* Config)
 {
-    char conf_fname[] = "/etc/fiflo.conf";
+    char conf_fname[] = "/etc/fiflorc";
 
     if(access(conf_fname, F_OK) == ERROR) // There is no config file.
     {
@@ -15,7 +15,7 @@ bool config__load(Conf_t* Config)
 
         if(fclose(Config->File) == EOF)
         {
-            fprintf(stderr, "Can't close a config file.\n");
+            fprintf(stderr, "Unable to close a configuration file.\n");
             return false;
         }
     }
@@ -25,15 +25,14 @@ bool config__load(Conf_t* Config)
 void config__init_selectors(Conf_t* Config)
 {
     strcpy(Config->Color_current_file.selector, "color-current-file");
-    strcpy(Config->Color_line_number_current.selector,
-           "color-line-number-current");
-
     strcpy(Config->Color_line_number.selector,  "color-line-number");
     strcpy(Config->Color_text.selector,         "color-text");
     strcpy(Config->Color_ui.selector,           "color-ui");
     strcpy(Config->Color_warning.selector,      "color-warning");
     strcpy(Config->Color_whitespace.selector,   "color-whitespace");
     strcpy(Config->Tab_sz.selector,             "tab-size");
+    strcpy(Config->Color_line_number_current.selector,
+           "color-line-number-current");
 }
 
 bool config__parse_selector(Conf_t* Config, const char* const selector,
@@ -167,7 +166,7 @@ void config__load_custom(Conf_t* Config)
     const char space_or_control_char = 32;
     int        parsed_value = 0;
     char       line[80];
-    char       selector[48];
+    char       selector[CONFIG__SELECTOR_SZ];
     char       value[32];
 
     config__init_selectors(Config);
@@ -179,7 +178,7 @@ void config__load_custom(Conf_t* Config)
             continue;
         }
         // Splits a string around the " = ".
-        strncpy(selector, strtok(line, " = "), 48);
+        strncpy(selector, strtok(line, " = "), CONFIG__SELECTOR_SZ);
         strncpy(value,    strtok(NULL, " = "), 32);
 
         parsed_value = config__parse_value(value);

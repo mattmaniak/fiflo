@@ -12,29 +12,31 @@
 typedef enum
 {
     RED            = 31,
-    GREEN          = 32,
-    YELLOW         = 33,
-    BLUE           = 34,
-    MAGENTA        = 35,
-    CYAN           = 36,
-    WHITE          = 37,
+    GREEN,
+    YELLOW,
+    BLUE,
+    MAGENTA,
+    CYAN,
+    WHITE,
     BRIGHT_BLACK   = 90,
-    BRIGHT_RED     = 91,
-    BRIGHT_GREEN   = 92,
-    BRIGHT_YELLOW  = 93,
-    BRIGHT_BLUE    = 94,
-    BRIGHT_MAGENTA = 95,
-    BRIGHT_CYAN    = 96,
-    BRIGHT_WHITE   = 97
+    BRIGHT_RED,
+    BRIGHT_GREEN,
+    BRIGHT_YELLOW,
+    BRIGHT_BLUE,
+    BRIGHT_MAGENTA,
+    BRIGHT_CYAN,
+    BRIGHT_WHITE
 }
 Config__color_t;
 
 #define CONFIG__MIN_TAB_SZ 2
 #define CONFIG__MAX_TAB_SZ 8
 
+#define CONFIG__SELECTOR_SZ 48
+
 typedef struct
 {
-    char selector[32];
+    char selector[CONFIG__SELECTOR_SZ];
     int  value;
 }
 Opt_t;
@@ -53,19 +55,19 @@ typedef struct
 }
 Conf_t;
 
-// Open the "~/.config/fiflorc"
+// Open and load the specified configuration file.
 bool config__load(Conf_t*);
 
 // Set selectors names.
 void config__init_selectors(Conf_t*);
 
-// Check if a selector_in_file == expected_selector.
+// Check if a selector_in_file is equal to an expected_selector or not.
 bool config__parse_selector(Conf_t*, const char* const, const int);
 
 // Convert a word into an ASCII escape code.
 int config__parse_value(const char* const);
 
-// As in the name.
+// Apply a built-in default config ignoring any config files.
 void config__set_default(Conf_t*);
 
 // As above but read from a file.

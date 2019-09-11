@@ -6,32 +6,36 @@
 
 // Ancient ASCII control characters that can be used as keyboard shortcuts.
 
-#define CTRL_A             1   // Start of header
-#define CTRL_B             2   // Start of text.
-#define CTRL_C             3   // End of text.
-#define CTRL_D             4   // End of transmission.
-#define	CTRL_E             5   // Enquiry.
-#define CTRL_F             6   // Acknowledge.
-#define CTRL_M             13  // Carriage return. Converted to linefeed (10).
-#define CTRL_N             14  // Shift out.
-#define CTRL_O             15  // Shift in.
-#define CTRL_P             16  // Data link escape.
-#define CTRL_Q             17  // Device control 1 (xon).
-#define CTRL_R             18  // Device control 2.
-#define CTRL_S             19  // Device control 3 (xoff).
-#define CTRL_T             20  // Device control 4.
-#define CTRL_U             21  // Negative acknowledge.
-#define CTRL_V             22  // Synchronous idle.
-#define CTRL_W             23  // End of transmission block.
-#define CTRL_X             24  // Cancel.
-#define CTRL_Y             25  // End of medium.
-#define CTRL_Z             26  // Substitute.
-#define CTRL_LEFT_BRACKET  27  // Escape for ANSI codes.
-#define CTRL_BACKSLASH     28  // File separator.
-#define CTRL_RIGHT_BRACKET 29  // Group separator.
-#define CTRL_CARRET        30  // Record separator.
-#define CTRL_DASH          31  // Unit separator.
-#define BACKSPACE          127 // Delete. Backspace for real.
+enum
+{
+    KEYS__CTRL_A = 1,         // Start of header
+    KEYS__CTRL_B,             // Start of text.
+    KEYS__CTRL_C,             // End of text.
+    KEYS__CTRL_D,             // End of transmission.
+    KEYS__CTRL_E,             // Enquiry.
+    KEYS__CTRL_F,             // Acknowledge.
+    KEYS__CTRL_M = 13,        // Carriage return. Converted to linefeed (10).
+    KEYS__CTRL_N,             // Shift out.
+    KEYS__CTRL_O,             // Shift in.
+    KEYS__CTRL_P,             // Data link escape.
+    KEYS__CTRL_Q,             // Device control 1 (xon).
+    KEYS__CTRL_R,             // Device control 2.
+    KEYS__CTRL_S,             // Device control 3 (xoff).
+    KEYS__CTRL_T,             // Device control 4.
+    KEYS__CTRL_U,             // Negative acknowledge.
+    KEYS__CTRL_V,             // Synchronous idle.
+    KEYS__CTRL_W,             // End of transmission block.
+    KEYS__CTRL_X,             // Cancel.
+    KEYS__CTRL_Y,             // End of medium.
+    KEYS__CTRL_Z,             // Substitute.
+    KEYS__CTRL_LEFT_BRACKET,  // Escape for ANSI codes.
+    KEYS__CTRL_BACKSLASH,     // File separator.
+    KEYS__CTRL_RIGHT_BRACKET, // Group separator.
+    KEYS__CTRL_CARRET,        // Record separator.
+    KEYS__CTRL_DASH,          // Unit separator.
+    KEYS__BACKSPACE = 127,    // Delete. Backspace for real.
+};
+
 
 // These ones move the cursor.
 void keys__arrow_left(Buff_t*, const Conf_t* const);
