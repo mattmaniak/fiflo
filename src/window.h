@@ -21,13 +21,13 @@
 #define ANSI_CURSOR_LEFT(offset)  printf("\033[%uD", offset)
 
 // Returns current terminal width and height and exits if is wrong.
-term_t window__get_terminal_sz(const char);
+term_t window__get_term_sz(const char);
 
 // Clean a whole rendered window.
 void window__flush(void);
 
 // Vertical fill between a text and lower bar. If there isn't many lines.
-void window__fill(const Buff_t* const, const Ui_t* const);
+void window__fill(const Buff_t* const, const Conf_t* const, const Ui_t* const);
 
 // Sets the cursor position starting from a left bottom.
 void window__set_cursor_pos(const Buff_t* const, const Mod_t* const,

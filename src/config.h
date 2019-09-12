@@ -32,6 +32,10 @@ Config__color_t;
 #define CONFIG__MIN_TAB_SZ 2
 #define CONFIG__MAX_TAB_SZ 8
 
+#define CONFIG__PUNCH_CARD_W 80
+#define CONFIG__MIN_PUNCH_CARD_W 1
+#define CONFIG__MAX_PUNCH_CARD_W 1024
+
 #define CONFIG__SELECTOR_SZ 48
 
 typedef struct
@@ -51,6 +55,7 @@ typedef struct
     Opt_t Color_ui;
     Opt_t Color_warning;
     Opt_t Color_whitespace;
+    Opt_t Punch_card_width;
     Opt_t Tab_sz;
 }
 Conf_t;

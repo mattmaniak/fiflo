@@ -21,7 +21,7 @@ bool chars__parse_char(Buff_t* Buffer, const Conf_t* const Config,
         return file__save(Buffer, Config);
 
     case KEYS__CTRL_BACKSLASH:
-        Modes->lbar_expanded = !Modes->lbar_expanded;
+        Modes->expanded_lbar = !Modes->expanded_lbar;
         break;
 
     case KEYS__CTRL_D:

@@ -27,17 +27,17 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     ui__set_color(&Config->Color_ui.value);
     printf("%*s", UI__LEFT_PADDING, " ");
 
-    if(Buffer->fname_len < (size_t) (Ui->win_w - UI__RIGHT_PADDING))
+    if(Buffer->fname_len < (const size_t) (Ui->win_w - UI__RIGHT_PADDING))
     {
         puts(Buffer->fname);
     }
     else
     {
         // The filename is too long to show - scroll it.
-        for(size_t char_i = Buffer->fname_len - Ui->win_w
-            + UI__HORIZONTAL_PADDING; char_i < Buffer->fname_len; char_i++)
+        for(size_t ch_idx = Buffer->fname_len - Ui->win_w
+            + UI__HORIZONTAL_PADDING; ch_idx < Buffer->fname_len; ch_idx++)
         {
-            putchar(Buffer->fname[char_i]);
+            putchar(Buffer->fname[ch_idx]);
         }
         WRAP_LINE();
     }
@@ -45,7 +45,7 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
            (const int) (STATUS_MAX - strlen(Buffer->status) - SPACE_SZ
            + UI__GIT_LOGO_W), UI__GIT_LOGO);
 
-    if((term_t) strlen(Buffer->git_branch)
+    if((const term_t) strlen(Buffer->git_branch)
        < (Ui->win_w - UI__GIT_LOGO_W - STATUS_MAX - UI__HORIZONTAL_PADDING))
     {
         printf("%s", Buffer->git_branch);
@@ -73,11 +73,10 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
             BUFFER__CURSOR_X + IDX);
 
     WRAP_LINE();
-
     ui__set_color(NULL); // Resets a last line color.
     ui__set_color(&Config->Color_ui.value);
 
-    if(Modes->lbar_expanded)
+    if(Modes->expanded_lbar)
     {
         printf("%*sloaded files:", UI__LEFT_PADDING, "");
         WRAP_LINE();
@@ -98,30 +97,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
             WRAP_LINE();
         }
     }
-
     // Cursor position indicator (2D matrix).
     printf("%*s%.*s%*s", UI__LEFT_PADDING, "", STATUS_MAX, lbar_text,
-           (int) (STATUS_MAX - strlen(lbar_text)), "");
-
-    if((const idx_t) (Ui->textarea_w + UI__HORIZONTAL_PADDING)
-       > punch_card_width)
-    {
-        printf("%*s",
-               Ui->line_num_len + punch_card_width - STATUS_MAX - SPACE_SZ
-               - (term_t) strlen(punch_card), " ");
-
-        if(BUFFER__CURSOR_X >= Ui->textarea_w) // Scrolling.
-        {
-            punch_card_width = BUFFER__CURSOR_X + IDX - Ui->textarea_w
-                               + tmp_width;
-        }
-
-        if((BUFFER__ACTUAL_LINE_LEN > punch_card_width)
-           && (BUFFER__ACTUAL_LINE[punch_card_width] != '\n'))
-        {
-            ui__set_color(&Config->Color_warning.value);
-        }
-        printf("%d^", punch_card_width);
-    }
+           (const int) (STATUS_MAX - strlen(lbar_text)), "");
     ui__set_color(NULL);
 }

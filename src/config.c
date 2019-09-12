@@ -30,6 +30,7 @@ void config__init_selectors(Conf_t* Config)
     strcpy(Config->Color_ui.selector,          "color_ui");
     strcpy(Config->Color_warning.selector,     "color_warning");
     strcpy(Config->Color_whitespace.selector,  "color_whitespace");
+    strcpy(Config->Punch_card_width.selector,  "punch_card_width");
     strcpy(Config->Tab_sz.selector,            "tab_size");
     strcpy(Config->Color_line_number_actual.selector,
            "color_line_number_actual");
@@ -68,6 +69,10 @@ bool config__parse_selector(Conf_t* Config, const char* const selector,
         else if(!strcmp(Config->Color_whitespace.selector, selector))
         {
             Config->Color_whitespace.value = value;
+        }
+        else if(!strcmp(Config->Punch_card_width.selector, selector))
+        {
+            Config->Punch_card_width.value = value;
         }
     }
     else if(!strcmp(Config->Tab_sz.selector, selector))
@@ -114,35 +119,35 @@ int config__parse_value(const char* const read_value)
     {
         return WHITE;
     }
-    else if(!strcmp(read_value, "bright-black"))
+    else if(!strcmp(read_value, "bright_black"))
     {
         return BRIGHT_BLACK;
     }
-    else if(!strcmp(read_value, "bright-red"))
+    else if(!strcmp(read_value, "bright_red"))
     {
         return BRIGHT_RED;
     }
-    else if(!strcmp(read_value, "bright-green"))
+    else if(!strcmp(read_value, "bright_green"))
     {
         return BRIGHT_GREEN;
     }
-    else if(!strcmp(read_value, "bright-yellow"))
+    else if(!strcmp(read_value, "bright_yellow"))
     {
         return BRIGHT_YELLOW;
     }
-    else if(!strcmp(read_value, "bright-blue"))
+    else if(!strcmp(read_value, "bright_blue"))
     {
         return BRIGHT_BLUE;
     }
-    else if(!strcmp(read_value, "bright-magenta"))
+    else if(!strcmp(read_value, "bright_magenta"))
     {
         return BRIGHT_MAGENTA;
     }
-    else if(!strcmp(read_value, "bright-cyan"))
+    else if(!strcmp(read_value, "bright_cyan"))
     {
         return BRIGHT_CYAN;
     }
-    else if(!strcmp(read_value, "bright-white"))
+    else if(!strcmp(read_value, "bright_white"))
     {
         return BRIGHT_WHITE;
     }
@@ -158,6 +163,7 @@ void config__set_default(Conf_t* Config)
     Config->Color_ui.value                 = WHITE;
     Config->Color_warning.value            = RED;
     Config->Color_whitespace.value         = BRIGHT_BLACK;
+    Config->Punch_card_width.value         = CONFIG__PUNCH_CARD_W;
     Config->Tab_sz.value                   = CONFIG__MAX_TAB_SZ;
 }
 

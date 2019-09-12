@@ -27,11 +27,11 @@ typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 
 typedef struct
 {
-    term_t line_num_len;   // Dynamic width of line numbers.
-    term_t textarea_w;     // Horizontal space for a text (width: chars).
-    term_t textarea_h;     // Vertical space for a text (lines).
-    term_t lbar_h;         // Lower bar height (lines).
-    term_t toggled_lbar_h; // As above but toggled.
+    term_t line_num_len;    // Dynamic width of line numbers.
+    term_t textarea_w;      // Horizontal space for a text (width: chars).
+    term_t textarea_h;      // Vertical space for a text (lines).
+    term_t lbar_h;          // Lower bar height (lines).
+    term_t expanded_lbar_h; // As above but toggled.
     term_t win_w;
     term_t win_h;
 }

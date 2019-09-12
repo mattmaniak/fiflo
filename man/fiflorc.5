@@ -35,6 +35,9 @@ Actually it is only the punch card indicator.
 .B color_whitespace
 Tabs and spaces highlighting.
 .TP
+.B punch_card_width
+Horizontal offset of the vertical wrap guide line.
+.TP
 .B tab_size
 Equality of spaces that the tab key produces.
 .SH VALUES
@@ -48,6 +51,9 @@ with "color".
 .TP
 .B <2; 8>
 Available tab width.
+.TP
+.B <1; 1024>
+Available punch card width.
 .SH WRONG SYNTAX HANDLING
 If the selector or value is wrong or if there is no trailing newline at the end
 of the file, the default value will be applied. Else if the selector and value
