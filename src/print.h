@@ -16,10 +16,10 @@
 
 // Convert specifically implemented tabs into some renderable spaces.
 void print__line_with_tabs(const Buff_t* const, const Conf_t* const,
-                           const Syntax_t* const, const Ui_t* const,
-                           const idx_t, const idx_t, const idx_t);
+                           const Syntax_t* const, const idx_t, const idx_t,
+                           const idx_t);
 
-//
+// Show the vertical wrap guide.
 void print__punch_card(const Conf_t* const, const Ui_t* const, const idx_t);
 
 // Return value of hidden lines.

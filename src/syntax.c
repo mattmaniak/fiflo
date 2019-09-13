@@ -118,6 +118,7 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
 
     const bool allowed_sufix = (Line->text[end_paint_offset] == ' ')
                                || (Line->text[end_paint_offset] == '\n')
+                               || (Line->text[end_paint_offset] == '(')
                                || (Line->text[end_paint_offset] == '*');
 
     // A word at the beginning of the line.

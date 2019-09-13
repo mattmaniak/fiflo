@@ -1,6 +1,6 @@
 #include "file.h"
 
-bool file__set_name(Buff_t* Buffer, const char* const arg)
+bool file__set_name(Buff_t* const Buffer, const char* const arg)
 {
     size_t cw_dir_length;
 

@@ -156,9 +156,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     print__display_text(&Buffer[actual_file_idx], Config, Syntax, &Ui);
     window__fill(&Buffer[actual_file_idx], Config, &Ui);
 
-    ui__lower_bar(Buffer, Config, Modes, &Ui, additional_argc_idx,
-                  actual_file_idx);
-
+    ui__lower_bar(Buffer, Config, Modes, additional_argc_idx, actual_file_idx);
     window__set_cursor_pos(&Buffer[actual_file_idx], Modes, &Ui);
 
     return true;

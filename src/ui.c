@@ -58,14 +58,12 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 }
 
 void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
-                   const Mod_t* const Modes, const Ui_t* const Ui,
-                   const idx_t additional_argc_idx,
+                   const Mod_t* const Modes, const idx_t additional_argc_idx,
                    const idx_t actual_file_idx)
 {
-    idx_t       punch_card_width = 80;
-    const idx_t tmp_width        = punch_card_width;
-    char        punch_card[16];
-    char        lbar_text[STATUS_MAX];
+    idx_t punch_card_width = 80;
+    char  punch_card[16];
+    char  lbar_text[STATUS_MAX];
 
     sprintf(punch_card, "%u", punch_card_width);
     sprintf(lbar_text, "[%u; %u]",

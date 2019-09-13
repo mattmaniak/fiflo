@@ -14,7 +14,7 @@
 extern bool chars__printable_char(Buff_t*, const char);
 
 // Sets a filename. If basename is passed as arg actent path will be added.
-bool file__set_name(Buff_t*, const char* const);
+bool file__set_name(Buff_t* const, const char* const);
 
 // If there is tab char in a file, load e.g. 4 tabs to a memory.
 bool file__convert_tab_from_file(Buff_t*, const Conf_t* const, const char);
