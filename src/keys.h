@@ -38,17 +38,17 @@ enum
 
 
 // These ones move the cursor.
-void keys__arrow_left(Buff_t*, const Conf_t* const);
-void keys__arrow_right(Buff_t*, const Conf_t* const);
-void keys__arrow_up(Buff_t*);
-void keys__arrow_down(Buff_t*);
+void keys__arrow_left(Buff_t* const, const Conf_t* const);
+void keys__arrow_right(Buff_t* const, const Conf_t* const);
+void keys__arrow_up(Buff_t* const);
+void keys__arrow_down(Buff_t* const);
 
 // Skip whole words.
-void keys__ctrl_arrow_left(Buff_t*);
-void keys__ctrl_arrow_right(Buff_t*);
+void keys__ctrl_arrow_left(Buff_t* const);
+void keys__ctrl_arrow_right(Buff_t* const);
 
 // Scroll to the beginning/end of a file.
-void keys__ctrl_arrow_up(Buff_t*);
-void keys__ctrl_arrow_down(Buff_t*);
+void keys__ctrl_arrow_up(Buff_t* const);
+void keys__ctrl_arrow_down(Buff_t* const);
 
 #endif

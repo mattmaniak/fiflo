@@ -1,6 +1,6 @@
 #include "fiflo.h"
 
-void fiflo__run(int argc, char** argv)
+void fiflo__run(const int argc, char** const argv)
 {
     const size_t fname_arg_sz = 1;
 
@@ -46,7 +46,8 @@ void fiflo__run(int argc, char** argv)
 
     for(;;) // The main program loop.
     {
-        int recognized_extension = extension__recognize(Buffer->basename);
+        const int recognized_extension =
+        extension__recognize(Buffer->basename);
 
         if(Buffer->extension != recognized_extension)
         {

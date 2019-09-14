@@ -1,6 +1,6 @@
 #include "syntax.h"
 
-bool syntax__load(Syntax_t* Syntax, const int extension)
+bool syntax__load(Syntax_t* const Syntax, const int extension)
 {
     char  fname[64];
     char  keyword[SYNTAX__MAX_KWRD_LEN];
@@ -46,7 +46,7 @@ bool syntax__load(Syntax_t* Syntax, const int extension)
     return true;
 }
 
-void syntax__sort(Syntax_t* Syntax)
+void syntax__sort(Syntax_t* const Syntax)
 {
     Syntax__Kwrd_t Tmp_kwrd;
 

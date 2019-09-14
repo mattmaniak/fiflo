@@ -1,6 +1,6 @@
 #include "memory.h"
 
-bool memory__extend_line(Buff_t* Buffer, const idx_t ln_idx)
+bool memory__extend_line(Buff_t* const Buffer, const idx_t ln_idx)
 {
     idx_t memblk = BUFFER__MEMBLK;
     idx_t ln_len = Buffer->Lines[ln_idx].length;
@@ -30,7 +30,6 @@ bool memory__extend_line(Buff_t* Buffer, const idx_t ln_idx)
 #endif
 
     }
-
     if(Buffer->Lines[ln_idx].text == NULL)
     {
         fprintf(stderr, "Can't extend a memory block for the line %u.\n",
@@ -40,7 +39,7 @@ bool memory__extend_line(Buff_t* Buffer, const idx_t ln_idx)
     return true;
 }
 
-bool memory__shrink_current_line(Buff_t* Buffer)
+bool memory__shrink_current_line(Buff_t* const Buffer)
 {
     idx_t memblk = BUFFER__BASIC_MEMBLK;
 
@@ -73,7 +72,7 @@ bool memory__shrink_current_line(Buff_t* Buffer)
     return true;
 }
 
-bool memory__shrink_prev_line(Buff_t* Buffer)
+bool memory__shrink_prev_line(Buff_t* const Buffer)
 {
     idx_t memblk = BUFFER__BASIC_MEMBLK;
 
@@ -103,7 +102,7 @@ bool memory__shrink_prev_line(Buff_t* Buffer)
     return true;
 }
 
-bool memory__extend_lines_array(Buff_t* Buffer)
+bool memory__extend_lines_array(Buff_t* const Buffer)
 {
     // Enhance the array that contains pointers to lines.
     Buffer->Lines = realloc(Buffer->Lines, (Buffer->lines_amount + IDX)
@@ -127,7 +126,7 @@ bool memory__extend_lines_array(Buff_t* Buffer)
     return true;
 }
 
-bool memory__shrink_lines_array(Buff_t* Buffer)
+bool memory__shrink_lines_array(Buff_t* const Buffer)
 {
     Buffer->Lines = realloc(Buffer->Lines, (Buffer->lines_amount + IDX)
                             * sizeof(Line_t));
@@ -140,7 +139,7 @@ bool memory__shrink_lines_array(Buff_t* Buffer)
     return true;
 }
 
-bool memory__copy_lines_forward(Buff_t* Buffer)
+bool memory__copy_lines_forward(Buff_t* const Buffer)
 {
     for(idx_t ln_idx = Buffer->lines_amount; ln_idx > BUFFER__ACTUAL_LINE_IDX;
         ln_idx--)
@@ -168,7 +167,7 @@ bool memory__copy_lines_forward(Buff_t* Buffer)
     return true;
 }
 
-bool memory__copy_lines_backward(Buff_t* Buffer)
+bool memory__copy_lines_backward(Buff_t* const Buffer)
 {
     for(idx_t ln_idx = BUFFER__ACTUAL_LINE_IDX; ln_idx < Buffer->lines_amount;
         ln_idx++)

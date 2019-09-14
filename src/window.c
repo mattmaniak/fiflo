@@ -6,7 +6,7 @@ term_t window__get_term_sz(const char axis)
     const int sz_max  = USHRT_MAX;
     const int h_min   = UI__UBAR_SZ + line_sz + UI__TOGGLED_LBAR_H;
     const int w_min   = UI__GIT_LOGO_W + SPACE_SZ + UI__GIT_BRANCH_MIN_W
-                        + SPACE_SZ + STATUS_MAX + UI__HORIZONTAL_PADDING;
+                        + SPACE_SZ + BUFFER__STATUS_MAX + UI__HORIZONTAL_PADDING;
 
     const struct winsize terminal;
 

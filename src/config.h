@@ -57,25 +57,27 @@ typedef struct
     Opt_t Color_whitespace;
     Opt_t Punch_card_width;
     Opt_t Tab_sz;
+
+    const int32_t _padding;
 }
 Conf_t;
 
 // Open and load the specified configuration file.
-bool config__load(Conf_t*);
+bool config__load(Conf_t* const);
 
 // Set selectors names.
-void config__init_selectors(Conf_t*);
+void config__init_selectors(Conf_t* const);
 
 // Check if a selector_in_file is equal to an expected_selector or not.
-bool config__parse_selector(Conf_t*, const char* const, const int);
+bool config__parse_selector(Conf_t* const, const char* const, const int);
 
 // Convert a word into an ASCII escape code.
 int config__parse_value(const char* const);
 
 // Apply a built-in default config ignoring any config files.
-void config__set_default(Conf_t*);
+void config__set_default(Conf_t* const);
 
 // As above but read from a file.
-void config__load_custom(Conf_t*);
+void config__load_custom(Conf_t* const);
 
 #endif

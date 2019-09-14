@@ -1,6 +1,6 @@
 #include "args.h"
 
-bool args__parse(int argc, char** argv)
+bool args__parse(const int argc, char** const argv)
 {
     // Notice: argv[0] is the program name.
     const int fname_arg_sz = 1;

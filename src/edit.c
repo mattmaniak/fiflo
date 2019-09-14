@@ -215,11 +215,11 @@ void edit__filename(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
     else if(key == enter)
     {
         Modes->live_fname_edit = false;
-        SET_STATUS("saved as with a different name");
+        BUFFER__SET_STATUS("saved as with a different name");
 
         if(!strcmp(Buffer->fname, Buffer->fname_copy))
         {
-            SET_STATUS("saved as");
+            BUFFER__SET_STATUS("saved as");
         }
         file__save(Buffer, Config);
         strncpy(Buffer->fname_copy, Buffer->fname, PATH_MAX);
@@ -230,6 +230,6 @@ void edit__filename(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
         Buffer->fname_len = strlen(Buffer->fname);
 
         Modes->live_fname_edit = false;
-        SET_STATUS("filename unchanged");
+        BUFFER__SET_STATUS("filename unchanged");
     }
 }

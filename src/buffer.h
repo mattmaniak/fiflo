@@ -28,8 +28,9 @@
 // Max amount of chars: (16 MB - 1). Newline is also a char.
 #define CHARS_MAX (UINT_MAX / 256)
 
-#define STATUS_MAX      32
-#define SET_STATUS(msg) strncpy(Buffer->status, msg, STATUS_MAX - IDX)
+#define BUFFER__STATUS_MAX      32
+#define BUFFER__SET_STATUS(msg) \
+strncpy(Buffer->status, msg, BUFFER__STATUS_MAX - IDX)
 
 typedef struct
 {
@@ -62,7 +63,7 @@ typedef struct
     // Visual shit.
     idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
     idx_t    cursor_rev_y;       // As above but in Y-axis.
-    char     status[STATUS_MAX]; // Message displayed in a upper bar.
+    char     status[BUFFER__STATUS_MAX]; // Message displayed in a upper bar.
 }
 Buff_t;
 
@@ -118,9 +119,9 @@ Buffer->Lines[BUFFER__PREV_LINE_IDX].length
 (Buffer->cursor_rev_y == Buffer->lines_amount)
 
 // Initializes all Buffer structure members.
-bool buffer__init(Buff_t*);
+bool buffer__init(Buff_t* const);
 
 // Display a error message and exit.
-void buffer__free(Buff_t*);
+void buffer__free(Buff_t* const);
 
 #endif

@@ -15,7 +15,7 @@
 bool chars__parse_char(Buff_t*, const Conf_t* const, Mod_t*, const char);
 
 // Add a char when a pressed key is a printable one.
-bool chars__printable_char(Buff_t*, const char);
+bool chars__printable_char(Buff_t* const, const char);
 
 // Initialize a new line.
 bool chars__linefeed(Buff_t*);

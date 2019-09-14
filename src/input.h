@@ -18,11 +18,11 @@
 char input__getch(void);
 
 // Converts a given letter by the parse_key and chooses the cursor direction.
-void input__recognize_sequence(Buff_t*, const Conf_t* const, const char* const,
-                               size_t*);
+void input__recognize_sequence(Buff_t* const, const Conf_t* const,
+                               const char* const, size_t* const);
 
 // Saves a last pressed key to a temponary buffer and analyzes it.
-bool input__parse_key(Buff_t*, const Conf_t* const, Mod_t*, size_t*,
-                      const char);
+bool input__parse_key(Buff_t* const, const Conf_t* const, Mod_t* const,
+                      size_t* const, const char);
 
 #endif

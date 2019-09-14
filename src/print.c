@@ -62,7 +62,8 @@ void print__punch_card(const Conf_t* const Config, const Ui_t* const Ui,
     if((Ui->textarea_w >= Config->Punch_card_width.value)
        && ((ln_len + IDX) < (const idx_t) Config->Punch_card_width.value))
     {
-        printf("%*s", Config->Punch_card_width.value - ln_len - IDX, " ");
+        printf("%*s", (const unsigned int)
+               Config->Punch_card_width.value - ln_len - IDX, " ");
         printf("\033[%um \033[0m", 7); // Invert color.
     }
 }

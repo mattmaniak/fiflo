@@ -1,6 +1,6 @@
 #include "config.h"
 
-bool config__load(Conf_t* Config)
+bool config__load(Conf_t* const Config)
 {
     char conf_fname[] = "/etc/fiflorc";
 
@@ -22,7 +22,7 @@ bool config__load(Conf_t* Config)
     return true;
 }
 
-void config__init_selectors(Conf_t* Config)
+void config__init_selectors(Conf_t* const Config)
 {
     strcpy(Config->Color_actual_file.selector, "color_actual_file");
     strcpy(Config->Color_line_number.selector, "color_line_number");
@@ -36,7 +36,7 @@ void config__init_selectors(Conf_t* Config)
            "color_line_number_actual");
 }
 
-bool config__parse_selector(Conf_t* Config, const char* const selector,
+bool config__parse_selector(Conf_t* const Config, const char* const selector,
                             const int value)
 {
     // Adds a value to a found selector in a configuration structure.
@@ -154,7 +154,7 @@ int config__parse_value(const char* const read_value)
     return 0;
 }
 
-void config__set_default(Conf_t* Config)
+void config__set_default(Conf_t* const Config)
 {
     Config->Color_actual_file.value        = BRIGHT_BLACK;
     Config->Color_line_number.value        = WHITE;
@@ -167,7 +167,7 @@ void config__set_default(Conf_t* Config)
     Config->Tab_sz.value                   = CONFIG__MAX_TAB_SZ;
 }
 
-void config__load_custom(Conf_t* Config)
+void config__load_custom(Conf_t* const Config)
 {
     const char space_or_control_char = 32;
     int        parsed_value = 0;

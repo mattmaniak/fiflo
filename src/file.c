@@ -98,8 +98,8 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
     return true;
 }
 
-bool file__convert_tab_from_file(Buff_t* Buffer, const Conf_t* const Config,
-                                 const char ch)
+bool file__convert_tab_from_file(Buff_t* const Buffer,
+                                 const Conf_t* const Config, const char ch)
 {
     /* Converts in-file '\t' in to a sequence of e.g. "\t\t\t\t" if the Tab
        width is set to 4. */
@@ -117,20 +117,20 @@ bool file__convert_tab_from_file(Buff_t* Buffer, const Conf_t* const Config,
     return true;
 }
 
-bool file__load(Buff_t* Buffer, const Conf_t* const Config)
+bool file__load(Buff_t* const Buffer, const Conf_t* const Config)
 {
     FILE* Textfile;
     char  ch;
 
     if(Buffer->fname[Buffer->fname_len - NUL_SZ] == '/')
     {
-        SET_STATUS("current directory set");
+        BUFFER__SET_STATUS("current directory set");
         return true;
     }
 
     if((Textfile = fopen(Buffer->fname, "r")) == NULL)
     {
-        SET_STATUS("the file will be created");
+        BUFFER__SET_STATUS("the file will be created");
         return true;
     }
     while((ch = (char) getc(Textfile)) != EOF)
@@ -149,13 +149,14 @@ bool file__load(Buff_t* Buffer, const Conf_t* const Config)
         fprintf(stderr, "Can't close a textfile after load.\n");
         return false;
     }
-    SET_STATUS("read a file");
+    BUFFER__SET_STATUS("read a file");
 
     return true;
 }
 
-void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
-                               const idx_t ln_idx, idx_t* const ch_idx)
+void file__convert_tab_to_file(const Buff_t* const Buffer,
+                               const Conf_t* const Config, const idx_t ln_idx,
+                               idx_t* const ch_idx)
 {
     // Convert editor-friendly Tab, e.g. "\t\t\t\t" into a file-friendly '\t'.
     for(idx_t tab_idx = 0;
@@ -174,13 +175,13 @@ void file__convert_tab_to_file(Buff_t* Buffer, const Conf_t* const Config,
     }
 }
 
-bool file__save(Buff_t* Buffer, const Conf_t* const Config)
+bool file__save(Buff_t* const Buffer, const Conf_t* const Config)
 {
     FILE* Textfile = fopen(Buffer->fname, "w");
 
     if(Textfile == NULL)
     {
-        SET_STATUS("can't write to the file");
+        BUFFER__SET_STATUS("can't write to the file");
         return true;
     }
     for(idx_t ln_idx = 0; ln_idx <= Buffer->lines_amount; ln_idx++)
@@ -198,12 +199,12 @@ bool file__save(Buff_t* Buffer, const Conf_t* const Config)
         fprintf(stderr, "Can't close the textfile after save.\n");
         return false;
     }
-    SET_STATUS("saved");
+    BUFFER__SET_STATUS("saved");
 
     return true;
 }
 
-bool file__get_git_branch(Buff_t* Buffer)
+bool file__get_git_branch(Buff_t* const Buffer)
 {
     char  git_head_file_pathname[PATH_MAX + NAME_MAX];
     FILE* Git_head_file;

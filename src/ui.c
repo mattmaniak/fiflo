@@ -42,17 +42,19 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         WRAP_LINE();
     }
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status,
-           (const int) (STATUS_MAX - strlen(Buffer->status) - SPACE_SZ
+           (const int) (BUFFER__STATUS_MAX - strlen(Buffer->status) - SPACE_SZ
            + UI__GIT_LOGO_W), UI__GIT_LOGO);
 
     if((const term_t) strlen(Buffer->git_branch)
-       < (Ui->win_w - UI__GIT_LOGO_W - STATUS_MAX - UI__HORIZONTAL_PADDING))
+       < (Ui->win_w - UI__GIT_LOGO_W - BUFFER__STATUS_MAX
+          - UI__HORIZONTAL_PADDING))
     {
         printf("%s", Buffer->git_branch);
     }
     else
     {
-        printf("%.*s", Ui->win_w - STATUS_MAX - SPACE_SZ , Buffer->git_branch);
+        printf("%.*s", Ui->win_w - BUFFER__STATUS_MAX - SPACE_SZ ,
+               Buffer->git_branch);
     }
     WRAP_LINE();
 }
@@ -63,7 +65,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 {
     idx_t punch_card_width = 80;
     char  punch_card[16];
-    char  lbar_text[STATUS_MAX];
+    char  lbar_text[BUFFER__STATUS_MAX];
 
     sprintf(punch_card, "%u", punch_card_width);
     sprintf(lbar_text, "[%u; %u]",
@@ -96,7 +98,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         }
     }
     // Cursor position indicator (2D matrix).
-    printf("%*s%.*s%*s", UI__LEFT_PADDING, "", STATUS_MAX, lbar_text,
-           (const int) (STATUS_MAX - strlen(lbar_text)), "");
+    printf("%*s%.*s%*s", UI__LEFT_PADDING, "", BUFFER__STATUS_MAX, lbar_text,
+           (const int) (BUFFER__STATUS_MAX - strlen(lbar_text)), "");
     ui__set_color(NULL);
 }

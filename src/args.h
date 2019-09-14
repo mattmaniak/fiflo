@@ -11,6 +11,6 @@
 #include "options.h"
 
 // Analyzes argumets passed to the editor.
-bool args__parse(int, char**);
+bool args__parse(const int, char** const);
 
 #endif

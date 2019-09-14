@@ -49,7 +49,8 @@ char input__getch(void)
 }
 
 void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
-                               const char* const sequence, size_t* file_idx)
+                               const char* const sequence,
+                               size_t* const file_idx)
 {
     const size_t seq_length_max = 6;
 
@@ -141,8 +142,9 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
 
 }
 
-bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
-                      size_t* file_idx, const char key)
+bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
+                      Mod_t* const Modes,
+                      size_t* const file_idx, const char key)
 {
     static char  chars_sequence[INPUT__SEQ_MAX];
     static idx_t char_idx;

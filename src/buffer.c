@@ -1,6 +1,6 @@
 #include "buffer.h"
 
-bool buffer__init(Buff_t* Buffer)
+bool buffer__init(Buff_t* const Buffer)
 {
     if((Buffer->pathname = malloc(PATH_MAX)) == NULL)
     {
@@ -30,7 +30,7 @@ bool buffer__init(Buff_t* Buffer)
     return true;
 }
 
-void buffer__free(Buff_t* Buffer)
+void buffer__free(Buff_t* const Buffer)
 {
     for(idx_t ln_idx = 0; ln_idx <= Buffer->lines_amount; ln_idx++)
     {

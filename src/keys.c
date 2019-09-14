@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "keys.h"
 
-void keys__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
+void keys__arrow_left(Buff_t* const Buffer, const Conf_t* const Config)
 {
     const idx_t tab_sz = (const idx_t) Config->Tab_sz.value;
 
@@ -31,7 +31,7 @@ void keys__arrow_left(Buff_t* Buffer, const Conf_t* const Config)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
+void keys__arrow_right(Buff_t* const Buffer, const Conf_t* const Config)
 {
     const idx_t tab_sz = (const idx_t) Config->Tab_sz.value;
 
@@ -65,7 +65,7 @@ void keys__arrow_right(Buff_t* Buffer, const Conf_t* const Config)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__arrow_up(Buff_t* Buffer)
+void keys__arrow_up(Buff_t* const Buffer)
 {
     if(!BUFFER__CURSOR_AT_TOP)
     {
@@ -78,7 +78,7 @@ void keys__arrow_up(Buff_t* Buffer)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__arrow_down(Buff_t* Buffer)
+void keys__arrow_down(Buff_t* const Buffer)
 {
     bool cursor_at_previous_line_start = BUFFER__CURSOR_AT_LINE_BEGINNING;
 
@@ -100,7 +100,7 @@ void keys__arrow_down(Buff_t* Buffer)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__ctrl_arrow_left(Buff_t* Buffer)
+void keys__ctrl_arrow_left(Buff_t* const Buffer)
 {
     // Go to a previous line.
     if((BUFFER__CURSOR_X == 0)
@@ -158,7 +158,7 @@ void keys__ctrl_arrow_left(Buff_t* Buffer)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__ctrl_arrow_right(Buff_t* Buffer)
+void keys__ctrl_arrow_right(Buff_t* const Buffer)
 {
     // Go to a next line.
     if((Buffer->cursor_rev_x == 1) && BUFFER__CURSOR_Y_SCROLLED)
@@ -191,7 +191,7 @@ void keys__ctrl_arrow_right(Buff_t* Buffer)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__ctrl_arrow_up(Buff_t* Buffer)
+void keys__ctrl_arrow_up(Buff_t* const Buffer)
 {
     if(!BUFFER__CURSOR_AT_TOP)
     {
@@ -210,7 +210,7 @@ void keys__ctrl_arrow_up(Buff_t* Buffer)
     Buffer->escape_sequence_on_input = false;
 }
 
-void keys__ctrl_arrow_down(Buff_t* Buffer)
+void keys__ctrl_arrow_down(Buff_t* const Buffer)
 {
     if(Buffer->cursor_rev_y > 0) // Not at a bottom of the file.
     {

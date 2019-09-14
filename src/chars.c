@@ -62,7 +62,7 @@ bool chars__linefeed(Buff_t* Buffer)
     return true;
 }
 
-bool chars__printable_char(Buff_t* Buffer, const char ch)
+bool chars__printable_char(Buff_t* const Buffer, const char ch)
 {
 
 #ifdef DEBUG_KEYS
@@ -106,17 +106,17 @@ bool chars__printable_char(Buff_t* Buffer, const char ch)
             }
             if(ch != '\0')
             {
-                SET_STATUS("edited");
+                BUFFER__SET_STATUS("edited");
             }
         }
         else
         {
-            SET_STATUS("can't read or insert more chars");
+            BUFFER__SET_STATUS("can't read or insert more chars");
         }
     }
     else
     {
-        SET_STATUS("unsupported char(s)");
+        BUFFER__SET_STATUS("unsupported char(s)");
     }
     return true;
 }
@@ -192,7 +192,7 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
             break;
         }
     }
-    SET_STATUS("edited");
+    BUFFER__SET_STATUS("edited");
 
     return true;
 }
@@ -215,7 +215,7 @@ bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
     }
     else
     {
-        SET_STATUS("can't read or insert more tabs");
+        BUFFER__SET_STATUS("can't read or insert more tabs");
     }
     return true;
 }

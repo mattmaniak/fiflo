@@ -1,6 +1,6 @@
 #include "path.h"
 
-bool path__extract_pathname_from_arg(Buff_t* Buffer)
+bool path__extract_pathname_from_arg(Buff_t* const Buffer)
 {
     size_t ch_idx         = 0;
     size_t last_slash_pos = 0;
@@ -36,7 +36,7 @@ bool path__extract_pathname_from_arg(Buff_t* Buffer)
     return true;
 }
 
-void path__extract_basename_from_arg(Buff_t* Buffer)
+void path__extract_basename_from_arg(Buff_t* const Buffer)
 {
     size_t ch_idx         = strlen(Buffer->fname);
     size_t last_slash_pos = 0;
@@ -53,7 +53,7 @@ void path__extract_basename_from_arg(Buff_t* Buffer)
     strcpy(Buffer->basename, &Buffer->fname[last_slash_pos]);
 }
 
-void path__merge_pathname_and_basename(Buff_t* Buffer)
+void path__merge_pathname_and_basename(Buff_t* const Buffer)
 {
     strcpy(Buffer->fname, Buffer->pathname);
 
