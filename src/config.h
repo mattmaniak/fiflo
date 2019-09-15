@@ -7,27 +7,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "ansi.h"
 #include "buffer.h"
-
-typedef enum
-{
-    RED            = 31,
-    GREEN,
-    YELLOW,
-    BLUE,
-    MAGENTA,
-    CYAN,
-    WHITE,
-    BRIGHT_BLACK   = 90,
-    BRIGHT_RED,
-    BRIGHT_GREEN,
-    BRIGHT_YELLOW,
-    BRIGHT_BLUE,
-    BRIGHT_MAGENTA,
-    BRIGHT_CYAN,
-    BRIGHT_WHITE
-}
-Config__color_t;
 
 #define CONFIG__MIN_TAB_SZ 2
 #define CONFIG__MAX_TAB_SZ 8

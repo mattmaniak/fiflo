@@ -14,20 +14,22 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         // Whitespace highlighting.
         if(ch == '\t')
         {
-            ui__set_color(&Config->Color_whitespace.value);
+            ui__colorize(&Config->Color_whitespace.value);
             if(ch_idx == 79)
             {
-                printf("\033[7m");
+                ui__colorize(&Config->Color_ui.value);
+                ANSI__INVERT();
             }
             putchar(PRINT__TAB_HIGHLIGHT);
             printf("\033[0m");
         }
         else if(ch == ' ')
         {
-            ui__set_color(&Config->Color_whitespace.value);
+            ui__colorize(&Config->Color_whitespace.value);
             if(ch_idx == 79)
             {
-                printf("\033[7m");
+                ui__colorize(&Config->Color_ui.value);
+                ANSI__INVERT();
             }
             putchar(PRINT__SPACE_HIGHLIGHT);
             printf("\033[0m");
@@ -39,10 +41,11 @@ void print__line_with_tabs(const Buff_t* const Buffer,
 
             if(ch_idx == ch_idx_after_highlighting)
             {
-                ui__set_color(&Config->Color_text.value);
+                ui__colorize(&Config->Color_text.value);
                 if(ch_idx == 79)
                 {
-                    printf("\033[7m");
+                    ui__colorize(&Config->Color_ui.value);
+                    ANSI__INVERT();
                 }
                 putchar(ch);
                 printf("\033[0m");
@@ -52,7 +55,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
                 ch_idx = ch_idx_after_highlighting;
             }
         }
-        ui__set_color(NULL);
+        ui__colorize(NULL);
     }
 }
 
@@ -64,7 +67,13 @@ void print__punch_card(const Conf_t* const Config, const Ui_t* const Ui,
     {
         printf("%*s", (const unsigned int)
                Config->Punch_card_width.value - ln_len - IDX, " ");
-        printf("\033[%um \033[0m", 7); // Invert color.
+
+        // printf("\033[%um \033[0m", 7); // Invert color.
+
+        ui__colorize(&Config->Color_ui.value);
+        ANSI__INVERT()
+        putchar(' ');
+        printf("\033[0m");
     }
 }
 

@@ -71,8 +71,12 @@ void window__fill(const Buff_t* const Buffer, const Conf_t* const Config,
 
             if(Ui->textarea_w >= Config->Punch_card_width.value)
             {
-                printf("%*s", Ui->line_num_len + Config->Punch_card_width.value - IDX, " ");
-                printf("\033[7m");
+                printf("%*s",
+                       Ui->line_num_len + Config->Punch_card_width.value - IDX,
+                       " ");
+
+                ui__colorize(&Config->Color_ui.value);
+                ANSI__INVERT();
                 putchar(' ');
                 printf("\033[0m");
             }
@@ -156,7 +160,8 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     print__display_text(&Buffer[actual_file_idx], Config, Syntax, &Ui);
     window__fill(&Buffer[actual_file_idx], Config, &Ui);
 
-    ui__lower_bar(Buffer, Config, Modes, additional_argc_idx, actual_file_idx);
+    ui__lower_bar(Buffer, Config, Modes, &Ui, additional_argc_idx,
+                  actual_file_idx);
     window__set_cursor_pos(&Buffer[actual_file_idx], Modes, &Ui);
 
     return true;

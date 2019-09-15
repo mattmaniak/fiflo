@@ -1,6 +1,6 @@
 #include "ui.h"
 
-void ui__set_color(const int* const value)
+void ui__colorize(const int* const value)
 {
     // Reset to a default color or set am another one.
     printf("\033[%um", (value == NULL) ? 0 : *value);
@@ -10,26 +10,34 @@ void ui__print_line_number(const Buff_t* const Buffer,
                            const Conf_t* const Config, const idx_t ln_idx,
                            const term_t line_num_len)
 {
-    ui__set_color(&Config->Color_line_number.value);
+    ui__colorize(&Config->Color_ui.value);
+    ANSI__INVERT();
 
     if(ln_idx == BUFFER__ACTUAL_LINE_IDX)
     {
-        ui__set_color(&Config->Color_line_number_actual.value);
+        ui__colorize(NULL);
+        ui__colorize(&Config->Color_ui.value);
     }
-    printf("%*u ", line_num_len - SPACE_SZ, ln_idx + IDX);
+    printf("%*u", line_num_len - SPACE_SZ, ln_idx + IDX);
 
-    ui__set_color(NULL);
+    ui__colorize(NULL);
+    putchar(' ');
 }
 
 void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
                    const Ui_t* const Ui)
 {
-    ui__set_color(&Config->Color_ui.value);
+    const int fname_area  = Ui->win_w - UI__LEFT_PADDING - UI__RIGHT_PADDING;
+
+    ui__colorize(&Config->Color_ui.value);
+    ANSI__INVERT();
+    // ui__colorize(&Config->Color_ui.value);
     printf("%*s", UI__LEFT_PADDING, " ");
 
-    if(Buffer->fname_len < (const size_t) (Ui->win_w - UI__RIGHT_PADDING))
+    if(Buffer->fname_len <= (const int) fname_area)
     {
-        puts(Buffer->fname);
+        printf("%s%*s", Buffer->fname,
+               fname_area - strlen(Buffer->fname) + UI__RIGHT_PADDING, " ");
     }
     else
     {
@@ -39,6 +47,7 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         {
             putchar(Buffer->fname[ch_idx]);
         }
+        printf("%*s", UI__RIGHT_PADDING, " ");
         WRAP_LINE();
     }
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status,
@@ -49,7 +58,9 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
        < (Ui->win_w - UI__GIT_LOGO_W - BUFFER__STATUS_MAX
           - UI__HORIZONTAL_PADDING))
     {
-        printf("%s", Buffer->git_branch);
+        printf("%s%*s", Buffer->git_branch,
+               fname_area - BUFFER__STATUS_MAX - strlen(Buffer->git_branch)
+               - UI__GIT_LOGO_W + UI__LEFT_PADDING + UI__RIGHT_PADDING, " ");
     }
     else
     {
@@ -60,45 +71,73 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 }
 
 void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
-                   const Mod_t* const Modes, const idx_t additional_argc_idx,
+                   const Mod_t* const Modes, const Ui_t* const Ui,
+                   const idx_t additional_argc_idx,
                    const idx_t actual_file_idx)
 {
-    idx_t punch_card_width = 80;
-    char  punch_card[16];
-    char  lbar_text[BUFFER__STATUS_MAX];
+    const int  fname_area  = Ui->win_w - UI__LEFT_PADDING - UI__RIGHT_PADDING;
+    const char files_str[] = "loaded files";
+    idx_t      punch_card_w = 80;
+    char       punch_card[16];
+    char       cursor_pos_indicator[BUFFER__STATUS_MAX];
 
-    sprintf(punch_card, "%u", punch_card_width);
-    sprintf(lbar_text, "[%u; %u]",
+    sprintf(punch_card, "%u", punch_card_w);
+    sprintf(cursor_pos_indicator, "[%u; %u]",
             Buffer->lines_amount - Buffer->cursor_rev_y + IDX,
             BUFFER__CURSOR_X + IDX);
 
     WRAP_LINE();
-    ui__set_color(NULL); // Resets a last line color.
-    ui__set_color(&Config->Color_ui.value);
+    ui__colorize(NULL); // Resets a last line color.
+    ui__colorize(&Config->Color_ui.value);
 
     if(Modes->expanded_lbar)
     {
-        printf("%*sloaded files:", UI__LEFT_PADDING, "");
+        ANSI__INVERT();
+
+        printf("%*s%s%*s", UI__LEFT_PADDING, " ", files_str,
+               fname_area - strlen(files_str) + UI__RIGHT_PADDING, " ");
         WRAP_LINE();
 
         for(idx_t file_idx = 0; file_idx <= additional_argc_idx; file_idx++)
         {
             if(file_idx == actual_file_idx)
             {
-                ui__set_color(&Config->Color_actual_file.value);
+                ANSI__INVERT();
+                // ui__colorize(&Config->Color_actual_file.value);
+                ui__colorize(NULL);
             }
-            printf("%*s%s", UI__LEFT_PADDING, "", Buffer[file_idx].fname);
+            ui__colorize(&Config->Color_ui.value);
+            printf("%*s", UI__LEFT_PADDING, " ");
 
-            ui__set_color(NULL);
+            if(strlen(Buffer[file_idx].fname) <= fname_area)
+            {
+                printf("%s%*s", Buffer[file_idx].fname,
+                       fname_area - strlen(Buffer[file_idx].fname), " ");
+            }
+            else
+            {
+                printf("%.*s", fname_area, Buffer[file_idx].fname);
+            }
+
+            printf("%*s", UI__RIGHT_PADDING, " ");
+            ui__colorize(NULL);
             WRAP_LINE();
         }
         for(idx_t ln_idx = 0; ln_idx < 4 - additional_argc_idx - IDX; ln_idx++)
         {
+            ui__colorize(&Config->Color_ui.value);
+            ANSI__INVERT();
+            printf("%*s", Ui->win_w, " ");
+            ui__colorize(NULL);
             WRAP_LINE();
         }
     }
+    ui__colorize(&Config->Color_ui.value);
+    ANSI__INVERT();
+
     // Cursor position indicator (2D matrix).
-    printf("%*s%.*s%*s", UI__LEFT_PADDING, "", BUFFER__STATUS_MAX, lbar_text,
-           (const int) (BUFFER__STATUS_MAX - strlen(lbar_text)), "");
-    ui__set_color(NULL);
+    printf("%*s%s%*s", UI__LEFT_PADDING, " ", cursor_pos_indicator,
+           (const int) (Ui->win_w - UI__LEFT_PADDING
+           - strlen(cursor_pos_indicator)), " ");
+    ui__colorize(NULL);
 }

@@ -38,7 +38,7 @@ typedef struct
 Ui_t;
 
 // Used to style a UI.
-void ui__set_color(const int* const);
+void ui__colorize(const int* const);
 
 // Prints a line number.
 void ui__print_line_number(const Buff_t* const, const Conf_t* const,
@@ -49,6 +49,7 @@ void ui__upper_bar(const Buff_t* const, const Conf_t* const, const Ui_t* const);
 
 // Renders the lower bar that contains keyboard info.
 void ui__lower_bar(const Buff_t* const, const Conf_t* const,
-                   const Mod_t* const, const idx_t, const idx_t);
+                   const Mod_t* const, const Ui_t* const, const idx_t,
+                   const idx_t);
 
 #endif

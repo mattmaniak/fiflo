@@ -12,11 +12,12 @@ v4.1.0 (2019, WIP):
 - file extension recognition,
 - syntax highlighting,
 - visible vertical punch card,
-- horizontal scroll rendering fix,
-- selectors' names in the configuration file.
+- horizontal scroll rendering fix (TODO),
+- selectors' names change in the configuration file,
+- inverted color UI with a configurable color.
 
 v4.0.0 (2019, June 18):
-- vertical Arrows^Ctrl scroll paragraphs now,
+- vertical Arrows^Ctrl shortcut scrolls paragraphs now,
 - simplified text management API,
 - possibility to open, edit and switch up to 4 files simultaneously,
 - cursor position indicator [x, y],

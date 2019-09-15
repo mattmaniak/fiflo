@@ -98,7 +98,7 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax, Line_t* Line,
                 if(ch_idx == 79)
                 {
                     printf("\033[0m");
-                    ui__set_color(&Syntax->Keywords[kwrd_idx].color);
+                    ui__colorize(&Syntax->Keywords[kwrd_idx].color);
                 }
             }
             ch_idx--;
@@ -125,7 +125,7 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
     if((ch_idx == 0) && (allowed_sufix
                          || (Line->text[end_paint_offset] == ':')))
     {
-        ui__set_color(&Syntax->Keywords[kwrd_idx].color);
+        ui__colorize(&Syntax->Keywords[kwrd_idx].color);
     }
     // Another word somewhere in a text.
     else if(((Line->text[ch_idx - PREV] == ' ')
@@ -133,7 +133,7 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
              || (Line->text[ch_idx - PREV] == '('))
             && (allowed_sufix || (Line->text[end_paint_offset] == ')')))
     {
-        ui__set_color(&Syntax->Keywords[kwrd_idx].color);
+        ui__colorize(&Syntax->Keywords[kwrd_idx].color);
     }
     return end_paint_offset;
 }
