@@ -87,22 +87,20 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax, Line_t* Line,
         {
             end_paint_offset = syntax__check_word_to_paint(Syntax, Line,
                                                            ch_idx, kwrd_idx);
-
             for(; ch_idx < end_paint_offset; ch_idx++)
             {
                 if(ch_idx == 79)
                 {
-                    printf("\033[7m");
+                    ANSI__INVERT();
                 }
                 putchar(Line->text[ch_idx]);
                 if(ch_idx == 79)
                 {
-                    printf("\033[0m");
+                    ui__colorize(NULL);
                     ui__colorize(&Syntax->Keywords[kwrd_idx].color);
                 }
             }
             ch_idx--;
-
             break;
         }
     }

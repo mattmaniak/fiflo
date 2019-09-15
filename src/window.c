@@ -69,16 +69,19 @@ void window__fill(const Buff_t* const Buffer, const Conf_t* const Config,
         {
             WRAP_LINE();
 
-            if(Ui->textarea_w >= Config->Punch_card_width.value)
+            if(Ui->textarea_w >= (Ui->actual_punch_card_pos
+                                  + Config->Punch_card_width.value))
             {
-                printf("%*s",
-                       Ui->line_num_len + Config->Punch_card_width.value - IDX,
-                       " ");
+                if(-Ui->actual_punch_card_pos < Config->Punch_card_width.value)
+                {
+                    printf("%*s", Ui->line_num_len + Ui->actual_punch_card_pos
+                           + Config->Punch_card_width.value - IDX, " ");
 
-                ui__colorize(&Config->Color_ui.value);
-                ANSI__INVERT();
-                putchar(' ');
-                printf("\033[0m");
+                    ui__colorize(&Config->Color_ui.value);
+                    ANSI__INVERT();
+                    putchar(' ');
+                    ui__colorize(NULL);
+                }
             }
         }
     }
@@ -155,6 +158,12 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.textarea_w = (const term_t) (Ui.win_w - Ui.line_num_len);
     Ui.textarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
+    Ui.actual_punch_card_pos = Ui.textarea_w + Buffer->cursor_rev_x
+                               - BUFFER__ACTUAL_LINE_LEN - IDX;
+    if(Ui.actual_punch_card_pos > 0)
+    {
+        Ui.actual_punch_card_pos = 0;
+    }
     ui__upper_bar(&Buffer[actual_file_idx], Config, &Ui);
 
     print__display_text(&Buffer[actual_file_idx], Config, Syntax, &Ui);

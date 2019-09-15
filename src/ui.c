@@ -83,7 +83,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
     sprintf(punch_card, "%u", punch_card_w);
     sprintf(cursor_pos_indicator, "[%u; %u]",
-            Buffer->lines_amount - Buffer->cursor_rev_y + IDX,
+            Buffer[actual_file_idx].lines_amount
+            - Buffer[actual_file_idx].cursor_rev_y + IDX,
             BUFFER__CURSOR_X + IDX);
 
     WRAP_LINE();
@@ -100,13 +101,15 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
         for(idx_t file_idx = 0; file_idx <= additional_argc_idx; file_idx++)
         {
+            ui__colorize(NULL);
+            ui__colorize(&Config->Color_ui.value);
+            ANSI__INVERT();
+
             if(file_idx == actual_file_idx)
             {
-                ANSI__INVERT();
-                // ui__colorize(&Config->Color_actual_file.value);
                 ui__colorize(NULL);
+                ui__colorize(&Config->Color_ui.value);
             }
-            ui__colorize(&Config->Color_ui.value);
             printf("%*s", UI__LEFT_PADDING, " ");
 
             if(strlen(Buffer[file_idx].fname) <= fname_area)
@@ -118,9 +121,7 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
             {
                 printf("%.*s", fname_area, Buffer[file_idx].fname);
             }
-
             printf("%*s", UI__RIGHT_PADDING, " ");
-            ui__colorize(NULL);
             WRAP_LINE();
         }
         for(idx_t ln_idx = 0; ln_idx < 4 - additional_argc_idx - IDX; ln_idx++)
