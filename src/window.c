@@ -105,12 +105,12 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 
     if(!Modes->live_fname_edit)
     {
-        if(BUFFER__ACTUAL_LINE_LEN < Ui->textarea_w)
+        if(BUFFER__ACTUAL_LINE.len < Ui->textarea_w)
         {
             // No horizontal scrolling.
             move_right = (const term_t) (Ui->line_num_len + BUFFER__CURSOR_X);
         }
-        else if((BUFFER__ACTUAL_LINE_LEN - Ui->textarea_w)
+        else if((BUFFER__ACTUAL_LINE.len - Ui->textarea_w)
                 >= Buffer->cursor_rev_x)
         {
             /* Last Ui->textarea_w chars are seen. Current line is scrolled,
@@ -158,7 +158,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.textarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
     Ui.actual_punch_card_pos = Ui.textarea_w + Buffer->cursor_rev_x
-                               - BUFFER__ACTUAL_LINE_LEN - IDX;
+                               - BUFFER__ACTUAL_LINE.len - IDX;
     if(Ui.actual_punch_card_pos > 0)
     {
         Ui.actual_punch_card_pos = 0;

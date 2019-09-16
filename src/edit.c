@@ -9,7 +9,7 @@ bool edit__delete_char(Buff_t* Buffer)
         {
             return false;
         }
-        BUFFER__ACTUAL_LINE_LEN--;
+        BUFFER__ACTUAL_LINE.len--;
         Buffer->chars_amount--;
     }
     // Deletes a non-empty line and copy chars to previous.
@@ -57,7 +57,7 @@ bool edit__delete_line(Buff_t* Buffer)
             /* With a last line deletion there is a need to remove the
                linefeed in a previous line. */
             BUFFER__LAST_LINE.len--;
-            BUFFER__LAST_LINE.text[BUFFER__LAST_LINE.len] = '\0';
+            BUFFER__LAST_LINE.txt[BUFFER__LAST_LINE.len] = '\0';
 
             Buffer->cursor_rev_x = 0;
         }
@@ -65,10 +65,10 @@ bool edit__delete_line(Buff_t* Buffer)
     else
     {
         BUFFER__LAST_LINE.len = 0;
-        BUFFER__LAST_LINE.text[BUFFER__LAST_LINE.len] = '\0';
+        BUFFER__LAST_LINE.txt[BUFFER__LAST_LINE.len] = '\0';
 
-        BUFFER__LAST_LINE.text = realloc(BUFFER__LAST_LINE.text, BUFFER__BASIC_MEMBLK);
-        if(BUFFER__LAST_LINE.text == NULL)
+        BUFFER__LAST_LINE.txt = realloc(BUFFER__LAST_LINE.txt, BUFFER__BASIC_MEMBLK);
+        if(BUFFER__LAST_LINE.txt == NULL)
         {
             fprintf(stderr, "Can't realloc a memory in a first line.\n");
         }
@@ -84,25 +84,27 @@ void edit__shift_text_horizonally(Buff_t* Buffer, const char direction)
     switch(direction)
     {
     case 'l':
-        for(ch_idx = BUFFER__CURSOR_X; ch_idx <= BUFFER__ACTUAL_LINE_LEN;
+        for(ch_idx = BUFFER__CURSOR_X; ch_idx <= BUFFER__ACTUAL_LINE.len;
             ch_idx++)
         {
-            BUFFER__ACTUAL_LINE[ch_idx - PREV] = BUFFER__ACTUAL_LINE[ch_idx];
+            BUFFER__ACTUAL_LINE.txt[ch_idx - PREV] =
+            BUFFER__ACTUAL_LINE.txt[ch_idx];
         }
         break;
 
     case 'r':
-        for(ch_idx = BUFFER__ACTUAL_LINE_LEN; ch_idx >= BUFFER__CURSOR_X;
+        for(ch_idx = BUFFER__ACTUAL_LINE.len; ch_idx >= BUFFER__CURSOR_X;
             ch_idx--)
         {
-            BUFFER__ACTUAL_LINE[ch_idx] = BUFFER__ACTUAL_LINE[ch_idx - PREV];
+            BUFFER__ACTUAL_LINE.txt[ch_idx] =
+            BUFFER__ACTUAL_LINE.txt[ch_idx - PREV];
         }
     }
 }
 
 bool edit__move_lines_forward(Buff_t* Buffer)
 {
-    BUFFER__PREV_LINE_LEN -= Buffer->cursor_rev_x;
+    BUFFER__PREV_LINE.len -= Buffer->cursor_rev_x;
 
     // Move more lines vertically with a part of a current line.
     if(BUFFER__CURSOR_Y_SCROLLED)
@@ -111,15 +113,15 @@ bool edit__move_lines_forward(Buff_t* Buffer)
         {
             return false;
         }
-        BUFFER__ACTUAL_LINE_LEN = 0;
+        BUFFER__ACTUAL_LINE.len = 0;
     }
 
     // Move a right part (separated by the cursor) of a line to a next.
-    for(idx_t ch_idx = BUFFER__PREV_LINE_LEN;
-        ch_idx < BUFFER__PREV_LINE_LEN + Buffer->cursor_rev_x; ch_idx++)
+    for(idx_t ch_idx = BUFFER__PREV_LINE.len;
+        ch_idx < BUFFER__PREV_LINE.len + Buffer->cursor_rev_x; ch_idx++)
     {
-        BUFFER__LAST_CHAR_IN_LINE = BUFFER__PREV_LINE[ch_idx];
-        BUFFER__ACTUAL_LINE_LEN++;
+        BUFFER__LAST_CHAR_IN_LINE = BUFFER__PREV_LINE.txt[ch_idx];
+        BUFFER__ACTUAL_LINE.len++;
         if(!memory__extend_line(Buffer, BUFFER__ACTUAL_LINE_IDX))
         {
             return false;
@@ -127,7 +129,7 @@ bool edit__move_lines_forward(Buff_t* Buffer)
     }
 
     // Now a length of an upper line will be shrinked after copying.
-    BUFFER__PREV_LINE[BUFFER__PREV_LINE_LEN] = '\0';
+    BUFFER__PREV_LINE.txt[BUFFER__PREV_LINE.len] = '\0';
     if(!memory__shrink_prev_line(Buffer))
     {
         return false;
@@ -138,15 +140,15 @@ bool edit__move_lines_forward(Buff_t* Buffer)
 bool edit__move_lines_backward(Buff_t* Buffer)
 {
     Buffer->chars_amount--;
-    BUFFER__PREV_LINE_LEN--;
+    BUFFER__PREV_LINE.len--;
 
     // Merge a previous line with a next.
-    for(idx_t ch_idx = 0; ch_idx <= BUFFER__ACTUAL_LINE_LEN; ch_idx++)
+    for(idx_t ch_idx = 0; ch_idx <= BUFFER__ACTUAL_LINE.len; ch_idx++)
     {
-        BUFFER__PREV_LINE[BUFFER__PREV_LINE_LEN] = BUFFER__ACTUAL_LINE[ch_idx];
-        if(BUFFER__ACTUAL_LINE[ch_idx] != '\0')
+        BUFFER__PREV_LINE.txt[BUFFER__PREV_LINE.len] = BUFFER__ACTUAL_LINE.txt[ch_idx];
+        if(BUFFER__ACTUAL_LINE.txt[ch_idx] != '\0')
         {
-            BUFFER__PREV_LINE_LEN++;
+            BUFFER__PREV_LINE.len++;
         }
         if(!memory__extend_line(Buffer, BUFFER__PREV_LINE_IDX))
         {
@@ -170,7 +172,7 @@ bool edit__move_lines_backward(Buff_t* Buffer)
 
 bool edit__delete_last_empty_line(Buff_t* Buffer)
 {
-    free(BUFFER__ACTUAL_LINE);
+    free(BUFFER__ACTUAL_LINE.txt);
 
     Buffer->lines_amount--;
     if(!memory__shrink_current_line(Buffer))
@@ -178,7 +180,7 @@ bool edit__delete_last_empty_line(Buff_t* Buffer)
         return false;
     }
 
-    BUFFER__ACTUAL_LINE_LEN--;
+    BUFFER__ACTUAL_LINE.len--;
     Buffer->chars_amount--;
 
     if(!memory__shrink_lines_array(Buffer))
@@ -190,7 +192,7 @@ bool edit__delete_last_empty_line(Buff_t* Buffer)
 
 bool edit__delete_last_line(Buff_t* Buffer)
 {
-    free(BUFFER__LAST_LINE.text);
+    free(BUFFER__LAST_LINE.txt);
 
     Buffer->lines_amount--;
     return memory__shrink_lines_array(Buffer);

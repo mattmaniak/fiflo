@@ -74,7 +74,7 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
                          const Conf_t* const Config, Line_t* Line,
                          const Ui_t* const Ui, idx_t ch_idx)
 {
-    const char* const str_to_print_addr = &Line->text[ch_idx];
+    const char* const str_to_print_addr = &Line->txt[ch_idx];
     idx_t             end_paint_offset;
 
     if(Syntax->kwrds_idx <= 0)
@@ -96,7 +96,7 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
                     ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 }
                 ui__colorize(Syntax->Keywords[kwrd_idx].color);
-                putchar(Line->text[ch_idx]);
+                putchar(Line->txt[ch_idx]);
                 ui__colorize(0);
             }
             ch_idx--;
@@ -113,24 +113,24 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
     const idx_t end_paint_offset = ch_idx
     + (const idx_t) strlen(Syntax->Keywords[kwrd_idx].keyword);
 
-    const bool allowed_sufix = (Line->text[end_paint_offset] == ' ')
-                               || (Line->text[end_paint_offset] == '\n')
-                               || (Line->text[end_paint_offset] == '\t')
-                               || (Line->text[end_paint_offset] == '(')
-                               || (Line->text[end_paint_offset] == '*')
-                               || (Line->text[end_paint_offset] == '\0');
+    const bool allowed_sufix = (Line->txt[end_paint_offset] == ' ')
+                               || (Line->txt[end_paint_offset] == '\n')
+                               || (Line->txt[end_paint_offset] == '\t')
+                               || (Line->txt[end_paint_offset] == '(')
+                               || (Line->txt[end_paint_offset] == '*')
+                               || (Line->txt[end_paint_offset] == '\0');
 
     // A word at the beginning of the line.
-    if((ch_idx == 0) && (allowed_sufix
-                         || (Line->text[end_paint_offset] == ':')))
+    if((ch_idx == 0)
+       && (allowed_sufix || (Line->txt[end_paint_offset] == ':')))
     {
         ui__colorize(Syntax->Keywords[kwrd_idx].color);
     }
     // Another word somewhere in a text.
-    else if(((Line->text[ch_idx - PREV] == ' ')
-             || (Line->text[ch_idx - PREV] == '\t')
-             || (Line->text[ch_idx - PREV] == '('))
-            && (allowed_sufix || (Line->text[end_paint_offset] == ')')))
+    else if(((Line->txt[ch_idx - PREV] == ' ')
+             || (Line->txt[ch_idx - PREV] == '\t')
+             || (Line->txt[ch_idx - PREV] == '('))
+            && (allowed_sufix || (Line->txt[end_paint_offset] == ')')))
     {
         ui__colorize(Syntax->Keywords[kwrd_idx].color);
     }

@@ -10,7 +10,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
 
     for(; ch_idx < end_ch_idx; ch_idx++)
     {
-        const char ch = Buffer->Lines[ln_idx].text[ch_idx];
+        const char ch = Buffer->Lines[ln_idx].txt[ch_idx];
 
         // Whitespace highlighting.
         if(ch == '\t')
@@ -99,12 +99,12 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
                         const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
     // There is a small amount of chars. Horizontal scroll isn't required.
-    if(BUFFER__ACTUAL_LINE_LEN < Ui->textarea_w)
+    if(BUFFER__ACTUAL_LINE.len < Ui->textarea_w)
     {
-        if(BUFFER__ACTUAL_LINE_LEN == 0)
+        if(BUFFER__ACTUAL_LINE.len == 0)
         {
             // Only the newline so print only the punch card.
-            print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE_LEN);
+            print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.len);
         }
         else
         {
@@ -113,21 +113,21 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
             {
                 print__line_with_tabs(Buffer, Config, Syntax, Ui,
                                       BUFFER__ACTUAL_LINE_IDX, 0,
-                                      BUFFER__ACTUAL_LINE_LEN);
-                print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE_LEN);
+                                      BUFFER__ACTUAL_LINE.len);
+                print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.len);
             }
             else // Non-last line so ignore the LF and wrap after a punch card.
             {
                 print__line_with_tabs(Buffer, Config, Syntax, Ui,
                                       BUFFER__ACTUAL_LINE_IDX, 0,
-                                      BUFFER__ACTUAL_LINE_LEN - LF_SZ);
-                print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE_LEN - LF_SZ);
+                                      BUFFER__ACTUAL_LINE.len - LF_SZ);
+                print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.len - LF_SZ);
                 WRAP_LINE();
             }
         }
     }
     // Chars won't fit in a horizontal space.
-    else if((BUFFER__ACTUAL_LINE_LEN - Ui->textarea_w)
+    else if((BUFFER__ACTUAL_LINE.len - Ui->textarea_w)
             >= Buffer->cursor_rev_x)
     {
         // Render only a right part of a line.
@@ -270,7 +270,7 @@ void print__scroll_lines(const Buff_t* const Buffer,
                          const Conf_t* const Config,
                          const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    idx_t chars_end_offset = BUFFER__ACTUAL_LINE_LEN;
+    idx_t chars_end_offset = BUFFER__ACTUAL_LINE.len;
 
     // Previous lines. If they are scrolled. Only a beginning is shown.
     for(idx_t ln_idx = print__set_start_line(Buffer, Ui);
@@ -283,10 +283,10 @@ void print__scroll_lines(const Buff_t* const Buffer,
     ui__print_line_number(Buffer, Config, BUFFER__ACTUAL_LINE_IDX,
                           Ui->line_num_len);
 
-    if(BUFFER__ACTUAL_LINE_LEN < Ui->textarea_w)
+    if(BUFFER__ACTUAL_LINE.len < Ui->textarea_w)
     {
-        if((BUFFER__ACTUAL_LINE_LEN > 0)
-           && (BUFFER__ACTUAL_LINE[BUFFER__ACTUAL_LINE_LEN - NUL_SZ] == '\n'))
+        if((BUFFER__ACTUAL_LINE.len > 0)
+           && (BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len - NUL_SZ] == '\n'))
         {
             chars_end_offset--;
         }
@@ -295,7 +295,7 @@ void print__scroll_lines(const Buff_t* const Buffer,
 
     }
     // Chars won't fit in a horizontal space.
-    else if((BUFFER__ACTUAL_LINE_LEN - Ui->textarea_w)
+    else if((BUFFER__ACTUAL_LINE.len - Ui->textarea_w)
             >= Buffer->cursor_rev_x)
     {
         // Text will be scrolled. Not cursor.
@@ -311,8 +311,8 @@ void print__scroll_lines(const Buff_t* const Buffer,
                               0, (const idx_t) Ui->textarea_w - LF_SZ);
     }
     print__punch_card(Config, Ui, (Buffer->cursor_rev_y == 0)
-                      ? BUFFER__ACTUAL_LINE_LEN
-                      : BUFFER__ACTUAL_LINE_LEN - LF_SZ);
+                      ? BUFFER__ACTUAL_LINE.len
+                      : BUFFER__ACTUAL_LINE.len - LF_SZ);
 }
 
 void print__display_text(const Buff_t* const Buffer,

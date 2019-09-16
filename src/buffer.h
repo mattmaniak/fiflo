@@ -27,7 +27,7 @@
 
 /* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
    recomended to set the CHARS_MAX to a value bigger than (INT_MAX - 1)
-   because of possible casts. */
+   because of possible casting. */
 #define CHARS_MAX (UINT_MAX / 256)
 
 #define BUFFER__STATUS_MAX      32
@@ -39,7 +39,7 @@ typedef struct
     int      extension;
 
     // True if pressed key is ANSI escape code.
-    bool     escape_sequence_on_input;
+    bool     esc_seq_on_input;
     char     git_branch[NAME_MAX]; // Max size is 250 defined by Git.
 
     const int32_t _padding_0;
@@ -79,26 +79,20 @@ Buff_t;
 #define BUFFER__ACTUAL_LINE_IDX \
 (Buffer->lines_amount - Buffer->cursor_rev_y)
 
-#define BUFFER__ACTUAL_LINE Buffer->Lines[BUFFER__ACTUAL_LINE_IDX].text
+#define BUFFER__ACTUAL_LINE Buffer->Lines[BUFFER__ACTUAL_LINE_IDX]
 
-#define BUFFER__ACTUAL_LINE_LEN  \
-Buffer->Lines[BUFFER__ACTUAL_LINE_IDX].len
+#define BUFFER__CURSOR_X (BUFFER__ACTUAL_LINE.len - Buffer->cursor_rev_x)
 
-#define BUFFER__CURSOR_X (BUFFER__ACTUAL_LINE_LEN - Buffer->cursor_rev_x)
+#define BUFFER__ACTUAL_CHAR BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X]
 
-#define BUFFER__ACTUAL_CHAR BUFFER__ACTUAL_LINE[BUFFER__CURSOR_X]
-
-#define BUFFER__PREV_CHAR BUFFER__ACTUAL_LINE[BUFFER__CURSOR_X - PREV]
+#define BUFFER__PREV_CHAR BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - PREV]
 
 #define BUFFER__LAST_CHAR_IN_LINE \
-BUFFER__ACTUAL_LINE[BUFFER__ACTUAL_LINE_LEN]
+BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len]
 
 #define BUFFER__PREV_LINE_IDX (BUFFER__ACTUAL_LINE_IDX - PREV)
 
-#define BUFFER__PREV_LINE Buffer->Lines[BUFFER__PREV_LINE_IDX].text
-
-#define BUFFER__PREV_LINE_LEN \
-Buffer->Lines[BUFFER__PREV_LINE_IDX].len
+#define BUFFER__PREV_LINE Buffer->Lines[BUFFER__PREV_LINE_IDX]
 
 #define BUFFER__LAST_LINE Buffer->Lines[Buffer->lines_amount]
 
@@ -108,12 +102,12 @@ Buffer->Lines[BUFFER__PREV_LINE_IDX].len
 
 #define BUFFER__CURSOR_Y_SCROLLED (Buffer->cursor_rev_y > 0)
 
-#define BUFFER__EMPTY_LINE (BUFFER__ACTUAL_LINE_LEN == 0)
+#define BUFFER__EMPTY_LINE (BUFFER__ACTUAL_LINE.len == 0)
 
 #define BUFFER__FIRST_LINE (BUFFER__ACTUAL_LINE_IDX == 0)
 
 #define BUFFER__CURSOR_AT_LINE_BEGINNING \
-(Buffer->cursor_rev_x == BUFFER__ACTUAL_LINE_LEN)
+(Buffer->cursor_rev_x == BUFFER__ACTUAL_LINE.len)
 
 #define BUFFER__CURSOR_AT_TOP \
 (Buffer->cursor_rev_y == Buffer->lines_amount)

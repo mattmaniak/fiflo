@@ -13,4 +13,5 @@ fiflo - TODOs and ideas:
 - more precise Ctrl^Arrow left (full-word cursor scroll),
 - regex,
 - a few more chars than textarea_w rendering (doesn't hide),
-- more DRY Makefile.
+- more DRY Makefile,
+- check variables casting.

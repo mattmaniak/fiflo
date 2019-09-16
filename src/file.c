@@ -162,7 +162,7 @@ void file__convert_tab_to_file(const Buff_t* const Buffer,
     for(idx_t tab_idx = 0;
         tab_idx < (const idx_t) Config->Tab_sz.value; tab_idx++)
     {
-        if(Buffer->Lines[ln_idx].text[*ch_idx + tab_idx] != '\t')
+        if(Buffer->Lines[ln_idx].txt[*ch_idx + tab_idx] != '\t')
         {
             break; // No Tab, so don't convert anything.
         }
@@ -191,7 +191,7 @@ bool file__save(Buff_t* const Buffer, const Conf_t* const Config)
         for(idx_t ch_idx = 0; ch_idx < Buffer->Lines[ln_idx].len; ch_idx++)
         {
             file__convert_tab_to_file(Buffer, Config, ln_idx, &ch_idx);
-            putc(Buffer->Lines[ln_idx].text[ch_idx], Textfile);
+            putc(Buffer->Lines[ln_idx].txt[ch_idx], Textfile);
         }
     }
     if(fclose(Textfile) == EOF)

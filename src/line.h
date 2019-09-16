@@ -9,7 +9,7 @@ typedef uint32_t idx_t;
 
 typedef struct
 {
-    char* text;
+    char* txt;
     idx_t len;
 
     idx_t _padding;

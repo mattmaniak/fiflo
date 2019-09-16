@@ -8,8 +8,7 @@ bool memory__extend_line(Buff_t* const Buffer, const idx_t ln_idx)
     if(ln_len == BUFFER__BASIC_MEMBLK)
     {
         // There are 4/8 (on different archs) chars, extend to BUFFER__MEMBLK.
-        Buffer->Lines[ln_idx].text = realloc(Buffer->Lines[ln_idx].text,
-                                             memblk);
+        Buffer->Lines[ln_idx].txt = realloc(Buffer->Lines[ln_idx].txt, memblk);
 
 #ifdef DEBUG_MEMORY
         printf("Extend_line %u with mem of %u B.\n",
@@ -21,8 +20,7 @@ bool memory__extend_line(Buff_t* const Buffer, const idx_t ln_idx)
     {
         // There are more chars so append the new memblock.
         memblk = ((ln_len / BUFFER__MEMBLK) * BUFFER__MEMBLK) + BUFFER__MEMBLK;
-        Buffer->Lines[ln_idx].text = realloc(Buffer->Lines[ln_idx].text,
-                                             memblk);
+        Buffer->Lines[ln_idx].txt = realloc(Buffer->Lines[ln_idx].txt, memblk);
 
 #ifdef DEBUG_MEMORY
         printf("Extend_line %u with mem of %u B.\n",
@@ -30,7 +28,7 @@ bool memory__extend_line(Buff_t* const Buffer, const idx_t ln_idx)
 #endif
 
     }
-    if(Buffer->Lines[ln_idx].text == NULL)
+    if(Buffer->Lines[ln_idx].txt == NULL)
     {
         fprintf(stderr, "Can't extend a memory block for the line %u.\n",
                 ln_idx + IDX);
@@ -45,16 +43,16 @@ bool memory__shrink_current_line(Buff_t* const Buffer)
 
     /* These cases are executed only when the backspace is pressed. Works in
        the same way as "extend_current_line". */
-    if((BUFFER__ACTUAL_LINE_LEN >= BUFFER__BASIC_MEMBLK)
-       && (BUFFER__ACTUAL_LINE_LEN < BUFFER__MEMBLK))
+    if((BUFFER__ACTUAL_LINE.len >= BUFFER__BASIC_MEMBLK)
+       && (BUFFER__ACTUAL_LINE.len < BUFFER__MEMBLK))
     {
         // Shrink to size of the BUFFER__MEMBLK.
         memblk = BUFFER__MEMBLK;
     }
-    else if(BUFFER__ACTUAL_LINE_LEN >= BUFFER__MEMBLK)
+    else if(BUFFER__ACTUAL_LINE.len >= BUFFER__MEMBLK)
     {
         // Remove the newest memblk because isn't needed now.
-        memblk = ((BUFFER__ACTUAL_LINE_LEN / BUFFER__MEMBLK) * BUFFER__MEMBLK)
+        memblk = ((BUFFER__ACTUAL_LINE.len / BUFFER__MEMBLK) * BUFFER__MEMBLK)
                  + BUFFER__MEMBLK;
     }
 
@@ -63,7 +61,8 @@ bool memory__shrink_current_line(Buff_t* const Buffer)
            BUFFER__ACTUAL_LINE_IDX + IDX, memblk);
 #endif
 
-    if((BUFFER__ACTUAL_LINE = realloc(BUFFER__ACTUAL_LINE, memblk)) == NULL)
+    if((BUFFER__ACTUAL_LINE.txt = realloc(BUFFER__ACTUAL_LINE.txt, memblk))
+       == NULL)
     {
         fprintf(stderr, "Can't shrink a memory block for the line %u\n",
                 BUFFER__ACTUAL_LINE_IDX + IDX);
@@ -76,15 +75,15 @@ bool memory__shrink_prev_line(Buff_t* const Buffer)
 {
     idx_t memblk = BUFFER__BASIC_MEMBLK;
 
-    if((BUFFER__PREV_LINE_LEN >= BUFFER__BASIC_MEMBLK)
-       && (BUFFER__PREV_LINE_LEN < BUFFER__MEMBLK))
+    if((BUFFER__PREV_LINE.len >= BUFFER__BASIC_MEMBLK)
+       && (BUFFER__PREV_LINE.len < BUFFER__MEMBLK))
     {
         memblk = BUFFER__MEMBLK;
     }
-    else if((BUFFER__PREV_LINE_LEN >= BUFFER__MEMBLK))
+    else if((BUFFER__PREV_LINE.len >= BUFFER__MEMBLK))
     {
         // Set the size of some MEMBLKs.
-        memblk = ((BUFFER__PREV_LINE_LEN / BUFFER__MEMBLK) * BUFFER__MEMBLK)
+        memblk = ((BUFFER__PREV_LINE.len / BUFFER__MEMBLK) * BUFFER__MEMBLK)
                  + BUFFER__MEMBLK;
     }
 
@@ -93,7 +92,8 @@ bool memory__shrink_prev_line(Buff_t* const Buffer)
            BUFFER__PREV_LINE_IDX + IDX, memblk);
 #endif
 
-    if((BUFFER__PREV_LINE = realloc(BUFFER__PREV_LINE, memblk)) == NULL)
+    if((BUFFER__PREV_LINE.txt = realloc(BUFFER__PREV_LINE.txt, memblk))
+       == NULL)
     {
         fprintf(stderr, "Can't shrink a memory block for the prev. %u line.\n",
                 BUFFER__PREV_LINE_IDX + IDX);
@@ -115,7 +115,7 @@ bool memory__extend_lines_array(Buff_t* const Buffer)
     }
 
     // The new line is allocated with only 4 or 8 bytes bytes.
-    if((BUFFER__LAST_LINE.text = malloc(BUFFER__BASIC_MEMBLK)) == NULL)
+    if((BUFFER__LAST_LINE.txt = malloc(BUFFER__BASIC_MEMBLK)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for a new line.\n");
         return false;
@@ -147,21 +147,20 @@ bool memory__copy_lines_forward(Buff_t* const Buffer)
         idx_t memblk = ((Buffer->Lines[ln_idx - PREV].len / BUFFER__MEMBLK)
                         * BUFFER__MEMBLK) + BUFFER__MEMBLK;
 
-        Buffer->Lines[ln_idx].text = realloc(Buffer->Lines[ln_idx].text,
-                                             memblk);
+        Buffer->Lines[ln_idx].txt = realloc(Buffer->Lines[ln_idx].txt, memblk);
 
 #ifdef DEBUG_MEMORY
         printf("Copied line %u forward to %u with new mem of %u B.\n",
                ln_idx + IDX - PREV, ln_idx + IDX, memblk);
 #endif
 
-        if(Buffer->Lines[ln_idx].text == NULL)
+        if(Buffer->Lines[ln_idx].txt == NULL)
         {
             fprintf(stderr, "Can't resize the forward %u line.\n",
                     ln_idx + IDX);
             return false;
         }
-        strcpy(Buffer->Lines[ln_idx].text, Buffer->Lines[ln_idx - PREV].text);
+        strcpy(Buffer->Lines[ln_idx].txt, Buffer->Lines[ln_idx - PREV].txt);
         Buffer->Lines[ln_idx].len = Buffer->Lines[ln_idx - PREV].len;
     }
     return true;
@@ -175,21 +174,20 @@ bool memory__copy_lines_backward(Buff_t* const Buffer)
         idx_t memblk = ((Buffer->Lines[ln_idx + NEXT].len / BUFFER__MEMBLK)
                         * BUFFER__MEMBLK) + BUFFER__MEMBLK;
 
-        Buffer->Lines[ln_idx].text = realloc(Buffer->Lines[ln_idx].text,
-                                             memblk);
+        Buffer->Lines[ln_idx].txt = realloc(Buffer->Lines[ln_idx].txt, memblk);
 
 #ifdef DEBUG_MEMORY
         printf("Copied line %u backward to %u with new mem of %u B.\n",
                ln_idx + IDX + NEXT, ln_idx + IDX, memblk);
 #endif
 
-        if(Buffer->Lines[ln_idx].text == NULL)
+        if(Buffer->Lines[ln_idx].txt == NULL)
         {
             fprintf(stderr, "Can't copy the line %u backward.\n",
                     ln_idx + IDX);
             return false;
         }
-        strcpy(Buffer->Lines[ln_idx].text, Buffer->Lines[ln_idx + NEXT].text);
+        strcpy(Buffer->Lines[ln_idx].txt, Buffer->Lines[ln_idx + NEXT].txt);
         Buffer->Lines[ln_idx].len = Buffer->Lines[ln_idx + NEXT].len;
     }
     return true;

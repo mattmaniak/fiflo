@@ -72,67 +72,67 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
     if(!strcmp(sequence, arrow_up))
     {
         keys__arrow_up(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_down))
     {
         keys__arrow_down(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_right))
     {
         keys__arrow_right(Buffer, Config);
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_left))
     {
         keys__arrow_left(Buffer, Config);
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
         keys__ctrl_arrow_up(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
         keys__ctrl_arrow_down(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_right))
     {
         keys__ctrl_arrow_right(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_left))
     {
         keys__ctrl_arrow_left(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f1))
     {
         *file_idx = 0;
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f2))
     {
         *file_idx = 1;
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f3))
     {
         *file_idx = 2;
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f4))
     {
         *file_idx = 3;
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
     // Other cases that block an input for "seq_length_max" chars.
     else if(strlen(sequence) >= seq_length_max)
     {
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
     }
 
 #ifdef DEBUG_INPUT
@@ -151,15 +151,15 @@ bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
 
     if((key == KEYS__CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
     {
-        Buffer->escape_sequence_on_input = true;
+        Buffer->esc_seq_on_input = true;
 
 #ifdef DEBUG_INPUT
-        Buffer->escape_sequence_on_input = false;
+        Buffer->esc_seq_on_input = false;
 #endif
 
         char_idx = 0;
     }
-    if(Buffer->escape_sequence_on_input)
+    if(Buffer->esc_seq_on_input)
     {
         chars_sequence[char_idx] = key;
         if(char_idx < (INPUT__SEQ_MAX - NUL_SZ))
@@ -169,7 +169,7 @@ bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
         chars_sequence[char_idx] = '\0';
         input__recognize_sequence(Buffer, Config, chars_sequence, file_idx);
 
-        if(!Buffer->escape_sequence_on_input)
+        if(!Buffer->esc_seq_on_input)
         {
             char_idx = 0;
         }
