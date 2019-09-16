@@ -39,7 +39,7 @@ typedef struct
 Ui_t;
 
 // Used to style a UI.
-void ui__colorize(const int* const);
+void ui__colorize(const int);
 
 // Prints a line number.
 void ui__print_line_number(const Buff_t* const, const Conf_t* const,

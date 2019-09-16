@@ -77,10 +77,9 @@ void window__fill(const Buff_t* const Buffer, const Conf_t* const Config,
                     printf("%*s", Ui->line_num_len + Ui->actual_punch_card_pos
                            + Config->Punch_card_width.value - IDX, " ");
 
-                    ui__colorize(&Config->Color_ui.value);
-                    ANSI__INVERT();
+                    ui__colorize(Config->Color_ui.value + 10);
                     putchar(' ');
-                    ui__colorize(NULL);
+                    ui__colorize(0);
                 }
             }
         }

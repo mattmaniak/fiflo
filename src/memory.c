@@ -3,11 +3,11 @@
 bool memory__extend_line(Buff_t* const Buffer, const idx_t ln_idx)
 {
     idx_t memblk = BUFFER__MEMBLK;
-    idx_t ln_len = Buffer->Lines[ln_idx].length;
+    idx_t ln_len = Buffer->Lines[ln_idx].len;
 
     if(ln_len == BUFFER__BASIC_MEMBLK)
     {
-        // There are 4/8 chars, extend to BUFFER__MEMBLK.
+        // There are 4/8 (on different archs) chars, extend to BUFFER__MEMBLK.
         Buffer->Lines[ln_idx].text = realloc(Buffer->Lines[ln_idx].text,
                                              memblk);
 
@@ -115,13 +115,13 @@ bool memory__extend_lines_array(Buff_t* const Buffer)
     }
 
     // The new line is allocated with only 4 or 8 bytes bytes.
-    if((BUFFER__LAST_LINE = malloc(BUFFER__BASIC_MEMBLK)) == NULL)
+    if((BUFFER__LAST_LINE.text = malloc(BUFFER__BASIC_MEMBLK)) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for a new line.\n");
         return false;
     }
     // Naturally the new line doesn't contains any chars - only terminator.
-    BUFFER__LAST_LINE_LEN = 0;
+    BUFFER__LAST_LINE.len = 0;
 
     return true;
 }
@@ -144,7 +144,7 @@ bool memory__copy_lines_forward(Buff_t* const Buffer)
     for(idx_t ln_idx = Buffer->lines_amount; ln_idx > BUFFER__ACTUAL_LINE_IDX;
         ln_idx--)
     {
-        idx_t memblk = ((Buffer->Lines[ln_idx - PREV].length / BUFFER__MEMBLK)
+        idx_t memblk = ((Buffer->Lines[ln_idx - PREV].len / BUFFER__MEMBLK)
                         * BUFFER__MEMBLK) + BUFFER__MEMBLK;
 
         Buffer->Lines[ln_idx].text = realloc(Buffer->Lines[ln_idx].text,
@@ -162,7 +162,7 @@ bool memory__copy_lines_forward(Buff_t* const Buffer)
             return false;
         }
         strcpy(Buffer->Lines[ln_idx].text, Buffer->Lines[ln_idx - PREV].text);
-        Buffer->Lines[ln_idx].length = Buffer->Lines[ln_idx - PREV].length;
+        Buffer->Lines[ln_idx].len = Buffer->Lines[ln_idx - PREV].len;
     }
     return true;
 }
@@ -172,7 +172,7 @@ bool memory__copy_lines_backward(Buff_t* const Buffer)
     for(idx_t ln_idx = BUFFER__ACTUAL_LINE_IDX; ln_idx < Buffer->lines_amount;
         ln_idx++)
     {
-        idx_t memblk = ((Buffer->Lines[ln_idx + NEXT].length / BUFFER__MEMBLK)
+        idx_t memblk = ((Buffer->Lines[ln_idx + NEXT].len / BUFFER__MEMBLK)
                         * BUFFER__MEMBLK) + BUFFER__MEMBLK;
 
         Buffer->Lines[ln_idx].text = realloc(Buffer->Lines[ln_idx].text,
@@ -190,7 +190,7 @@ bool memory__copy_lines_backward(Buff_t* const Buffer)
             return false;
         }
         strcpy(Buffer->Lines[ln_idx].text, Buffer->Lines[ln_idx + NEXT].text);
-        Buffer->Lines[ln_idx].length = Buffer->Lines[ln_idx + NEXT].length;
+        Buffer->Lines[ln_idx].len = Buffer->Lines[ln_idx + NEXT].len;
     }
     return true;
 }

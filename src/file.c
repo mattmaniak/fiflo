@@ -188,7 +188,7 @@ bool file__save(Buff_t* const Buffer, const Conf_t* const Config)
     {
         /* Using fputs or fprintf causes an use-of-uninitialized-value using
            MSan because of there is a more memory allocated than is needed. */
-        for(idx_t ch_idx = 0; ch_idx < Buffer->Lines[ln_idx].length; ch_idx++)
+        for(idx_t ch_idx = 0; ch_idx < Buffer->Lines[ln_idx].len; ch_idx++)
         {
             file__convert_tab_to_file(Buffer, Config, ln_idx, &ch_idx);
             putc(Buffer->Lines[ln_idx].text[ch_idx], Textfile);

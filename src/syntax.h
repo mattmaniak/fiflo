@@ -34,7 +34,8 @@ bool syntax__load(Syntax_t* const, const int);
 void syntax__sort(Syntax_t* const);
 
 // Checks and renders a word if it's color should change.
-idx_t syntax__paint_word(const Syntax_t* const, Line_t*, idx_t);
+idx_t syntax__paint_word(const Syntax_t* const, const Conf_t* const, Line_t*,
+                         const Ui_t* const, idx_t);
 
 // Checks if a word should be painted. It can't be a substring.
 idx_t syntax__check_word_to_paint(const Syntax_t* const, const Line_t* const,

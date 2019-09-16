@@ -15,48 +15,52 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         // Whitespace highlighting.
         if(ch == '\t')
         {
-            ui__colorize(&Config->Color_whitespace.value);
-            if(ch_idx == (Config->Punch_card_width.value - IDX))
+            ui__colorize(Config->Color_whitespace.value);
+            if(ln_idx != BUFFER__ACTUAL_LINE_IDX)
             {
-                ui__colorize(&Config->Color_ui.value);
-                ANSI__INVERT();
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->actual_punch_card_pos))
+                {
+                    ui__colorize(Config->Color_ui.value + 10);
+                }
+                putchar(PRINT__TAB_HIGHLIGHT);
+                ui__colorize(0);
             }
-            putchar(PRINT__TAB_HIGHLIGHT);
-            ui__colorize(NULL);
+            else
+            {
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
+                {
+                    ui__colorize(Config->Color_ui.value + 10);
+                }
+                putchar(PRINT__TAB_HIGHLIGHT);
+            }
         }
         else if(ch == ' ')
         {
-            ui__colorize(&Config->Color_whitespace.value);
-            if(ch_idx == (Config->Punch_card_width.value - IDX))
+            ui__colorize(Config->Color_whitespace.value);
+            if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->actual_punch_card_pos))
             {
-                ui__colorize(&Config->Color_ui.value);
-                ANSI__INVERT();
+                ui__colorize(Config->Color_ui.value + 10);
             }
             putchar(PRINT__SPACE_HIGHLIGHT);
-            ui__colorize(NULL);
+            ui__colorize(0);
         }
         else // Print words.
         {
             const idx_t ch_idx_after_highlighting =
-            syntax__paint_word(Syntax, &Buffer->Lines[ln_idx], ch_idx);
+            syntax__paint_word(Syntax, Config, &Buffer->Lines[ln_idx], Ui, ch_idx);
 
             if(ch_idx == ch_idx_after_highlighting)
             {
-                ui__colorize(&Config->Color_text.value);
-                if(ch_idx == (Config->Punch_card_width.value - IDX))
-                {
-                    ui__colorize(&Config->Color_ui.value);
-                    ANSI__INVERT();
-                }
+                ui__colorize(Config->Color_text.value);
                 putchar(ch);
-                ui__colorize(NULL);
+                ui__colorize(0);
             }
             else // Word printed and highlighted. Shift the index to the next.
             {
                 ch_idx = ch_idx_after_highlighting;
             }
         }
-        ui__colorize(NULL);
+        ui__colorize(0);
     }
 }
 
@@ -66,13 +70,15 @@ void print__punch_card(const Conf_t* const Config, const Ui_t* const Ui,
     if((Ui->textarea_w >= Config->Punch_card_width.value)
        && ((ln_len + IDX) < (const idx_t) Config->Punch_card_width.value))
     {
-        printf("%*s", (const unsigned int)
-               Config->Punch_card_width.value - ln_len - IDX, " ");
+        if(-Ui->actual_punch_card_pos < (const int) (Config->Punch_card_width.value - ln_len - IDX))
+        {
+            printf("%*s", (const unsigned int)
+                   Ui->actual_punch_card_pos + Config->Punch_card_width.value - ln_len - IDX, " ");
 
-        ui__colorize(&Config->Color_ui.value);
-        ANSI__INVERT()
-        putchar(' ');
-        ui__colorize(NULL);
+            ui__colorize(Config->Color_ui.value + 10);
+            putchar(' ');
+            ui__colorize(0);
+        }
     }
 }
 
@@ -149,11 +155,11 @@ void print__another_line(const Buff_t* const Buffer,
     ui__print_line_number(Buffer, Config, ln_idx, Ui->line_num_len);
 
     // Ignore the linefeed and print it after the wrap line.
-    if(Buffer->Lines[ln_idx].length < Ui->textarea_w)
+    if(Buffer->Lines[ln_idx].len < Ui->textarea_w)
     {
         print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx, 0,
-                              Buffer->Lines[ln_idx].length - LF_SZ);
-        print__punch_card(Config, Ui, Buffer->Lines[ln_idx].length - LF_SZ);
+                              Buffer->Lines[ln_idx].len - LF_SZ);
+        print__punch_card(Config, Ui, Buffer->Lines[ln_idx].len - LF_SZ);
         WRAP_LINE();
     }
     else
@@ -186,7 +192,7 @@ void print__scroll_line_horizontally(const Buff_t* const Buffer,
 void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
                       const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    const idx_t current_line_sz = 1;
+    const idx_t actual_line_sz = 1;
     idx_t       ln_idx;
 
     for(ln_idx = 0; ln_idx < BUFFER__ACTUAL_LINE_IDX; ln_idx++)
@@ -200,24 +206,26 @@ void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
 
     if(BUFFER__CURSOR_Y_SCROLLED)
     {
-        for(ln_idx += current_line_sz; ln_idx < Buffer->lines_amount; ln_idx++)
+        for(ln_idx += actual_line_sz; ln_idx < Buffer->lines_amount; ln_idx++)
         {
             print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
         }
         ui__print_line_number(Buffer, Config, Buffer->lines_amount,
                               Ui->line_num_len);
 
-        if(BUFFER__LAST_LINE_LEN < Ui->textarea_w)
+        if(BUFFER__LAST_LINE.len < Ui->textarea_w)
         {
-            print__line_with_tabs(Buffer, Config, Syntax, Ui, Buffer->lines_amount,
-                                  0, BUFFER__LAST_LINE_LEN);
+            print__line_with_tabs(Buffer, Config, Syntax, Ui,
+                                  Buffer->lines_amount, 0,
+                                  BUFFER__LAST_LINE.len);
         }
         else
         {
-            print__line_with_tabs(Buffer, Config, Syntax, Ui, Buffer->lines_amount,
-                                  0, (const idx_t) Ui->textarea_w - LF_SZ);
+            print__line_with_tabs(Buffer, Config, Syntax, Ui,
+                                  Buffer->lines_amount, 0,
+                                  (const idx_t) Ui->textarea_w - LF_SZ);
         }
-        print__punch_card(Config, Ui, BUFFER__LAST_LINE_LEN);
+        print__punch_card(Config, Ui, BUFFER__LAST_LINE.len);
     }
 }
 
@@ -245,17 +253,17 @@ void print__shrink_lines(const Buff_t* const Buffer,
     }
     ui__print_line_number(Buffer, Config, last_ln_idx, Ui->line_num_len);
 
-    if(Buffer->Lines[last_ln_idx].length < Ui->textarea_w)
+    if(Buffer->Lines[last_ln_idx].len < Ui->textarea_w)
     {
         print__line_with_tabs(Buffer, Config, Syntax, Ui, last_ln_idx, 0,
-                              Buffer->Lines[last_ln_idx].length - LF_SZ);
+                              Buffer->Lines[last_ln_idx].len - LF_SZ);
     }
     else
     {
         print__line_with_tabs(Buffer, Config, Syntax, Ui, last_ln_idx, 0,
                               (const idx_t) Ui->textarea_w - LF_SZ);
     }
-    print__punch_card(Config, Ui, Buffer->Lines[last_ln_idx].length - LF_SZ);
+    print__punch_card(Config, Ui, Buffer->Lines[last_ln_idx].len - LF_SZ);
 }
 
 void print__scroll_lines(const Buff_t* const Buffer,

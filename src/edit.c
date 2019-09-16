@@ -28,7 +28,7 @@ bool edit__delete_char(Buff_t* Buffer)
 bool edit__delete_line(Buff_t* Buffer)
 {
     idx_t next_line_idx    = BUFFER__ACTUAL_LINE_IDX + NEXT;
-    idx_t next_line_length = Buffer->Lines[next_line_idx].length;
+    idx_t next_line_length = Buffer->Lines[next_line_idx].len;
 
     if(!BUFFER__FIRST_LINE)
     {
@@ -56,19 +56,19 @@ bool edit__delete_line(Buff_t* Buffer)
 
             /* With a last line deletion there is a need to remove the
                linefeed in a previous line. */
-            BUFFER__LAST_LINE_LEN--;
-            BUFFER__LAST_LINE[BUFFER__LAST_LINE_LEN] = '\0';
+            BUFFER__LAST_LINE.len--;
+            BUFFER__LAST_LINE.text[BUFFER__LAST_LINE.len] = '\0';
 
             Buffer->cursor_rev_x = 0;
         }
     }
     else
     {
-        BUFFER__LAST_LINE_LEN = 0;
-        BUFFER__LAST_LINE[BUFFER__LAST_LINE_LEN] = '\0';
+        BUFFER__LAST_LINE.len = 0;
+        BUFFER__LAST_LINE.text[BUFFER__LAST_LINE.len] = '\0';
 
-        BUFFER__LAST_LINE = realloc(BUFFER__LAST_LINE, BUFFER__BASIC_MEMBLK);
-        if(BUFFER__LAST_LINE == NULL)
+        BUFFER__LAST_LINE.text = realloc(BUFFER__LAST_LINE.text, BUFFER__BASIC_MEMBLK);
+        if(BUFFER__LAST_LINE.text == NULL)
         {
             fprintf(stderr, "Can't realloc a memory in a first line.\n");
         }
@@ -190,7 +190,7 @@ bool edit__delete_last_empty_line(Buff_t* Buffer)
 
 bool edit__delete_last_line(Buff_t* Buffer)
 {
-    free(BUFFER__LAST_LINE);
+    free(BUFFER__LAST_LINE.text);
 
     Buffer->lines_amount--;
     return memory__shrink_lines_array(Buffer);

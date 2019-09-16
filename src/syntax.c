@@ -70,8 +70,9 @@ void syntax__sort(Syntax_t* const Syntax)
     }
 }
 
-idx_t syntax__paint_word(const Syntax_t* const Syntax, Line_t* Line,
-                         idx_t ch_idx)
+idx_t syntax__paint_word(const Syntax_t* const Syntax,
+                         const Conf_t* const Config, Line_t* Line,
+                         const Ui_t* const Ui, idx_t ch_idx)
 {
     const char* const str_to_print_addr = &Line->text[ch_idx];
     idx_t             end_paint_offset;
@@ -89,16 +90,14 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax, Line_t* Line,
                                                            ch_idx, kwrd_idx);
             for(; ch_idx < end_paint_offset; ch_idx++)
             {
-                if(ch_idx == 79)
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->actual_punch_card_pos))
                 {
-                    ANSI__INVERT();
+                    ui__colorize(Config->Color_ui.value + 10);
+                    ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 }
+                ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 putchar(Line->text[ch_idx]);
-                if(ch_idx == 79)
-                {
-                    ui__colorize(NULL);
-                    ui__colorize(&Syntax->Keywords[kwrd_idx].color);
-                }
+                ui__colorize(0);
             }
             ch_idx--;
             break;
@@ -116,14 +115,16 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
 
     const bool allowed_sufix = (Line->text[end_paint_offset] == ' ')
                                || (Line->text[end_paint_offset] == '\n')
+                               || (Line->text[end_paint_offset] == '\t')
                                || (Line->text[end_paint_offset] == '(')
-                               || (Line->text[end_paint_offset] == '*');
+                               || (Line->text[end_paint_offset] == '*')
+                               || (Line->text[end_paint_offset] == '\0');
 
     // A word at the beginning of the line.
     if((ch_idx == 0) && (allowed_sufix
                          || (Line->text[end_paint_offset] == ':')))
     {
-        ui__colorize(&Syntax->Keywords[kwrd_idx].color);
+        ui__colorize(Syntax->Keywords[kwrd_idx].color);
     }
     // Another word somewhere in a text.
     else if(((Line->text[ch_idx - PREV] == ' ')
@@ -131,7 +132,7 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
              || (Line->text[ch_idx - PREV] == '('))
             && (allowed_sufix || (Line->text[end_paint_offset] == ')')))
     {
-        ui__colorize(&Syntax->Keywords[kwrd_idx].color);
+        ui__colorize(Syntax->Keywords[kwrd_idx].color);
     }
     return end_paint_offset;
 }

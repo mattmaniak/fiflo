@@ -25,7 +25,9 @@
 #define NEXT      1
 #define ERROR     -1
 
-// Max amount of chars: (16 MB - 1). Newline is also a char.
+/* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
+   recomended to set the CHARS_MAX to a value bigger than (INT_MAX - 1)
+   because of possible casts. */
 #define CHARS_MAX (UINT_MAX / 256)
 
 #define BUFFER__STATUS_MAX      32
@@ -80,7 +82,7 @@ Buff_t;
 #define BUFFER__ACTUAL_LINE Buffer->Lines[BUFFER__ACTUAL_LINE_IDX].text
 
 #define BUFFER__ACTUAL_LINE_LEN  \
-Buffer->Lines[BUFFER__ACTUAL_LINE_IDX].length
+Buffer->Lines[BUFFER__ACTUAL_LINE_IDX].len
 
 #define BUFFER__CURSOR_X (BUFFER__ACTUAL_LINE_LEN - Buffer->cursor_rev_x)
 
@@ -96,11 +98,9 @@ BUFFER__ACTUAL_LINE[BUFFER__ACTUAL_LINE_LEN]
 #define BUFFER__PREV_LINE Buffer->Lines[BUFFER__PREV_LINE_IDX].text
 
 #define BUFFER__PREV_LINE_LEN \
-Buffer->Lines[BUFFER__PREV_LINE_IDX].length
+Buffer->Lines[BUFFER__PREV_LINE_IDX].len
 
-#define BUFFER__LAST_LINE Buffer->Lines[Buffer->lines_amount].text
-
-#define BUFFER__LAST_LINE_LEN Buffer->Lines[Buffer->lines_amount].length
+#define BUFFER__LAST_LINE Buffer->Lines[Buffer->lines_amount]
 
 #define BUFFER__CHARS_LIMIT_NOT_EXCEEDED (Buffer->chars_amount < CHARS_MAX)
 
