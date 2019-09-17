@@ -72,7 +72,7 @@ void syntax__sort(Syntax_t* const Syntax)
 
 idx_t syntax__paint_word(const Syntax_t* const Syntax,
                          const Conf_t* const Config, Line_t* Line,
-                         const Ui_t* const Ui, idx_t ch_idx)
+                         const Ui_t* const Ui, idx_t end_ch_idx, idx_t ch_idx)
 {
     const char* const str_to_print_addr = &Line->txt[ch_idx];
     idx_t             end_paint_offset;
@@ -88,6 +88,11 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
         {
             end_paint_offset = syntax__check_word_to_paint(Syntax, Line,
                                                            ch_idx, kwrd_idx);
+            // Breaks a word if the end of a terminal is achieved.
+            if(end_paint_offset > end_ch_idx)
+            {
+                end_paint_offset = end_ch_idx; // TODO: RENDERS ONE MORE CHAR.
+            }
             for(; ch_idx < end_paint_offset; ch_idx++)
             {
                 if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->actual_punch_card_pos))

@@ -47,7 +47,8 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         else // Print words.
         {
             const idx_t ch_idx_after_highlighting =
-            syntax__paint_word(Syntax, Config, &Buffer->Lines[ln_idx], Ui, ch_idx);
+            syntax__paint_word(Syntax, Config, &Buffer->Lines[ln_idx], Ui,
+                               end_ch_idx, ch_idx);
 
             if(ch_idx == ch_idx_after_highlighting)
             {
