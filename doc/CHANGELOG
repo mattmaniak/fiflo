@@ -14,7 +14,8 @@ v4.1.0 (2019, WIP):
 - visible vertical punch card,
 - horizontal scroll rendering fix (TODO),
 - selectors' names change in the configuration file,
-- inverted color UI with a configurable color.
+- inverted color UI with a configurable color,
+- adaptive expanded lower bar height instead of the fixed one.
 
 v4.0.0 (2019, June 18):
 - vertical Arrows^Ctrl shortcut scrolls paragraphs now,

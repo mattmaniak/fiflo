@@ -6,6 +6,7 @@
 #define IDX       1
 #define NUL_SZ    1
 #define LF_SZ     1
+#define LN_SZ     1
 #define CURSOR_SZ 1
 #define SPACE_SZ  1
 #define SLASH_SZ  1

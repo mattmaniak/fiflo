@@ -12,7 +12,7 @@
 #include "print.h"
 #include "ui.h"
 
-// Returns current terminal width and height and exits if it's wrong.
+// Return current terminal width and height and exits if it's wrong.
 term_t window__receive_term_sz(const char);
 
 // Clean a whole rendered window.

@@ -87,8 +87,8 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
         if(strstr(str_to_print_addr, Syntax->Keywords[kwrd_idx].keyword)
            == str_to_print_addr)
         {
-            end_paint_idx = syntax__check_word_to_paint(Syntax, Line,
-                                                           ch_idx, kwrd_idx);
+            end_paint_idx = syntax__check_word_to_paint(Syntax, Line, ch_idx,
+                                                        kwrd_idx);
             // Breaks a word if the end of a terminal is achieved.
             if(end_paint_idx > end_ch_idx)
             {
@@ -101,7 +101,8 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
                     ui__colorize(Config->Color_ui.value + 10);
                     ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 }
-                ui__colorize(Syntax->Keywords[kwrd_idx].color);
+                // ui__colorize(Syntax->Keywords[kwrd_idx].color);
+                // putchar('!');
                 putchar(Line->txt[ch_idx]);
                 ui__colorize(0);
             }

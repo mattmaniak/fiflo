@@ -2,9 +2,8 @@
 
 term_t window__receive_term_sz(const char axis)
 {
-    const int ln_sz  = 1;
     const int sz_max = USHRT_MAX;
-    const int h_min  = UI__UBAR_SZ + ln_sz + UI__TOGGLED_LBAR_H;
+    const int h_min  = UI__UBAR_SZ + LN_SZ + UI__MAX_LBAR_H; // TODO: DYNAMIC
     const int w_min  = UI__GIT_LOGO_W + SPACE_SZ + UI__GIT_BRANCH_MIN_W
                        + SPACE_SZ + BUFFER__STATUS_MAX
                        + UI__HORIZONTAL_PADDING;
@@ -146,7 +145,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     {
         return false;
     }
-    Ui.expanded_lbar_h = UI__TOGGLED_LBAR_H;
+    Ui.expanded_lbar_h = UI__LBAR_SZ + additional_argc_idx + IDX + LN_SZ;
     Ui.lbar_h          = (Modes->expanded_lbar) ? Ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 
@@ -157,11 +156,9 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.textarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
     Ui.pcard_delta_x = Ui.textarea_w + Buffer->cursor_rev_x
-                               - BUFFER__ACTUAL_LINE.len - IDX;
-    if(Ui.pcard_delta_x > 0)
-    {
-        Ui.pcard_delta_x = 0;
-    }
+                       - BUFFER__ACTUAL_LINE.len - IDX;
+    Ui.pcard_delta_x = (Ui.pcard_delta_x > 0) ? 0 : Ui.pcard_delta_x;
+
     ui__upper_bar(&Buffer[actual_file_idx], Config, &Ui);
 
     print__display_text(&Buffer[actual_file_idx], Config, Syntax, &Ui);

@@ -1,5 +1,5 @@
 # fiflo
-Terminal-based text editor with Windows-like (CUA) bindings.
+CUA terminal-based text-editor for Linux.
 
 ## Abstract
 Learn C. Create text editor for Linux without any dependencies. Started as the

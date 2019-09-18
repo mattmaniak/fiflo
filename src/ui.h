@@ -13,10 +13,10 @@
 #define UI__GIT_LOGO_W       (int) strlen(UI__GIT_LOGO)
 #define UI__GIT_BRANCH_MIN_W 10
 
-#define UI__UBAR_SZ 2
-#define UI__LBAR_SZ 1 // Must be equal 1, otherwise will break rendering.
+#define UI__UBAR_SZ    2
+#define UI__LBAR_SZ    1 // Must be equal 1, otherwise will break rendering.
+#define UI__MAX_LBAR_H 6
 
-#define UI__TOGGLED_LBAR_H     6
 #define UI__LEFT_PADDING       1
 #define UI__RIGHT_PADDING      1
 #define UI__HORIZONTAL_PADDING (UI__LEFT_PADDING + UI__RIGHT_PADDING)

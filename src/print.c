@@ -333,7 +333,6 @@ void print__display_text(const Buff_t* const Buffer,
     }
     else
     {
-        // first_rendered_ln_idx = ;
         print__scroll_lines(Buffer, Config, Syntax, Ui);
     }
 }

@@ -123,13 +123,6 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
             printf("%*s", UI__RIGHT_PADDING, " ");
             WRAP_LINE();
         }
-        for(idx_t ln_idx = 0; ln_idx < 4 - additional_argc_idx - IDX; ln_idx++)
-        {
-            ui__colorize(Config->Color_ui.value + 10);
-            printf("%*s", Ui->win_w, " ");
-            ui__colorize(0);
-            WRAP_LINE();
-        }
     }
     ui__colorize(Config->Color_ui.value);
     ANSI__INVERT();
