@@ -13,17 +13,7 @@
 #include <linux/limits.h>
 
 #include "line.h"
-
-// Macros that makes a life a little bit more readable.
-#define IDX       1
-#define NUL_SZ    1
-#define LF_SZ     1
-#define CURSOR_SZ 1
-#define SPACE_SZ  1
-#define SLASH_SZ  1
-#define PREV      1
-#define NEXT      1
-#define ERROR     -1
+#include "macros.h"
 
 /* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
    recomended to set the CHARS_MAX to a value bigger than (INT_MAX - 1)

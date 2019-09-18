@@ -5,23 +5,15 @@
 
 #include <sys/ioctl.h>
 
+#include "ansi.h"
 #include "buffer.h"
 #include "config.h"
 #include "modes.h"
 #include "print.h"
 #include "ui.h"
 
-// ANSI escape codes for a terminal control.
-#define ANSI_CLEAN_WHOLE_LINE()   printf("\033[2K")
-#define ANSI_SAVE_CURSOR_POS()    printf("\033[s")
-#define ANSI_RESTORE_CURSOR_POS() printf("\033[u")
-#define ANSI_CURSOR_UP(offset)    printf("\033[%uA", offset)
-#define ANSI_CURSOR_DOWN(offset)  printf("\033[%uB", offset)
-#define ANSI_CURSOR_RIGHT(offset) printf("\033[%uC", offset)
-#define ANSI_CURSOR_LEFT(offset)  printf("\033[%uD", offset)
-
-// Returns current terminal width and height and exits if is wrong.
-term_t window__get_term_sz(const char);
+// Returns current terminal width and height and exits if it's wrong.
+term_t window__receive_term_sz(const char);
 
 // Clean a whole rendered window.
 void window__flush(void);

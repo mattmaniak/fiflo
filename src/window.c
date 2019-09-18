@@ -1,59 +1,60 @@
 #include "window.h"
 
-term_t window__get_term_sz(const char axis)
+term_t window__receive_term_sz(const char axis)
 {
-    const int line_sz = 1;
-    const int sz_max  = USHRT_MAX;
-    const int h_min   = UI__UBAR_SZ + line_sz + UI__TOGGLED_LBAR_H;
-    const int w_min   = UI__GIT_LOGO_W + SPACE_SZ + UI__GIT_BRANCH_MIN_W
-                        + SPACE_SZ + BUFFER__STATUS_MAX + UI__HORIZONTAL_PADDING;
+    const int ln_sz  = 1;
+    const int sz_max = USHRT_MAX;
+    const int h_min  = UI__UBAR_SZ + ln_sz + UI__TOGGLED_LBAR_H;
+    const int w_min  = UI__GIT_LOGO_W + SPACE_SZ + UI__GIT_BRANCH_MIN_W
+                       + SPACE_SZ + BUFFER__STATUS_MAX
+                       + UI__HORIZONTAL_PADDING;
 
-    const struct winsize terminal;
+    const struct winsize Term_win;
 
-    /* TIOCGWINSZ request to the stdout descriptor. &term is required by that
-    specific device (stdout). */
-    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == ERROR)
+    /* "TIOCGWINSZ request to the stdout descriptor. &term is required by that
+        specific device (stdout)." */
+    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &Term_win) == ERROR)
     {
-        fprintf(stderr, "Can't get a terminal's size.\n");
+        fprintf(stderr, "Can't get a Term_win's size.\n");
         return 0;
     }
 
     // Terminal size check.
-    if((terminal.ws_col < w_min) || (terminal.ws_row < h_min))
+    if((Term_win.ws_col < w_min) || (Term_win.ws_row < h_min))
     {
-        fprintf(stderr, "Minimal terminal's size: %ux%u.\n", w_min, h_min);
+        fprintf(stderr, "Minimal Term_win's size: %ux%u.\n", w_min, h_min);
         return 0;
     }
-    else if((terminal.ws_col > sz_max) || (terminal.ws_row > sz_max))
+    else if((Term_win.ws_col > sz_max) || (Term_win.ws_row > sz_max))
     {
-        fprintf(stderr, "Maximum terminal's size: %ux%u.\n", sz_max, sz_max);
+        fprintf(stderr, "Maximum Term_win's size: %ux%u.\n", sz_max, sz_max);
         return 0;
     }
 
     switch(axis)
     {
     case 'w':
-        return terminal.ws_col;
+        return Term_win.ws_col;
 
     case 'h':
-        return terminal.ws_row;
+        return Term_win.ws_row;
     }
     return 0;
 }
 
 void window__flush(void)
 {
-    const term_t term_h = window__get_term_sz('h');
+    const term_t term_h = window__receive_term_sz('h');
 
     // Restore to a lowest left corner and clean a lowest line.
-    ANSI_RESTORE_CURSOR_POS();
-    ANSI_CLEAN_WHOLE_LINE();
+    ANSI__RESTORE_CURSOR_POS();
+    ANSI__CLEAN_WHOLE_LINE();
 
     // Then from move up and clean next lines till a window ends.
-    for(term_t line = UI__LBAR_SZ; line < term_h; line++)
+    for(term_t ln = UI__LBAR_SZ; ln < term_h; ln++)
     {
-        ANSI_CURSOR_UP(1);
-        ANSI_CLEAN_WHOLE_LINE();
+        ANSI__CURSOR_UP(1);
+        ANSI__CLEAN_WHOLE_LINE();
     }
     fflush(NULL);
 }
@@ -69,18 +70,16 @@ void window__fill(const Buff_t* const Buffer, const Conf_t* const Config,
         {
             WRAP_LINE();
 
-            if(Ui->textarea_w >= (Ui->actual_punch_card_pos
-                                  + Config->Punch_card_width.value))
+            if((Ui->textarea_w >= (Ui->pcard_delta_x
+                                   + Config->Punch_card_width.value))
+               && (-Ui->pcard_delta_x < Config->Punch_card_width.value))
             {
-                if(-Ui->actual_punch_card_pos < Config->Punch_card_width.value)
-                {
-                    printf("%*s", Ui->line_num_len + Ui->actual_punch_card_pos
-                           + Config->Punch_card_width.value - IDX, " ");
+                printf("%*s", Ui->line_num_len + Ui->pcard_delta_x
+                       + Config->Punch_card_width.value - IDX, " ");
 
-                    ui__colorize(Config->Color_ui.value + 10);
-                    putchar(' ');
-                    ui__colorize(0);
-                }
+                ui__colorize(Config->Color_ui.value + 10);
+                putchar(' ');
+                ui__colorize(0);
             }
         }
     }
@@ -100,8 +99,8 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
     }
 
     // Cursor is pushed right by the lower bar. Move it back.
-    ANSI_CURSOR_LEFT(Ui->win_w);
-    ANSI_SAVE_CURSOR_POS();
+    ANSI__CURSOR_LEFT(Ui->win_w);
+    ANSI__SAVE_CURSOR_POS();
 
     if(!Modes->live_fname_edit)
     {
@@ -128,8 +127,8 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
                   (Ui->textarea_h - BUFFER__ACTUAL_LINE_IDX - IDX + Ui->lbar_h)
                   : Ui->lbar_h;
     }
-    ANSI_CURSOR_RIGHT(move_right);
-    ANSI_CURSOR_UP(move_up);
+    ANSI__CURSOR_RIGHT(move_right);
+    ANSI__CURSOR_UP(move_up);
 }
 
 bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
@@ -142,8 +141,8 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
 
     sprintf(line_num_str, "%u", Buffer->lines_amount + IDX);
 
-    if(((Ui.win_w = window__get_term_sz('w')) == 0)
-       || ((Ui.win_h = window__get_term_sz('h')) == 0))
+    if(((Ui.win_w = window__receive_term_sz('w')) == 0)
+       || ((Ui.win_h = window__receive_term_sz('h')) == 0))
     {
         return false;
     }
@@ -157,11 +156,11 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.textarea_w = (const term_t) (Ui.win_w - Ui.line_num_len);
     Ui.textarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
-    Ui.actual_punch_card_pos = Ui.textarea_w + Buffer->cursor_rev_x
+    Ui.pcard_delta_x = Ui.textarea_w + Buffer->cursor_rev_x
                                - BUFFER__ACTUAL_LINE.len - IDX;
-    if(Ui.actual_punch_card_pos > 0)
+    if(Ui.pcard_delta_x > 0)
     {
-        Ui.actual_punch_card_pos = 0;
+        Ui.pcard_delta_x = 0;
     }
     ui__upper_bar(&Buffer[actual_file_idx], Config, &Ui);
 

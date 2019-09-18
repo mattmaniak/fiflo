@@ -18,7 +18,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
             ui__colorize(Config->Color_whitespace.value);
             if(ln_idx != BUFFER__ACTUAL_LINE_IDX)
             {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->actual_punch_card_pos))
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->pcard_delta_x))
                 {
                     ui__colorize(Config->Color_ui.value + 10);
                 }
@@ -37,7 +37,8 @@ void print__line_with_tabs(const Buff_t* const Buffer,
         else if(ch == ' ')
         {
             ui__colorize(Config->Color_whitespace.value);
-            if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->actual_punch_card_pos))
+            // if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->pcard_delta_x))
+            if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
             {
                 ui__colorize(Config->Color_ui.value + 10);
             }
@@ -71,10 +72,10 @@ void print__punch_card(const Conf_t* const Config, const Ui_t* const Ui,
     if((Ui->textarea_w >= Config->Punch_card_width.value)
        && ((ln_len + IDX) < (const idx_t) Config->Punch_card_width.value))
     {
-        if(-Ui->actual_punch_card_pos < (const int) (Config->Punch_card_width.value - ln_len - IDX))
+        if(-Ui->pcard_delta_x < (const int) (Config->Punch_card_width.value - ln_len - IDX))
         {
             printf("%*s", (const unsigned int)
-                   Ui->actual_punch_card_pos + Config->Punch_card_width.value - ln_len - IDX, " ");
+                   Ui->pcard_delta_x + Config->Punch_card_width.value - ln_len - IDX, " ");
 
             ui__colorize(Config->Color_ui.value + 10);
             putchar(' ');
@@ -271,7 +272,7 @@ void print__scroll_lines(const Buff_t* const Buffer,
                          const Conf_t* const Config,
                          const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    idx_t chars_end_offset = BUFFER__ACTUAL_LINE.len;
+    idx_t end_ch_idx = BUFFER__ACTUAL_LINE.len;
 
     // Previous lines. If they are scrolled. Only a beginning is shown.
     for(idx_t ln_idx = print__set_start_line(Buffer, Ui);
@@ -287,12 +288,13 @@ void print__scroll_lines(const Buff_t* const Buffer,
     if(BUFFER__ACTUAL_LINE.len < Ui->textarea_w)
     {
         if((BUFFER__ACTUAL_LINE.len > 0)
-           && (BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len - NUL_SZ] == '\n'))
+           && (BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len - NUL_SZ]
+           == '\n'))
         {
-            chars_end_offset--;
+            end_ch_idx--;
         }
-        print__line_with_tabs(Buffer, Config, Syntax, Ui, BUFFER__ACTUAL_LINE_IDX,
-                              0, chars_end_offset);
+        print__line_with_tabs(Buffer, Config, Syntax, Ui,
+                              BUFFER__ACTUAL_LINE_IDX, 0, end_ch_idx);
 
     }
     // Chars won't fit in a horizontal space.
@@ -308,8 +310,9 @@ void print__scroll_lines(const Buff_t* const Buffer,
     else
     {
         // Render only left part of a line. The cursor can be scrolled.
-        print__line_with_tabs(Buffer, Config, Syntax, Ui, BUFFER__ACTUAL_LINE_IDX,
-                              0, (const idx_t) Ui->textarea_w - LF_SZ);
+        print__line_with_tabs(Buffer, Config, Syntax, Ui,
+                              BUFFER__ACTUAL_LINE_IDX, 0,
+                              (const idx_t) Ui->textarea_w - LF_SZ);
     }
     print__punch_card(Config, Ui, (Buffer->cursor_rev_y == 0)
                       ? BUFFER__ACTUAL_LINE.len

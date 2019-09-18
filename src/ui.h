@@ -34,7 +34,7 @@ typedef struct
     term_t expanded_lbar_h; // As above but toggled.
     term_t win_w;
     term_t win_h;
-    int    actual_punch_card_pos;
+    int    pcard_delta_x;
 }
 Ui_t;
 
