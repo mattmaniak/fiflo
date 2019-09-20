@@ -101,10 +101,13 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
                     ui__colorize(Config->Color_ui.value + 10);
                     ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 }
-                // ui__colorize(Syntax->Keywords[kwrd_idx].color);
-                // putchar('!');
                 putchar(Line->txt[ch_idx]);
-                ui__colorize(0);
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->pcard_delta_x))
+                {
+                    // Reset the background color after punch card.
+                    ui__colorize(0);
+                    ui__colorize(Syntax->Keywords[kwrd_idx].color);
+                }
             }
             if(ch_idx < end_ch_idx) // Not a last char, so don't hide a next.
             {

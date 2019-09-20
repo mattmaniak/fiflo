@@ -1,10 +1,9 @@
 fiflo - changelog
 
 Description
-Below version numbers contains more detailed descriptions of annotated Git
-tags. Dates are not alternative version names. They are just release dates.
-Changelog contains only new tangible features and source code changes. To see
-what's new in the implementation, use git-show or git-log.
+Dates are not alternative version names. They are just release dates.
+The changelog contains only new tangible features and source code changes. To
+see what's new in the implementation, use git-show or git-log.
 
 Versions:
 v4.1.0 (2019, WIP):
