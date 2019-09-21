@@ -22,8 +22,6 @@ void print__line_with_tabs(const Buff_t* const Buffer,
                 {
                     ui__colorize(Config->Color_ui.value + 10);
                 }
-                putchar(PRINT__TAB_HIGHLIGHT);
-                ui__colorize(0);
             }
             else
             {
@@ -31,8 +29,9 @@ void print__line_with_tabs(const Buff_t* const Buffer,
                 {
                     ui__colorize(Config->Color_ui.value + 10);
                 }
-                putchar(PRINT__TAB_HIGHLIGHT);
             }
+            putchar(PRINT__TAB_HIGHLIGHT);
+            ui__colorize(0);
         }
         else if(ch == ' ')
         {
@@ -72,13 +71,13 @@ void print__line_with_tabs(const Buff_t* const Buffer,
                 if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
                 {
                     ui__colorize(Config->Color_ui.value + 10);
+                    // putchar('!');
                 }
             }
             if(ch_idx == ch_idx_after_highlighting)
             {
                 ui__colorize(Config->Color_text.value);
                 putchar(ch);
-                ui__colorize(0);
             }
             else // Word printed and highlighted. Shift the index to the next.
             {
@@ -89,7 +88,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
     }
 }
 
-void print__punch_card(const Buff_t* const Buffer, const Conf_t* const Config,
+void print__punch_card(const Conf_t* const Config,
                        const Ui_t* const Ui, const char* const ln_txt,
                        const idx_t ln_len)
 {
@@ -141,7 +140,7 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
         if(BUFFER__ACTUAL_LINE.len == 0)
         {
             // Only the newline so print only the punch card.
-            print__punch_card(Buffer, Config, Ui, BUFFER__ACTUAL_LINE.txt,
+            print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.txt,
                               BUFFER__ACTUAL_LINE.len);
         }
         else
@@ -152,7 +151,7 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
                 print__line_with_tabs(Buffer, Config, Syntax, Ui,
                                       BUFFER__ACTUAL_LINE_IDX, 0,
                                       BUFFER__ACTUAL_LINE.len);
-                print__punch_card(Buffer, Config, Ui, BUFFER__ACTUAL_LINE.txt,
+                print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.txt,
                                   BUFFER__ACTUAL_LINE.len);
             }
             else // Non-last line so ignore the LF and wrap after a punch card.
@@ -160,7 +159,7 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
                 print__line_with_tabs(Buffer, Config, Syntax, Ui,
                                       BUFFER__ACTUAL_LINE_IDX, 0,
                                       BUFFER__ACTUAL_LINE.len - LF_SZ);
-                print__punch_card(Buffer, Config, Ui, BUFFER__ACTUAL_LINE.txt,
+                print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.txt,
                                   BUFFER__ACTUAL_LINE.len - LF_SZ);
                 WRAP_LINE();
             }
@@ -198,16 +197,30 @@ void print__another_line(const Buff_t* const Buffer,
     // Ignore the linefeed and print it after the wrap line.
     if(Buffer->Lines[ln_idx].len < Ui->txtarea_w)
     {
-        print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx, 0,
+        /* Using the -Ui->pcard_delta_x as the initiale offset scroll all other
+           lines horizontally. */
+
+        print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx,
+                              0,
                               Buffer->Lines[ln_idx].len - LF_SZ);
-        print__punch_card(Buffer, Config, Ui, Buffer->Lines[ln_idx].txt,
+
+        // print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx,
+        //                       -Ui->pcard_delta_x,
+        //                       Buffer->Lines[ln_idx].len - LF_SZ);
+
+        print__punch_card(Config, Ui, Buffer->Lines[ln_idx].txt,
                           Buffer->Lines[ln_idx].len - LF_SZ);
         WRAP_LINE();
     }
     else
     {
-        print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx, 0,
+        print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx,
+                              0,
                               (const idx_t) Ui->txtarea_w - LF_SZ);
+
+        // print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx,
+        //                       -Ui->pcard_delta_x,
+        //                       (const idx_t) Ui->txtarea_w - LF_SZ);
         WRAP_LINE();
     }
 }
@@ -266,7 +279,7 @@ void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
                                   Buffer->lines_amount, 0,
                                   (const idx_t) Ui->txtarea_w - LF_SZ);
         }
-        print__punch_card(Buffer, Config, Ui, BUFFER__LAST_LINE.txt,
+        print__punch_card(Config, Ui, BUFFER__LAST_LINE.txt,
                           BUFFER__LAST_LINE.len);
     }
 }
@@ -305,7 +318,7 @@ void print__shrink_lines(const Buff_t* const Buffer,
         print__line_with_tabs(Buffer, Config, Syntax, Ui, last_ln_idx, 0,
                               (const idx_t) Ui->txtarea_w - LF_SZ);
     }
-    print__punch_card(Buffer, Config, Ui, Buffer->Lines[last_ln_idx].txt,
+    print__punch_card(Config, Ui, Buffer->Lines[last_ln_idx].txt,
                       Buffer->Lines[last_ln_idx].len - LF_SZ);
 }
 
@@ -355,7 +368,7 @@ void print__scroll_lines(const Buff_t* const Buffer,
                               BUFFER__ACTUAL_LINE_IDX, 0,
                               (const idx_t) Ui->txtarea_w - LF_SZ);
     }
-    print__punch_card(Buffer, Config, Ui, BUFFER__ACTUAL_LINE.txt,
+    print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.txt,
                       (Buffer->cursor_rev_y == 0) ? BUFFER__ACTUAL_LINE.len
                       : BUFFER__ACTUAL_LINE.len - LF_SZ);
 }

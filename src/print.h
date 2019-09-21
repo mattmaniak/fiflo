@@ -20,8 +20,8 @@ void print__line_with_tabs(const Buff_t* const, const Conf_t* const,
                            const idx_t, const idx_t, const idx_t);
 
 // Show the vertical wrap guide.
-void print__punch_card(const Buff_t* const, const Conf_t* const,
-                       const Ui_t* const, const char* const, const idx_t);
+void print__punch_card(const Conf_t* const, const Ui_t* const,
+                       const char* const, const idx_t);
 
 // Return value of hidden lines.
 idx_t print__set_start_line(const Buff_t* const, const Ui_t* const);

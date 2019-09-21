@@ -76,6 +76,7 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
                          idx_t ch_idx)
 {
     const char* const str_to_print_addr = &Line->txt[ch_idx];
+    bool              ignored_kwrd      = false;
     idx_t             end_paint_idx;
 
     if(Syntax->kwrds_idx <= 0)
@@ -89,6 +90,12 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
         {
             end_paint_idx = syntax__check_word_to_paint(Syntax, Line, ch_idx,
                                                         kwrd_idx);
+            if(end_paint_idx == 0)
+            {
+                end_paint_idx = ch_idx;
+                ignored_kwrd  = true;
+            }
+
             // Breaks a word if the end of a terminal is achieved.
             if(end_paint_idx > end_ch_idx)
             {
@@ -109,7 +116,8 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
                     ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 }
             }
-            if(ch_idx < end_ch_idx) // Not a last char, so don't hide a next.
+            // Not a last char, so don't hide a next.
+            if(!ignored_kwrd && (ch_idx < end_ch_idx))
             {
                 ch_idx--; // An other char will be printed. Make it visible.
             }
@@ -131,21 +139,28 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
                                || (Line->txt[end_paint_idx] == '\t')
                                || (Line->txt[end_paint_idx] == '(')
                                || (Line->txt[end_paint_idx] == '*')
+                               || (Line->txt[end_paint_idx] == '>')
                                || (Line->txt[end_paint_idx] == '\0');
 
     // A word at the beginning of the line.
     if((ch_idx == 0)
-       && (allowed_sufix || (Line->txt[end_paint_idx] == ':')))
+       && (allowed_sufix || (Line->txt[end_paint_idx] == ':')
+           || (Line->txt[end_paint_idx] == ' ')))
     {
         ui__colorize(Syntax->Keywords[kwrd_idx].color);
     }
     // Another word somewhere in a text.
     else if(((Line->txt[ch_idx - PREV] == ' ')
              || (Line->txt[ch_idx - PREV] == '\t')
-             || (Line->txt[ch_idx - PREV] == '('))
+             || (Line->txt[ch_idx - PREV] == '(')
+             || (Line->txt[end_paint_idx] == '<'))
             && (allowed_sufix || (Line->txt[end_paint_idx] == ')')))
     {
         ui__colorize(Syntax->Keywords[kwrd_idx].color);
+    }
+    else
+    {
+        return 0;
     }
     return end_paint_idx;
 }
