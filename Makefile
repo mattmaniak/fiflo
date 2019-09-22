@@ -104,7 +104,7 @@ install:
 	sudo cp LICENSE $(DOC_INS_DIR)
 	sudo cp $(DOC_DIR)/* $(DOC_INS_DIR)
 
-	sudo cp -i CONF_FILE $(CONF_DIR)
+	sudo cp -i $(CONF_FILE) $(CONF_DIR)
 
 	@echo " "
 	@echo "Fiflo installed."

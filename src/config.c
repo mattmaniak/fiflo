@@ -160,7 +160,7 @@ void config__set_default(Conf_t* const Config)
     Config->Color_line_number.value        = WHITE;
     Config->Color_line_number_actual.value = BRIGHT_BLACK;
     Config->Color_text.value               = WHITE;
-    Config->Color_ui.value                 = GREEN;
+    Config->Color_ui.value                 = WHITE;
     Config->Color_warning.value            = RED;
     Config->Color_whitespace.value         = BRIGHT_BLACK;
     Config->Punch_card_width.value         = CONFIG__PUNCH_CARD_W;
@@ -170,7 +170,7 @@ void config__set_default(Conf_t* const Config)
 void config__load_custom(Conf_t* const Config)
 {
     const char space_or_control_char = 32;
-    int        parsed_value = 0;
+    int        parsed_value          = 0;
     char       line[80];
     char       selector[CONFIG__SELECTOR_SZ];
     char       value[32];

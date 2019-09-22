@@ -15,6 +15,7 @@ enum
     EXTENSION__NONE,
     EXTENSION__C,
     EXTENSION__PYTHON,
+    EXTENSION__HTML
 };
 
 // Recognizes an extension of a current file.

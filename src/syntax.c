@@ -17,6 +17,10 @@ bool syntax__load(Syntax_t* const Syntax, const int extension)
 
     case EXTENSION__PYTHON:
         strcpy(fname, "/usr/share/fiflo/python.fiflorc");
+        break;
+
+    case EXTENSION__HTML:
+        strcpy(fname, "/usr/share/fiflo/html.fiflorc");
     }
 
     if((file = fopen(fname, "r")) != NULL)
@@ -72,8 +76,7 @@ void syntax__sort(Syntax_t* const Syntax)
 
 idx_t syntax__paint_word(const Syntax_t* const Syntax,
                          const Conf_t* const Config, Line_t* Line,
-                         const Ui_t* const Ui, const idx_t end_ch_idx,
-                         idx_t ch_idx)
+                         const idx_t end_ch_idx, idx_t ch_idx)
 {
     const char* const str_to_print_addr = &Line->txt[ch_idx];
     bool              ignored_kwrd      = false;
@@ -88,8 +91,11 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
         if(strstr(str_to_print_addr, Syntax->Keywords[kwrd_idx].keyword)
            == str_to_print_addr)
         {
-            end_paint_idx = syntax__check_word_to_paint(Syntax, Line, ch_idx,
-                                                        kwrd_idx);
+            ui__colorize(Syntax->Keywords[kwrd_idx].color);
+
+            end_paint_idx = ch_idx + (const idx_t)
+                            strlen(Syntax->Keywords[kwrd_idx].keyword);
+
             if(end_paint_idx == 0)
             {
                 end_paint_idx = ch_idx;
@@ -125,42 +131,4 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
         }
     }
     return ch_idx;
-}
-
-idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
-                                  const Line_t* const Line, const idx_t ch_idx,
-                                  const idx_t kwrd_idx)
-{
-    const idx_t end_paint_idx = ch_idx
-    + (const idx_t) strlen(Syntax->Keywords[kwrd_idx].keyword);
-
-    const bool allowed_sufix = (Line->txt[end_paint_idx] == ' ')
-                               || (Line->txt[end_paint_idx] == '\n')
-                               || (Line->txt[end_paint_idx] == '\t')
-                               || (Line->txt[end_paint_idx] == '(')
-                               || (Line->txt[end_paint_idx] == '*')
-                               || (Line->txt[end_paint_idx] == '>')
-                               || (Line->txt[end_paint_idx] == '\0');
-
-    // A word at the beginning of the line.
-    // if((ch_idx == 0)
-    //    && (allowed_sufix || (Line->txt[end_paint_idx] == ':')
-    //        || (Line->txt[end_paint_idx] == ' ')))
-    // {
-    //     ui__colorize(Syntax->Keywords[kwrd_idx].color);
-    // }
-    // // Another word somewhere in a text.
-    // else if(((Line->txt[ch_idx - PREV] == ' ')
-    //          || (Line->txt[ch_idx - PREV] == '\t')
-    //          || (Line->txt[ch_idx - PREV] == '(')
-    //          || (Line->txt[end_paint_idx] == '<'))
-    //         && (allowed_sufix || (Line->txt[end_paint_idx] == ')')))
-    // {
-        ui__colorize(Syntax->Keywords[kwrd_idx].color);
-    // }
-    // else
-    // {
-    //     return 0;
-    // }
-    return end_paint_idx;
 }
