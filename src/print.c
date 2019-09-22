@@ -18,7 +18,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
             ui__colorize(Config->Color_whitespace.value);
             if(ln_idx != BUFFER__ACTUAL_LINE_IDX)
             {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->pcard_delta_x))
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
                 {
                     ui__colorize(Config->Color_ui.value + 10);
                 }
@@ -38,7 +38,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
             ui__colorize(Config->Color_whitespace.value);
             if(ln_idx != BUFFER__ACTUAL_LINE_IDX)
             {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->pcard_delta_x))
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
                 {
                     ui__colorize(Config->Color_ui.value + 10);
                 }
@@ -61,7 +61,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
 
             if(ln_idx != BUFFER__ACTUAL_LINE_IDX)
             {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->pcard_delta_x))
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
                 {
                     ui__colorize(Config->Color_ui.value + 10);
                 }
@@ -71,7 +71,6 @@ void print__line_with_tabs(const Buff_t* const Buffer,
                 if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
                 {
                     ui__colorize(Config->Color_ui.value + 10);
-                    // putchar('!');
                 }
             }
             if(ch_idx == ch_idx_after_highlighting)
@@ -92,29 +91,39 @@ void print__punch_card(const Conf_t* const Config,
                        const Ui_t* const Ui, const char* const ln_txt,
                        const idx_t ln_len)
 {
+    int pcard_offset = Config->Punch_card_width.value - ln_len - IDX;
+
     if(Ui->txtarea_w >= Config->Punch_card_width.value)
     {
-        if(((ln_len + IDX) < (const idx_t) Config->Punch_card_width.value)
-           && (-Ui->pcard_delta_x
-               < (const int) (Config->Punch_card_width.value - ln_len - IDX)))
+        if(((ln_len + IDX) < (const idx_t) Config->Punch_card_width.value))
         {
-            printf("%*s", (const unsigned int) Ui->pcard_delta_x
-                   + Config->Punch_card_width.value - ln_len - IDX, " ");
 
-            ui__colorize(Config->Color_ui.value + 10);
-            putchar(' ');
-            ui__colorize(0);
+            if((const int) ln_len < -Ui->pcard_delta_x)
+            {
+                pcard_offset = Config->Punch_card_width.value
+                               + Ui->pcard_delta_x - IDX;
+            }
+            if(pcard_offset > 0)
+            {
+                printf("%*s", pcard_offset, " ");
+                ui__colorize(Config->Color_ui.value + 10);
+                putchar(' ');
+            }
+            else if(pcard_offset == 0)
+            {
+                ui__colorize(Config->Color_ui.value + 10);
+                putchar(' ');
+            }
         }
         // The Linefeed highlighting.
         else if((ln_txt[ln_len] == '\n')
-                && (-Ui->pcard_delta_x
-                    == (const int) (Config->Punch_card_width.value - ln_len
-                    - IDX)))
+                && ((ln_len + IDX) == (const idx_t) Config->Punch_card_width.value)
+                && ((const int) ln_len >= -Ui->pcard_delta_x))
         {
-            ui__colorize(Config->Color_ui.value + 10);
-            putchar(' ');
-            ui__colorize(0);
+                ui__colorize(Config->Color_ui.value + 10);
+                putchar(' ');
         }
+        ui__colorize(0);
     }
 }
 
@@ -192,6 +201,8 @@ void print__another_line(const Buff_t* const Buffer,
                          const Syntax_t* const Syntax, const Ui_t* const Ui,
                          const idx_t ln_idx)
 {
+    idx_t start_ch_idx = (-Ui->pcard_delta_x < 0) ? 0 : -Ui->pcard_delta_x;
+
     ui__print_line_number(Buffer, Config, ln_idx, Ui->line_num_len);
 
     // Ignore the linefeed and print it after the wrap line.
@@ -200,13 +211,8 @@ void print__another_line(const Buff_t* const Buffer,
         /* Using the -Ui->pcard_delta_x as the initiale offset scroll all other
            lines horizontally. */
 
-        print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx,
-                              0,
+        print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx, start_ch_idx,
                               Buffer->Lines[ln_idx].len - LF_SZ);
-
-        // print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx,
-        //                       -Ui->pcard_delta_x,
-        //                       Buffer->Lines[ln_idx].len - LF_SZ);
 
         print__punch_card(Config, Ui, Buffer->Lines[ln_idx].txt,
                           Buffer->Lines[ln_idx].len - LF_SZ);
@@ -215,12 +221,8 @@ void print__another_line(const Buff_t* const Buffer,
     else
     {
         print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx,
-                              0,
+                              start_ch_idx,
                               (const idx_t) Ui->txtarea_w - LF_SZ);
-
-        // print__line_with_tabs(Buffer, Config, Syntax, Ui, ln_idx,
-        //                       -Ui->pcard_delta_x,
-        //                       (const idx_t) Ui->txtarea_w - LF_SZ);
         WRAP_LINE();
     }
 }
@@ -326,11 +328,12 @@ void print__scroll_lines(const Buff_t* const Buffer,
                          const Conf_t* const Config,
                          const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    idx_t end_ch_idx = BUFFER__ACTUAL_LINE.len;
+    idx_t end_ch_idx   = BUFFER__ACTUAL_LINE.len;
+    idx_t start_ln_idx = print__set_start_line(Buffer, Ui);
 
     // Previous lines. If they are scrolled. Only a beginning is shown.
-    for(idx_t ln_idx = print__set_start_line(Buffer, Ui);
-        ln_idx < BUFFER__ACTUAL_LINE_IDX; ln_idx++)
+    for(idx_t ln_idx = start_ln_idx; ln_idx < BUFFER__ACTUAL_LINE_IDX;
+        ln_idx++)
     {
         print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
     }

@@ -103,13 +103,13 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
             }
             for(; ch_idx < end_paint_idx; ch_idx++)
             {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->pcard_delta_x))
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
                 {
                     ui__colorize(Config->Color_ui.value + 10);
                     ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 }
                 putchar(Line->txt[ch_idx]);
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX + Ui->pcard_delta_x))
+                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
                 {
                     // Reset the background color after punch card.
                     ui__colorize(0);
@@ -143,24 +143,24 @@ idx_t syntax__check_word_to_paint(const Syntax_t* const Syntax,
                                || (Line->txt[end_paint_idx] == '\0');
 
     // A word at the beginning of the line.
-    if((ch_idx == 0)
-       && (allowed_sufix || (Line->txt[end_paint_idx] == ':')
-           || (Line->txt[end_paint_idx] == ' ')))
-    {
+    // if((ch_idx == 0)
+    //    && (allowed_sufix || (Line->txt[end_paint_idx] == ':')
+    //        || (Line->txt[end_paint_idx] == ' ')))
+    // {
+    //     ui__colorize(Syntax->Keywords[kwrd_idx].color);
+    // }
+    // // Another word somewhere in a text.
+    // else if(((Line->txt[ch_idx - PREV] == ' ')
+    //          || (Line->txt[ch_idx - PREV] == '\t')
+    //          || (Line->txt[ch_idx - PREV] == '(')
+    //          || (Line->txt[end_paint_idx] == '<'))
+    //         && (allowed_sufix || (Line->txt[end_paint_idx] == ')')))
+    // {
         ui__colorize(Syntax->Keywords[kwrd_idx].color);
-    }
-    // Another word somewhere in a text.
-    else if(((Line->txt[ch_idx - PREV] == ' ')
-             || (Line->txt[ch_idx - PREV] == '\t')
-             || (Line->txt[ch_idx - PREV] == '(')
-             || (Line->txt[end_paint_idx] == '<'))
-            && (allowed_sufix || (Line->txt[end_paint_idx] == ')')))
-    {
-        ui__colorize(Syntax->Keywords[kwrd_idx].color);
-    }
-    else
-    {
-        return 0;
-    }
+    // }
+    // else
+    // {
+    //     return 0;
+    // }
     return end_paint_idx;
 }

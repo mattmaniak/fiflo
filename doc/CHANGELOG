@@ -9,9 +9,9 @@ Versions:
 v4.1.0 (2019, WIP):
 - cursor position indicator shows it's x-pos instead of a current line length,
 - file extension recognition,
-- syntax highlighting,
-- visible vertical punch card,
-- horizontal scroll rendering fix (TODO),
+- simple syntax highlighting,
+- vertical punch card,
+- all lines will be scrolled horizontally instead of one,
 - selectors' names change in the configuration file,
 - inverted color UI with a configurable color,
 - adaptive expanded lower bar height instead of the fixed one.
