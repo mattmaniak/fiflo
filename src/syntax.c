@@ -79,6 +79,8 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
                          const idx_t end_ch_idx, idx_t ch_idx)
 {
     const char* const str_to_print_addr = &Line->txt[ch_idx];
+    const idx_t       pcard_w           =
+    (const idx_t) Config->Punch_card_width.value;
     bool              ignored_kwrd      = false;
     idx_t             end_paint_idx;
 
@@ -109,13 +111,14 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
             }
             for(; ch_idx < end_paint_idx; ch_idx++)
             {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
+                if(ch_idx == (pcard_w - IDX))
                 {
-                    ui__colorize(Config->Color_ui.value + 10);
+                    ui__colorize(Config->Color_ui.value
+                                 + ANSI__BG_COLOR_OFFSET);
                     ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 }
                 putchar(Line->txt[ch_idx]);
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
+                if(ch_idx == (pcard_w - IDX))
                 {
                     // Reset the background color after punch card.
                     ui__colorize(0);

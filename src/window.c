@@ -134,7 +134,8 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     {
         return false;
     }
-    Ui.expanded_lbar_h = UI__LBAR_SZ + additional_argc_idx + IDX + LN_SZ;
+    Ui.expanded_lbar_h = (const term_t) (UI__LBAR_SZ + additional_argc_idx
+                         + IDX + LN_SZ);
     Ui.lbar_h          = (Modes->expanded_lbar) ? Ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 
@@ -144,8 +145,8 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.txtarea_w = (const term_t) (Ui.win_w - Ui.line_num_len);
     Ui.txtarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
-    Ui.pcard_delta_x = Ui.txtarea_w + Buffer->cursor_rev_x
-                       - BUFFER__ACTUAL_LINE.len - IDX;
+    Ui.pcard_delta_x = (const int) (Ui.txtarea_w + Buffer->cursor_rev_x
+                       - BUFFER__ACTUAL_LINE.len - IDX);
     Ui.pcard_delta_x = (Ui.pcard_delta_x > 0) ? 0 : Ui.pcard_delta_x;
 
     ui__upper_bar(&Buffer[actual_file_idx], Config, &Ui);

@@ -117,7 +117,8 @@ void print__another_line(const Buff_t* const Buffer,
                          const Syntax_t* const Syntax, const Ui_t* const Ui,
                          const idx_t ln_idx)
 {
-    idx_t start_ch_idx = (-Ui->pcard_delta_x < 0) ? 0 : -Ui->pcard_delta_x;
+    const idx_t start_ch_idx = (-Ui->pcard_delta_x < 0) ? 0
+                               : (const idx_t) -Ui->pcard_delta_x;
 
     ui__print_line_number(Buffer, Config, ln_idx, Ui->line_num_len);
 
@@ -164,9 +165,9 @@ void print__scroll_line_horizontally(const Buff_t* const Buffer,
 void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
                       const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    idx_t ln_idx;
+    idx_t ln_idx = 0;
 
-    for(ln_idx = 0; ln_idx < BUFFER__ACTUAL_LINE_IDX; ln_idx++)
+    for(; ln_idx < BUFFER__ACTUAL_LINE_IDX; ln_idx++)
     {
         print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
     }
@@ -203,7 +204,7 @@ void print__shrink_lines(const Buff_t* const Buffer,
                          const Conf_t* const Config,
                          const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    const idx_t last_ln_idx = (const idx_t) Ui->txtarea_h - IDX;
+    const idx_t last_ln_idx = Ui->txtarea_h - IDX;
     idx_t       ln_idx      = 0;
 
     // Previous lines. If they are scrolled. Only a beginning is shown.

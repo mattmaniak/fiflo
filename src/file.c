@@ -134,11 +134,8 @@ bool file__load(Buff_t* const Buffer, const Conf_t* const Config)
     }
     while((ch = (char) getc(Textfile)) != EOF)
     {
-        if(!file__convert_tab_from_file(Buffer, Config, ch))
-        {
-            return false;
-        }
-        if(!chars__printable_char(Buffer, ch))
+        if(!file__convert_tab_from_file(Buffer, Config, ch)
+           || !chars__printable_char(Buffer, ch))
         {
             return false;
         }
@@ -157,19 +154,19 @@ void file__convert_tab_to_file(const Buff_t* const Buffer,
                                const Conf_t* const Config, const idx_t ln_idx,
                                idx_t* const ch_idx)
 {
+    const idx_t tab_sz = (const idx_t) Config->Tab_sz.value;
+
     // Convert editor-friendly Tab, e.g. "\t\t\t\t" into a file-friendly '\t'.
-    for(idx_t tab_idx = 0;
-        tab_idx < (const idx_t) Config->Tab_sz.value; tab_idx++)
+    for(idx_t tab_idx = 0; tab_idx < tab_sz; tab_idx++)
     {
         if(Buffer->Lines[ln_idx].txt[*ch_idx + tab_idx] != '\t')
         {
             break; // No Tab, so don't convert anything.
         }
-        else if(tab_idx == (const idx_t) Config->Tab_sz.value - IDX)
+        else if(tab_idx == (tab_sz - IDX))
         {
             // Some in-memory Tabs converted
-            *ch_idx += (const idx_t) Config->Tab_sz.value
-                       - FILE__AT_LEAST_ONE_TAB;
+            *ch_idx += tab_sz - FILE__AT_LEAST_ONE_TAB;
         }
     }
 }
@@ -211,13 +208,8 @@ bool file__get_git_branch(Buff_t* const Buffer)
     strcpy(git_head_file_pathname, Buffer->pathname);
     strcat(git_head_file_pathname, "/.git/HEAD");
 
-    if(access(git_head_file_pathname, F_OK) == ERROR)
-    {
-        strcpy(Buffer->git_branch, "[none]");
-        return true;
-    }
-
-    if((Git_head_file = fopen(git_head_file_pathname, "r")) == NULL)
+    if((access(git_head_file_pathname, F_OK) == ERROR)
+       || ((Git_head_file = fopen(git_head_file_pathname, "r")) == NULL))
     {
         strcpy(Buffer->git_branch, "[none]");
         return true;

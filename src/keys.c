@@ -15,9 +15,9 @@ void keys__arrow_left(Buff_t* const Buffer, const Conf_t* const Config)
                 Buffer->cursor_rev_x++;
                 break; // No Tab, so don't skip anything.
             }
-            else if(tab_idx == (idx_t) Config->Tab_sz.value - IDX)
+            else if(tab_idx == (tab_sz - IDX))
             {
-                Buffer->cursor_rev_x += (idx_t) Config->Tab_sz.value;
+                Buffer->cursor_rev_x += tab_sz;
             }
         }
 
@@ -45,9 +45,9 @@ void keys__arrow_right(Buff_t* const Buffer, const Conf_t* const Config)
                 Buffer->cursor_rev_x--;
                 break; // No Tab, so don't skip anything.
             }
-            else if(tab_idx == (idx_t) Config->Tab_sz.value - IDX)
+            else if(tab_idx == (tab_sz - IDX))
             {
-                Buffer->cursor_rev_x -= (idx_t) Config->Tab_sz.value;
+                Buffer->cursor_rev_x -= tab_sz;
             }
         }
         if(!BUFFER__CURSOR_X_SCROLLED && BUFFER__CURSOR_Y_SCROLLED)
@@ -80,12 +80,12 @@ void keys__arrow_up(Buff_t* const Buffer)
 
 void keys__arrow_down(Buff_t* const Buffer)
 {
-    bool cursor_at_previous_line_start = BUFFER__CURSOR_AT_LINE_BEGINNING;
+    const bool cursor_at_prev_ln_start = BUFFER__CURSOR_AT_LINE_BEGINNING;
 
     if(BUFFER__CURSOR_Y_SCROLLED)
     {
         Buffer->cursor_rev_y--;
-        if(cursor_at_previous_line_start)
+        if(cursor_at_prev_ln_start)
         {
             /* Cursor at the left side: doesn't go at a end of a line. Always
                at the beginning. */

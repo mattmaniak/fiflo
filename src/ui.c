@@ -35,8 +35,8 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
     if(Buffer->fname_len <= (const size_t) fname_area)
     {
-        printf("%s%*s", Buffer->fname, (int) (fname_area
-               - strlen(Buffer->fname) + UI__RIGHT_PADDING), " ");
+        printf("%s%*s", Buffer->fname, fname_area
+               - (const int) strlen(Buffer->fname) + UI__RIGHT_PADDING, " ");
     }
     else
     {
@@ -57,8 +57,8 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
        < (Ui->win_w - UI__GIT_LOGO_W - BUFFER__STATUS_MAX
           - UI__HORIZONTAL_PADDING))
     {
-        printf("%s%*s", Buffer->git_branch, (int) (fname_area
-               - BUFFER__STATUS_MAX - strlen(Buffer->git_branch)
+        printf("%s%*s", Buffer->git_branch, (fname_area
+               - BUFFER__STATUS_MAX - (const int) strlen(Buffer->git_branch)
                - UI__GIT_LOGO_W + UI__LEFT_PADDING + UI__RIGHT_PADDING), " ");
     }
     else
@@ -94,8 +94,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     {
         ANSI__INVERT();
 
-        printf("%*s%s%*s", UI__LEFT_PADDING, " ", files_str, (int) (fname_area
-               - strlen(files_str) + UI__RIGHT_PADDING), " ");
+        printf("%*s%s%*s", UI__LEFT_PADDING, " ", files_str, fname_area
+               - (const int) strlen(files_str) + UI__RIGHT_PADDING, " ");
         WRAP_LINE();
 
         for(idx_t file_idx = 0; file_idx <= additional_argc_idx; file_idx++)
@@ -113,8 +113,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
 
             if((term_t) strlen(Buffer[file_idx].fname) <= fname_area)
             {
-                printf("%s%*s", Buffer[file_idx].fname, (int) (fname_area
-                       - strlen(Buffer[file_idx].fname)), " ");
+                printf("%s%*s", Buffer[file_idx].fname, fname_area
+                       - (const int) strlen(Buffer[file_idx].fname), " ");
             }
             else
             {

@@ -52,7 +52,7 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
                                const char* const sequence,
                                size_t* const file_idx)
 {
-    const size_t seq_length_max = 6;
+    const size_t seq_len_max = 6;
 
     const char arrow_up[]    = "\033[A";
     const char arrow_down[]  = "\033[B";
@@ -129,8 +129,8 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
         *file_idx = 3;
         Buffer->esc_seq_on_input = false;
     }
-    // Other cases that block an input for "seq_length_max" chars.
-    else if(strlen(sequence) >= seq_length_max)
+    // Other cases that block an input for "seq_len_max" chars.
+    else if(strlen(sequence) >= seq_len_max)
     {
         Buffer->esc_seq_on_input = false;
     }

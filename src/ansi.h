@@ -27,6 +27,8 @@ enum
     BRIGHT_WHITE
 };
 
+#define ANSI__BG_COLOR_OFFSET 10
+
 #define ANSI__CLEAN_WHOLE_LINE()   printf("\033[2K")
 #define ANSI__SAVE_CURSOR_POS()    printf("\033[s")
 #define ANSI__RESTORE_CURSOR_POS() printf("\033[u")

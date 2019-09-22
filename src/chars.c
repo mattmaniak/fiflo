@@ -114,7 +114,7 @@ bool chars__printable_char(Buff_t* const Buffer, const char ch)
 bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
 {
     const idx_t remembered_line_idx = BUFFER__ACTUAL_LINE_IDX;
-    const idx_t tab_sz              = Config->Tab_sz.value;
+    const idx_t tab_sz              = (const idx_t) Config->Tab_sz.value;
 
     for(idx_t tab_idx = 0; tab_idx < tab_sz; tab_idx++)
     {
@@ -188,12 +188,12 @@ bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
     /* When the Tab key is pressed, it will insert e.g. 4 '\t' into a buffer.
        They will be converted during a rendering, loading and saving a file. */
 
-    const idx_t tab_sz = Config->Tab_sz.value;
+    const idx_t tab_sz = (const idx_t) Config->Tab_sz.value;
 
     // Prevent the not-full Tab insert.
-    if(Buffer->chars_amount <= (CHARS_MAX - tab_sz))
+    if(Buffer->chars_amount <= (const idx_t) (CHARS_MAX - tab_sz))
     {
-        for(int tab_sz = 0; tab_sz < Config->Tab_sz.value; tab_sz++)
+        for(idx_t tab_idx = 0; tab_idx < tab_sz; tab_idx++)
         {
             if(!chars__printable_char(Buffer, '\t'))
             {
