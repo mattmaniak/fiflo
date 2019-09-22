@@ -18,7 +18,6 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
         {
             fprintf(stderr,
                     "Can't insert the slash. The Current dir is too long.\n");
-
             return false;
         }
         strcpy(Buffer->fname, Buffer->pathname); // Copy pathname.
@@ -82,7 +81,6 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
         {
             fprintf(stderr,
                     "Can't insert the slash. The current dir is too long.\n");
-
             return false;
         }
         strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy pathname.
@@ -103,8 +101,9 @@ bool file__convert_tab_from_file(Buff_t* const Buffer,
 {
     /* Converts in-file '\t' in to a sequence of e.g. "\t\t\t\t" if the Tab
        width is set to 4. */
-    if(ch == '\t')
+    switch(ch)
     {
+    case '\t':
         for(idx_t ch_idx = 0; ch_idx < (const idx_t)
             (Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB); ch_idx++)
         {

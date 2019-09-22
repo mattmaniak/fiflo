@@ -42,20 +42,14 @@ bool chars__linefeed(Buff_t* Buffer)
         {
             return false;
         }
-
-        if(BUFFER__CURSOR_X_SCROLLED)
+        if(BUFFER__CURSOR_X_SCROLLED && !edit__move_lines_forward(Buffer))
         {
-            if(!edit__move_lines_forward(Buffer))
-            {
-                return false;
-            }
+            return false;
         }
-        else if(BUFFER__CURSOR_Y_SCROLLED)
+        else if(BUFFER__CURSOR_Y_SCROLLED
+                && !memory__copy_lines_forward(Buffer))
         {
-            if(!memory__copy_lines_forward(Buffer))
-            {
-                return false;
-            }
+            return false;
         }
         BUFFER__LAST_CHAR_IN_LINE = '\0';
     }
@@ -83,7 +77,6 @@ bool chars__printable_char(Buff_t* const Buffer, const char ch)
             {
                 return false;
             }
-
             if(BUFFER__CURSOR_X_SCROLLED)
             {
                 edit__shift_text_horizonally(Buffer, 'r');
@@ -97,12 +90,9 @@ bool chars__printable_char(Buff_t* const Buffer, const char ch)
                 Buffer->chars_amount--;
                 BUFFER__ACTUAL_LINE.len--;
             }
-            else if(ch == '\n')
+            else if((ch == '\n') && !chars__linefeed(Buffer))
             {
-                if(!chars__linefeed(Buffer))
-                {
-                    return false;
-                }
+                return false;
             }
             if(ch != '\0')
             {
@@ -123,14 +113,15 @@ bool chars__printable_char(Buff_t* const Buffer, const char ch)
 
 bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
 {
-    const idx_t prev = 1;
-    idx_t       remembered_line_idx = BUFFER__ACTUAL_LINE_IDX;
+    const idx_t remembered_line_idx = BUFFER__ACTUAL_LINE_IDX;
+    const idx_t tab_sz              = Config->Tab_sz.value;
 
-    for(idx_t tab_idx = 0; tab_idx < (idx_t) Config->Tab_sz.value; tab_idx++)
+    for(idx_t tab_idx = 0; tab_idx < tab_sz; tab_idx++)
     {
         // Prevent removing a char and 3 tabs from that e.g.: "\t\t\t\t".
         if((BUFFER__CURSOR_X > 1)
-           && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - NUL_SZ - prev] == '\t')
+           && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - NUL_SZ - PREV]
+               == '\t')
            && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - NUL_SZ] != '\t'))
         {
             tab_idx = (idx_t) Config->Tab_sz.value - IDX;
@@ -148,20 +139,14 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
             }
             break;
         }
-
-        if(!BUFFER__EMPTY_LINE)
+        if(!BUFFER__EMPTY_LINE && !edit__delete_char(Buffer))
         {
-            if(!edit__delete_char(Buffer))
-            {
-                return false;
-            }
+            return false;
         }
-        else if(!BUFFER__FIRST_LINE && !BUFFER__CURSOR_Y_SCROLLED)
+        else if(!BUFFER__FIRST_LINE && !BUFFER__CURSOR_Y_SCROLLED &&
+                !edit__delete_last_empty_line(Buffer))
         {
-            if(!edit__delete_last_empty_line(Buffer))
-            {
-                return false;
-            }
+            return false;
         }
 
         // Some text and the Tab(s) at the end.
@@ -180,7 +165,8 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
         }
         // Scenario when there is the Tab and some text further.
         else if((BUFFER__CURSOR_X > 0) && (Buffer->cursor_rev_x > 0)
-                && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - NUL_SZ] != '\t'))
+                && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - NUL_SZ]
+                    != '\t'))
         {
             break;
         }
@@ -202,8 +188,10 @@ bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
     /* When the Tab key is pressed, it will insert e.g. 4 '\t' into a buffer.
        They will be converted during a rendering, loading and saving a file. */
 
+    const idx_t tab_sz = Config->Tab_sz.value;
+
     // Prevent the not-full Tab insert.
-    if(Buffer->chars_amount <= (CHARS_MAX - (idx_t) Config->Tab_sz.value))
+    if(Buffer->chars_amount <= (CHARS_MAX - tab_sz))
     {
         for(int tab_sz = 0; tab_sz < Config->Tab_sz.value; tab_sz++)
         {

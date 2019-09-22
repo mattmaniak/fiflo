@@ -9,6 +9,7 @@
 #include "buffer.h"
 #include "config.h"
 #include "modes.h"
+#include "pcard.h"
 #include "print.h"
 #include "ui.h"
 

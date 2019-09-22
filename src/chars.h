@@ -5,6 +5,7 @@
 
 #include "buffer.h"
 #include "config.h"
+#include "macros.h"
 #include "modes.h"
 #include "keys.h"
 #include "file.h"

@@ -5,7 +5,7 @@ void fiflo__run(const int argc, char** const argv)
     const size_t fname_arg_sz = 1;
 
     char   pressed_key      = '\0'; // For an initialization purpose only.
-    size_t current_file_idx = 0;
+    size_t actual_file_idx = 0;
 
     Buff_t*  Buffer;
     Conf_t   Config;
@@ -54,20 +54,19 @@ void fiflo__run(const int argc, char** const argv)
             syntax__load(&Syntax, recognized_extension);
             Buffer->extension = recognized_extension;
         }
-        if(!file__get_git_branch(&Buffer[current_file_idx])
-           || !input__parse_key(&Buffer[current_file_idx], &Config, &Modes,
-                                &current_file_idx, pressed_key))
+        if(!file__get_git_branch(&Buffer[actual_file_idx])
+           || !input__parse_key(&Buffer[actual_file_idx], &Config, &Modes,
+                                &actual_file_idx, pressed_key))
         {
             break;
         }
-        if(current_file_idx > additional_argc_idx)
-        {
-            current_file_idx = additional_argc_idx;
-        }
+        actual_file_idx = (actual_file_idx > additional_argc_idx)
+                          ? additional_argc_idx : 0;
+
         // Flushes and renders always after the keypress.
         if(!window__render(Buffer, &Config, &Modes, &Syntax,
                            (const idx_t) additional_argc_idx,
-                           (const idx_t) current_file_idx)
+                           (const idx_t) actual_file_idx)
            || ((pressed_key = input__getch()) == ERROR))
         {
             break;
@@ -75,12 +74,12 @@ void fiflo__run(const int argc, char** const argv)
         window__flush();
     }
 
-    free:
-        for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
-        {
-            buffer__free(&Buffer[buff_idx]);
-        }
-        free(Buffer);
+free:
+    for(idx_t buff_idx = 0; buff_idx <= additional_argc_idx; buff_idx++)
+    {
+        buffer__free(&Buffer[buff_idx]);
+    }
+    free(Buffer);
 }
 
 int main(int argc, char** argv)
@@ -91,7 +90,7 @@ int main(int argc, char** argv)
     }
     fiflo__run(argc, argv);
 
-    exit:
-        fflush(NULL); // Clean both output buffers.
-        return 0;
+exit:
+    fflush(NULL); // Clean both output buffers.
+    return 0;
 }

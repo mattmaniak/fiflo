@@ -6,122 +6,39 @@ void print__line_with_tabs(const Buff_t* const Buffer,
                            const idx_t start_ch_idx, const idx_t end_ch_idx)
 {
     idx_t ch_idx = start_ch_idx;
+    idx_t ch_idx_after_kwrd;
     char  ch;
 
     for(; ch_idx < end_ch_idx; ch_idx++)
     {
         ch = Buffer->Lines[ln_idx].txt[ch_idx];
+        pcard__print_at_offset(Config, ch_idx);
 
-        // Whitespace highlighting.
-        if(ch == '\t')
+        switch(ch) // Mostly whitespace highlighting.
         {
+        case '\t':
             ui__colorize(Config->Color_whitespace.value);
-            if(ln_idx != BUFFER__ACTUAL_LINE_IDX)
-            {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
-                {
-                    ui__colorize(Config->Color_ui.value + 10);
-                }
-            }
-            else
-            {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
-                {
-                    ui__colorize(Config->Color_ui.value + 10);
-                }
-            }
             putchar(PRINT__TAB_HIGHLIGHT);
-            ui__colorize(0);
-        }
-        else if(ch == ' ')
-        {
-            ui__colorize(Config->Color_whitespace.value);
-            if(ln_idx != BUFFER__ACTUAL_LINE_IDX)
-            {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
-                {
-                    ui__colorize(Config->Color_ui.value + 10);
-                }
-            }
-            else
-            {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
-                {
-                    ui__colorize(Config->Color_ui.value + 10);
-                }
-            }
-            putchar(PRINT__SPACE_HIGHLIGHT);
-            ui__colorize(0);
-        }
-        else // Print words.
-        {
-            const idx_t ch_idx_after_highlighting =
-            syntax__paint_word(Syntax, Config, &Buffer->Lines[ln_idx],
-                               end_ch_idx, ch_idx);
+            break;
 
-            if(ln_idx != BUFFER__ACTUAL_LINE_IDX)
-            {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
-                {
-                    ui__colorize(Config->Color_ui.value + 10);
-                }
-            }
-            else
-            {
-                if(ch_idx == (const idx_t) (Config->Punch_card_width.value - IDX))
-                {
-                    ui__colorize(Config->Color_ui.value + 10);
-                }
-            }
-            if(ch_idx == ch_idx_after_highlighting)
+        case ' ':
+            ui__colorize(Config->Color_whitespace.value);
+            putchar(PRINT__SPACE_HIGHLIGHT);
+            break;
+
+        default: // Print words.
+            ch_idx_after_kwrd = syntax__paint_word(Syntax, Config,
+                                                   &Buffer->Lines[ln_idx],
+                                                   end_ch_idx, ch_idx);
+            if(ch_idx == ch_idx_after_kwrd)
             {
                 ui__colorize(Config->Color_text.value);
                 putchar(ch);
             }
             else // Word printed and highlighted. Shift the index to the next.
             {
-                ch_idx = ch_idx_after_highlighting;
+                ch_idx = ch_idx_after_kwrd;
             }
-        }
-        ui__colorize(0);
-    }
-}
-
-void print__punch_card(const Conf_t* const Config,
-                       const Ui_t* const Ui, const char* const ln_txt,
-                       const idx_t ln_len)
-{
-    int pcard_offset = Config->Punch_card_width.value - ln_len - IDX;
-
-    if(Ui->txtarea_w >= Config->Punch_card_width.value)
-    {
-        if(((ln_len + IDX) < (const idx_t) Config->Punch_card_width.value))
-        {
-
-            if((const int) ln_len < -Ui->pcard_delta_x)
-            {
-                pcard_offset = Config->Punch_card_width.value
-                               + Ui->pcard_delta_x - IDX;
-            }
-            if(pcard_offset > 0)
-            {
-                printf("%*s", pcard_offset, " ");
-                ui__colorize(Config->Color_ui.value + 10);
-                putchar(' ');
-            }
-            else if(pcard_offset == 0)
-            {
-                ui__colorize(Config->Color_ui.value + 10);
-                putchar(' ');
-            }
-        }
-        // The Linefeed highlighting.
-        else if((ln_txt[ln_len] == '\n')
-                && ((ln_len + IDX) == (const idx_t) Config->Punch_card_width.value)
-                && ((const int) ln_len >= -Ui->pcard_delta_x))
-        {
-                ui__colorize(Config->Color_ui.value + 10);
-                putchar(' ');
         }
         ui__colorize(0);
     }
@@ -146,30 +63,30 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
     // There is a small amount of chars. Horizontal scroll isn't required.
     if(BUFFER__ACTUAL_LINE.len < Ui->txtarea_w)
     {
-        if(BUFFER__ACTUAL_LINE.len == 0)
+        switch(BUFFER__ACTUAL_LINE.len)
         {
+        case 0:
             // Only the newline so print only the punch card.
-            print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.txt,
-                              BUFFER__ACTUAL_LINE.len);
-        }
-        else
-        {
-            // Last line so print a whole line.
+            pcard__print_after_txt(Config, Ui, BUFFER__ACTUAL_LINE.txt,
+                                   BUFFER__ACTUAL_LINE.len);
+            break;
+
+        default:
             if(BUFFER__ACTUAL_LINE_IDX == Buffer->lines_amount)
             {
                 print__line_with_tabs(Buffer, Config, Syntax,
                                       BUFFER__ACTUAL_LINE_IDX, 0,
                                       BUFFER__ACTUAL_LINE.len);
-                print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.txt,
-                                  BUFFER__ACTUAL_LINE.len);
+                pcard__print_after_txt(Config, Ui, BUFFER__ACTUAL_LINE.txt,
+                                       BUFFER__ACTUAL_LINE.len);
             }
             else // Non-last line so ignore the LF and wrap after a punch card.
             {
                 print__line_with_tabs(Buffer, Config, Syntax,
                                       BUFFER__ACTUAL_LINE_IDX, 0,
                                       BUFFER__ACTUAL_LINE.len - LF_SZ);
-                print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.txt,
-                                  BUFFER__ACTUAL_LINE.len - LF_SZ);
+                pcard__print_after_txt(Config, Ui, BUFFER__ACTUAL_LINE.txt,
+                                       BUFFER__ACTUAL_LINE.len - LF_SZ);
                 WRAP_LINE();
             }
         }
@@ -213,8 +130,8 @@ void print__another_line(const Buff_t* const Buffer,
         print__line_with_tabs(Buffer, Config, Syntax, ln_idx, start_ch_idx,
                               Buffer->Lines[ln_idx].len - LF_SZ);
 
-        print__punch_card(Config, Ui, Buffer->Lines[ln_idx].txt,
-                          Buffer->Lines[ln_idx].len - LF_SZ);
+        pcard__print_after_txt(Config, Ui, Buffer->Lines[ln_idx].txt,
+                               Buffer->Lines[ln_idx].len - LF_SZ);
         WRAP_LINE();
     }
     else
@@ -277,8 +194,8 @@ void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
             print__line_with_tabs(Buffer, Config, Syntax, Buffer->lines_amount,
                                   0, (const idx_t) Ui->txtarea_w - LF_SZ);
         }
-        print__punch_card(Config, Ui, BUFFER__LAST_LINE.txt,
-                          BUFFER__LAST_LINE.len);
+        pcard__print_after_txt(Config, Ui, BUFFER__LAST_LINE.txt,
+                               BUFFER__LAST_LINE.len);
     }
 }
 
@@ -316,8 +233,8 @@ void print__shrink_lines(const Buff_t* const Buffer,
         print__line_with_tabs(Buffer, Config, Syntax, last_ln_idx, 0,
                               (const idx_t) Ui->txtarea_w - LF_SZ);
     }
-    print__punch_card(Config, Ui, Buffer->Lines[last_ln_idx].txt,
-                      Buffer->Lines[last_ln_idx].len - LF_SZ);
+    pcard__print_after_txt(Config, Ui, Buffer->Lines[last_ln_idx].txt,
+                           Buffer->Lines[last_ln_idx].len - LF_SZ);
 }
 
 void print__scroll_lines(const Buff_t* const Buffer,
@@ -348,11 +265,9 @@ void print__scroll_lines(const Buff_t* const Buffer,
         }
         print__line_with_tabs(Buffer, Config, Syntax, BUFFER__ACTUAL_LINE_IDX,
                               0, end_ch_idx);
-
     }
     // Chars won't fit in a horizontal space.
-    else if((BUFFER__ACTUAL_LINE.len - Ui->txtarea_w)
-            >= Buffer->cursor_rev_x)
+    else if((BUFFER__ACTUAL_LINE.len - Ui->txtarea_w) >= Buffer->cursor_rev_x)
     {
         // Text will be scrolled. Not cursor.
         print__line_with_tabs(Buffer, Config, Syntax, BUFFER__ACTUAL_LINE_IDX,
@@ -365,9 +280,10 @@ void print__scroll_lines(const Buff_t* const Buffer,
         print__line_with_tabs(Buffer, Config, Syntax, BUFFER__ACTUAL_LINE_IDX,
                               0, (const idx_t) Ui->txtarea_w - LF_SZ);
     }
-    print__punch_card(Config, Ui, BUFFER__ACTUAL_LINE.txt,
-                      (Buffer->cursor_rev_y == 0) ? BUFFER__ACTUAL_LINE.len
-                      : BUFFER__ACTUAL_LINE.len - LF_SZ);
+    pcard__print_after_txt(Config, Ui, BUFFER__ACTUAL_LINE.txt,
+                           (Buffer->cursor_rev_y == 0)
+                           ? BUFFER__ACTUAL_LINE.len
+                           : BUFFER__ACTUAL_LINE.len - LF_SZ);
 }
 
 void print__display_text(const Buff_t* const Buffer,

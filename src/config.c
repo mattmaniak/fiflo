@@ -2,7 +2,7 @@
 
 bool config__load(Conf_t* const Config)
 {
-    char conf_fname[] = "/etc/fiflorc";
+    const char conf_fname[] = "/etc/fiflorc";
 
     if(access(conf_fname, F_OK) == ERROR) // There is no config file.
     {

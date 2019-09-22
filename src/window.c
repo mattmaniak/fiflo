@@ -68,21 +68,10 @@ void window__fill(const Buff_t* const Buffer, const Conf_t* const Config,
             line < (const idx_t) (Ui->txtarea_h - UI__LBAR_SZ); line++)
         {
             WRAP_LINE();
-
-            if((Ui->txtarea_w >= (Ui->pcard_delta_x
-                                   + Config->Punch_card_width.value))
-               && (-Ui->pcard_delta_x < Config->Punch_card_width.value))
-            {
-                printf("%*s", Ui->line_num_len + Ui->pcard_delta_x
-                       + Config->Punch_card_width.value - IDX, " ");
-
-                ui__colorize(Config->Color_ui.value + 10);
-                putchar(' ');
-                ui__colorize(0);
-            }
+            pcard__print_after_nothing(Config, Ui);
         }
     }
-    // Else the lower bar will by posed by a text.
+    // Else the lower bar will by positioned by a text.
 }
 
 void window__set_cursor_pos(const Buff_t* const Buffer,

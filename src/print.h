@@ -9,6 +9,7 @@
 #include "config.h"
 #include "syntax.h"
 #include "modes.h"
+#include "pcard.h"
 #include "ui.h"
 
 #define PRINT__SPACE_HIGHLIGHT '.'
@@ -18,10 +19,6 @@
 void print__line_with_tabs(const Buff_t* const, const Conf_t* const,
                            const Syntax_t* const, const idx_t, const idx_t,
                            const idx_t);
-
-// Show the vertical wrap guide.
-void print__punch_card(const Conf_t* const, const Ui_t* const,
-                       const char* const, const idx_t);
 
 // Return value of hidden lines.
 idx_t print__set_start_line(const Buff_t* const, const Ui_t* const);

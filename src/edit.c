@@ -13,12 +13,9 @@ bool edit__delete_char(Buff_t* Buffer)
         Buffer->chars_amount--;
     }
     // Deletes a non-empty line and copy chars to previous.
-    else if(!BUFFER__FIRST_LINE)
+    else if(!BUFFER__FIRST_LINE && !edit__move_lines_backward(Buffer))
     {
-        if(!edit__move_lines_backward(Buffer))
-        {
-            return false;
-        }
+        return false;
     }
     BUFFER__LAST_CHAR_IN_LINE = '\0'; // Delete the linefeed.
 
@@ -27,8 +24,8 @@ bool edit__delete_char(Buff_t* Buffer)
 
 bool edit__delete_line(Buff_t* Buffer)
 {
-    idx_t next_line_idx    = BUFFER__ACTUAL_LINE_IDX + NEXT;
-    idx_t next_line_length = Buffer->Lines[next_line_idx].len;
+    const idx_t next_line_idx    = BUFFER__ACTUAL_LINE_IDX + NEXT;
+    const idx_t next_line_length = Buffer->Lines[next_line_idx].len;
 
     if(!BUFFER__FIRST_LINE)
     {
@@ -37,11 +34,8 @@ bool edit__delete_line(Buff_t* Buffer)
             Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_BEGINNING)
                                    ? next_line_length : LF_SZ;
 
-            if(!memory__copy_lines_backward(Buffer))
-            {
-                return false;
-            }
-            if(!edit__delete_last_line(Buffer))
+            if(!memory__copy_lines_backward(Buffer)
+               || !edit__delete_last_line(Buffer))
             {
                 return false;
             }
@@ -145,7 +139,9 @@ bool edit__move_lines_backward(Buff_t* Buffer)
     // Merge a previous line with a next.
     for(idx_t ch_idx = 0; ch_idx <= BUFFER__ACTUAL_LINE.len; ch_idx++)
     {
-        BUFFER__PREV_LINE.txt[BUFFER__PREV_LINE.len] = BUFFER__ACTUAL_LINE.txt[ch_idx];
+        BUFFER__PREV_LINE.txt[BUFFER__PREV_LINE.len] =
+        BUFFER__ACTUAL_LINE.txt[ch_idx];
+
         if(BUFFER__ACTUAL_LINE.txt[ch_idx] != '\0')
         {
             BUFFER__PREV_LINE.len++;
@@ -156,12 +152,9 @@ bool edit__move_lines_backward(Buff_t* Buffer)
         }
     }
 
-    if(BUFFER__CURSOR_Y_SCROLLED)
+    if(BUFFER__CURSOR_Y_SCROLLED && !memory__copy_lines_backward(Buffer))
     {
-        if(!memory__copy_lines_backward(Buffer))
-        {
-            return false;
-        }
+        return false;
     }
     if(!edit__delete_last_line(Buffer))
     {
