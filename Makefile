@@ -31,17 +31,22 @@ CONF_DIR = /etc
 # All in the ./obj depending on the ./src.
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
 
-# Check and set the Compilation driver.
-ifeq ($(USR_INS_DIR)/gcc, $(shell ls $(USR_INS_DIR)/gcc))
-	CC = gcc
-	CFLAGS += -Wall -Wextra -pedantic
+# Define or not if a compiler exists or not.
+GCC := $(shell command -v gcc 2> /dev/null)
+CLANG := $(shell command -v clang 2> /dev/null)
 
-else ifeq ($(USR_INS_DIR)/clang, $(shell ls $(USR_INS_DIR)/clang))
+# Check and set a compilation driver.
+ifdef GCC
+	CC = gcc
+	CFLAGS += -Wall -Wextra -Wconversion -Wunreachable-code
+endif
+
+ifndef GCC
+ifdef CLANG
 	CC = clang
 	CFLAGS += -Weverything
-
-else
-	$(error Compilation driver was not found: gcc or clang is required.)
+endif
+$(error Compilation driver was not found: gcc or clang is required.)
 endif
 
 # Compilation of object files depends on source files wnich depends on headers.
@@ -81,7 +86,7 @@ coverage:
 	gcov $(OBJ_DIR)/*.gcno
 	mv *.gcov $(COV_DIR)
 
-# Fun with a filesystem.
+# Some fun with a user's filesystem.
 .PHONY: install
 install:
 	@echo ' '

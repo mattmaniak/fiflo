@@ -204,7 +204,7 @@ void print__shrink_lines(const Buff_t* const Buffer,
                          const Conf_t* const Config,
                          const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    const idx_t last_ln_idx = Ui->txtarea_h - SIZE__IDX;
+    const idx_t last_ln_idx = (const idx_t) Ui->txtarea_h - SIZE__IDX;
     idx_t       ln_idx      = 0;
 
     // Previous lines. If they are scrolled. Only a beginning is shown.
