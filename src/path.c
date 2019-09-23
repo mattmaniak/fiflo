@@ -21,7 +21,7 @@ bool path__extract_pathname_from_arg(Buff_t* const Buffer)
     strncpy(Buffer->pathname, Buffer->fname, last_slash_pos);
     Buffer->pathname[last_slash_pos] = '\0';
 
-    if(chdir(Buffer->pathname) == ERROR)
+    if(chdir(Buffer->pathname) == -1)
     {
         fprintf(stderr,
                 "Can't change the direcory to get the parent file path.\n");

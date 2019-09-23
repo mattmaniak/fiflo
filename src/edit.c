@@ -24,7 +24,7 @@ bool edit__delete_char(Buff_t* Buffer)
 
 bool edit__delete_line(Buff_t* Buffer)
 {
-    const idx_t next_line_idx    = BUFFER__ACTUAL_LINE_IDX + NEXT;
+    const idx_t next_line_idx    = BUFFER__ACTUAL_LINE_IDX + SIZE__NEXT;
     const idx_t next_line_length = Buffer->Lines[next_line_idx].len;
 
     if(!BUFFER__FIRST_LINE)
@@ -32,7 +32,7 @@ bool edit__delete_line(Buff_t* Buffer)
         if(BUFFER__CURSOR_Y_SCROLLED)
         {
             Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_BEGINNING)
-                                   ? next_line_length : LF_SZ;
+                                   ? next_line_length : SIZE__LF;
 
             if(!memory__copy_lines_backward(Buffer)
                || !edit__delete_last_line(Buffer))
@@ -81,7 +81,7 @@ void edit__shift_text_horizonally(Buff_t* Buffer, const char direction)
         for(ch_idx = BUFFER__CURSOR_X; ch_idx <= BUFFER__ACTUAL_LINE.len;
             ch_idx++)
         {
-            BUFFER__ACTUAL_LINE.txt[ch_idx - PREV] =
+            BUFFER__ACTUAL_LINE.txt[ch_idx - SIZE__PREV] =
             BUFFER__ACTUAL_LINE.txt[ch_idx];
         }
         break;
@@ -91,7 +91,7 @@ void edit__shift_text_horizonally(Buff_t* Buffer, const char direction)
             ch_idx--)
         {
             BUFFER__ACTUAL_LINE.txt[ch_idx] =
-            BUFFER__ACTUAL_LINE.txt[ch_idx - PREV];
+            BUFFER__ACTUAL_LINE.txt[ch_idx - SIZE__PREV];
         }
     }
 }
@@ -198,7 +198,7 @@ void edit__filename(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
     const char escape = KEYS__CTRL_LEFT_BRACKET;
 
     if((key >= 32) && (key != KEYS__BACKSPACE)
-       && ((Buffer->fname_len + IDX) < PATH_MAX))
+       && ((Buffer->fname_len + SIZE__IDX) < PATH_MAX))
     {
         Buffer->fname[Buffer->fname_len] = key;
         Buffer->fname[++Buffer->fname_len] = '\0';

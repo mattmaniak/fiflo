@@ -3,16 +3,16 @@
 term_t window__receive_term_sz(const char axis)
 {
     const int sz_max = USHRT_MAX;
-    const int h_min  = UI__UBAR_SZ + LN_SZ + UI__MAX_LBAR_H; // TODO: DYNAMIC
-    const int w_min  = UI__GIT_LOGO_W + SPACE_SZ + UI__GIT_BRANCH_MIN_W
-                       + SPACE_SZ + BUFFER__STATUS_MAX
+    const int h_min  = UI__UBAR_SZ + SIZE__LN + UI__MAX_LBAR_H; // TODO: DYNAMIC
+    const int w_min  = UI__GIT_LOGO_W + SIZE__SPACE + UI__GIT_BRANCH_MIN_W
+                       + SIZE__SPACE + BUFFER__STATUS_MAX
                        + UI__HORIZONTAL_PADDING;
 
     const struct winsize Term_win;
 
     /* "TIOCGWINSZ request to the stdout descriptor. &term is required by that
         specific device (stdout)." */
-    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &Term_win) == ERROR)
+    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &Term_win) == -1)
     {
         fprintf(stderr, "Can't get a Term_win's size.\n");
         return 0;
@@ -62,7 +62,7 @@ void window__fill(const Buff_t* const Buffer, const Conf_t* const Config,
                   const Ui_t* const Ui)
 {
     // Fill an empty area below a text to adjust a position the lower bar.
-    if((Buffer->lines_amount + IDX) < (const idx_t) Ui->txtarea_h)
+    if((Buffer->lines_amount + SIZE__IDX) < (const idx_t) Ui->txtarea_h)
     {
         for(idx_t line = Buffer->lines_amount;
             line < (const idx_t) (Ui->txtarea_h - UI__LBAR_SZ); line++)
@@ -83,7 +83,7 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 
     if(move_right >= Ui->win_w)
     {
-        move_right = (const term_t) (Ui->win_w - CURSOR_SZ);
+        move_right = (const term_t) (Ui->win_w - SIZE__CURSOR);
     }
 
     // Cursor is pushed right by the lower bar. Move it back.
@@ -102,18 +102,16 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
         {
             /* Last Ui->txtarea_w chars are seen. Current line is scrolled,
                not cursor. */
-            move_right = (const term_t) (Ui->win_w - CURSOR_SZ);
+            move_right = (const term_t) (Ui->win_w - SIZE__CURSOR);
         }
         else
         {
             // Text is scrolled horizontally to a start. Cursor can be moved.
-            move_right = (const term_t)
-                         (Ui->line_num_len + BUFFER__CURSOR_X);
+            move_right = (const term_t) (Ui->line_num_len + BUFFER__CURSOR_X);
         }
         move_up = (BUFFER__ACTUAL_LINE_IDX < Ui->txtarea_h) ?
-                  (const term_t)
-                  (Ui->txtarea_h - BUFFER__ACTUAL_LINE_IDX - IDX + Ui->lbar_h)
-                  : Ui->lbar_h;
+                  (const term_t) (Ui->txtarea_h - BUFFER__ACTUAL_LINE_IDX
+                                  - SIZE__IDX + Ui->lbar_h) : Ui->lbar_h;
     }
     ANSI__CURSOR_RIGHT(move_right);
     ANSI__CURSOR_UP(move_up);
@@ -127,7 +125,7 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     char line_num_str[16]; // Needed to count a length of a number.
     Ui_t Ui;
 
-    sprintf(line_num_str, "%u", Buffer->lines_amount + IDX);
+    sprintf(line_num_str, "%u", Buffer->lines_amount + SIZE__IDX);
 
     if(((Ui.win_w = window__receive_term_sz('w')) == 0)
        || ((Ui.win_h = window__receive_term_sz('h')) == 0))
@@ -135,18 +133,18 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
         return false;
     }
     Ui.expanded_lbar_h = (const term_t) (UI__LBAR_SZ + additional_argc_idx
-                         + IDX + LN_SZ);
+                         + SIZE__IDX + SIZE__LN);
     Ui.lbar_h          = (Modes->expanded_lbar) ? Ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 
-    Ui.line_num_len = (const term_t) (strlen(line_num_str) + SPACE_SZ
+    Ui.line_num_len = (const term_t) (strlen(line_num_str) + SIZE__SPACE
                       + UI__LEFT_PADDING);
 
     Ui.txtarea_w = (const term_t) (Ui.win_w - Ui.line_num_len);
     Ui.txtarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
     Ui.pcard_delta_x = (const int) (Ui.txtarea_w + Buffer->cursor_rev_x
-                       - BUFFER__ACTUAL_LINE.len - IDX);
+                       - BUFFER__ACTUAL_LINE.len - SIZE__IDX);
     Ui.pcard_delta_x = (Ui.pcard_delta_x > 0) ? 0 : Ui.pcard_delta_x;
 
     ui__upper_bar(&Buffer[actual_file_idx], Config, &Ui);

@@ -15,7 +15,7 @@ void keys__arrow_left(Buff_t* const Buffer, const Conf_t* const Config)
                 Buffer->cursor_rev_x++;
                 break; // No Tab, so don't skip anything.
             }
-            else if(tab_idx == (tab_sz - IDX))
+            else if(tab_idx == (tab_sz - SIZE__IDX))
             {
                 Buffer->cursor_rev_x += tab_sz;
             }
@@ -25,7 +25,7 @@ void keys__arrow_left(Buff_t* const Buffer, const Conf_t* const Config)
     else if((Buffer->lines_amount > 0) && !BUFFER__CURSOR_AT_TOP)
     {
         // Set to a right part of a line ignoring it's linefeed.
-        Buffer->cursor_rev_x = LF_SZ;
+        Buffer->cursor_rev_x = SIZE__LF;
         Buffer->cursor_rev_y++;
     }
     Buffer->esc_seq_on_input = false;
@@ -45,7 +45,7 @@ void keys__arrow_right(Buff_t* const Buffer, const Conf_t* const Config)
                 Buffer->cursor_rev_x--;
                 break; // No Tab, so don't skip anything.
             }
-            else if(tab_idx == (tab_sz - IDX))
+            else if(tab_idx == (tab_sz - SIZE__IDX))
             {
                 Buffer->cursor_rev_x -= tab_sz;
             }
@@ -72,7 +72,7 @@ void keys__arrow_up(Buff_t* const Buffer)
         /* Cursor at a left side: doesn't go at a end of a line. Always at the
            beginning or ignore the linefeed. */
         Buffer->cursor_rev_x = (BUFFER__CURSOR_AT_LINE_BEGINNING)
-                               ? BUFFER__PREV_LINE.len : LF_SZ;
+                               ? BUFFER__PREV_LINE.len : SIZE__LF;
         Buffer->cursor_rev_y++;
     }
     Buffer->esc_seq_on_input = false;
@@ -94,7 +94,7 @@ void keys__arrow_down(Buff_t* const Buffer)
         else
         {
             // Ignore the LF or not.
-            Buffer->cursor_rev_x = (BUFFER__CURSOR_Y_SCROLLED) ? LF_SZ : 0;
+            Buffer->cursor_rev_x = (BUFFER__CURSOR_Y_SCROLLED) ? SIZE__LF : 0;
         }
     }
     Buffer->esc_seq_on_input = false;
@@ -107,7 +107,7 @@ void keys__ctrl_arrow_left(Buff_t* const Buffer)
        && (Buffer->cursor_rev_y < Buffer->lines_amount))
     {
         Buffer->cursor_rev_y++;
-        Buffer->cursor_rev_x = LF_SZ;
+        Buffer->cursor_rev_x = SIZE__LF;
     }
     if((BUFFER__ACTUAL_CHAR != ' ') && (BUFFER__ACTUAL_CHAR != '\t'))
     {
@@ -120,8 +120,9 @@ void keys__ctrl_arrow_left(Buff_t* const Buffer)
         // Skip the Tab instantly instead of 1 column char for the first time.
         if(!BUFFER__EMPTY_LINE && ((BUFFER__ACTUAL_CHAR == ' ')
            || (BUFFER__ACTUAL_CHAR == '\t'))
-           && ((BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - PREV] == ' ')
-           || (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - PREV] == '\t')))
+           && ((BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__PREV] == ' ')
+           || (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__PREV]
+               == '\t')))
         {
             // Prevents skipping only one part of the Tab.
             while((Buffer->cursor_rev_x < BUFFER__ACTUAL_LINE.len)
@@ -168,16 +169,18 @@ void keys__ctrl_arrow_right(Buff_t* const Buffer)
     }
     if((BUFFER__ACTUAL_CHAR != ' ') && (BUFFER__ACTUAL_CHAR != '\t'))
     {
-        while((Buffer->cursor_rev_x > NUL_SZ) && !((BUFFER__ACTUAL_CHAR == ' ')
-               || (BUFFER__ACTUAL_CHAR == '\t')))
+        while((Buffer->cursor_rev_x > SIZE__NUL)
+              && !((BUFFER__ACTUAL_CHAR == ' ')
+                   || (BUFFER__ACTUAL_CHAR == '\t')))
         {
             Buffer->cursor_rev_x--;
         }
     }
     else // Non-whitespace chars.
     {
-        while((Buffer->cursor_rev_x > NUL_SZ) && ((BUFFER__ACTUAL_CHAR == ' ')
-              || (BUFFER__ACTUAL_CHAR == '\t')))
+        while((Buffer->cursor_rev_x > SIZE__NUL)
+              && ((BUFFER__ACTUAL_CHAR == ' ')
+                  || (BUFFER__ACTUAL_CHAR == '\t')))
         {
             Buffer->cursor_rev_x--;
         }

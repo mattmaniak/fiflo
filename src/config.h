@@ -29,14 +29,11 @@ Opt_t;
 typedef struct
 {
     FILE* File;
-    Opt_t Color_actual_file;
-    Opt_t Color_line_number;
-    Opt_t Color_line_number_actual;
-    Opt_t Color_text;
+    Opt_t Color_txt;
     Opt_t Color_ui;
     Opt_t Color_warning;
     Opt_t Color_whitespace;
-    Opt_t Punch_card_width;
+    Opt_t Pcard_w;
     Opt_t Tab_sz;
 
     const int32_t _padding;

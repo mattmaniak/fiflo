@@ -13,14 +13,15 @@ void fiflo__run(const int argc, char** const argv)
     Syntax_t Syntax;
 
     char** additional_argv     = &argv[1];
-    size_t additional_argc_idx = (const size_t) argc - IDX;
+    size_t additional_argc_idx = (const size_t) argc - SIZE__IDX;
 
     additional_argc_idx -= (argc > 1) ? fname_arg_sz : 0;
     Syntax.kwrds_idx    = 0;
 
     modes__init(&Modes);
 
-    if((Buffer = malloc((additional_argc_idx + IDX) * sizeof(Buff_t))) == NULL)
+    if((Buffer = malloc((additional_argc_idx + SIZE__IDX)
+                         * sizeof(Buff_t))) == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for file buffers.\n");
         goto free;
@@ -67,7 +68,7 @@ void fiflo__run(const int argc, char** const argv)
         if(!window__render(Buffer, &Config, &Modes, &Syntax,
                            (const idx_t) additional_argc_idx,
                            (const idx_t) actual_file_idx)
-           || ((pressed_key = input__getch()) == ERROR))
+           || ((pressed_key = input__getch()) == -1))
         {
             break;
         }

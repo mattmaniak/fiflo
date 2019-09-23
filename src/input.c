@@ -13,12 +13,12 @@ char input__getch(void)
     char key;
 
     // Get a state of the standard input.
-    if(tcgetattr(STDIN_FILENO, &old_term_params) == ERROR)
+    if(tcgetattr(STDIN_FILENO, &old_term_params) == -1)
     {
         window__flush();
         fprintf(stderr, "Stdin attribiutes error. Pipe isn't supported.\n");
 
-        return ERROR;
+        return -1;
     }
     new_term_params = old_term_params;
 
@@ -28,22 +28,22 @@ char input__getch(void)
 
     /* Immediately set a state of the stdin to the *new_term_params. Use the
        new terminal I/O settings. */
-    if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == ERROR)
+    if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == -1)
     {
         window__flush();
         fprintf(stderr, "Can't set a terminal's raw mode. Type \"reset\".\n");
 
-        return ERROR;
+        return -1;
     }
     key = (char) getchar();
 
     // Immediately restore the state of the stdin (0) to the* new_term_params.
-    if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == ERROR)
+    if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == -1)
     {
         window__flush();
         fprintf(stderr,
                 "Can't restore a terminal's normal mode. Type \"reset\".\n");
-        return ERROR;
+        return -1;
     }
     return key;
 }
@@ -147,7 +147,7 @@ bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
                       size_t* const file_idx, const char key)
 {
     static char  chars_sequence[INPUT__SEQ_MAX];
-    static idx_t char_idx;
+    static idx_t ch_idx;
 
     if((key == KEYS__CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
     {
@@ -157,21 +157,21 @@ bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
         Buffer->esc_seq_on_input = false;
 #endif
 
-        char_idx = 0;
+        ch_idx = 0;
     }
     if(Buffer->esc_seq_on_input)
     {
-        chars_sequence[char_idx] = key;
-        if(char_idx < (INPUT__SEQ_MAX - NUL_SZ))
+        chars_sequence[ch_idx] = key;
+        if(ch_idx < (INPUT__SEQ_MAX - SIZE__NUL))
         {
-            char_idx++;
+            ch_idx++;
         }
-        chars_sequence[char_idx] = '\0';
+        chars_sequence[ch_idx] = '\0';
         input__recognize_sequence(Buffer, Config, chars_sequence, file_idx);
 
         if(!Buffer->esc_seq_on_input)
         {
-            char_idx = 0;
+            ch_idx = 0;
         }
     }
     else if(Modes->live_fname_edit)

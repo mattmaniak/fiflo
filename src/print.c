@@ -32,7 +32,7 @@ void print__line_with_tabs(const Buff_t* const Buffer,
                                                    end_ch_idx, ch_idx);
             if(ch_idx == ch_idx_after_kwrd)
             {
-                ui__colorize(Config->Color_text.value);
+                ui__colorize(Config->Color_txt.value);
                 putchar(ch);
             }
             else // Word printed and highlighted. Shift the index to the next.
@@ -51,7 +51,7 @@ idx_t print__set_start_line(const Buff_t* const Buffer, const Ui_t* const Ui)
     if(BUFFER__ACTUAL_LINE_IDX >= Ui->txtarea_h)
     {
         // Amount of lines to hide in a magic upper area.
-        scrolled_lines = Buffer->lines_amount + IDX - Ui->txtarea_h
+        scrolled_lines = Buffer->lines_amount + SIZE__IDX - Ui->txtarea_h
                          - Buffer->cursor_rev_y;
     }
     return scrolled_lines;
@@ -84,9 +84,9 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
             {
                 print__line_with_tabs(Buffer, Config, Syntax,
                                       BUFFER__ACTUAL_LINE_IDX, 0,
-                                      BUFFER__ACTUAL_LINE.len - LF_SZ);
+                                      BUFFER__ACTUAL_LINE.len - SIZE__LF);
                 pcard__print_after_txt(Config, Ui, BUFFER__ACTUAL_LINE.txt,
-                                       BUFFER__ACTUAL_LINE.len - LF_SZ);
+                                       BUFFER__ACTUAL_LINE.len - SIZE__LF);
                 WRAP_LINE();
             }
         }
@@ -101,10 +101,10 @@ void print__actual_line(const Buff_t* const Buffer, const Conf_t* const Config,
     else // Shrink the line.
     {
         print__line_with_tabs(Buffer, Config, Syntax, BUFFER__ACTUAL_LINE_IDX,
-                              0, (const idx_t) Ui->txtarea_w - LF_SZ);
+                              0, (const idx_t) Ui->txtarea_w - SIZE__LF);
 
         // Not last rendered line so wrap it.
-        if(((BUFFER__ACTUAL_LINE_IDX + IDX) < Ui->txtarea_h)
+        if(((BUFFER__ACTUAL_LINE_IDX + SIZE__IDX) < Ui->txtarea_h)
            && (BUFFER__ACTUAL_LINE_IDX != Buffer->lines_amount))
         {
             WRAP_LINE();
@@ -129,16 +129,16 @@ void print__another_line(const Buff_t* const Buffer,
            lines horizontally. */
 
         print__line_with_tabs(Buffer, Config, Syntax, ln_idx, start_ch_idx,
-                              Buffer->Lines[ln_idx].len - LF_SZ);
+                              Buffer->Lines[ln_idx].len - SIZE__LF);
 
         pcard__print_after_txt(Config, Ui, Buffer->Lines[ln_idx].txt,
-                               Buffer->Lines[ln_idx].len - LF_SZ);
+                               Buffer->Lines[ln_idx].len - SIZE__LF);
         WRAP_LINE();
     }
     else
     {
         print__line_with_tabs(Buffer, Config, Syntax, ln_idx, start_ch_idx,
-                              (const idx_t) Ui->txtarea_w - LF_SZ);
+                              (const idx_t) Ui->txtarea_w - SIZE__LF);
         WRAP_LINE();
     }
 }
@@ -150,7 +150,7 @@ void print__scroll_line_horizontally(const Buff_t* const Buffer,
 {
     // AT text will be scrolled. Not the cursor.
     print__line_with_tabs(Buffer, Config, Syntax, BUFFER__ACTUAL_LINE_IDX,
-                          BUFFER__CURSOR_X + CURSOR_SZ - Ui->txtarea_w,
+                          BUFFER__CURSOR_X + SIZE__CURSOR - Ui->txtarea_w,
                           BUFFER__CURSOR_X);
 
     /* Sometimes this is needed because the "window__fill" function renders the
@@ -178,7 +178,7 @@ void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
 
     if(BUFFER__CURSOR_Y_SCROLLED)
     {
-        for(ln_idx += LN_SZ; ln_idx < Buffer->lines_amount; ln_idx++)
+        for(ln_idx += SIZE__LN; ln_idx < Buffer->lines_amount; ln_idx++)
         {
             print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
         }
@@ -193,7 +193,7 @@ void print__fit_lines(const Buff_t* const Buffer, const Conf_t* const Config,
         else
         {
             print__line_with_tabs(Buffer, Config, Syntax, Buffer->lines_amount,
-                                  0, (const idx_t) Ui->txtarea_w - LF_SZ);
+                                  0, (const idx_t) Ui->txtarea_w - SIZE__LF);
         }
         pcard__print_after_txt(Config, Ui, BUFFER__LAST_LINE.txt,
                                BUFFER__LAST_LINE.len);
@@ -204,7 +204,7 @@ void print__shrink_lines(const Buff_t* const Buffer,
                          const Conf_t* const Config,
                          const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    const idx_t last_ln_idx = Ui->txtarea_h - IDX;
+    const idx_t last_ln_idx = Ui->txtarea_h - SIZE__IDX;
     idx_t       ln_idx      = 0;
 
     // Previous lines. If they are scrolled. Only a beginning is shown.
@@ -218,7 +218,8 @@ void print__shrink_lines(const Buff_t* const Buffer,
     print__actual_line(Buffer, Config, Syntax, Ui);
 
     // Next lines. If they are scrolled. Only a beginning is shown.
-    for(ln_idx = BUFFER__ACTUAL_LINE_IDX + IDX; ln_idx < last_ln_idx; ln_idx++)
+    for(ln_idx = BUFFER__ACTUAL_LINE_IDX + SIZE__IDX; ln_idx < last_ln_idx;
+        ln_idx++)
     {
         print__another_line(Buffer, Config, Syntax, Ui, ln_idx);
     }
@@ -227,15 +228,15 @@ void print__shrink_lines(const Buff_t* const Buffer,
     if(Buffer->Lines[last_ln_idx].len < Ui->txtarea_w)
     {
         print__line_with_tabs(Buffer, Config, Syntax, last_ln_idx, 0,
-                              Buffer->Lines[last_ln_idx].len - LF_SZ);
+                              Buffer->Lines[last_ln_idx].len - SIZE__LF);
     }
     else
     {
         print__line_with_tabs(Buffer, Config, Syntax, last_ln_idx, 0,
-                              (const idx_t) Ui->txtarea_w - LF_SZ);
+                              (const idx_t) Ui->txtarea_w - SIZE__LF);
     }
     pcard__print_after_txt(Config, Ui, Buffer->Lines[last_ln_idx].txt,
-                           Buffer->Lines[last_ln_idx].len - LF_SZ);
+                           Buffer->Lines[last_ln_idx].len - SIZE__LF);
 }
 
 void print__scroll_lines(const Buff_t* const Buffer,
@@ -259,7 +260,7 @@ void print__scroll_lines(const Buff_t* const Buffer,
     if(BUFFER__ACTUAL_LINE.len < Ui->txtarea_w)
     {
         if((BUFFER__ACTUAL_LINE.len > 0)
-           && (BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len - NUL_SZ]
+           && (BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len - SIZE__NUL]
            == '\n'))
         {
             end_ch_idx--;
@@ -272,19 +273,19 @@ void print__scroll_lines(const Buff_t* const Buffer,
     {
         // Text will be scrolled. Not cursor.
         print__line_with_tabs(Buffer, Config, Syntax, BUFFER__ACTUAL_LINE_IDX,
-                              BUFFER__CURSOR_X + CURSOR_SZ - Ui->txtarea_w,
+                              BUFFER__CURSOR_X + SIZE__CURSOR - Ui->txtarea_w,
                               BUFFER__CURSOR_X);
     }
     else
     {
         // Render only left part of a line. The cursor can be scrolled.
         print__line_with_tabs(Buffer, Config, Syntax, BUFFER__ACTUAL_LINE_IDX,
-                              0, (const idx_t) Ui->txtarea_w - LF_SZ);
+                              0, (const idx_t) Ui->txtarea_w - SIZE__LF);
     }
     pcard__print_after_txt(Config, Ui, BUFFER__ACTUAL_LINE.txt,
                            (Buffer->cursor_rev_y == 0)
                            ? BUFFER__ACTUAL_LINE.len
-                           : BUFFER__ACTUAL_LINE.len - LF_SZ);
+                           : BUFFER__ACTUAL_LINE.len - SIZE__LF);
 }
 
 void print__display_text(const Buff_t* const Buffer,
@@ -295,7 +296,7 @@ void print__display_text(const Buff_t* const Buffer,
     {
         print__fit_lines(Buffer, Config, Syntax, Ui);
     }
-    else if((BUFFER__ACTUAL_LINE_IDX + IDX) < Ui->txtarea_h)
+    else if((BUFFER__ACTUAL_LINE_IDX + SIZE__IDX) < Ui->txtarea_h)
     {
         print__shrink_lines(Buffer, Config, Syntax, Ui);
     }

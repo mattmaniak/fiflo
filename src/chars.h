@@ -5,12 +5,12 @@
 
 #include "buffer.h"
 #include "config.h"
-#include "macros.h"
 #include "modes.h"
 #include "keys.h"
 #include "file.h"
 #include "memory.h"
 #include "edit.h"
+#include "size.h"
 
 // Know what to do next with a pressed key or a combination. Based on ASCII.
 bool chars__parse_char(Buff_t*, const Conf_t* const, Mod_t*, const char);

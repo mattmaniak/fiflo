@@ -121,7 +121,7 @@ bool file__load(Buff_t* const Buffer, const Conf_t* const Config)
     FILE* Textfile;
     char  ch;
 
-    if(Buffer->fname[Buffer->fname_len - NUL_SZ] == '/')
+    if(Buffer->fname[Buffer->fname_len - SIZE__NUL] == '/')
     {
         BUFFER__SET_STATUS("current directory set");
         return true;
@@ -163,7 +163,7 @@ void file__convert_tab_to_file(const Buff_t* const Buffer,
         {
             break; // No Tab, so don't convert anything.
         }
-        else if(tab_idx == (tab_sz - IDX))
+        else if(tab_idx == (tab_sz - SIZE__IDX))
         {
             // Some in-memory Tabs converted
             *ch_idx += tab_sz - FILE__AT_LEAST_ONE_TAB;
@@ -208,7 +208,7 @@ bool file__get_git_branch(Buff_t* const Buffer)
     strcpy(git_head_file_pathname, Buffer->pathname);
     strcat(git_head_file_pathname, "/.git/HEAD");
 
-    if((access(git_head_file_pathname, F_OK) == ERROR)
+    if((access(git_head_file_pathname, F_OK) == -1)
        || ((Git_head_file = fopen(git_head_file_pathname, "r")) == NULL))
     {
         strcpy(Buffer->git_branch, "[none]");
@@ -217,7 +217,7 @@ bool file__get_git_branch(Buff_t* const Buffer)
 
     // Ignore a passed string in a file to get a branch after the slash.
     if(fseek(Git_head_file, (const long int) strlen("ref: refs/heads/"), 0)
-       == ERROR)
+       == -1)
     {
         strcpy(Buffer->git_branch, "[none]");
         return true;
@@ -227,9 +227,9 @@ bool file__get_git_branch(Buff_t* const Buffer)
     while(fgets(Buffer->git_branch, NAME_MAX, Git_head_file) != NULL)
 
     // Delete the linefeed from the name.
-    if(Buffer->git_branch[strlen(Buffer->git_branch) - NUL_SZ] == '\n')
+    if(Buffer->git_branch[strlen(Buffer->git_branch) - SIZE__NUL] == '\n')
     {
-        Buffer->git_branch[strlen(Buffer->git_branch) - NUL_SZ] = '\0';
+        Buffer->git_branch[strlen(Buffer->git_branch) - SIZE__NUL] = '\0';
     }
 
     if(fclose(Git_head_file) == EOF)

@@ -58,8 +58,8 @@ void syntax__sort(Syntax_t* const Syntax)
     for(idx_t kwrd_idx = 0; kwrd_idx < Syntax->kwrds_idx; kwrd_idx++)
     {
         // Set a value of a further keyword to compare.
-        for(idx_t shift_idx = kwrd_idx + NEXT; shift_idx < Syntax->kwrds_idx;
-            shift_idx++)
+        for(idx_t shift_idx = kwrd_idx + SIZE__NEXT;
+            shift_idx < Syntax->kwrds_idx; shift_idx++)
         {
             // Swap if a next keyword is longer.
             if(strlen(Syntax->Keywords[kwrd_idx].keyword)
@@ -79,8 +79,7 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
                          const idx_t end_ch_idx, idx_t ch_idx)
 {
     const char* const str_to_print_addr = &Line->txt[ch_idx];
-    const idx_t       pcard_w           =
-    (const idx_t) Config->Punch_card_width.value;
+    const idx_t       pcard_w           = (const idx_t) Config->Pcard_w.value;
     bool              ignored_kwrd      = false;
     idx_t             end_paint_idx;
 
@@ -111,14 +110,14 @@ idx_t syntax__paint_word(const Syntax_t* const Syntax,
             }
             for(; ch_idx < end_paint_idx; ch_idx++)
             {
-                if(ch_idx == (pcard_w - IDX))
+                if(ch_idx == (pcard_w - SIZE__IDX))
                 {
                     ui__colorize(Config->Color_ui.value
                                  + ANSI__BG_COLOR_OFFSET);
                     ui__colorize(Syntax->Keywords[kwrd_idx].color);
                 }
                 putchar(Line->txt[ch_idx]);
-                if(ch_idx == (pcard_w - IDX))
+                if(ch_idx == (pcard_w - SIZE__IDX))
                 {
                     // Reset the background color after punch card.
                     ui__colorize(0);

@@ -4,7 +4,7 @@ bool config__load(Conf_t* const Config)
 {
     const char conf_fname[] = "/etc/fiflorc";
 
-    if(access(conf_fname, F_OK) == ERROR) // There is no config file.
+    if(access(conf_fname, F_OK) == -1) // There is no config file.
     {
         config__set_default(Config);
         return true;
@@ -24,16 +24,12 @@ bool config__load(Conf_t* const Config)
 
 void config__init_selectors(Conf_t* const Config)
 {
-    strcpy(Config->Color_actual_file.selector, "color_actual_file");
-    strcpy(Config->Color_line_number.selector, "color_line_number");
-    strcpy(Config->Color_text.selector,        "color_text");
-    strcpy(Config->Color_ui.selector,          "color_ui");
-    strcpy(Config->Color_warning.selector,     "color_warning");
-    strcpy(Config->Color_whitespace.selector,  "color_whitespace");
-    strcpy(Config->Punch_card_width.selector,  "punch_card_width");
-    strcpy(Config->Tab_sz.selector,            "tab_size");
-    strcpy(Config->Color_line_number_actual.selector,
-           "color_line_number_actual");
+    strcpy(Config->Color_txt.selector,        "color_text");
+    strcpy(Config->Color_ui.selector,         "color_ui");
+    strcpy(Config->Color_warning.selector,    "color_warning");
+    strcpy(Config->Color_whitespace.selector, "color_whitespace");
+    strcpy(Config->Pcard_w.selector,          "punch_card_width");
+    strcpy(Config->Tab_sz.selector,           "tab_size");
 }
 
 bool config__parse_selector(Conf_t* const Config, const char* const selector,
@@ -46,21 +42,9 @@ bool config__parse_selector(Conf_t* const Config, const char* const selector,
         {
             Config->Color_ui.value = value;
         }
-        else if(!strcmp(Config->Color_actual_file.selector, selector))
+        else if(!strcmp(Config->Color_txt.selector, selector))
         {
-            Config->Color_actual_file.value = value;
-        }
-        else if(!strcmp(Config->Color_line_number_actual.selector, selector))
-        {
-            Config->Color_line_number_actual.value = value;
-        }
-        else if(!strcmp(Config->Color_line_number.selector, selector))
-        {
-            Config->Color_line_number.value = value;
-        }
-        else if(!strcmp(Config->Color_text.selector, selector))
-        {
-            Config->Color_text.value = value;
+            Config->Color_txt.value = value;
         }
         else if(!strcmp(Config->Color_warning.selector, selector))
         {
@@ -70,9 +54,9 @@ bool config__parse_selector(Conf_t* const Config, const char* const selector,
         {
             Config->Color_whitespace.value = value;
         }
-        else if(!strcmp(Config->Punch_card_width.selector, selector))
+        else if(!strcmp(Config->Pcard_w.selector, selector))
         {
-            Config->Punch_card_width.value = value;
+            Config->Pcard_w.value = value;
         }
     }
     else if(!strcmp(Config->Tab_sz.selector, selector))
@@ -156,15 +140,12 @@ int config__parse_value(const char* const read_value)
 
 void config__set_default(Conf_t* const Config)
 {
-    Config->Color_actual_file.value        = BRIGHT_BLACK;
-    Config->Color_line_number.value        = WHITE;
-    Config->Color_line_number_actual.value = BRIGHT_BLACK;
-    Config->Color_text.value               = WHITE;
-    Config->Color_ui.value                 = WHITE;
-    Config->Color_warning.value            = RED;
-    Config->Color_whitespace.value         = BRIGHT_BLACK;
-    Config->Punch_card_width.value         = CONFIG__PUNCH_CARD_W;
-    Config->Tab_sz.value                   = CONFIG__MAX_TAB_SZ;
+    Config->Color_txt.value         = WHITE;
+    Config->Color_ui.value          = WHITE;
+    Config->Color_warning.value     = RED;
+    Config->Color_whitespace.value  = BRIGHT_BLACK;
+    Config->Pcard_w.value           = CONFIG__PUNCH_CARD_W;
+    Config->Tab_sz.value            = CONFIG__MAX_TAB_SZ;
 }
 
 void config__load_custom(Conf_t* const Config)

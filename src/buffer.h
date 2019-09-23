@@ -13,7 +13,7 @@
 #include <linux/limits.h>
 
 #include "line.h"
-#include "macros.h"
+#include "size.h"
 
 /* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
    recomended to set the CHARS_MAX to a value bigger than (INT_MAX - 1)
@@ -22,7 +22,7 @@
 
 #define BUFFER__STATUS_MAX      32
 #define BUFFER__SET_STATUS(msg) \
-strncpy(Buffer->status, msg, BUFFER__STATUS_MAX - IDX)
+strncpy(Buffer->status, msg, BUFFER__STATUS_MAX - SIZE__IDX)
 
 typedef struct
 {
@@ -75,12 +75,12 @@ Buff_t;
 
 #define BUFFER__ACTUAL_CHAR BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X]
 
-#define BUFFER__PREV_CHAR BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - PREV]
+#define BUFFER__PREV_CHAR BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__PREV]
 
 #define BUFFER__LAST_CHAR_IN_LINE \
 BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len]
 
-#define BUFFER__PREV_LINE_IDX (BUFFER__ACTUAL_LINE_IDX - PREV)
+#define BUFFER__PREV_LINE_IDX (BUFFER__ACTUAL_LINE_IDX - SIZE__PREV)
 
 #define BUFFER__PREV_LINE Buffer->Lines[BUFFER__PREV_LINE_IDX]
 

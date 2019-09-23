@@ -10,10 +10,6 @@
 # It changes nothing because the editor has it implemented independently.
 # If You change anything it will be applied.
 
-color_actual_file = bright_black
-color_actual_line = bright_black
-color_line_number_actual = bright_black
-color_line_number = white
 color_text = white
 color_ui = white
 color_warning = red

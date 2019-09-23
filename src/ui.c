@@ -18,7 +18,7 @@ void ui__print_line_number(const Buff_t* const Buffer,
         ui__colorize(0);
         ui__colorize(Config->Color_ui.value);
     }
-    printf("%*u", line_num_len - SPACE_SZ, ln_idx + IDX);
+    printf("%*u", line_num_len - SIZE__SPACE, ln_idx + SIZE__IDX);
 
     ui__colorize(0);
     putchar(' ');
@@ -50,8 +50,8 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
         WRAP_LINE();
     }
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status,
-           (const int) (BUFFER__STATUS_MAX - strlen(Buffer->status) - SPACE_SZ
-           + UI__GIT_LOGO_W), UI__GIT_LOGO);
+           (const int) (BUFFER__STATUS_MAX - strlen(Buffer->status)
+           - SIZE__SPACE + UI__GIT_LOGO_W), UI__GIT_LOGO);
 
     if((const term_t) strlen(Buffer->git_branch)
        < (Ui->win_w - UI__GIT_LOGO_W - BUFFER__STATUS_MAX
@@ -63,7 +63,7 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     }
     else
     {
-        printf("%.*s", Ui->win_w - BUFFER__STATUS_MAX - SPACE_SZ ,
+        printf("%.*s", Ui->win_w - BUFFER__STATUS_MAX - SIZE__SPACE ,
                Buffer->git_branch);
     }
     WRAP_LINE();
@@ -83,8 +83,8 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     sprintf(punch_card, "%u", punch_card_w);
     sprintf(cursor_pos_indicator, "[%u; %u]",
             Buffer[actual_file_idx].lines_amount
-            - Buffer[actual_file_idx].cursor_rev_y + IDX,
-            BUFFER__CURSOR_X + IDX);
+            - Buffer[actual_file_idx].cursor_rev_y + SIZE__IDX,
+            BUFFER__CURSOR_X + SIZE__IDX);
 
     WRAP_LINE();
     ui__colorize(0); // Resets a last line color.
