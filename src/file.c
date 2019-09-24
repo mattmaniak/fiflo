@@ -2,7 +2,7 @@
 
 bool file__set_name(Buff_t* const Buffer, const char* const arg)
 {
-    size_t cw_dir_length;
+    size_t cw_dir_len;
 
     if(arg == NULL) // Name not passed by an user.
     {
@@ -11,10 +11,10 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
             fprintf(stderr, "Can't get the current directory. Too long.\n");
             return false;
         }
-        cw_dir_length = strlen(Buffer->pathname);
+        cw_dir_len = strlen(Buffer->pathname);
 
         // Getcwd() returns a pathname without the slash, which is required.
-        if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
+        if(cw_dir_len >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
                     "Can't insert the slash. The Current dir is too long.\n");
@@ -22,8 +22,8 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
         }
         strcpy(Buffer->fname, Buffer->pathname); // Copy pathname.
 
-        Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
-        Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
+        Buffer->fname[cw_dir_len]            = '/'; // Add the slash.
+        Buffer->fname[cw_dir_len + SLASH_SZ] = '\0';
 
         Buffer->fname_len = strlen(Buffer->fname);
 
@@ -74,10 +74,10 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
             fprintf(stderr, "Can't get a current directory. Too long.\n");
             return false;
         }
-        cw_dir_length = strlen(Buffer->pathname);
+        cw_dir_len = strlen(Buffer->pathname);
 
         // Getcwd() returns a pathname without the slash, which is required.
-        if(cw_dir_length >= (PATH_MAX - SLASH_SZ))
+        if(cw_dir_len >= (PATH_MAX - SLASH_SZ))
         {
             fprintf(stderr,
                     "Can't insert the slash. The current dir is too long.\n");
@@ -85,38 +85,19 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
         }
         strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy pathname.
 
-        Buffer->fname[cw_dir_length]            = '/'; // Add the slash.
-        Buffer->fname[cw_dir_length + SLASH_SZ] = '\0';
+        Buffer->fname[cw_dir_len]            = '/'; // Add the slash.
+        Buffer->fname[cw_dir_len + SLASH_SZ] = '\0';
 
         // Append a basename.
-        strncpy(&Buffer->fname[cw_dir_length + SLASH_SZ], arg, NAME_MAX);
+        strncpy(&Buffer->fname[cw_dir_len + SLASH_SZ], arg, NAME_MAX);
     }
     Buffer->fname_len = strlen(Buffer->fname);
 
     return true;
 }
 
-bool file__convert_tab_from_file(Buff_t* const Buffer,
-                                 const Conf_t* const Config, const char ch)
-{
-    /* Converts in-file '\t' in to a sequence of e.g. "\t\t\t\t" if the Tab
-       width is set to 4. */
-    switch(ch)
-    {
-    case '\t':
-        for(idx_t ch_idx = 0; ch_idx < (const idx_t)
-            (Config->Tab_sz.value - FILE__AT_LEAST_ONE_TAB); ch_idx++)
-        {
-            if(!chars__printable_char(Buffer, ch))
-            {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-bool file__load(Buff_t* const Buffer, const Conf_t* const Config)
+bool file__load(Buff_t* const Buffer, const Conf_t* const Config,
+                const Mod_t* const Modes)
 {
     FILE* Textfile;
     char  ch;
@@ -132,12 +113,22 @@ bool file__load(Buff_t* const Buffer, const Conf_t* const Config)
         BUFFER__SET_STATUS("the file will be created");
         return true;
     }
-    while((ch = (char) getc(Textfile)) != EOF)
+    while((ch = (const char) getc(Textfile)) != EOF)
     {
-        if(!file__convert_tab_from_file(Buffer, Config, ch)
-           || !chars__printable_char(Buffer, ch))
+        switch(ch)
         {
-            return false;
+        default:
+            if(!chars__printable_char(Buffer, ch))
+            {
+                return false;
+            }
+            break;
+
+        case '\t':
+            if(!file__convert_tab_from_file(Buffer, Config, Modes, ch))
+            {
+                return false;
+            }
         }
     }
     if(fclose(Textfile) == EOF)
@@ -147,6 +138,28 @@ bool file__load(Buff_t* const Buffer, const Conf_t* const Config)
     }
     BUFFER__SET_STATUS("read a file");
 
+    return true;
+}
+
+bool file__convert_tab_from_file(Buff_t* const Buffer,
+                                 const Conf_t* const Config,
+                                 const Mod_t* const Modes, const char ch)
+{
+    /* Converts in-file '\t' in to a sequence of e.g. "\t\t\t\t" if the Tab
+       width is set to 4. */
+    const idx_t tab_sz = (const idx_t) Config->Tab_sz.value;
+    const char  tab_ch = (Modes->tabs_to_spaces) ? ' ' : '\t';
+
+    if(ch == '\t')
+    {
+        for(idx_t ch_idx = 0; ch_idx < tab_sz; ch_idx++)
+        {
+            if(!chars__printable_char(Buffer, tab_ch))
+            {
+                return false;
+            }
+        }
+    }
     return true;
 }
 

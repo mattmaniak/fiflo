@@ -14,7 +14,9 @@ v4.1.0 (2019, WIP):
 - all lines will be scrolled horizontally instead of one,
 - selectors' names change in the configuration file,
 - inverted color UI with a configurable color,
-- adaptive expanded lower bar height instead of the fixed one.
+- adaptive expanded lower bar height instead of the fixed one,
+- soft/hard tabs choice,
+- indentation recognition.
 
 v4.0.0 (2019, June 18):
 - vertical Arrows^Ctrl shortcut scrolls paragraphs now,

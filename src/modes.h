@@ -7,6 +7,7 @@ typedef struct
 {
     bool live_fname_edit; // A filename is edited, not a text.
     bool expanded_lbar;   // An extended lower bar is displayed.
+    bool tabs_to_spaces;
 }
 Mod_t;
 

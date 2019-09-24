@@ -17,7 +17,7 @@
 #include "options.h"
 
 // Some initializers and the main program loop.
-void fiflo__run(const int, char** const);
+void fiflo__run(int, char** const);
 
 int main(int, char**);
 

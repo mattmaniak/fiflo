@@ -1,7 +1,7 @@
 #include "chars.h"
 
 bool chars__parse_char(Buff_t* Buffer, const Conf_t* const Config,
-                       Mod_t* Modes, const char ch)
+                       Mod_t* const Modes, const char ch)
 {
     switch(ch)
     {
@@ -9,10 +9,10 @@ bool chars__parse_char(Buff_t* Buffer, const Conf_t* const Config,
         return chars__printable_char(Buffer, ch);
 
     case '\t':
-        return chars__tab(Buffer, Config);
+        return chars__tab(Buffer, Config, Modes);
 
     case KEYS__BACKSPACE:
-        return chars__backspace(Buffer, Config);
+        return chars__backspace(Buffer, Config, Modes);
 
     case KEYS__CTRL_Q:
         return false;
@@ -111,18 +111,21 @@ bool chars__printable_char(Buff_t* const Buffer, const char ch)
     return true;
 }
 
-bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
+bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config,
+                      const Mod_t* const Modes)
 {
-    const idx_t remembered_line_idx = BUFFER__ACTUAL_LINE_IDX;
-    const idx_t tab_sz              = (const idx_t) Config->Tab_sz.value;
+    const idx_t remembered_ln_idx = BUFFER__ACTUAL_LINE_IDX;
+    const char  tab_ch            = (Modes->tabs_to_spaces) ? ' ' : '\t';
+    const idx_t tab_sz            = (const idx_t) Config->Tab_sz.value;
 
     for(idx_t tab_idx = 0; tab_idx < tab_sz; tab_idx++)
     {
         // Prevent removing a char and 3 tabs from that e.g.: "\t\t\t\t".
         if((BUFFER__CURSOR_X > 1)
            && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X
-                                       - SIZE__NUL - SIZE__PREV] == '\t')
-           && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__NUL] != '\t'))
+                                       - SIZE__NUL - SIZE__PREV] == tab_ch)
+           && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__NUL]
+               != tab_ch))
         {
             tab_idx = (idx_t) Config->Tab_sz.value - SIZE__IDX;
         }
@@ -130,8 +133,8 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
         /* Scenario when there is a char at the beginning and the Tab at the
            right. */
         if((BUFFER__CURSOR_X == 1) && (Buffer->cursor_rev_x > 0)
-           && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__NUL] != '\t')
-           && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X] == '\t'))
+           && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__NUL] != tab_ch)
+           && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X] == tab_ch))
         {
             if(!edit__delete_char(Buffer))
             {
@@ -152,28 +155,28 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
         // Some text and the Tab(s) at the end.
         if((BUFFER__ACTUAL_LINE.len > 0) && (Buffer->cursor_rev_x == 0)
            && (BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len - SIZE__NUL]
-           != '\t'))
+           != tab_ch))
         {
             break;
         }
         /* Prevent removing a line when a first char in a line has to be
            removed. */
         else if((BUFFER__CURSOR_X == 0)
-                && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X] != '\t'))
+                && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X] != tab_ch))
         {
             break;
         }
         // Scenario when there is the Tab and some text further.
         else if((BUFFER__CURSOR_X > 0) && (Buffer->cursor_rev_x > 0)
                 && (BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__NUL]
-                    != '\t'))
+                    != tab_ch))
         {
             break;
         }
 
         /* Prevents deleting [tab_width] lines at once with a maximally
            scrolled cursor in X. */
-        if(remembered_line_idx != BUFFER__ACTUAL_LINE_IDX)
+        if(remembered_ln_idx != BUFFER__ACTUAL_LINE_IDX)
         {
             break;
         }
@@ -183,19 +186,21 @@ bool chars__backspace(Buff_t* Buffer, const Conf_t* const Config)
     return true;
 }
 
-bool chars__tab(Buff_t* Buffer, const Conf_t* const Config)
+bool chars__tab(Buff_t* Buffer, const Conf_t* const Config,
+                const Mod_t* const Modes)
 {
     /* When the Tab key is pressed, it will insert e.g. 4 '\t' into a buffer.
        They will be converted during a rendering, loading and saving a file. */
 
     const idx_t tab_sz = (const idx_t) Config->Tab_sz.value;
+    const char  tab_ch = (Modes->tabs_to_spaces) ? ' ' : '\t';
 
     // Prevent the not-full Tab insert.
     if(Buffer->chars_amount <= (const idx_t) (CHARS_MAX - tab_sz))
     {
         for(idx_t tab_idx = 0; tab_idx < tab_sz; tab_idx++)
         {
-            if(!chars__printable_char(Buffer, '\t'))
+            if(!chars__printable_char(Buffer, tab_ch))
             {
                 return false;
             }

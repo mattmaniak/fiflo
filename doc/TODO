@@ -8,7 +8,6 @@ fiflo - TODOs and ideas:
 - CRLF support,
 - moving the cursor without a window redrawing,
 - cursor scroll in the live filename edit mode,
-- distinguish an indentation type,
 - more precise Ctrl^Arrow left (full-word cursor scroll),
 - regex,
 - more DRY Makefile,

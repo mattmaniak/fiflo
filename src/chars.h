@@ -13,7 +13,7 @@
 #include "size.h"
 
 // Know what to do next with a pressed key or a combination. Based on ASCII.
-bool chars__parse_char(Buff_t*, const Conf_t* const, Mod_t*, const char);
+bool chars__parse_char(Buff_t*, const Conf_t* const, Mod_t* const, const char);
 
 // Add a char when a pressed key is a printable one.
 bool chars__printable_char(Buff_t* const, const char);
@@ -22,9 +22,9 @@ bool chars__printable_char(Buff_t* const, const char);
 bool chars__linefeed(Buff_t*);
 
 // Remove a last char and optionally delete a last line.
-bool chars__backspace(Buff_t*, const Conf_t* const);
+bool chars__backspace(Buff_t*, const Conf_t* const, const Mod_t* const);
 
 // Insert a specified amount of the '\t' to emulate the Tab.
-bool chars__tab(Buff_t*, const Conf_t* const);
+bool chars__tab(Buff_t*, const Conf_t* const, const Mod_t* const);
 
 #endif

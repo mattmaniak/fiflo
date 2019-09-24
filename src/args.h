@@ -8,9 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "modes.h"
 #include "options.h"
 
-// Analyzes argumets passed to the editor.
-bool args__parse(const int, char** const);
+// Analyze argumets passed to the editor.
+bool args__parse(Mod_t* const, int*, char** const);
 
 #endif
