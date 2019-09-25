@@ -7,7 +7,7 @@ bool syntax__load(Syntax_t* const Syntax, const int extension)
     char  color[SYNTAX__MAX_KWRD_LEN];
     FILE* file;
 
-    Syntax->kwrds_idx = 0;
+    Syntax->kwrds_amount = 0;
 
     switch(extension)
     {
@@ -27,18 +27,18 @@ bool syntax__load(Syntax_t* const Syntax, const int extension)
     {
         while(fscanf(file, "%s = %s", keyword, color) != EOF)
         {
-            strncpy(Syntax->Keywords[Syntax->kwrds_idx].keyword, keyword,
+            strncpy(Syntax->Keywords[Syntax->kwrds_amount].keyword, keyword,
                     SYNTAX__MAX_KWRD_LEN);
 
-            Syntax->Keywords[Syntax->kwrds_idx].color =
+            Syntax->Keywords[Syntax->kwrds_amount].color =
             config__parse_value(color);
 
-            if(Syntax->kwrds_idx++ >= SYNTAX__MAX_KWRDS_IN_FILE)
+            if(Syntax->kwrds_amount++ >= SYNTAX__MAX_KWRDS_IN_FILE)
             {
                 break;
             }
         }
-        Syntax->kwrds_idx--;
+        Syntax->kwrds_amount--;
         syntax__sort(Syntax);
 
         if(fclose(file) == EOF)
@@ -55,82 +55,82 @@ void syntax__sort(Syntax_t* const Syntax)
     Syntax__Kwrd_t Tmp_kwrd;
 
     // Iterate through all keywords.
-    for(idx_t kwrd_idx = 0; kwrd_idx < Syntax->kwrds_idx; kwrd_idx++)
+    for(size_t kwrd_i = 0; kwrd_i < Syntax->kwrds_amount; kwrd_i++)
     {
         // Set a value of a further keyword to compare.
-        for(idx_t shift_idx = kwrd_idx + SIZE__NEXT;
-            shift_idx < Syntax->kwrds_idx; shift_idx++)
+        for(size_t shift_i = kwrd_i + SIZE__NEXT;
+            shift_i < Syntax->kwrds_amount; shift_i++)
         {
             // Swap if a next keyword is longer.
-            if(strlen(Syntax->Keywords[kwrd_idx].keyword)
-               < strlen(Syntax->Keywords[shift_idx].keyword))
+            if(strlen(Syntax->Keywords[kwrd_i].keyword)
+               < strlen(Syntax->Keywords[shift_i].keyword))
             {
-                Tmp_kwrd = Syntax->Keywords[kwrd_idx];
+                Tmp_kwrd = Syntax->Keywords[kwrd_i];
 
-                Syntax->Keywords[kwrd_idx]  = Syntax->Keywords[shift_idx];
-                Syntax->Keywords[shift_idx] = Tmp_kwrd;
+                Syntax->Keywords[kwrd_i]  = Syntax->Keywords[shift_i];
+                Syntax->Keywords[shift_i] = Tmp_kwrd;
             }
         }
     }
 }
 
-idx_t syntax__paint_word(const Syntax_t* const Syntax,
+size_t syntax__paint_word(const Syntax_t* const Syntax,
                          const Conf_t* const Config, Line_t* Line,
-                         const idx_t end_ch_idx, idx_t ch_idx)
+                         const size_t end_ch_i, size_t ch_i)
 {
-    const char* const str_to_print_addr = &Line->txt[ch_idx];
-    const idx_t       pcard_w           = (const idx_t) Config->Pcard_w.value;
-    bool              ignored_kwrd      = false;
-    idx_t             end_paint_idx;
+    const char* const str_to_print_addr = &Line->txt[ch_i];
+    const size_t      pcard_w           = (const size_t) Config->Pcard_w.value;
+    bool              kwrd_ignored      = false;
+    size_t            end_paint_i;
 
-    if(Syntax->kwrds_idx <= 0)
+    if(Syntax->kwrds_amount <= 0)
     {
-        return ch_idx;
+        return ch_i;
     }
-    for(idx_t kwrd_idx = 0; kwrd_idx <= Syntax->kwrds_idx; kwrd_idx++)
+    for(size_t kwrd_i = 0; kwrd_i <= Syntax->kwrds_amount; kwrd_i++)
     {
-        if(strstr(str_to_print_addr, Syntax->Keywords[kwrd_idx].keyword)
+        if(strstr(str_to_print_addr, Syntax->Keywords[kwrd_i].keyword)
            == str_to_print_addr)
         {
-            ui__colorize(Syntax->Keywords[kwrd_idx].color);
+            ui__colorize(Syntax->Keywords[kwrd_i].color);
 
-            end_paint_idx = ch_idx + (const idx_t)
-                            strlen(Syntax->Keywords[kwrd_idx].keyword);
+            end_paint_i = ch_i + (const size_t)
+                          strlen(Syntax->Keywords[kwrd_i].keyword);
 
-            if(end_paint_idx == 0)
+            if(end_paint_i == 0)
             {
-                end_paint_idx = ch_idx;
-                ignored_kwrd  = true;
+                end_paint_i  = ch_i;
+                kwrd_ignored = true;
             }
 
             // Breaks a word if the end of a terminal is achieved.
-            if(end_paint_idx > end_ch_idx)
+            if(end_paint_i > end_ch_i)
             {
-                end_paint_idx = end_ch_idx;
+                end_paint_i = end_ch_i;
             }
-            for(; ch_idx < end_paint_idx; ch_idx++)
+            for(; ch_i < end_paint_i; ch_i++)
             {
-                if(ch_idx == (pcard_w - SIZE__IDX))
+                if(ch_i == (pcard_w - SIZE__I))
                 {
                     ui__colorize(Config->Color_ui.value
                                  + ANSI__BG_COLOR_OFFSET);
-                    ui__colorize(Syntax->Keywords[kwrd_idx].color);
+                    ui__colorize(Syntax->Keywords[kwrd_i].color);
                 }
-                putchar(Line->txt[ch_idx]);
-                if(ch_idx == (pcard_w - SIZE__IDX))
+                putchar(Line->txt[ch_i]);
+                if(ch_i == (pcard_w - SIZE__I))
                 {
                     // Reset the background color after punch card.
                     ui__colorize(0);
-                    ui__colorize(Syntax->Keywords[kwrd_idx].color);
+                    ui__colorize(Syntax->Keywords[kwrd_i].color);
                 }
             }
             // Not a last char, so don't hide a next.
-            if(!ignored_kwrd && (ch_idx < end_ch_idx))
+            if(!kwrd_ignored && (ch_i < end_ch_i))
             {
-                ch_idx--; // An other char will be printed. Make it visible.
+                ch_i--; // An other char will be printed. Make it visible.
             }
             break;
         }
     }
-    return ch_idx;
+    return ch_i;
 }

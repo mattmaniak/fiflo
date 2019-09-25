@@ -50,7 +50,7 @@ char input__getch(void)
 
 void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
                                const char* const sequence,
-                               size_t* const file_idx)
+                               size_t* const file_i)
 {
     const size_t seq_len_max = 6;
 
@@ -71,62 +71,62 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
 
     if(!strcmp(sequence, arrow_up))
     {
-        keys__arrow_up(Buffer);
+        arrows__arrow_up(Buffer);
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_down))
     {
-        keys__arrow_down(Buffer);
+        arrows__arrow_down(Buffer);
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_right))
     {
-        keys__arrow_right(Buffer, Config);
+        arrows__arrow_right(Buffer, Config);
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_left))
     {
-        keys__arrow_left(Buffer, Config);
+        arrows__arrow_left(Buffer, Config);
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
-        keys__ctrl_arrow_up(Buffer);
+        arrows__ctrl_arrow_up(Buffer);
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
-        keys__ctrl_arrow_down(Buffer);
+        arrows__ctrl_arrow_down(Buffer);
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_right))
     {
-        keys__ctrl_arrow_right(Buffer);
+        arrows__ctrl_arrow_right(Buffer);
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_left))
     {
-        keys__ctrl_arrow_left(Buffer);
+        arrows__ctrl_arrow_left(Buffer);
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f1))
     {
-        *file_idx = 0;
+        *file_i = 0;
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f2))
     {
-        *file_idx = 1;
+        *file_i = 1;
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f3))
     {
-        *file_idx = 2;
+        *file_i = 2;
         Buffer->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f4))
     {
-        *file_idx = 3;
+        *file_i = 3;
         Buffer->esc_seq_on_input = false;
     }
     // Other cases that block an input for "seq_len_max" chars.
@@ -144,12 +144,12 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
 
 bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
                       Mod_t* const Modes,
-                      size_t* const file_idx, const char key)
+                      size_t* const file_i, const char key)
 {
-    static char  chars_sequence[INPUT__SEQ_MAX];
-    static idx_t ch_idx;
+    static char   ch_sequence[INPUT__SEQ_MAX];
+    static size_t ch_i;
 
-    if((key == KEYS__CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
+    if((key == ASCII__CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
     {
         Buffer->esc_seq_on_input = true;
 
@@ -157,21 +157,21 @@ bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
         Buffer->esc_seq_on_input = false;
 #endif
 
-        ch_idx = 0;
+        ch_i = 0;
     }
     if(Buffer->esc_seq_on_input)
     {
-        chars_sequence[ch_idx] = key;
-        if(ch_idx < (INPUT__SEQ_MAX - SIZE__NUL))
+        ch_sequence[ch_i] = key;
+        if(ch_i <= INPUT__SEQ_MAX)
         {
-            ch_idx++;
+            ch_i++;
         }
-        chars_sequence[ch_idx] = '\0';
-        input__recognize_sequence(Buffer, Config, chars_sequence, file_idx);
+        ch_sequence[ch_i] = '\0';
+        input__recognize_sequence(Buffer, Config, ch_sequence, file_i);
 
         if(!Buffer->esc_seq_on_input)
         {
-            ch_idx = 0;
+            ch_i = 0;
         }
     }
     else if(Modes->live_fname_edit)

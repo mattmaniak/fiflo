@@ -18,11 +18,11 @@
 /* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
    recomended to set the CHARS_MAX to a value bigger than (INT_MAX - 1)
    because of possible casting. */
-#define CHARS_MAX (INT_MAX / 128)
+#define CHARS_MAX (SIZE_MAX / 128)
 
 #define BUFFER__STATUS_MAX      32
 #define BUFFER__SET_STATUS(msg) \
-strncpy(Buffer->status, msg, BUFFER__STATUS_MAX - SIZE__IDX)
+strncpy(Buffer->status, msg, BUFFER__STATUS_MAX - SIZE__I)
 
 typedef struct
 {
@@ -49,12 +49,12 @@ typedef struct
 
     // File's content and some indicators.
     Line_t*  Lines;
-    idx_t    chars_amount; // All chars index.
-    idx_t    lines_amount; // Lines index.
+    size_t   ch_amount; // All chars amount index.
+    size_t   ln_amount; // All lines amount index.
 
     // Visual shit.
-    idx_t    cursor_rev_x;       // User's cursor position in the reversed X.
-    idx_t    cursor_rev_y;       // As above but in Y-axis.
+    size_t   cursor_rev_x;       // User's cursor position in the reversed X.
+    size_t   cursor_rev_y;       // As above but in Y-axis.
     char     status[BUFFER__STATUS_MAX]; // Message displayed in a upper bar.
 }
 Buff_t;
@@ -63,44 +63,41 @@ Buff_t;
 #define BUFFER__BASIC_MEMBLK (sizeof(Buffer->Lines) * sizeof(char))
 
 // Must be >= 16 and dividable by 8.
-#define BUFFER__MEMBLK (const idx_t) (128 * sizeof(char))
+#define BUFFER__MEMBLK (const size_t) (128 * sizeof(char))
 
 // Some placeholders.
-#define BUFFER__ACTUAL_LINE_IDX \
-(Buffer->lines_amount - Buffer->cursor_rev_y)
+#define BUFFER__ACTUAL_LN_I (Buffer->ln_amount - Buffer->cursor_rev_y)
 
-#define BUFFER__ACTUAL_LINE Buffer->Lines[BUFFER__ACTUAL_LINE_IDX]
+#define BUFFER__ACTUAL_LN Buffer->Lines[BUFFER__ACTUAL_LN_I]
 
-#define BUFFER__CURSOR_X (BUFFER__ACTUAL_LINE.len - Buffer->cursor_rev_x)
+#define BUFFER__CURSOR_X (BUFFER__ACTUAL_LN.len - Buffer->cursor_rev_x)
 
-#define BUFFER__ACTUAL_CHAR BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X]
+#define BUFFER__ACTUAL_CH BUFFER__ACTUAL_LN.txt[BUFFER__CURSOR_X]
 
-#define BUFFER__PREV_CHAR BUFFER__ACTUAL_LINE.txt[BUFFER__CURSOR_X - SIZE__PREV]
+#define BUFFER__PREV_CH BUFFER__ACTUAL_LN.txt[BUFFER__CURSOR_X - SIZE__PREV]
 
-#define BUFFER__LAST_CHAR_IN_LINE \
-BUFFER__ACTUAL_LINE.txt[BUFFER__ACTUAL_LINE.len]
+#define BUFFER__LAST_CH_IN_LN BUFFER__ACTUAL_LN.txt[BUFFER__ACTUAL_LN.len]
 
-#define BUFFER__PREV_LINE_IDX (BUFFER__ACTUAL_LINE_IDX - SIZE__PREV)
+#define BUFFER__PREV_LN_I (BUFFER__ACTUAL_LN_I - SIZE__PREV)
 
-#define BUFFER__PREV_LINE Buffer->Lines[BUFFER__PREV_LINE_IDX]
+#define BUFFER__PREV_LN Buffer->Lines[BUFFER__PREV_LN_I]
 
-#define BUFFER__LAST_LINE Buffer->Lines[Buffer->lines_amount]
+#define BUFFER__LAST_LN Buffer->Lines[Buffer->ln_amount]
 
-#define BUFFER__CHARS_LIMIT_NOT_EXCEEDED (Buffer->chars_amount < CHARS_MAX)
+#define BUFFER__CH_LIMIT_NOT_EXCEEDED (Buffer->ch_amount < CHARS_MAX)
 
 #define BUFFER__CURSOR_X_SCROLLED (Buffer->cursor_rev_x > 0)
 
 #define BUFFER__CURSOR_Y_SCROLLED (Buffer->cursor_rev_y > 0)
 
-#define BUFFER__EMPTY_LINE (BUFFER__ACTUAL_LINE.len == 0)
+#define BUFFER__EMPTY_LN (BUFFER__ACTUAL_LN.len == 0)
 
-#define BUFFER__FIRST_LINE (BUFFER__ACTUAL_LINE_IDX == 0)
+#define BUFFER__FIRST_LN (BUFFER__ACTUAL_LN_I == 0)
 
-#define BUFFER__CURSOR_AT_LINE_BEGINNING \
-(Buffer->cursor_rev_x == BUFFER__ACTUAL_LINE.len)
+#define BUFFER__CURSOR_AT_LN_START \
+(Buffer->cursor_rev_x == BUFFER__ACTUAL_LN.len)
 
-#define BUFFER__CURSOR_AT_TOP \
-(Buffer->cursor_rev_y == Buffer->lines_amount)
+#define BUFFER__CURSOR_AT_TOP (Buffer->cursor_rev_y == Buffer->ln_amount)
 
 // Initializes all Buffer structure members.
 bool buffer__init(Buff_t* const);

@@ -17,11 +17,11 @@
 
 // Convert specifically implemented tabs into some renderable spaces.
 void print__line_with_tabs(const Buff_t* const, const Conf_t* const,
-                           const Syntax_t* const, const idx_t, const idx_t,
-                           const idx_t);
+                           const Syntax_t* const, const size_t, const size_t,
+                           const size_t);
 
 // Return value of hidden lines.
-idx_t print__set_start_line(const Buff_t* const, const Ui_t* const);
+size_t print__set_start_line(const Buff_t* const, const Ui_t* const);
 
 // Decide how to display a line. Can scroll it or the cursor.
 void print__actual_line(const Buff_t* const, const Conf_t* const,
@@ -30,7 +30,7 @@ void print__actual_line(const Buff_t* const, const Conf_t* const,
 // Print and shrink a line that without the cursor.
 void print__another_line(const Buff_t* const, const Conf_t* const,
                          const Syntax_t* const, const Ui_t* const,
-                         const idx_t);
+                         const size_t);
 
 // Scroll chars. Used when the cursor is in a static right position.
 void print__scroll_line_horizontally(const Buff_t* const, const Conf_t* const,

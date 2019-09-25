@@ -9,7 +9,8 @@ bool config__load(Conf_t* const Config)
         config__set_default(Config);
         return true;
     }
-    if((Config->File = fopen(conf_fname, "r")) != NULL)
+    Config->File = fopen(conf_fname, "r");
+    if(Config->File != NULL)
     {
         config__load_custom(Config);
 

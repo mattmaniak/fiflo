@@ -2,24 +2,24 @@
 
 bool path__extract_pathname_from_arg(Buff_t* const Buffer)
 {
-    size_t ch_idx         = 0;
-    size_t last_slash_pos = 0;
+    size_t ch_i           = 0;
+    size_t slash_last_pos = 0;
 
-    while(Buffer->fname[ch_idx] != '\0')
+    while(Buffer->fname[ch_i] != '\0')
     {
-        if(Buffer->fname[ch_idx] == '/')
+        if(Buffer->fname[ch_i] == '/')
         {
-            if(ch_idx == 0) // Cares about the absolute path.
+            if(ch_i == 0) // Cares about the absolute path.
             {
-                last_slash_pos = 1;
+                slash_last_pos = 1;
                 break;
             }
-            last_slash_pos = ch_idx;
+            slash_last_pos = ch_i;
         }
-        ch_idx++;
+        ch_i++;
     }
-    strncpy(Buffer->pathname, Buffer->fname, last_slash_pos);
-    Buffer->pathname[last_slash_pos] = '\0';
+    strncpy(Buffer->pathname, Buffer->fname, slash_last_pos);
+    Buffer->pathname[slash_last_pos] = '\0';
 
     if(chdir(Buffer->pathname) == -1)
     {
@@ -28,7 +28,8 @@ bool path__extract_pathname_from_arg(Buff_t* const Buffer)
         return false;
     }
 
-    if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
+    Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX);
+    if(Buffer->pathname == NULL)
     {
         fprintf(stderr, "Can't get the current directory. Too long.\n");
         return false;
@@ -38,19 +39,19 @@ bool path__extract_pathname_from_arg(Buff_t* const Buffer)
 
 void path__extract_basename_from_arg(Buff_t* const Buffer)
 {
-    size_t ch_idx         = strlen(Buffer->fname);
-    size_t last_slash_pos = 0;
+    size_t ch_i             = strlen(Buffer->fname);
+    size_t slash_last_pos = 0;
 
-    while(ch_idx > 0)
+    while(ch_i > 0)
     {
-        if(Buffer->fname[ch_idx] == '/')
+        if(Buffer->fname[ch_i] == '/')
         {
-            last_slash_pos = ch_idx + SIZE__SLASH;
+            slash_last_pos = ch_i + SIZE__SLASH;
             break;
         }
-        ch_idx--;
+        ch_i--;
     }
-    strcpy(Buffer->basename, &Buffer->fname[last_slash_pos]);
+    strcpy(Buffer->basename, &Buffer->fname[slash_last_pos]);
 }
 
 void path__merge_pathname_and_basename(Buff_t* const Buffer)

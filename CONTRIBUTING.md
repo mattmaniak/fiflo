@@ -12,16 +12,12 @@ Only with: master, develop and hotifx branches.
 ### Version scheme
 [SemVer](https://semver.org/)
 
-### Coding rules:
-- Allman-like indentation with 4 spaces,
-- line ending: LF,
-- snake_case only,
-- visually align: defines, types, names, assignments etc,
-- single line should not exceed 79 chars printable chars,
-- e.g. function "fun()" in the file asdf.c should be prefixed: "asdf__fun()",
-- insert short TODOs near things to fix as uppercase comments,
-- write documentation comments,
-- keep docs up-to-date with the code in stable releases,
+### Coding rules
+[GNU's Writing C](https://www.gnu.org/prep/standards/html_node/Writing-C.html)
+Exceptions:
+- don't put additional spaces before braces or parenthesis,
+- keep data types in the same line as a function name,
+- place pointers' asterisks stuck on to a type name.
 
 ## Merge request
 - As the source base and it's develop branch can be found on

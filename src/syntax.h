@@ -22,7 +22,7 @@ Syntax__Kwrd_t;
 typedef struct
 {
     Syntax__Kwrd_t Keywords[SYNTAX__MAX_KWRDS_IN_FILE];
-    idx_t          kwrds_idx;
+    size_t         kwrds_amount;
 }
 Syntax_t;
 
@@ -34,7 +34,7 @@ bool syntax__load(Syntax_t* const, const int);
 void syntax__sort(Syntax_t* const);
 
 // Checks and renders a word if it's color should change.
-idx_t syntax__paint_word(const Syntax_t* const, const Conf_t* const, Line_t*,
-                         const idx_t, idx_t);
+size_t syntax__paint_word(const Syntax_t* const, const Conf_t* const, Line_t*,
+                         const size_t, size_t);
 
 #endif

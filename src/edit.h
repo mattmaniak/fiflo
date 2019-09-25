@@ -4,8 +4,8 @@
 // All the unseen magic that will happen when an user inserts a char.
 
 #include "buffer.h"
-#include "file.h"
-#include "keys.h"
+#include "file_io.h"
+#include "arrows.h"
 #include "memory.h"
 
 // Optionally shift a text horizontally.

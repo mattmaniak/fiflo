@@ -13,13 +13,13 @@ bool args__parse(Mod_t* const Modes, int* argc, char** const argv)
         fprintf(stderr, "Maximum four additional args can be passed.\n");
         return false;
     }
-    for(int arg_idx = fname_arg_sz; arg_idx < orig_argc; arg_idx++)
+    for(int arg_i = fname_arg_sz; arg_i < orig_argc; arg_i++)
     {
         /* Can't use the "ARG_MAX", because clang 6.0.0 with "-Weverything"
            doesn't recognize it. */
-        if(strlen(argv[arg_idx]) < (PATH_MAX + NAME_MAX))
+        if(strlen(argv[arg_i]) < (PATH_MAX + NAME_MAX))
         {
-            if(!options__parse_and_print(Modes, argc, argv[arg_idx]))
+            if(!options__parse_and_print(Modes, argc, argv[arg_i]))
             {
                 return false;
             }

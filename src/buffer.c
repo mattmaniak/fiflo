@@ -14,14 +14,14 @@ bool buffer__init(Buff_t* const Buffer)
         fprintf(stderr, "Can't alloc a memory a array with lines.\n");
         return false;
     }
-    Buffer->chars_amount     = 0;
-    Buffer->lines_amount     = 0;
+    Buffer->ch_amount        = 0;
+    Buffer->ln_amount        = 0;
     Buffer->cursor_rev_x     = 0;
     Buffer->cursor_rev_y     = 0;
-    BUFFER__ACTUAL_LINE.len  = 0;
+    BUFFER__ACTUAL_LN.len    = 0;
     Buffer->esc_seq_on_input = false;
 
-    if((BUFFER__ACTUAL_LINE.txt = malloc(BUFFER__BASIC_MEMBLK)) == NULL)
+    if((BUFFER__ACTUAL_LN.txt = malloc(BUFFER__BASIC_MEMBLK)) == NULL)
     {
         fprintf(stderr, "Can't allocate a memory for a first line.\n");
         return false;
@@ -31,11 +31,11 @@ bool buffer__init(Buff_t* const Buffer)
 
 void buffer__free(Buff_t* const Buffer)
 {
-    for(idx_t ln_idx = 0; ln_idx <= Buffer->lines_amount; ln_idx++)
+    for(size_t ln_i = 0; ln_i <= Buffer->ln_amount; ln_i++)
     {
-        if(Buffer->Lines[ln_idx].txt != NULL)
+        if(Buffer->Lines[ln_i].txt != NULL)
         {
-            free(Buffer->Lines[ln_idx].txt);
+            free(Buffer->Lines[ln_i].txt);
         }
     }
     if(Buffer->Lines != NULL)

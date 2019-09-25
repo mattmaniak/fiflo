@@ -8,7 +8,7 @@
 #include "buffer.h"
 
 // Alloc a next memory block for chars in a line if needed.
-bool memory__extend_line(Buff_t* const, const idx_t);
+bool memory__extend_line(Buff_t* const, const size_t);
 
 // Work as the function above but shrinks memblocks.
 bool memory__shrink_current_line(Buff_t* const);
