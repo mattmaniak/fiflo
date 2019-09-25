@@ -18,7 +18,7 @@
 /* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
    recomended to set the CHARS_MAX to a value bigger than (INT_MAX - 1)
    because of possible casting. */
-#define CHARS_MAX (SIZE_MAX / 128)
+#define CHARS_MAX USHRT_MAX // TODO
 
 #define BUFFER__STATUS_MAX      32
 #define BUFFER__SET_STATUS(msg) \

@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// Built-in configuration and a config file handling.
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +15,7 @@
 #define CONFIG__MIN_TAB_SZ 2
 #define CONFIG__MAX_TAB_SZ 8
 
-#define CONFIG__PUNCH_CARD_W 80
+#define CONFIG__PUNCH_CARD_W     80
 #define CONFIG__MIN_PUNCH_CARD_W 1
 #define CONFIG__MAX_PUNCH_CARD_W 1024
 
@@ -35,8 +37,6 @@ typedef struct
     Opt_t Color_whitespace;
     Opt_t Pcard_w;
     Opt_t Tab_sz;
-
-    const int32_t _padding;
 }
 Conf_t;
 
