@@ -14,7 +14,7 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
         cw_dir_len = strlen(Buffer->pathname);
 
         // Getcwd() returns a pathname without the slash, which is required.
-        if(cw_dir_len >= (PATH_MAX - SLASH_SZ))
+        if(cw_dir_len >= (PATH_MAX - SIZE__SLASH))
         {
             fprintf(stderr,
                     "Can't insert the slash. The Current dir is too long.\n");
@@ -23,7 +23,7 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
         strcpy(Buffer->fname, Buffer->pathname); // Copy pathname.
 
         Buffer->fname[cw_dir_len]            = '/'; // Add the slash.
-        Buffer->fname[cw_dir_len + SLASH_SZ] = '\0';
+        Buffer->fname[cw_dir_len + SIZE__SLASH] = '\0';
 
         Buffer->fname_len = strlen(Buffer->fname);
 
@@ -77,7 +77,7 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
         cw_dir_len = strlen(Buffer->pathname);
 
         // Getcwd() returns a pathname without the slash, which is required.
-        if(cw_dir_len >= (PATH_MAX - SLASH_SZ))
+        if(cw_dir_len >= (PATH_MAX - SIZE__SLASH))
         {
             fprintf(stderr,
                     "Can't insert the slash. The current dir is too long.\n");
@@ -86,10 +86,10 @@ bool file__set_name(Buff_t* const Buffer, const char* const arg)
         strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy pathname.
 
         Buffer->fname[cw_dir_len]            = '/'; // Add the slash.
-        Buffer->fname[cw_dir_len + SLASH_SZ] = '\0';
+        Buffer->fname[cw_dir_len + SIZE__SLASH] = '\0';
 
         // Append a basename.
-        strncpy(&Buffer->fname[cw_dir_len + SLASH_SZ], arg, NAME_MAX);
+        strncpy(&Buffer->fname[cw_dir_len + SIZE__SLASH], arg, NAME_MAX);
     }
     Buffer->fname_len = strlen(Buffer->fname);
 

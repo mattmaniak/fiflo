@@ -9,7 +9,7 @@
 #define SIZE__LN     1
 #define SIZE__CURSOR 1
 #define SIZE__SPACE  1
-#define SLASH_SZ     1
+#define SIZE__SLASH  1
 #define SIZE__PREV   1
 #define SIZE__NEXT   1
 

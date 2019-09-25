@@ -45,7 +45,7 @@ void path__extract_basename_from_arg(Buff_t* const Buffer)
     {
         if(Buffer->fname[ch_idx] == '/')
         {
-            last_slash_pos = ch_idx + SLASH_SZ;
+            last_slash_pos = ch_idx + SIZE__SLASH;
             break;
         }
         ch_idx--;

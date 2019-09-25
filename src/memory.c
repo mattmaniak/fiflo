@@ -162,6 +162,7 @@ bool memory__copy_lines_forward(Buff_t* const Buffer)
         }
         strcpy(Buffer->Lines[ln_idx].txt,
                Buffer->Lines[ln_idx - SIZE__PREV].txt);
+
         Buffer->Lines[ln_idx].len = Buffer->Lines[ln_idx - SIZE__PREV].len;
     }
     return true;
