@@ -5,7 +5,7 @@ term_t window__receive_term_sz(const char axis)
     const int sz_max = USHRT_MAX;
     const int h_min  = UI__UBAR_SZ + SIZE__LN + UI__MAX_LBAR_H; // TODO: DYNAMIC
     const int w_min  = UI__GIT_LOGO_W + SIZE__SPACE + UI__GIT_BRANCH_MIN_W
-                       + SIZE__SPACE + BUFFER__STATUS_MAX
+                       + SIZE__SPACE + V_FILE__STATUS_MAX
                        + UI__HORIZONTAL_PADDING;
 
     const struct winsize Term_win;
@@ -58,13 +58,13 @@ void window__flush(void)
     fflush(NULL);
 }
 
-void window__fill(const Buff_t* const Buffer, const Conf_t* const Config,
+void window__fill(const V_file_t* const V_file, const Conf_t* const Config,
                   const Ui_t* const Ui)
 {
     // Fill an empty area below a text to adjust a position the lower bar.
-    if((Buffer->ln_amount + SIZE__I) < (const size_t) Ui->txtarea_h)
+    if((V_file->ln_amount + SIZE__I) < (const size_t) Ui->txtarea_h)
     {
-        for(size_t line = Buffer->ln_amount;
+        for(size_t line = V_file->ln_amount;
             line < (const size_t) (Ui->txtarea_h - UI__LBAR_SZ); line++)
         {
             WRAP_LN();
@@ -74,11 +74,11 @@ void window__fill(const Buff_t* const Buffer, const Conf_t* const Config,
     // Else the lower bar will by positioned by a text.
 }
 
-void window__set_cursor_pos(const Buff_t* const Buffer,
+void window__set_cursor_pos(const V_file_t* const V_file,
                             const Mod_t* const Modes, const Ui_t* const Ui)
 {
     // Set by default to a filename edit.
-    term_t move_right = (const term_t) (UI__LEFT_PADDING + Buffer->fname_len);
+    term_t move_right = (const term_t) (UI__LEFT_PADDING + V_file->fname_len);
     term_t move_up    = (const term_t) (Ui->win_h - UI__LBAR_SZ);
 
     if(move_right >= Ui->win_w)
@@ -92,13 +92,13 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
 
     if(!Modes->live_fname_edit)
     {
-        if(BUFFER__ACTUAL_LN.len < Ui->txtarea_w)
+        if(V_FILE__ACTUAL_LN.len < Ui->txtarea_w)
         {
             // No horizontal scrolling.
-            move_right = (const term_t) (Ui->ln_num_len + BUFFER__CURSOR_X);
+            move_right = (const term_t) (Ui->ln_num_len + V_FILE__CURSOR_X);
         }
-        else if((BUFFER__ACTUAL_LN.len - Ui->txtarea_w)
-                >= Buffer->cursor_rev_x)
+        else if((V_FILE__ACTUAL_LN.len - Ui->txtarea_w)
+                >= V_file->cursor_rev_x)
         {
             /* Last Ui->txtarea_w chars are seen. Current line is scrolled,
                not cursor. */
@@ -107,25 +107,24 @@ void window__set_cursor_pos(const Buff_t* const Buffer,
         else
         {
             // Text is scrolled horizontally to a start. Cursor can be moved.
-            move_right = (const term_t) (Ui->ln_num_len + BUFFER__CURSOR_X);
+            move_right = (const term_t) (Ui->ln_num_len + V_FILE__CURSOR_X);
         }
-        move_up = (BUFFER__ACTUAL_LN_I < Ui->txtarea_h) ?
-                  (const term_t) (Ui->txtarea_h - BUFFER__ACTUAL_LN_I
-                                  - SIZE__I + Ui->lbar_h) : Ui->lbar_h;
+        move_up = (V_FILE__ACTUAL_LN_I < Ui->txtarea_h)
+                  ? (const term_t) (Ui->txtarea_h - V_FILE__ACTUAL_LN_I
+                                    - SIZE__I + Ui->lbar_h) : Ui->lbar_h;
     }
     ANSI__CURSOR_RIGHT(move_right);
     ANSI__CURSOR_UP(move_up);
 }
 
-bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
+bool window__render(const V_file_t* const V_file, const Conf_t* const Config,
                     const Mod_t* const Modes, const Syntax_t* const Syntax,
-                    const size_t additional_argc_i,
-                    const size_t actual_file_i)
+                    const size_t additional_argc_i, const size_t actual_file_i)
 {
-    char line_num_str[16]; // Needed to count a length of a number.
+    char ln_num_str[16]; // Needed to count a length of a number.
     Ui_t Ui;
 
-    sprintf(line_num_str, "%lu", Buffer->ln_amount + SIZE__I);
+    sprintf(ln_num_str, "%lu", V_file->ln_amount + SIZE__I);
 
     if(((Ui.win_w = window__receive_term_sz('w')) == 0)
        || ((Ui.win_h = window__receive_term_sz('h')) == 0))
@@ -137,24 +136,24 @@ bool window__render(const Buff_t* const Buffer, const Conf_t* const Config,
     Ui.lbar_h          = (Modes->expanded_lbar) ? Ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 
-    Ui.ln_num_len = (const term_t) (strlen(line_num_str) + SIZE__SPACE
-                      + UI__LEFT_PADDING);
+    Ui.ln_num_len = (const term_t) (strlen(ln_num_str) + SIZE__SPACE
+                    + UI__LEFT_PADDING);
 
     Ui.txtarea_w = (const term_t) (Ui.win_w - Ui.ln_num_len);
     Ui.txtarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
-    Ui.pcard_delta_x = (const int) (Ui.txtarea_w + Buffer->cursor_rev_x
-                       - BUFFER__ACTUAL_LN.len - SIZE__I);
+    Ui.pcard_delta_x = (const int) (Ui.txtarea_w + V_file->cursor_rev_x
+                       - V_FILE__ACTUAL_LN.len - SIZE__I);
     Ui.pcard_delta_x = (Ui.pcard_delta_x > 0) ? 0 : Ui.pcard_delta_x;
 
-    ui__upper_bar(&Buffer[actual_file_i], Config, &Ui);
+    ui__upper_bar(&V_file[actual_file_i], Config, &Ui);
 
-    print__display_text(&Buffer[actual_file_i], Config, Syntax, &Ui);
-    window__fill(&Buffer[actual_file_i], Config, &Ui);
+    print__display_text(&V_file[actual_file_i], Config, Syntax, &Ui);
+    window__fill(&V_file[actual_file_i], Config, &Ui);
 
-    ui__lower_bar(Buffer, Config, Modes, &Ui, additional_argc_i,
+    ui__lower_bar(V_file, Config, Modes, &Ui, additional_argc_i,
                   actual_file_i);
-    window__set_cursor_pos(&Buffer[actual_file_i], Modes, &Ui);
+    window__set_cursor_pos(&V_file[actual_file_i], Modes, &Ui);
 
     return true;
 }

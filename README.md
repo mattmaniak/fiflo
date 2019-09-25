@@ -1,5 +1,5 @@
 # fiflo
-CUA terminal-based text-editor for Linux.
+Edit text on Linux using Windows keyboard shortcuts.
 
 ## Abstract
 Learn C. Create text editor for Linux without any dependencies. Started as the
@@ -35,7 +35,7 @@ Then use it directly from a disk...
 fiflo
 ```
 
-or better read the  manual...
+or better, read the manual...
 ```
 man fiflo
 ```
@@ -61,33 +61,40 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 ### Source files (submodules):
 - **args** - passed command-line arguments handling,
 
-- **buffer** - initialization and deleting the main buffer which holds the text
-and it's metadata,semantic macros,
+- **arrows** - arrows support,
+
+- **v_file** - An implementation of the virtual file structure.
 
 - **chars** - ascii codes that are interpreted as text,
 
 - **config** - fiflorc parser and values setter,
 
 - **edit** - more complex text editing operations that happens after the
-keypress,
+             keypress,
+
+- **extension** - file extension recognition,
 
 - **fiflo** - **the main file**, just "main" and the execution loop,
 
-- **file** - read/save the file, live editing the filename,
+- **file_io** - read/save the file, live editing the filename,
 
 - **input** - gets the key and parses it,
 
-- **keys** - keyboard bindings that don't insert chars, e.g. arrows,
-
 - **memory** - real-time automatic memory management for the text buffer,
+
+- **modes** - possible states of the editor, e.g. lower bar expanded,
 
 - **options** - "--help" and friends parameters,
 
 - **path** - pathname, basename setting from arg,
 
+- **pcard** - vertical line (sometimes called wrap guide) implementation.
+
 - **print** - various magic that prints the text,
 
-- **ui** - user interface components like bars.
+- **syntax** - syntax highlighting,
+
+- **ui** - user interface components like bars,
 
 - **window** - window rendering and flushing.
 
@@ -110,9 +117,9 @@ make debug
 ```
 
 After that and the fiflo execution, there is possibility to check the code
-coverage. It will create the cov/ dir and put the every source file with codecov
-marked after the previous execution The program must be compiled with the
-"debug" option previously. Gcc only.
+coverage. It will create the cov/ dir and put the every source file with
+codecov marked after the previous execution The program must be compiled using
+the "debug" option previously. Possible only with the gcc.
 ```
 make coverage
 ```

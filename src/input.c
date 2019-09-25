@@ -35,7 +35,7 @@ char input__getch(void)
 
         return -1;
     }
-    key = (char) getchar();
+    key = (const char) getchar();
 
     // Immediately restore the state of the stdin (0) to the* new_term_params.
     if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == -1)
@@ -48,7 +48,7 @@ char input__getch(void)
     return key;
 }
 
-void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
+void input__recognize_sequence(V_file_t* V_file, const Conf_t* const Config,
                                const char* const sequence,
                                size_t* const file_i)
 {
@@ -71,95 +71,94 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
 
     if(!strcmp(sequence, arrow_up))
     {
-        arrows__arrow_up(Buffer);
-        Buffer->esc_seq_on_input = false;
+        arrows__arrow_up(V_file);
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_down))
     {
-        arrows__arrow_down(Buffer);
-        Buffer->esc_seq_on_input = false;
+        arrows__arrow_down(V_file);
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_right))
     {
-        arrows__arrow_right(Buffer, Config);
-        Buffer->esc_seq_on_input = false;
+        arrows__arrow_right(V_file, Config);
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_left))
     {
-        arrows__arrow_left(Buffer, Config);
-        Buffer->esc_seq_on_input = false;
+        arrows__arrow_left(V_file, Config);
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
-        arrows__ctrl_arrow_up(Buffer);
-        Buffer->esc_seq_on_input = false;
+        arrows__ctrl_arrow_up(V_file);
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
-        arrows__ctrl_arrow_down(Buffer);
-        Buffer->esc_seq_on_input = false;
+        arrows__ctrl_arrow_down(V_file);
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_right))
     {
-        arrows__ctrl_arrow_right(Buffer);
-        Buffer->esc_seq_on_input = false;
+        arrows__ctrl_arrow_right(V_file);
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_left))
     {
-        arrows__ctrl_arrow_left(Buffer);
-        Buffer->esc_seq_on_input = false;
+        arrows__ctrl_arrow_left(V_file);
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f1))
     {
         *file_i = 0;
-        Buffer->esc_seq_on_input = false;
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f2))
     {
         *file_i = 1;
-        Buffer->esc_seq_on_input = false;
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f3))
     {
         *file_i = 2;
-        Buffer->esc_seq_on_input = false;
+        V_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f4))
     {
         *file_i = 3;
-        Buffer->esc_seq_on_input = false;
+        V_file->esc_seq_on_input = false;
     }
     // Other cases that block an input for "seq_len_max" chars.
     else if(strlen(sequence) >= seq_len_max)
     {
-        Buffer->esc_seq_on_input = false;
+        V_file->esc_seq_on_input = false;
     }
 
 #ifdef DEBUG_INPUT
-    printf("cursor_rev_x %u, cursor_rev_y %u.\n", Buffer->cursor_rev_x,
-           Buffer->cursor_rev_y);
+    printf("cursor_rev_x %u, cursor_rev_y %u.\n", V_file->cursor_rev_x,
+           V_file->cursor_rev_y);
 #endif
 
 }
 
-bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
-                      Mod_t* const Modes,
-                      size_t* const file_i, const char key)
+bool input__parse_key(V_file_t* const V_file, const Conf_t* const Config,
+                      Mod_t* const Modes, size_t* const file_i, const char key)
 {
     static char   ch_sequence[INPUT__SEQ_MAX];
     static size_t ch_i;
 
     if((key == ASCII__CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
     {
-        Buffer->esc_seq_on_input = true;
+        V_file->esc_seq_on_input = true;
 
 #ifdef DEBUG_INPUT
-        Buffer->esc_seq_on_input = false;
+        V_file->esc_seq_on_input = false;
 #endif
 
         ch_i = 0;
     }
-    if(Buffer->esc_seq_on_input)
+    if(V_file->esc_seq_on_input)
     {
         ch_sequence[ch_i] = key;
         if(ch_i <= INPUT__SEQ_MAX)
@@ -167,20 +166,20 @@ bool input__parse_key(Buff_t* const Buffer, const Conf_t* const Config,
             ch_i++;
         }
         ch_sequence[ch_i] = '\0';
-        input__recognize_sequence(Buffer, Config, ch_sequence, file_i);
+        input__recognize_sequence(V_file, Config, ch_sequence, file_i);
 
-        if(!Buffer->esc_seq_on_input)
+        if(!V_file->esc_seq_on_input)
         {
             ch_i = 0;
         }
     }
     else if(Modes->live_fname_edit)
     {
-        edit__filename(Buffer, Config, Modes, key);
+        edit__filename(V_file, Config, Modes, key);
     }
     else
     {
-        return chars__parse_char(Buffer, Config, Modes, key);
+        return chars__parse_char(V_file, Config, Modes, key);
     }
     return true;
 }

@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-#include "buffer.h"
+#include "v_file.h"
 #include "config.h"
 #include "modes.h"
 
@@ -45,14 +45,15 @@ Ui_t;
 void ui__colorize(const int);
 
 // Prints a line number.
-void ui__print_line_number(const Buff_t* const, const Conf_t* const,
+void ui__print_line_number(const V_file_t* const, const Conf_t* const,
                            const size_t, const term_t);
 
 // Renders the upper bar with a filename and indicators.
-void ui__upper_bar(const Buff_t* const, const Conf_t* const, const Ui_t* const);
+void ui__upper_bar(const V_file_t* const, const Conf_t* const,
+                   const Ui_t* const);
 
 // Renders the lower bar that contains keyboard info.
-void ui__lower_bar(const Buff_t* const, const Conf_t* const,
+void ui__lower_bar(const V_file_t* const, const Conf_t* const,
                    const Mod_t* const, const Ui_t* const, const size_t,
                    const size_t);
 

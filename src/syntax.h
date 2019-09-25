@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "buffer.h"
+#include "v_file.h"
 #include "config.h"
 #include "extension.h"
 #include "ui.h"

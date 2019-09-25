@@ -1,17 +1,17 @@
 #include "file_io.h"
 
-bool file_io__set_name(Buff_t* const Buffer, const char* const arg)
+bool file_io__set_name(V_file_t* const V_file, const char* const arg)
 {
     size_t cw_dir_len;
 
     if(arg == NULL) // Name not passed by an user.
     {
-        if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
+        if((V_file->pathname = getcwd(V_file->pathname, PATH_MAX)) == NULL)
         {
             fprintf(stderr, "Can't get the current directory. Too long.\n");
             return false;
         }
-        cw_dir_len = strlen(Buffer->pathname);
+        cw_dir_len = strlen(V_file->pathname);
 
         // Getcwd() returns a pathname without the slash, which is required.
         if(cw_dir_len >= (PATH_MAX - SIZE__SLASH))
@@ -20,12 +20,12 @@ bool file_io__set_name(Buff_t* const Buffer, const char* const arg)
                     "Can't insert the slash. The Current dir is too long.\n");
             return false;
         }
-        strcpy(Buffer->fname, Buffer->pathname); // Copy pathname.
+        strcpy(V_file->fname, V_file->pathname); // Copy pathname.
 
-        Buffer->fname[cw_dir_len]            = '/'; // Add the slash.
-        Buffer->fname[cw_dir_len + SIZE__SLASH] = '\0';
+        V_file->fname[cw_dir_len]            = '/'; // Add the slash.
+        V_file->fname[cw_dir_len + SIZE__SLASH] = '\0';
 
-        Buffer->fname_len = strlen(Buffer->fname);
+        V_file->fname_len = strlen(V_file->fname);
 
         return true;
     }
@@ -38,14 +38,14 @@ bool file_io__set_name(Buff_t* const Buffer, const char* const arg)
             fprintf(stderr, "The passed filename is too long.\n");
             return false;
         }
-        strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
+        strncpy(V_file->fname, arg, PATH_MAX + NAME_MAX);
 
-        if(!path__extract_pathname_from_arg(Buffer))
+        if(!path__extract_pathname_from_arg(V_file))
         {
             return false;
         }
-        path__extract_basename_from_arg(Buffer);
-        path__merge_pathname_and_basename(Buffer);
+        path__extract_basename_from_arg(V_file);
+        path__merge_pathname_and_basename(V_file);
     }
     else if(arg[0] == '/') // An absolute dir.
     {
@@ -54,9 +54,9 @@ bool file_io__set_name(Buff_t* const Buffer, const char* const arg)
             fprintf(stderr, "The passed filename is too long.\n");
             return false;
         }
-        strncpy(Buffer->fname, arg, PATH_MAX + NAME_MAX);
+        strncpy(V_file->fname, arg, PATH_MAX + NAME_MAX);
 
-        if(!path__extract_pathname_from_arg(Buffer))
+        if(!path__extract_pathname_from_arg(V_file))
         {
             return false;
         }
@@ -69,12 +69,12 @@ bool file_io__set_name(Buff_t* const Buffer, const char* const arg)
             return false;
         }
 
-        if((Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX)) == NULL)
+        if((V_file->pathname = getcwd(V_file->pathname, PATH_MAX)) == NULL)
         {
             fprintf(stderr, "Can't get a current directory. Too long.\n");
             return false;
         }
-        cw_dir_len = strlen(Buffer->pathname);
+        cw_dir_len = strlen(V_file->pathname);
 
         // Getcwd() returns a pathname without the slash, which is required.
         if(cw_dir_len >= (PATH_MAX - SIZE__SLASH))
@@ -83,34 +83,34 @@ bool file_io__set_name(Buff_t* const Buffer, const char* const arg)
                     "Can't insert the slash. The current dir is too long.\n");
             return false;
         }
-        strncpy(Buffer->fname, Buffer->pathname, PATH_MAX); // Copy pathname.
+        strncpy(V_file->fname, V_file->pathname, PATH_MAX); // Copy pathname.
 
-        Buffer->fname[cw_dir_len]            = '/'; // Add the slash.
-        Buffer->fname[cw_dir_len + SIZE__SLASH] = '\0';
+        V_file->fname[cw_dir_len]            = '/'; // Add the slash.
+        V_file->fname[cw_dir_len + SIZE__SLASH] = '\0';
 
         // Append a basename.
-        strncpy(&Buffer->fname[cw_dir_len + SIZE__SLASH], arg, NAME_MAX);
+        strncpy(&V_file->fname[cw_dir_len + SIZE__SLASH], arg, NAME_MAX);
     }
-    Buffer->fname_len = strlen(Buffer->fname);
+    V_file->fname_len = strlen(V_file->fname);
 
     return true;
 }
 
-bool file_io__load(Buff_t* const Buffer, const Conf_t* const Config,
+bool file_io__load(V_file_t* const V_file, const Conf_t* const Config,
                 const Mod_t* const Modes)
 {
     FILE* Textfile;
     char  ch;
 
-    if(Buffer->fname[Buffer->fname_len - SIZE__NUL] == '/')
+    if(V_file->fname[V_file->fname_len - SIZE__NUL] == '/')
     {
-        BUFFER__SET_STATUS("current directory set");
+        V_FILE__SET_STATUS("current directory set");
         return true;
     }
 
-    if((Textfile = fopen(Buffer->fname, "r")) == NULL)
+    if((Textfile = fopen(V_file->fname, "r")) == NULL)
     {
-        BUFFER__SET_STATUS("the file will be created");
+        V_FILE__SET_STATUS("the file will be created");
         return true;
     }
     while((ch = (const char) getc(Textfile)) != EOF)
@@ -118,14 +118,14 @@ bool file_io__load(Buff_t* const Buffer, const Conf_t* const Config,
         switch(ch)
         {
         default:
-            if(!chars__printable_char(Buffer, ch))
+            if(!chars__printable_char(V_file, ch))
             {
                 return false;
             }
             break;
 
         case '\t':
-            if(!file_io__convert_tab_from_file(Buffer, Config, Modes, ch))
+            if(!file_io__convert_tab_from_file(V_file, Config, Modes, ch))
             {
                 return false;
             }
@@ -136,12 +136,12 @@ bool file_io__load(Buff_t* const Buffer, const Conf_t* const Config,
         fprintf(stderr, "Can't close a textfile after load.\n");
         return false;
     }
-    BUFFER__SET_STATUS("read a file");
+    V_FILE__SET_STATUS("read a file");
 
     return true;
 }
 
-bool file_io__convert_tab_from_file(Buff_t* const Buffer,
+bool file_io__convert_tab_from_file(V_file_t* const V_file,
                                  const Conf_t* const Config,
                                  const Mod_t* const Modes, const char ch)
 {
@@ -154,7 +154,7 @@ bool file_io__convert_tab_from_file(Buff_t* const Buffer,
     {
         for(size_t ch_i = 0; ch_i < tab_sz; ch_i++)
         {
-            if(!chars__printable_char(Buffer, tab_ch))
+            if(!chars__printable_char(V_file, tab_ch))
             {
                 return false;
             }
@@ -163,7 +163,7 @@ bool file_io__convert_tab_from_file(Buff_t* const Buffer,
     return true;
 }
 
-void file_io__convert_tab_to_file(const Buff_t* const Buffer,
+void file_io__convert_tab_to_file(const V_file_t* const V_file,
                                const Conf_t* const Config, const size_t ln_i,
                                size_t* const ch_i)
 {
@@ -172,7 +172,7 @@ void file_io__convert_tab_to_file(const Buff_t* const Buffer,
     // Convert editor-friendly Tab, e.g. "\t\t\t\t" into a file-friendly '\t'.
     for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
     {
-        if(Buffer->Lines[ln_i].txt[*ch_i + tab_i] != '\t')
+        if(V_file->Lines[ln_i].txt[*ch_i + tab_i] != '\t')
         {
             break; // No Tab, so don't convert anything.
         }
@@ -184,23 +184,23 @@ void file_io__convert_tab_to_file(const Buff_t* const Buffer,
     }
 }
 
-bool file_io__save(Buff_t* const Buffer, const Conf_t* const Config)
+bool file_io__save(V_file_t* const V_file, const Conf_t* const Config)
 {
-    FILE* Textfile = fopen(Buffer->fname, "w");
+    FILE* Textfile = fopen(V_file->fname, "w");
 
     if(Textfile == NULL)
     {
-        BUFFER__SET_STATUS("can't write to the file");
+        V_FILE__SET_STATUS("can't write to the file");
         return true;
     }
-    for(size_t ln_i = 0; ln_i <= Buffer->ln_amount; ln_i++)
+    for(size_t ln_i = 0; ln_i <= V_file->ln_amount; ln_i++)
     {
         /* Using fputs or fprintf causes an use-of-uninitialized-value using
            MSan because of there is a more memory allocated than is needed. */
-        for(size_t ch_i = 0; ch_i < Buffer->Lines[ln_i].len; ch_i++)
+        for(size_t ch_i = 0; ch_i < V_file->Lines[ln_i].len; ch_i++)
         {
-            file_io__convert_tab_to_file(Buffer, Config, ln_i, &ch_i);
-            putc(Buffer->Lines[ln_i].txt[ch_i], Textfile);
+            file_io__convert_tab_to_file(V_file, Config, ln_i, &ch_i);
+            putc(V_file->Lines[ln_i].txt[ch_i], Textfile);
         }
     }
     if(fclose(Textfile) == EOF)
@@ -208,23 +208,23 @@ bool file_io__save(Buff_t* const Buffer, const Conf_t* const Config)
         fprintf(stderr, "Can't close the textfile after save.\n");
         return false;
     }
-    BUFFER__SET_STATUS("saved");
+    V_FILE__SET_STATUS("saved");
 
     return true;
 }
 
-bool file_io__get_git_branch(Buff_t* const Buffer)
+bool file_io__get_git_branch(V_file_t* const V_file)
 {
     char  git_head_file_pathname[PATH_MAX + NAME_MAX];
     FILE* Git_head_file;
 
-    strcpy(git_head_file_pathname, Buffer->pathname);
+    strcpy(git_head_file_pathname, V_file->pathname);
     strcat(git_head_file_pathname, "/.git/HEAD");
 
     if((access(git_head_file_pathname, F_OK) == -1)
        || ((Git_head_file = fopen(git_head_file_pathname, "r")) == NULL))
     {
-        strcpy(Buffer->git_branch, "[none]");
+        strcpy(V_file->git_branch, "[none]");
         return true;
     }
 
@@ -232,17 +232,17 @@ bool file_io__get_git_branch(Buff_t* const Buffer)
     if(fseek(Git_head_file, (const long int) strlen("ref: refs/heads/"), 0)
        == -1)
     {
-        strcpy(Buffer->git_branch, "[none]");
+        strcpy(V_file->git_branch, "[none]");
         return true;
     }
 
     // Read a contents of the file.
-    while(fgets(Buffer->git_branch, NAME_MAX, Git_head_file) != NULL)
+    while(fgets(V_file->git_branch, NAME_MAX, Git_head_file) != NULL)
 
     // Delete the linefeed from the name.
-    if(Buffer->git_branch[strlen(Buffer->git_branch) - SIZE__NUL] == '\n')
+    if(V_file->git_branch[strlen(V_file->git_branch) - SIZE__NUL] == '\n')
     {
-        Buffer->git_branch[strlen(Buffer->git_branch) - SIZE__NUL] = '\0';
+        V_file->git_branch[strlen(V_file->git_branch) - SIZE__NUL] = '\0';
     }
 
     if(fclose(Git_head_file) == EOF)

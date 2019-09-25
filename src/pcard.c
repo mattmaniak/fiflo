@@ -13,8 +13,8 @@ void pcard__print_after_txt(const Conf_t* const Config, const Ui_t* const Ui,
 {
     const size_t pcard_w      = (const size_t) Config->Pcard_w.value;
     int          pcard_offset = (const int) ((const unsigned int)
-                                             Config->Pcard_w.value - ln_len
-                                             - SIZE__I);
+                                            Config->Pcard_w.value - ln_len
+                                            - SIZE__I);
 
     if(Ui->txtarea_w >= Config->Pcard_w.value)
     {

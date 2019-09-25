@@ -6,9 +6,9 @@ fiflo - TODOs and ideas:
 - load only part of a file (nearly-infinite buffer),
 - search option,
 - CRLF support,
+- UTF-8 support,
 - moving the cursor without a window redrawing,
 - cursor scroll in the live filename edit mode,
 - more precise Ctrl^Arrow left (full-word cursor scroll),
 - regex,
-- more DRY Makefile,
 - check variables casting.

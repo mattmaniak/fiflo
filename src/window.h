@@ -6,7 +6,7 @@
 #include <sys/ioctl.h>
 
 #include "ansi.h"
-#include "buffer.h"
+#include "v_file.h"
 #include "config.h"
 #include "modes.h"
 #include "pcard.h"
@@ -20,14 +20,15 @@ term_t window__receive_term_sz(const char);
 void window__flush(void);
 
 // Vertical fill between a text and lower bar. If there isn't many lines.
-void window__fill(const Buff_t* const, const Conf_t* const, const Ui_t* const);
+void window__fill(const V_file_t* const, const Conf_t* const,
+                  const Ui_t* const);
 
 // Sets the cursor position starting from a left bottom.
-void window__set_cursor_pos(const Buff_t* const, const Mod_t* const,
+void window__set_cursor_pos(const V_file_t* const, const Mod_t* const,
                             const Ui_t* const);
 
 // Stupid wrapper for above things.
-bool window__render(const Buff_t* const, const Conf_t* const,
+bool window__render(const V_file_t* const, const Conf_t* const,
                     const Mod_t* const, const Syntax_t* const, const size_t,
                     const size_t);
 

@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 #include "args.h"
-#include "buffer.h"
+#include "v_file.h"
 #include "config.h"
 #include "file_io.h"
 #include "extension.h"

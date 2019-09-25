@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #include "ansi.h"
-#include "buffer.h"
+#include "v_file.h"
 
 #define CONFIG__MIN_TAB_SZ 2
 #define CONFIG__MAX_TAB_SZ 8

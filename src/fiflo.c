@@ -10,10 +10,10 @@ void fiflo__run(int argc, char** const argv)
     size_t file_buffers;
     int    recognized_extension;
 
-    Buff_t*  Buffer;
-    Conf_t   Config;
-    Mod_t    Modes;
-    Syntax_t Syntax;
+    V_file_t* V_file;
+    Conf_t    Config;
+    Mod_t     Modes;
+    Syntax_t  Syntax;
 
     modes__init(&Modes);
     if(!args__parse(&Modes, &argc, argv))
@@ -25,13 +25,13 @@ void fiflo__run(int argc, char** const argv)
 
     // printf("%lu\n", file_buffers);
 
-    Buffer = malloc((const size_t) argc * sizeof(Buff_t));
-    if(Buffer == NULL)
+    V_file = malloc((const size_t) argc * sizeof(const V_file_t));
+    if(V_file == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for file buffers.\n");
         goto free;
     }
-    Buffer->extension = EXTENSION__NONE;
+    V_file->extension = EXTENSION__NONE;
 
     for(size_t buff_i = 0; buff_i < file_buffers; buff_i++)
     {
@@ -39,15 +39,15 @@ void fiflo__run(int argc, char** const argv)
         {
             additional_argv[buff_i][0] = '\0';
         }
-        if(!buffer__init(&Buffer[buff_i]) || !config__load(&Config)
-           || !file_io__set_name(&Buffer[buff_i], additional_argv[buff_i])
-           || !file_io__load(&Buffer[buff_i], &Config, &Modes))
+        if(!buffer__init(&V_file[buff_i]) || !config__load(&Config)
+           || !file_io__set_name(&V_file[buff_i], additional_argv[buff_i])
+           || !file_io__load(&V_file[buff_i], &Config, &Modes))
         {
             goto free;
         }
-        strcpy(Buffer[buff_i].fname_copy, Buffer[buff_i].fname);
+        strcpy(V_file[buff_i].fname_copy, V_file[buff_i].fname);
 
-        if(!file_io__get_git_branch(&Buffer[buff_i]))
+        if(!file_io__get_git_branch(&V_file[buff_i]))
         {
             break;
         }
@@ -55,14 +55,14 @@ void fiflo__run(int argc, char** const argv)
 
     for(;;) // The main program loop.
     {
-        recognized_extension = extension__recognize(Buffer->basename);
-        if(Buffer->extension != recognized_extension)
+        recognized_extension = extension__recognize(V_file->basename);
+        if(V_file->extension != recognized_extension)
         {
             syntax__load(&Syntax, recognized_extension);
-            Buffer->extension = recognized_extension;
+            V_file->extension = recognized_extension;
         }
-        if(!file_io__get_git_branch(&Buffer[actual_file_i])
-           || !input__parse_key(&Buffer[actual_file_i], &Config, &Modes,
+        if(!file_io__get_git_branch(&V_file[actual_file_i])
+           || !input__parse_key(&V_file[actual_file_i], &Config, &Modes,
                                 &actual_file_i, pressed_key))
         {
             break;
@@ -74,7 +74,7 @@ void fiflo__run(int argc, char** const argv)
         }
 
         // Flushes and renders always after the keypress.
-        if(!window__render(Buffer, &Config, &Modes, &Syntax,
+        if(!window__render(V_file, &Config, &Modes, &Syntax,
                            (const size_t) argc - SIZE__I,
                            (const size_t) actual_file_i)
            || ((pressed_key = input__getch()) == -1))
@@ -87,44 +87,10 @@ void fiflo__run(int argc, char** const argv)
 free:
     for(size_t buff_i = 0; buff_i < file_buffers; buff_i++)
     {
-        buffer__free(&Buffer[buff_i]);
+        buffer__free(&V_file[buff_i]);
     }
-    free(Buffer);
+    free(V_file);
 }
-
-// void fiflo__main_loop(void)
-// {
-//     for(;;) // The main program loop.
-//     {
-//         recognized_extension = extension__recognize(Buffer->basename);
-//         if(Buffer->extension != recognized_extension)
-//         {
-//             syntax__load(&Syntax, recognized_extension);
-//             Buffer->extension = recognized_extension;
-//         }
-//         if(!file_io__get_git_branch(&Buffer[actual_file_i])
-//            || !input__parse_key(&Buffer[actual_file_i], &Config, &Modes,
-//                                 &actual_file_i, pressed_key))
-//         {
-//             break;
-//         }
-//         // An user has selected too big id for a file, select the last one.
-//         if(actual_file_i > (argc - SIZE__I))
-//         {
-//             actual_file_i = argc - SIZE__I;
-//         }
-//
-//         // Flushes and renders always after the keypress.
-//         if(!window__render(Buffer, &Config, &Modes, &Syntax,
-//                            (const size_t) argc - SIZE__I,
-//                            (const size_t) actual_file_i)
-//            || ((pressed_key = input__getch()) == -1))
-//         {
-//             break;
-//         }
-//         window__flush();
-//     }
-// }
 
 int main(int argc, char** argv)
 {

@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 
-#include "buffer.h"
+#include "v_file.h"
 #include "config.h"
 #include "ui.h"
 

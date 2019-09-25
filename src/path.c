@@ -1,13 +1,13 @@
 #include "path.h"
 
-bool path__extract_pathname_from_arg(Buff_t* const Buffer)
+bool path__extract_pathname_from_arg(V_file_t* const V_file)
 {
     size_t ch_i           = 0;
     size_t slash_last_pos = 0;
 
-    while(Buffer->fname[ch_i] != '\0')
+    while(V_file->fname[ch_i] != '\0')
     {
-        if(Buffer->fname[ch_i] == '/')
+        if(V_file->fname[ch_i] == '/')
         {
             if(ch_i == 0) // Cares about the absolute path.
             {
@@ -18,18 +18,18 @@ bool path__extract_pathname_from_arg(Buff_t* const Buffer)
         }
         ch_i++;
     }
-    strncpy(Buffer->pathname, Buffer->fname, slash_last_pos);
-    Buffer->pathname[slash_last_pos] = '\0';
+    strncpy(V_file->pathname, V_file->fname, slash_last_pos);
+    V_file->pathname[slash_last_pos] = '\0';
 
-    if(chdir(Buffer->pathname) == -1)
+    if(chdir(V_file->pathname) == -1)
     {
         fprintf(stderr,
                 "Can't change the direcory to get the parent file path.\n");
         return false;
     }
 
-    Buffer->pathname = getcwd(Buffer->pathname, PATH_MAX);
-    if(Buffer->pathname == NULL)
+    V_file->pathname = getcwd(V_file->pathname, PATH_MAX);
+    if(V_file->pathname == NULL)
     {
         fprintf(stderr, "Can't get the current directory. Too long.\n");
         return false;
@@ -37,29 +37,29 @@ bool path__extract_pathname_from_arg(Buff_t* const Buffer)
     return true;
 }
 
-void path__extract_basename_from_arg(Buff_t* const Buffer)
+void path__extract_basename_from_arg(V_file_t* const V_file)
 {
-    size_t ch_i             = strlen(Buffer->fname);
+    size_t ch_i             = strlen(V_file->fname);
     size_t slash_last_pos = 0;
 
     while(ch_i > 0)
     {
-        if(Buffer->fname[ch_i] == '/')
+        if(V_file->fname[ch_i] == '/')
         {
             slash_last_pos = ch_i + SIZE__SLASH;
             break;
         }
         ch_i--;
     }
-    strcpy(Buffer->basename, &Buffer->fname[slash_last_pos]);
+    strcpy(V_file->basename, &V_file->fname[slash_last_pos]);
 }
 
-void path__merge_pathname_and_basename(Buff_t* const Buffer)
+void path__merge_pathname_and_basename(V_file_t* const V_file)
 {
-    strcpy(Buffer->fname, Buffer->pathname);
+    strcpy(V_file->fname, V_file->pathname);
 
-    Buffer->fname[strlen(Buffer->fname)] = '/'; // Append the slash.
-    Buffer->fname[strlen(Buffer->fname)] = '\0';
+    V_file->fname[strlen(V_file->fname)] = '/'; // Append the slash.
+    V_file->fname[strlen(V_file->fname)] = '\0';
 
-    strcat(Buffer->fname, Buffer->basename);
+    strcat(V_file->fname, V_file->basename);
 }

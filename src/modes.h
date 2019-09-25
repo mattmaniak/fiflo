@@ -1,6 +1,8 @@
 #ifndef MODES_H
 #define MODES_H
 
+// Possible states of the editor.
+
 #include <stdbool.h>
 
 typedef struct

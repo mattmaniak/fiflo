@@ -6,14 +6,14 @@ void ui__colorize(const int value)
     printf("\033[%um", (value == 0) ? 0 : value);
 }
 
-void ui__print_line_number(const Buff_t* const Buffer,
+void ui__print_line_number(const V_file_t* const V_file,
                            const Conf_t* const Config, const size_t ln_i,
                            const term_t ln_num_len)
 {
     ui__colorize(Config->Color_ui.value);
     ANSI__INVERT();
 
-    if(ln_i == BUFFER__ACTUAL_LN_I)
+    if(ln_i == V_FILE__ACTUAL_LN_I)
     {
         ui__colorize(0);
         ui__colorize(Config->Color_ui.value);
@@ -24,7 +24,7 @@ void ui__print_line_number(const Buff_t* const Buffer,
     putchar(' ');
 }
 
-void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
+void ui__upper_bar(const V_file_t* const V_file, const Conf_t* const Config,
                    const Ui_t* const Ui)
 {
     const int fname_area  = Ui->win_w - UI__LEFT_PADDING - UI__RIGHT_PADDING;
@@ -33,43 +33,43 @@ void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     ANSI__INVERT();
     printf("%*s", UI__LEFT_PADDING, " ");
 
-    if(Buffer->fname_len <= (const size_t) fname_area)
+    if(V_file->fname_len <= (const size_t) fname_area)
     {
-        printf("%s%*s", Buffer->fname, fname_area
-               - (const int) strlen(Buffer->fname) + UI__RIGHT_PADDING, " ");
+        printf("%s%*s", V_file->fname, fname_area
+               - (const int) strlen(V_file->fname) + UI__RIGHT_PADDING, " ");
     }
     else
     {
         // The filename is too long to show - scroll it.
-        for(size_t ch_i = Buffer->fname_len - Ui->win_w
-            + UI__HORIZONTAL_PADDING; ch_i < Buffer->fname_len; ch_i++)
+        for(size_t ch_i = V_file->fname_len - Ui->win_w
+            + UI__HORIZONTAL_PADDING; ch_i < V_file->fname_len; ch_i++)
         {
-            putchar(Buffer->fname[ch_i]);
+            putchar(V_file->fname[ch_i]);
         }
         printf("%*s", UI__RIGHT_PADDING, " ");
         WRAP_LN();
     }
-    printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status,
-           (BUFFER__STATUS_MAX - (const int) strlen(Buffer->status)
+    printf("%*s%s%*s", UI__LEFT_PADDING, " ", V_file->status,
+           (V_FILE__STATUS_MAX - (const int) strlen(V_file->status)
            - SIZE__SPACE + UI__GIT_LOGO_W), UI__GIT_LOGO);
 
-    if((const term_t) strlen(Buffer->git_branch)
-       < (Ui->win_w - UI__GIT_LOGO_W - BUFFER__STATUS_MAX
+    if((const term_t) strlen(V_file->git_branch)
+       < (Ui->win_w - UI__GIT_LOGO_W - V_FILE__STATUS_MAX
           - UI__HORIZONTAL_PADDING))
     {
-        printf("%s%*s", Buffer->git_branch, (fname_area
-               - BUFFER__STATUS_MAX - (const int) strlen(Buffer->git_branch)
+        printf("%s%*s", V_file->git_branch, (fname_area
+               - V_FILE__STATUS_MAX - (const int) strlen(V_file->git_branch)
                - UI__GIT_LOGO_W + UI__LEFT_PADDING + UI__RIGHT_PADDING), " ");
     }
     else
     {
-        printf("%.*s", Ui->win_w - BUFFER__STATUS_MAX - SIZE__SPACE ,
-               Buffer->git_branch);
+        printf("%.*s", Ui->win_w - V_FILE__STATUS_MAX - SIZE__SPACE ,
+               V_file->git_branch);
     }
     WRAP_LN();
 }
 
-void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
+void ui__lower_bar(const V_file_t* const V_file, const Conf_t* const Config,
                    const Mod_t* const Modes, const Ui_t* const Ui,
                    const size_t additional_argc_i,
                    const size_t actual_file_i)
@@ -78,13 +78,13 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
     const char files_str[] = "loaded files";
     size_t      punch_card_w = 80;
     char       punch_card[16];
-    char       cursor_pos_indicator[BUFFER__STATUS_MAX];
+    char       cursor_pos_indicator[V_FILE__STATUS_MAX];
 
     sprintf(punch_card, "%lu", punch_card_w);
     sprintf(cursor_pos_indicator, "[%lu; %lu]",
-            Buffer[actual_file_i].ln_amount
-            - Buffer[actual_file_i].cursor_rev_y + SIZE__I,
-            BUFFER__CURSOR_X + SIZE__I);
+            V_file[actual_file_i].ln_amount
+            - V_file[actual_file_i].cursor_rev_y + SIZE__I,
+            V_FILE__CURSOR_X + SIZE__I);
 
     WRAP_LN();
     ui__colorize(0); // Resets a last line color.
@@ -111,14 +111,14 @@ void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
             }
             printf("%*s", UI__LEFT_PADDING, " ");
 
-            if((term_t) strlen(Buffer[file_i].fname) <= fname_area)
+            if((term_t) strlen(V_file[file_i].fname) <= fname_area)
             {
-                printf("%s%*s", Buffer[file_i].fname, fname_area
-                       - (const int) strlen(Buffer[file_i].fname), " ");
+                printf("%s%*s", V_file[file_i].fname, fname_area
+                       - (const int) strlen(V_file[file_i].fname), " ");
             }
             else
             {
-                printf("%.*s", fname_area, Buffer[file_i].fname);
+                printf("%.*s", fname_area, V_file[file_i].fname);
             }
             printf("%*s", UI__RIGHT_PADDING, " ");
             WRAP_LN();
