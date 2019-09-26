@@ -62,10 +62,10 @@ void window__fill(const V_file_t* const V_file, const Conf_t* const Config,
                   const Ui_t* const Ui)
 {
     // Fill an empty area below a text to adjust a position the lower bar.
-    if((V_file->ln_amount + SIZE__I) < (const size_t) Ui->txtarea_h)
+    if((V_file->ln_amount + SIZE__I) < (size_t) Ui->txtarea_h)
     {
         for(size_t line = V_file->ln_amount;
-            line < (const size_t) (Ui->txtarea_h - UI__LBAR_SZ); line++)
+            line < (size_t) (Ui->txtarea_h - UI__LBAR_SZ); line++)
         {
             WRAP_LN();
             pcard__print_after_nothing(Config, Ui);
@@ -78,12 +78,12 @@ void window__set_cursor_pos(const V_file_t* const V_file,
                             const Mod_t* const Modes, const Ui_t* const Ui)
 {
     // Set by default to a filename edit.
-    term_t move_right = (const term_t) (UI__LEFT_PADDING + V_file->fname_len);
-    term_t move_up    = (const term_t) (Ui->win_h - UI__LBAR_SZ);
+    term_t move_right = (term_t) (UI__LEFT_PADDING + V_file->fname_len);
+    term_t move_up    = (term_t) (Ui->win_h - UI__LBAR_SZ);
 
     if(move_right >= Ui->win_w)
     {
-        move_right = (const term_t) (Ui->win_w - SIZE__CURSOR);
+        move_right = (term_t) (Ui->win_w - SIZE__CURSOR);
     }
 
     // Cursor is pushed right by the lower bar. Move it back.
@@ -95,23 +95,23 @@ void window__set_cursor_pos(const V_file_t* const V_file,
         if(V_FILE__ACTUAL_LN.len < Ui->txtarea_w)
         {
             // No horizontal scrolling.
-            move_right = (const term_t) (Ui->ln_num_len + V_FILE__CURSOR_X);
+            move_right = (term_t) (Ui->ln_num_len + V_FILE__CURSOR_X);
         }
         else if((V_FILE__ACTUAL_LN.len - Ui->txtarea_w)
                 >= V_file->cursor_rev_x)
         {
             /* Last Ui->txtarea_w chars are seen. Current line is scrolled,
                not cursor. */
-            move_right = (const term_t) (Ui->win_w - SIZE__CURSOR);
+            move_right = (term_t) (Ui->win_w - SIZE__CURSOR);
         }
         else
         {
             // Text is scrolled horizontally to a start. Cursor can be moved.
-            move_right = (const term_t) (Ui->ln_num_len + V_FILE__CURSOR_X);
+            move_right = (term_t) (Ui->ln_num_len + V_FILE__CURSOR_X);
         }
         move_up = (V_FILE__ACTUAL_LN_I < Ui->txtarea_h)
-                  ? (const term_t) (Ui->txtarea_h - V_FILE__ACTUAL_LN_I
-                                    - SIZE__I + Ui->lbar_h) : Ui->lbar_h;
+                  ? (term_t) (Ui->txtarea_h - V_FILE__ACTUAL_LN_I - SIZE__I
+                     + Ui->lbar_h) : Ui->lbar_h;
     }
     ANSI__CURSOR_RIGHT(move_right);
     ANSI__CURSOR_UP(move_up);
@@ -131,18 +131,18 @@ bool window__render(const V_file_t* const V_file, const Conf_t* const Config,
     {
         return false;
     }
-    Ui.expanded_lbar_h = (const term_t) (UI__LBAR_SZ + additional_argc_i
-                         + SIZE__I + SIZE__LN);
+    Ui.expanded_lbar_h = (term_t) (UI__LBAR_SZ + additional_argc_i + SIZE__I
+                         + SIZE__LN);
     Ui.lbar_h          = (Modes->expanded_lbar) ? Ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 
-    Ui.ln_num_len = (const term_t) (strlen(ln_num_str) + SIZE__SPACE
+    Ui.ln_num_len = (term_t) (strlen(ln_num_str) + SIZE__SPACE
                     + UI__LEFT_PADDING);
 
-    Ui.txtarea_w = (const term_t) (Ui.win_w - Ui.ln_num_len);
-    Ui.txtarea_h = (const term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
+    Ui.txtarea_w = (term_t) (Ui.win_w - Ui.ln_num_len);
+    Ui.txtarea_h = (term_t) (Ui.win_h - UI__UBAR_SZ - Ui.lbar_h);
 
-    Ui.pcard_delta_x = (const int) (Ui.txtarea_w + V_file->cursor_rev_x
+    Ui.pcard_delta_x = (int) (Ui.txtarea_w + V_file->cursor_rev_x
                        - V_FILE__ACTUAL_LN.len - SIZE__I);
     Ui.pcard_delta_x = (Ui.pcard_delta_x > 0) ? 0 : Ui.pcard_delta_x;
 

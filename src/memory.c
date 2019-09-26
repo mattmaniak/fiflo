@@ -96,7 +96,8 @@ bool memory__shrink_prev_line(V_file_t* const V_file)
     V_FILE__PREV_LN.txt = realloc(V_FILE__PREV_LN.txt, memblk);
     if(V_FILE__PREV_LN.txt == NULL)
     {
-        fprintf(stderr, "Can't shrink a memory block for the prev. %lu line.\n",
+        fprintf(stderr,
+                "Can't shrink a memory block for the prev. %lu line.\n",
                 V_FILE__PREV_LN_I + SIZE__I);
         return false;
     }

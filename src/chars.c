@@ -154,8 +154,8 @@ bool chars__backspace(V_file_t* V_file, const Conf_t* const Config,
                 return false;
             }
         }
-        else if(!V_FILE__FIRST_LN && !V_FILE__CURSOR_Y_SCROLLED &&
-                !edit__delete_last_empty_line(V_file))
+        else if(!V_FILE__FIRST_LN && !V_FILE__CURSOR_Y_SCROLLED
+                && !edit__delete_last_empty_line(V_file))
         {
             return false;
         }

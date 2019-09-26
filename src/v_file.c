@@ -23,7 +23,8 @@ bool buffer__init(V_file_t* const V_file)
     V_FILE__ACTUAL_LN.len    = 0;
     V_file->esc_seq_on_input = false;
 
-    if((V_FILE__ACTUAL_LN.txt = malloc(V_FILE__BASIC_MEMBLK)) == NULL)
+    V_FILE__ACTUAL_LN.txt = malloc(V_FILE__BASIC_MEMBLK);
+    if(V_FILE__ACTUAL_LN.txt == NULL)
     {
         fprintf(stderr, "Can't allocate a memory for a first line.\n");
         return false;

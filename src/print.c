@@ -7,7 +7,7 @@ void print__line_with_tabs(const V_file_t* const V_file,
 {
     size_t ch_i = start_ch_i;
     size_t ch_i_after_kwrd;
-    char  ch;
+    char   ch;
 
     for(; ch_i < end_ch_i; ch_i++)
     {
@@ -96,8 +96,7 @@ void print__actual_line(const V_file_t* const V_file,
         }
     }
     // Chars won't fit in a horizontal space.
-    else if((V_FILE__ACTUAL_LN.len - Ui->txtarea_w)
-            >= V_file->cursor_rev_x)
+    else if((V_FILE__ACTUAL_LN.len - Ui->txtarea_w) >= V_file->cursor_rev_x)
     {
         // Render only a right part of a line.
         print__scroll_line_horizontally(V_file, Config, Syntax, Ui);
@@ -122,7 +121,7 @@ void print__another_line(const V_file_t* const V_file,
                          const size_t ln_i)
 {
     const size_t start_ch_i = (-Ui->pcard_delta_x < 0) ? 0
-                               : (const size_t) -Ui->pcard_delta_x;
+                              : (size_t) -Ui->pcard_delta_x;
 
     ui__print_line_number(V_file, Config, ln_i, Ui->ln_num_len);
 
@@ -208,7 +207,7 @@ void print__shrink_lines(const V_file_t* const V_file,
                          const Conf_t* const Config,
                          const Syntax_t* const Syntax, const Ui_t* const Ui)
 {
-    const size_t last_ln_i = (const size_t) Ui->txtarea_h - SIZE__I;
+    const size_t last_ln_i = (size_t) Ui->txtarea_h - SIZE__I;
     size_t       ln_i      = 0;
 
     // Previous lines. If they are scrolled. Only a beginning is shown.
@@ -216,14 +215,11 @@ void print__shrink_lines(const V_file_t* const V_file,
     {
         print__another_line(V_file, Config, Syntax, Ui, ln_i);
     }
-    ui__print_line_number(V_file, Config, V_FILE__ACTUAL_LN_I,
-                          Ui->ln_num_len);
-
+    ui__print_line_number(V_file, Config, V_FILE__ACTUAL_LN_I, Ui->ln_num_len);
     print__actual_line(V_file, Config, Syntax, Ui);
 
     // Next lines. If they are scrolled. Only a beginning is shown.
-    for(ln_i = V_FILE__ACTUAL_LN_I + SIZE__I; ln_i < last_ln_i;
-        ln_i++)
+    for(ln_i = V_FILE__ACTUAL_LN_I + SIZE__I; ln_i < last_ln_i; ln_i++)
     {
         print__another_line(V_file, Config, Syntax, Ui, ln_i);
     }
@@ -237,7 +233,7 @@ void print__shrink_lines(const V_file_t* const V_file,
     else
     {
         print__line_with_tabs(V_file, Config, Syntax, last_ln_i, 0,
-                              (const size_t) Ui->txtarea_w - SIZE__LF);
+                              (size_t) Ui->txtarea_w - SIZE__LF);
     }
     pcard__print_after_txt(Config, Ui, V_file->Lines[last_ln_i].txt,
                            V_file->Lines[last_ln_i].len - SIZE__LF);
@@ -257,8 +253,7 @@ void print__scroll_lines(const V_file_t* const V_file,
     }
 
     // Display a last line without the linefeed to prevent a lbar breaking.
-    ui__print_line_number(V_file, Config, V_FILE__ACTUAL_LN_I,
-                          Ui->ln_num_len);
+    ui__print_line_number(V_file, Config, V_FILE__ACTUAL_LN_I, Ui->ln_num_len);
 
     if(V_FILE__ACTUAL_LN.len < Ui->txtarea_w)
     {
@@ -268,8 +263,8 @@ void print__scroll_lines(const V_file_t* const V_file,
         {
             end_ch_i--;
         }
-        print__line_with_tabs(V_file, Config, Syntax, V_FILE__ACTUAL_LN_I,
-                              0, end_ch_i);
+        print__line_with_tabs(V_file, Config, Syntax, V_FILE__ACTUAL_LN_I, 0,
+                              end_ch_i);
     }
     // Chars won't fit in a horizontal space.
     else if((V_FILE__ACTUAL_LN.len - Ui->txtarea_w) >= V_file->cursor_rev_x)
@@ -283,7 +278,7 @@ void print__scroll_lines(const V_file_t* const V_file,
     {
         // Render only left part of a line. The cursor can be scrolled.
         print__line_with_tabs(V_file, Config, Syntax, V_FILE__ACTUAL_LN_I,
-                              0, (const size_t) Ui->txtarea_w - SIZE__LF);
+                              0, (size_t) Ui->txtarea_w - SIZE__LF);
     }
     pcard__print_after_txt(Config, Ui, V_FILE__ACTUAL_LN.txt,
                            (V_file->cursor_rev_y == 0) ? V_FILE__ACTUAL_LN.len

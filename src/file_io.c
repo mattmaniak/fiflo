@@ -22,10 +22,9 @@ bool file_io__set_name(V_file_t* const V_file, const char* const arg)
         }
         strcpy(V_file->fname, V_file->pathname); // Copy pathname.
 
-        V_file->fname[cw_dir_len]            = '/'; // Add the slash.
+        V_file->fname[cw_dir_len]               = '/'; // Add the slash.
         V_file->fname[cw_dir_len + SIZE__SLASH] = '\0';
-
-        V_file->fname_len = strlen(V_file->fname);
+        V_file->fname_len                       = strlen(V_file->fname);
 
         return true;
     }
@@ -68,7 +67,6 @@ bool file_io__set_name(V_file_t* const V_file, const char* const arg)
             fprintf(stderr, "The passed filename is too long.\n");
             return false;
         }
-
         if((V_file->pathname = getcwd(V_file->pathname, PATH_MAX)) == NULL)
         {
             fprintf(stderr, "Can't get a current directory. Too long.\n");
@@ -85,7 +83,7 @@ bool file_io__set_name(V_file_t* const V_file, const char* const arg)
         }
         strncpy(V_file->fname, V_file->pathname, PATH_MAX); // Copy pathname.
 
-        V_file->fname[cw_dir_len]            = '/'; // Add the slash.
+        V_file->fname[cw_dir_len]               = '/'; // Add the slash.
         V_file->fname[cw_dir_len + SIZE__SLASH] = '\0';
 
         // Append a basename.
@@ -97,7 +95,7 @@ bool file_io__set_name(V_file_t* const V_file, const char* const arg)
 }
 
 bool file_io__load(V_file_t* const V_file, const Conf_t* const Config,
-                const Mod_t* const Modes)
+                   const Mod_t* const Modes)
 {
     FILE* Textfile;
     char  ch;
@@ -113,7 +111,7 @@ bool file_io__load(V_file_t* const V_file, const Conf_t* const Config,
         V_FILE__SET_STATUS("the file will be created");
         return true;
     }
-    while((ch = (const char) getc(Textfile)) != EOF)
+    while((ch = (char) getc(Textfile)) != EOF)
     {
         switch(ch)
         {
@@ -142,13 +140,13 @@ bool file_io__load(V_file_t* const V_file, const Conf_t* const Config,
 }
 
 bool file_io__convert_tab_from_file(V_file_t* const V_file,
-                                 const Conf_t* const Config,
-                                 const Mod_t* const Modes, const char ch)
+                                    const Conf_t* const Config,
+                                    const Mod_t* const Modes, const char ch)
 {
     /* Converts in-file '\t' in to a sequence of e.g. "\t\t\t\t" if the Tab
        width is set to 4. */
-    const size_t tab_sz = (const size_t) Config->Tab_sz.value;
-    const char  tab_ch = (Modes->tabs_to_spaces) ? ' ' : '\t';
+    const size_t tab_sz = (size_t) Config->Tab_sz.value;
+    const char   tab_ch = (Modes->tabs_to_spaces) ? ' ' : '\t';
 
     if(ch == '\t')
     {
@@ -164,10 +162,10 @@ bool file_io__convert_tab_from_file(V_file_t* const V_file,
 }
 
 void file_io__convert_tab_to_file(const V_file_t* const V_file,
-                               const Conf_t* const Config, const size_t ln_i,
-                               size_t* const ch_i)
+                                  const Conf_t* const Config,
+                                  const size_t ln_i, size_t* const ch_i)
 {
-    const size_t tab_sz = (const size_t) Config->Tab_sz.value;
+    const size_t tab_sz = (size_t) Config->Tab_sz.value;
 
     // Convert editor-friendly Tab, e.g. "\t\t\t\t" into a file-friendly '\t'.
     for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
@@ -221,9 +219,14 @@ bool file_io__get_git_branch(V_file_t* const V_file)
     strcpy(git_head_file_pathname, V_file->pathname);
     strcat(git_head_file_pathname, "/.git/HEAD");
 
-    if((access(git_head_file_pathname, F_OK) == -1)
-       || ((Git_head_file = fopen(git_head_file_pathname, "r")) == NULL))
+    if(access(git_head_file_pathname, F_OK) == -1)
     {
+        goto empty_branch;
+    }
+    Git_head_file = fopen(git_head_file_pathname, "r");
+    if(Git_head_file == NULL)
+    {
+    empty_branch:
         strcpy(V_file->git_branch, "[none]");
         return true;
     }

@@ -2,7 +2,7 @@
 
 void arrows__arrow_left(V_file_t* const V_file, const Conf_t* const Config)
 {
-    const size_t tab_sz = (const size_t) Config->Tab_sz.value;
+    const size_t tab_sz = (size_t) Config->Tab_sz.value;
 
     if(!V_FILE__CURSOR_AT_LN_START)
     {
@@ -32,7 +32,7 @@ void arrows__arrow_left(V_file_t* const V_file, const Conf_t* const Config)
 
 void arrows__arrow_right(V_file_t* const V_file, const Conf_t* const Config)
 {
-    const size_t tab_sz = (const size_t) Config->Tab_sz.value;
+    const size_t tab_sz = (size_t) Config->Tab_sz.value;
 
     if(V_FILE__CURSOR_X_SCROLLED)
     {
@@ -102,8 +102,7 @@ void arrows__arrow_down(V_file_t* const V_file)
 void arrows__ctrl_arrow_left(V_file_t* const V_file)
 {
     // Go to a previous line.
-    if((V_FILE__CURSOR_X == 0)
-       && (V_file->cursor_rev_y < V_file->ln_amount))
+    if((V_FILE__CURSOR_X == 0) && (V_file->cursor_rev_y < V_file->ln_amount))
     {
         V_file->cursor_rev_y++;
         V_file->cursor_rev_x = SIZE__LF;
@@ -137,8 +136,7 @@ void arrows__ctrl_arrow_left(V_file_t* const V_file)
     else // Non-whitespace chars.
     {
         while((V_file->cursor_rev_x < V_FILE__ACTUAL_LN.len)
-              && ((V_FILE__ACTUAL_CH == ' ')
-                  || (V_FILE__ACTUAL_CH == '\t')))
+              && ((V_FILE__ACTUAL_CH == ' ') || (V_FILE__ACTUAL_CH == '\t')))
         {
             V_file->cursor_rev_x++;
         }
@@ -167,8 +165,7 @@ void arrows__ctrl_arrow_right(V_file_t* const V_file)
     if((V_FILE__ACTUAL_CH != ' ') && (V_FILE__ACTUAL_CH != '\t'))
     {
         while((V_file->cursor_rev_x > SIZE__NUL)
-              && !((V_FILE__ACTUAL_CH == ' ')
-                   || (V_FILE__ACTUAL_CH == '\t')))
+              && !((V_FILE__ACTUAL_CH == ' ') || (V_FILE__ACTUAL_CH == '\t')))
         {
             V_file->cursor_rev_x--;
         }
@@ -176,8 +173,7 @@ void arrows__ctrl_arrow_right(V_file_t* const V_file)
     else // Non-whitespace chars.
     {
         while((V_file->cursor_rev_x > SIZE__NUL)
-              && ((V_FILE__ACTUAL_CH == ' ')
-                  || (V_FILE__ACTUAL_CH == '\t')))
+              && ((V_FILE__ACTUAL_CH == ' ') || (V_FILE__ACTUAL_CH == '\t')))
         {
             V_file->cursor_rev_x--;
         }

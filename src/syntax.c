@@ -5,7 +5,7 @@ bool syntax__load(Syntax_t* const Syntax, const int extension)
     char  fname[64];
     char  keyword[SYNTAX__MAX_KWRD_LEN];
     char  color[SYNTAX__MAX_KWRD_LEN];
-    FILE* file;
+    FILE* File;
 
     Syntax->kwrds_amount = 0;
 
@@ -23,9 +23,10 @@ bool syntax__load(Syntax_t* const Syntax, const int extension)
         strcpy(fname, "/usr/share/fiflo/html.fiflorc");
     }
 
-    if((file = fopen(fname, "r")) != NULL)
+    File = fopen(fname, "r");
+    if(File != NULL)
     {
-        while(fscanf(file, "%s = %s", keyword, color) != EOF)
+        while(fscanf(File, "%s = %s", keyword, color) != EOF)
         {
             strncpy(Syntax->Keywords[Syntax->kwrds_amount].keyword, keyword,
                     SYNTAX__MAX_KWRD_LEN);
@@ -41,9 +42,9 @@ bool syntax__load(Syntax_t* const Syntax, const int extension)
         Syntax->kwrds_amount--;
         syntax__sort(Syntax);
 
-        if(fclose(file) == EOF)
+        if(fclose(File) == EOF)
         {
-            fprintf(stderr, "Failed to close a syntax file.\n");
+            fprintf(stderr, "Failed to close a syntax File.\n");
             return false;
         }
     }
@@ -79,7 +80,7 @@ size_t syntax__paint_word(const Syntax_t* const Syntax,
                           const size_t end_ch_i, size_t ch_i)
 {
     const char* const str_to_print_addr = &Line->txt[ch_i];
-    const size_t      pcard_w           = (const size_t) Config->Pcard_w.value;
+    const size_t      pcard_w           = (size_t) Config->Pcard_w.value;
     bool              kwrd_ignored      = false;
     size_t            end_paint_i;
 
@@ -94,8 +95,8 @@ size_t syntax__paint_word(const Syntax_t* const Syntax,
         {
             ui__colorize(Syntax->Keywords[kwrd_i].color);
 
-            end_paint_i = ch_i + (const size_t)
-                          strlen(Syntax->Keywords[kwrd_i].keyword);
+            end_paint_i = (size_t) strlen(Syntax->Keywords[kwrd_i].keyword)
+                          + ch_i;
 
             if(end_paint_i == 0)
             {

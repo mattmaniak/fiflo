@@ -21,11 +21,11 @@ void fiflo__run(int argc, char** const argv)
         return;
     }
     argc         -= fname_arg_sz;
-    file_buffers = ((const size_t) argc == 0) ? 1 : (const size_t) argc;
+    file_buffers = ((size_t) argc == 0) ? 1 : (size_t) argc;
 
     // printf("%lu\n", file_buffers);
 
-    V_file = malloc((const size_t) argc * sizeof(const V_file_t));
+    V_file = malloc((size_t) argc * sizeof(V_file_t));
     if(V_file == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for file buffers.\n");
@@ -68,15 +68,14 @@ void fiflo__run(int argc, char** const argv)
             break;
         }
         // An user has selected too big id for a file, select the last one.
-        if(actual_file_i > ((const size_t) argc - SIZE__I))
+        if(actual_file_i > ((size_t) argc - SIZE__I))
         {
-            actual_file_i = (const size_t) argc - SIZE__I;
+            actual_file_i = (size_t) argc - SIZE__I;
         }
 
         // Flushes and renders always after the keypress.
         if(!window__render(V_file, &Config, &Modes, &Syntax,
-                           (const size_t) argc - SIZE__I,
-                           (const size_t) actual_file_i)
+                           (size_t) argc - SIZE__I, (size_t) actual_file_i)
            || ((pressed_key = input__getch()) == -1))
         {
             break;

@@ -35,7 +35,7 @@ char input__getch(void)
 
         return -1;
     }
-    key = (const char) getchar();
+    key = (char) getchar();
 
     // Immediately restore the state of the stdin (0) to the* new_term_params.
     if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == -1)
