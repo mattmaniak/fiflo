@@ -47,7 +47,7 @@ void ui__upper_bar(const V_file_t* const V_file, const Conf_t* const Config,
             putchar(V_file->fname[ch_i]);
         }
         printf("%*s", UI__RIGHT_PADDING, " ");
-        WRAP_LN();
+        UI__WRAP_LN();
     }
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", V_file->status,
            (V_FILE__STATUS_MAX - (int) strlen(V_file->status)
@@ -66,7 +66,7 @@ void ui__upper_bar(const V_file_t* const V_file, const Conf_t* const Config,
         printf("%.*s", Ui->win_w - V_FILE__STATUS_MAX - SIZE__SPACE,
                V_file->git_branch);
     }
-    WRAP_LN();
+    UI__WRAP_LN();
 }
 
 void ui__lower_bar(const V_file_t* const V_file, const Conf_t* const Config,
@@ -85,7 +85,7 @@ void ui__lower_bar(const V_file_t* const V_file, const Conf_t* const Config,
             - V_file[actual_file_i].cursor_rev_y + SIZE__I,
             V_FILE__CURSOR_X + SIZE__I);
 
-    WRAP_LN();
+    UI__WRAP_LN();
     ui__colorize(0); // Resets a last line color.
     ui__colorize(Config->Color_ui.value);
 
@@ -95,7 +95,7 @@ void ui__lower_bar(const V_file_t* const V_file, const Conf_t* const Config,
 
         printf("%*s%s%*s", UI__LEFT_PADDING, " ", files_str,
                fname_area - (int) strlen(files_str) + UI__RIGHT_PADDING, " ");
-        WRAP_LN();
+        UI__WRAP_LN();
 
         for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
         {
@@ -120,7 +120,7 @@ void ui__lower_bar(const V_file_t* const V_file, const Conf_t* const Config,
                 printf("%.*s", fname_area, V_file[file_i].fname);
             }
             printf("%*s", UI__RIGHT_PADDING, " ");
-            WRAP_LN();
+            UI__WRAP_LN();
         }
     }
     ui__colorize(Config->Color_ui.value);

@@ -48,7 +48,8 @@ char input__getch(void)
     return key;
 }
 
-void input__recognize_sequence(V_file_t* V_file, const Conf_t* const Config,
+void input__recognize_sequence(V_file_t* const V_file,
+                               const Conf_t* const Config,
                                const char* const sequence,
                                size_t* const file_i)
 {
@@ -64,10 +65,10 @@ void input__recognize_sequence(V_file_t* V_file, const Conf_t* const Config,
     const char ctrl_arrow_right[] = "\033[1;5C";
     const char ctrl_arrow_left[]  = "\033[1;5D";
 
-    const char ctrl_f1[]  = "\033[1;5P";
-    const char ctrl_f2[]  = "\033[1;5Q";
-    const char ctrl_f3[]  = "\033[1;5R";
-    const char ctrl_f4[]  = "\033[1;5S";
+    const char ctrl_f1[] = "\033[1;5P";
+    const char ctrl_f2[] = "\033[1;5Q";
+    const char ctrl_f3[] = "\033[1;5R";
+    const char ctrl_f4[] = "\033[1;5S";
 
     if(!strcmp(sequence, arrow_up))
     {
@@ -161,7 +162,7 @@ bool input__parse_key(V_file_t* const V_file, const Conf_t* const Config,
     if(V_file->esc_seq_on_input)
     {
         ch_sequence[ch_i] = key;
-        if(ch_i <= INPUT__SEQ_MAX)
+        if(ch_i < (INPUT__SEQ_MAX - SIZE__NUL))
         {
             ch_i++;
         }

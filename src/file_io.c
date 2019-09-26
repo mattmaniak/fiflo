@@ -6,7 +6,8 @@ bool file_io__set_name(V_file_t* const V_file, const char* const arg)
 
     if(arg == NULL) // Name not passed by an user.
     {
-        if((V_file->pathname = getcwd(V_file->pathname, PATH_MAX)) == NULL)
+        V_file->pathname = getcwd(V_file->pathname, PATH_MAX);
+        if(V_file->pathname == NULL)
         {
             fprintf(stderr, "Can't get the current directory. Too long.\n");
             return false;
@@ -111,8 +112,9 @@ bool file_io__load(V_file_t* const V_file, const Conf_t* const Config,
         V_FILE__SET_STATUS("the file will be created");
         return true;
     }
-    while((ch = (char) getc(Textfile)) != EOF)
+    while(ch != EOF)
     {
+        ch = (char) getc(Textfile);
         switch(ch)
         {
         default:
@@ -232,8 +234,7 @@ bool file_io__get_git_branch(V_file_t* const V_file)
     }
 
     // Ignore a passed string in a file to get a branch after the slash.
-    if(fseek(Git_head_file, (const long int) strlen("ref: refs/heads/"), 0)
-       == -1)
+    if(fseek(Git_head_file, (long int) strlen("ref: refs/heads/"), 0) == -1)
     {
         strcpy(V_file->git_branch, "[none]");
         return true;

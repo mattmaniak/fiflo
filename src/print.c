@@ -91,7 +91,7 @@ void print__actual_line(const V_file_t* const V_file,
 
                 pcard__print_after_txt(Config, Ui, V_FILE__ACTUAL_LN.txt,
                                        V_FILE__ACTUAL_LN.len - SIZE__LF);
-                WRAP_LN();
+                UI__WRAP_LN();
             }
         }
     }
@@ -110,7 +110,7 @@ void print__actual_line(const V_file_t* const V_file,
         if(((V_FILE__ACTUAL_LN_I + SIZE__I) < Ui->txtarea_h)
            && (V_FILE__ACTUAL_LN_I != V_file->ln_amount))
         {
-            WRAP_LN();
+            UI__WRAP_LN();
         }
     }
 }
@@ -136,13 +136,13 @@ void print__another_line(const V_file_t* const V_file,
 
         pcard__print_after_txt(Config, Ui, V_file->Lines[ln_i].txt,
                                V_file->Lines[ln_i].len - SIZE__LF);
-        WRAP_LN();
+        UI__WRAP_LN();
     }
     else
     {
         print__line_with_tabs(V_file, Config, Syntax, ln_i, start_ch_i,
                               (const size_t) Ui->txtarea_w - SIZE__LF);
-        WRAP_LN();
+        UI__WRAP_LN();
     }
 }
 
@@ -161,7 +161,7 @@ void print__scroll_line_horizontally(const V_file_t* const V_file,
        provided by the char in a line. */
     if(V_FILE__CURSOR_Y_SCROLLED)
     {
-        WRAP_LN();
+        UI__WRAP_LN();
     }
 }
 

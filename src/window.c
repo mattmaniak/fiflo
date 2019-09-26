@@ -67,7 +67,7 @@ void window__fill(const V_file_t* const V_file, const Conf_t* const Config,
         for(size_t line = V_file->ln_amount;
             line < (size_t) (Ui->txtarea_h - UI__LBAR_SZ); line++)
         {
-            WRAP_LN();
+            UI__WRAP_LN();
             pcard__print_after_nothing(Config, Ui);
         }
     }

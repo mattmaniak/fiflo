@@ -1,6 +1,6 @@
 #include "chars.h"
 
-bool chars__parse_char(V_file_t* V_file, const Conf_t* const Config,
+bool chars__parse_char(V_file_t* const V_file, const Conf_t* const Config,
                        Mod_t* const Modes, const char ch)
 {
     switch(ch)
@@ -33,7 +33,7 @@ bool chars__parse_char(V_file_t* V_file, const Conf_t* const Config,
     return true;
 }
 
-bool chars__linefeed(V_file_t* V_file)
+bool chars__linefeed(V_file_t* const V_file)
 {
     if(V_file->ln_amount < V_FILE__CH_MAX)
     {
@@ -116,12 +116,12 @@ bool chars__printable_char(V_file_t* const V_file, const char ch)
     return true;
 }
 
-bool chars__backspace(V_file_t* V_file, const Conf_t* const Config,
+bool chars__backspace(V_file_t* const V_file, const Conf_t* const Config,
                       const Mod_t* const Modes)
 {
     const size_t ln_i_before_change = V_FILE__ACTUAL_LN_I;
     const char   tab_ch             = (Modes->tabs_to_spaces) ? ' ' : '\t';
-    const size_t tab_sz             = (const size_t) Config->Tab_sz.value;
+    const size_t tab_sz             = (size_t) Config->Tab_sz.value;
 
     for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
     {
@@ -132,7 +132,7 @@ bool chars__backspace(V_file_t* V_file, const Conf_t* const Config,
            && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X - SIZE__NUL]
                != tab_ch))
         {
-            tab_i = (const size_t) Config->Tab_sz.value - SIZE__I;
+            tab_i = (size_t) Config->Tab_sz.value - SIZE__I;
         }
 
         /* Scenario when there is a char at the beginning and the Tab at the
@@ -200,11 +200,11 @@ bool chars__tab(V_file_t* V_file, const Conf_t* const Config,
     /* When the Tab key is pressed, it will insert e.g. 4 '\t' into a buffer.
        They will be converted during a rendering, loading and saving a file. */
 
-    const size_t tab_sz = (const size_t) Config->Tab_sz.value;
+    const size_t tab_sz = (size_t) Config->Tab_sz.value;
     const char   tab_ch = (Modes->tabs_to_spaces) ? ' ' : '\t';
 
     // Prevent the not-full Tab insert.
-    if(V_file->ch_amount <= (const size_t) (V_FILE__CH_MAX - tab_sz))
+    if(V_file->ch_amount <= (size_t) (V_FILE__CH_MAX - tab_sz))
     {
         for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
         {

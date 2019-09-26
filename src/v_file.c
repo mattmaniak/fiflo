@@ -10,7 +10,7 @@ bool buffer__init(V_file_t* const V_file)
     }
 
     // Pointer to pointers, so an address size is required.
-    V_file->Lines = malloc(sizeof(const Line_t));
+    V_file->Lines = malloc(sizeof(Line_t));
     if(V_file->Lines == NULL)
     {
         fprintf(stderr, "Can't alloc a memory a array with lines.\n");

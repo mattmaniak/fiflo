@@ -27,8 +27,8 @@ bool args__parse(Mod_t* const Modes, int* argc, char** const argv)
         }
         else
         {
-            fprintf(stderr, "A maximum argument's length is %u.\n", PATH_MAX
-                    + NAME_MAX);
+            fprintf(stderr, "A maximum argument's length is %u.\n",
+                    PATH_MAX + NAME_MAX);
             return false;
         }
     }

@@ -21,7 +21,7 @@
 #define UI__RIGHT_PADDING      1
 #define UI__HORIZONTAL_PADDING (UI__LEFT_PADDING + UI__RIGHT_PADDING)
 
-#define WRAP_LN() putchar('\n') // Not a text. Needed to rendering.
+#define UI__WRAP_LN() putchar('\n') // Not a text. Needed to rendering.
 
 typedef uint16_t term_t; // Unsigned short as in the "sys/ioctl.h".
 

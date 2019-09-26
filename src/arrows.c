@@ -210,7 +210,6 @@ void arrows__ctrl_arrow_down(V_file_t* const V_file)
         for(;;)
         {
             V_file->cursor_rev_y--;
-
             if((V_FILE__ACTUAL_LN.txt[0] == '\n')
                || (V_file->cursor_rev_y == 0))
             {

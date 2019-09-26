@@ -1,7 +1,7 @@
 #ifndef V_FILE_H
 #define V_FILE_H
 
-//* An implementation of the virtual file structure.
+// An implementation of the virtual file structure.
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -62,7 +62,7 @@ V_file_t;
 #define V_FILE__BASIC_MEMBLK (sizeof(V_file->Lines) * sizeof(char))
 
 // Must be >= 16 and dividable by 8.
-#define V_FILE__MEMBLK (const size_t) (128 * sizeof(char))
+#define V_FILE__MEMBLK (size_t) (128 * sizeof(char))
 
 // Some placeholders.
 #define V_FILE__ACTUAL_LN_I (V_file->ln_amount - V_file->cursor_rev_y)
@@ -98,10 +98,10 @@ V_file_t;
 
 #define V_FILE__CURSOR_AT_TOP (V_file->cursor_rev_y == V_file->ln_amount)
 
-// Initializes all V_file structure members.
+// Initialize all V_file structure members.
 bool buffer__init(V_file_t* const);
 
-// Display a error message and exit.
+// Display an error message and exit.
 void buffer__free(V_file_t* const);
 
 #endif
