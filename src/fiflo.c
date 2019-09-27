@@ -4,10 +4,11 @@ void fiflo__run(int argc, char** const argv)
 {
     const int fname_arg_sz = 1;
 
-    char   pressed_key     = '\0'; // For an initialization purposes only.
-    size_t actual_file_i   = 0;
-    char** additional_argv = &argv[1];
-    size_t file_buffers;
+    char   pressed_key       = '\0'; // For an initialization purposes only.
+    size_t actual_file_i     = 0;
+    size_t additional_argc_i = (argc > 1)
+                               ? (size_t) (argc - SIZE__I - fname_arg_sz)
+                               : (size_t) (argc - SIZE__I);
     int    recognized_extension;
 
     V_file_t* V_file;
@@ -20,8 +21,6 @@ void fiflo__run(int argc, char** const argv)
     {
         return;
     }
-    argc         -= fname_arg_sz;
-    file_buffers = ((size_t) argc == 0) ? 1 : (size_t) argc;
 
     V_file = malloc((size_t) argc * sizeof(V_file_t));
     if(V_file == NULL)
@@ -31,14 +30,10 @@ void fiflo__run(int argc, char** const argv)
     }
     V_file->extension = EXTENSION__NONE;
 
-    for(size_t file_i = 0; file_i < file_buffers; file_i++)
+    for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
     {
-        if(additional_argv[file_i][0] == '-')
-        {
-            additional_argv[file_i][0] = '\0';
-        }
         if(!buffer__init(&V_file[file_i]) || !config__load(&Config)
-           || !file_io__set_name(&V_file[file_i], additional_argv[file_i])
+           || !file_io__set_name(&V_file[file_i], argv[1 + file_i])
            || !file_io__load(&V_file[file_i], &Config, &Modes))
         {
             goto free;
@@ -66,9 +61,9 @@ void fiflo__run(int argc, char** const argv)
             break;
         }
         // An user has selected too big id for a file, select the last one.
-        if(actual_file_i > ((size_t) argc - SIZE__I))
+        if(actual_file_i > additional_argc_i)
         {
-            actual_file_i = (size_t) argc - SIZE__I;
+            actual_file_i = additional_argc_i;
         }
 
         // Flushes and renders always after the keypress.
@@ -85,7 +80,7 @@ void fiflo__run(int argc, char** const argv)
     }
 
 free:
-    for(size_t file_i = 0; file_i < file_buffers; file_i++)
+    for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
     {
         buffer__free(&V_file[file_i]);
     }

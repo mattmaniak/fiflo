@@ -1,7 +1,6 @@
 #include "options.h"
 
-bool options__parse_and_print(Mod_t* const Modes, int* argc,
-                              const char* const arg)
+bool options__parse_and_print(Mod_t* const Modes, const char* const arg)
 {
     if(!strcmp(arg, "-h") || !strcmp(arg, "--help"))
     {
@@ -28,19 +27,11 @@ bool options__parse_and_print(Mod_t* const Modes, int* argc,
     else if(!strcmp(arg, "-s") || !strcmp(arg, "--spaces"))
     {
         Modes->tabs_to_spaces = true;
-        if(*argc >= 2)
-        {
-            *argc -= 1;
-        }
         return true;
     }
     else if(!strcmp(arg, "-t") || !strcmp(arg, "--tabs"))
     {
         Modes->tabs_to_spaces = false;
-        if(*argc >= 2)
-        {
-            *argc -= 1;
-        }
         return true;
     }
     return true;

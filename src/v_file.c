@@ -22,6 +22,7 @@ bool buffer__init(V_file_t* const V_file)
     V_file->cursor_rev_y     = 0;
     V_FILE__ACTUAL_LN.len    = 0;
     V_file->esc_seq_on_input = false;
+    V_file->extension        = EXTENSION__NONE;
 
     V_FILE__ACTUAL_LN.txt = malloc(V_FILE__BASIC_MEMBLK);
     if(V_FILE__ACTUAL_LN.txt == NULL)

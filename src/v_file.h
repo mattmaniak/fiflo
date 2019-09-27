@@ -11,6 +11,7 @@
 #include <limits.h>
 #include <linux/limits.h>
 
+#include "extension.h"
 #include "line.h"
 #include "size.h"
 

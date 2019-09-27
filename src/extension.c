@@ -5,6 +5,7 @@ int extension__recognize(const char* const basename)
     const size_t dot_sz = 1;
     size_t       ch_i   = 0;
     const char*  extension;
+    // size_t       bname_len;
 
     if(basename != NULL)
     {
@@ -12,7 +13,8 @@ int extension__recognize(const char* const basename)
         {
             ch_i++;
         }
-        if(ch_i != strlen(basename)) // Not at the end of the extension.
+        // bname_len = strlen(basename);
+        if((strlen(basename) > 0) && (ch_i != strlen(basename))) // Not at the end of an ext.
         {
             extension = &basename[ch_i + dot_sz];
 
