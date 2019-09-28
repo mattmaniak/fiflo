@@ -1,5 +1,5 @@
 # Example fiflo configuration file.
-# To make it work, copy it to the /etc/fiflorc
+# To make it work, copy it to the /etc.
 #
 # If You've already executed "sudo make install", check "man fiflorc" for
 # details.

@@ -3,11 +3,12 @@
 bool args__parse(Mod_t* const Modes, int* argc, char** const argv)
 {
     // Notice: argv[0] is the program name.
-    const int fname_arg_sz = 1;
-    const int max_files    = 4;
-    const int options_max  = 8;
-    const int argc_max     = fname_arg_sz + max_files + options_max;
-    const int orig_argc    = *argc;
+    const int fname_arg_sz  = 1;
+    const int max_files     = 4;
+    const int options_max   = 8;
+    const int argc_max      = fname_arg_sz + max_files + options_max;
+    const int orig_argc     = *argc;
+    int       passed_fnames = 0;
 
     if(*argc > argc_max)
     {
@@ -29,9 +30,19 @@ bool args__parse(Mod_t* const Modes, int* argc, char** const argv)
                 {
                     *argc -= 1;
                 }
+                // Shift options to the beginning.
                 for(int argc_i = arg_i; argc_i < *argc; argc_i++)
                 {
                     argv[argc_i] = argv[argc_i + SIZE__NEXT];
+                }
+            }
+            else
+            {
+                if(++passed_fnames > max_files)
+                {
+                    fprintf(stderr, "Max. %d files can be opened.\n",
+                            max_files);
+                    return false;
                 }
             }
         }

@@ -4,8 +4,8 @@ fiflo configuration file
 .SH SYNOPSIS
 .TP
 [selector] = [value]
-Everything in a single line. Next one in a next line. Single neighbour spaces
-around the equality sign are essential.
+Everything in a single line. Next one in a next line. Single spaces around the
+equality sign are essential.
 .SH DESCRIPTION
 File that allows to change the default configuration of the fiflo which is
 built-in in the editor. It ignores lines that starts with a whitespace, with
@@ -27,32 +27,28 @@ Actually it is only the punch card indicator.
 Tabs and spaces highlighting.
 .TP
 .B punch_card_width
-Horizontal offset of the vertical wrap guide line.
+Horizontal offset of the vertical wrap guide line. Available values: <1; 1024>.
 .TP
 .B tab_size
-Equality of spaces that the tab key produces.
-.SH VALUES
+Equality of spaces that the tab key produces. Available values: <2; 8>.
+.SH COLORS
 .TP
 .B red, green, yellow, blue, magenta, cyan, white, bright_black, bright_red, \
 bright_green, bright_yellow, bright_blue, bright_magenta, bright_cyan, \
 bright_white
-Available colors. Every one of them is a foreground color. There is no
-possibility to set the background. Can be used only with selectors that starts
-with "color".
-.TP
-.B <2; 8>
-Available tab width.
-.TP
-.B <1; 1024>
-Available punch card width.
-.SH WRONG SYNTAX HANDLING
-If the selector or value is wrong or if there is no trailing newline at the end
+.SH TYPOS HANDLING
+If a selector or a value is wrong or if there is no trailing newline at the end
 of the file, the default value will be applied. Else if the selector and value
-are wrong, default editor's configuration will be applied.
+are wrong, the whole default editor's configuration will be applied.
+.SH SYNTAX HIGHLIGHTING
+Works only if there is a file placed in the /usr/share/nano dir. Currently
+supports: C, HTML and Python. Filename is [language].fiflorc, e.g. "c.fiflorc".
+File syntax is the same as the original fiflorc. The left side is a word to
+paint. The right side is a color. Everything in a separate line.
 .SH FILES
 .TP
 .B /etc/fiflorc
-The only and global confiuguration. If doesn't exist, the default config will
+The only and global config file. If doesn't exist, the default settings will
 be applied.
 .SH SEE ALSO
 fiflo(1)

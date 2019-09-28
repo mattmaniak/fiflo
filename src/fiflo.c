@@ -39,11 +39,6 @@ void fiflo__run(int argc, char** const argv)
             goto free;
         }
         strcpy(V_file[file_i].fname_copy, V_file[file_i].fname);
-
-        if(!file_io__get_git_branch(&V_file[file_i]))
-        {
-            break;
-        }
     }
 
     for(;;) // The main program loop.
