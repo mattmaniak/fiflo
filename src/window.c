@@ -34,7 +34,6 @@ term_t window__receive_term_sz(const char axis)
     {
     case 'w':
         return Term_win.ws_col;
-
     case 'h':
         return Term_win.ws_row;
     }
@@ -61,11 +60,12 @@ void window__flush(void)
 void window__fill(const V_file_t* const V_file, const Conf_t* const Config,
                   const Ui_t* const Ui)
 {
+    const size_t ln_to_fill = (size_t) Ui->txtarea_h - UI__LBAR_SZ;
+
     // Fill an empty area below a text to adjust a position the lower bar.
     if((V_file->ln_amount + SIZE__I) < (size_t) Ui->txtarea_h)
     {
-        for(size_t line = V_file->ln_amount;
-            line < (size_t) (Ui->txtarea_h - UI__LBAR_SZ); line++)
+        for(size_t ln = V_file->ln_amount; ln < ln_to_fill; ln++)
         {
             UI__WRAP_LN();
             pcard__print_after_nothing(Config, Ui);
@@ -131,8 +131,7 @@ bool window__render(const V_file_t* const V_file, const Conf_t* const Config,
     {
         return false;
     }
-    Ui.expanded_lbar_h = (term_t) (UI__LBAR_SZ + additional_argc_i + SIZE__I
-                         + SIZE__LN);
+    Ui.expanded_lbar_h = (term_t) (UI__LBAR_SZ + additional_argc_i + SIZE__I);
     Ui.lbar_h          = (Modes->expanded_lbar) ? Ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 

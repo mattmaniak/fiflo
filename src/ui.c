@@ -53,7 +53,7 @@ void ui__upper_bar(const V_file_t* const V_file, const Conf_t* const Config,
            (V_FILE__STATUS_MAX - (int) strlen(V_file->status)
            - SIZE__SPACE + UI__GIT_LOGO_W), UI__GIT_LOGO);
 
-    if((const term_t) strlen(V_file->git_branch)
+    if((term_t) strlen(V_file->git_branch)
        < (Ui->win_w - UI__GIT_LOGO_W - V_FILE__STATUS_MAX
           - UI__HORIZONTAL_PADDING))
     {
@@ -97,7 +97,7 @@ void ui__lower_bar(const V_file_t* const V_file, const Conf_t* const Config,
                fname_area - (int) strlen(files_str) + UI__RIGHT_PADDING, " ");
         UI__WRAP_LN();
 
-        for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
+        for(size_t file_i = 0; file_i < additional_argc_i; file_i++)
         {
             ui__colorize(0);
             ui__colorize(Config->Color_ui.value);
@@ -112,8 +112,8 @@ void ui__lower_bar(const V_file_t* const V_file, const Conf_t* const Config,
 
             if((term_t) strlen(V_file[file_i].fname) <= fname_area)
             {
-                printf("%s%*s", V_file[file_i].fname, fname_area
-                       - (int) strlen(V_file[file_i].fname), " ");
+                printf("%s%*s", V_file[file_i].fname,
+                       fname_area - (int) strlen(V_file[file_i].fname), " ");
             }
             else
             {

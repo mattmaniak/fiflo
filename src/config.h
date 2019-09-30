@@ -33,7 +33,6 @@ typedef struct
     FILE* File;
     Opt_t Color_txt;
     Opt_t Color_ui;
-    Opt_t Color_warning;
     Opt_t Color_whitespace;
     Opt_t Pcard_w;
     Opt_t Tab_sz;

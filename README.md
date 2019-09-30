@@ -2,10 +2,10 @@
 Edit text on Linux using Windows keyboard shortcuts.
 
 ## Abstract
-Learn C. Create text editor for Linux without any dependencies. Started as the
-C pointers and memory management exercise. The goal is to create an
-terminal-based version of the Atom's rich functionality with the Nano's
-minimalism.
+Learn C. Create a text editor for Linux without any dependencies. Started as
+the C pointers and memory management exercise. The goal is to create an editor
+that mixes the Atom's rich functionality and Windows-like keyboard bindings
+with the Nano's minimalism.
 
 ## Usage
 ### Check the requirements for the GNU/Linux:
@@ -13,7 +13,7 @@ minimalism.
 - make,
 - gcc >= 4.9 or clang >= 3.6,
 - gzip (only for the installation),
-- sudo (only for the installation, even for the bare Debian on root).
+- sudo (only for the installation, for Debian as root too).
 
 **It's also recommended to use a modern terminal emulator to avoid blinking.**
 
@@ -63,9 +63,9 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 - **arrows** - arrows support,
 
-- **v_file** - An implementation of the virtual file structure.
+- **v_file** - an implementation of the virtual file structure.
 
-- **chars** - ascii codes that are interpreted as text,
+- **keys** - do stuff after clicking on an ASCII value,
 
 - **config** - fiflorc parser and values setter,
 
@@ -98,12 +98,12 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 - **window** - window rendering and flushing.
 
-### Needed tools for debugging:
-- AddressSanitizer (built-in gcc and clang),
+### Tools required for a debugging:
+- AddressSanitizer (included in gcc and clang),
 - gcov,
 - valgrind.
 
-### Get and set the development branch
+### Checkout the develop branch for new, unstable features.
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop &&
 git checkout develop
@@ -126,7 +126,7 @@ make coverage
 
 Use the valgrind.
 ```
-valgrind -v ./fiflo [optional args for the editor]
+valgrind -v ./fiflo [optional arg(s) for the editor]
 ```
 Remark: fiflo must be compiled without ASan and MSan.
 

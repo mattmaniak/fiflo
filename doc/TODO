@@ -5,10 +5,9 @@ fiflo - TODOs and ideas:
 - improve vertical scroll - hard or soft with prev/next line preview,
 - load only part of a file (nearly-infinite buffer),
 - search option,
-- CRLF support,
 - UTF-8 support,
 - moving the cursor without a window redrawing,
 - cursor scroll in the live filename edit mode,
 - more precise Ctrl^Arrow left (full-word cursor scroll),
 - regex,
-- check variables casting.
+- punch_card that is invisible without scroll.

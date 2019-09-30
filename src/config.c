@@ -27,7 +27,6 @@ void config__init_selectors(Conf_t* const Config)
 {
     strcpy(Config->Color_txt.selector,        "color_text");
     strcpy(Config->Color_ui.selector,         "color_ui");
-    strcpy(Config->Color_warning.selector,    "color_warning");
     strcpy(Config->Color_whitespace.selector, "color_whitespace");
     strcpy(Config->Pcard_w.selector,          "punch_card_width");
     strcpy(Config->Tab_sz.selector,           "tab_size");
@@ -46,10 +45,6 @@ bool config__parse_selector(Conf_t* const Config, const char* const selector,
         else if(!strcmp(Config->Color_txt.selector, selector))
         {
             Config->Color_txt.value = value;
-        }
-        else if(!strcmp(Config->Color_warning.selector, selector))
-        {
-            Config->Color_warning.value = value;
         }
         else if(!strcmp(Config->Color_whitespace.selector, selector))
         {
@@ -143,7 +138,6 @@ void config__set_default(Conf_t* const Config)
 {
     Config->Color_txt.value         = WHITE;
     Config->Color_ui.value          = WHITE;
-    Config->Color_warning.value     = RED;
     Config->Color_whitespace.value  = BRIGHT_BLACK;
     Config->Pcard_w.value           = CONFIG__PUNCH_CARD_W;
     Config->Tab_sz.value            = CONFIG__MAX_TAB_SZ;
@@ -151,8 +145,8 @@ void config__set_default(Conf_t* const Config)
 
 void config__load_custom(Conf_t* const Config)
 {
-    const char space_or_control_char = 32;
-    int        parsed_value          = 0;
+    const char space_or_control_ch = 32;
+    int        parsed_value        = 0;
     char       line[80];
     char       selector[CONFIG__SELECTOR_SZ];
     char       value[32];
@@ -161,7 +155,7 @@ void config__load_custom(Conf_t* const Config)
 
     while(fgets(line, 80, Config->File) != NULL)
     {
-        if((line[0] == '#') || (line[0] <= space_or_control_char))
+        if((line[0] == '#') || (line[0] <= space_or_control_ch))
         {
             continue;
         }

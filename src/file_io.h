@@ -11,7 +11,7 @@
 
 #define FILE__AT_LEAST_ONE_TAB 1
 
-extern bool chars__printable_char(V_file_t* const, const char);
+extern bool keys__printable_char(V_file_t* const, const char);
 
 // Sets a filename. If basename is passed as arg actent path will be added.
 bool file_io__set_name(V_file_t* const, const char* const);

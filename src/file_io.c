@@ -118,7 +118,7 @@ bool file_io__load(V_file_t* const V_file, const Conf_t* const Config,
         switch(ch)
         {
         default:
-            if(!chars__printable_char(V_file, ch))
+            if(!keys__printable_char(V_file, ch))
             {
                 return false;
             }
@@ -154,7 +154,7 @@ bool file_io__convert_tab_from_file(V_file_t* const V_file,
     {
         for(size_t ch_i = 0; ch_i < tab_sz; ch_i++)
         {
-            if(!chars__printable_char(V_file, tab_ch))
+            if(!keys__printable_char(V_file, tab_ch))
             {
                 return false;
             }

@@ -5,7 +5,7 @@
 
 #include "v_file.h"
 #include "config.h"
-#include "chars.h"
+#include "keys.h"
 #include "edit.h"
 #include "file_io.h"
 #include "arrows.h"
