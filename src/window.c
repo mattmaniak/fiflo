@@ -2,11 +2,11 @@
 
 term_t window__receive_term_sz(const char axis)
 {
-    const int sz_max = USHRT_MAX;
-    const int h_min  = UI__UBAR_SZ + SIZE__LN + UI__MAX_LBAR_H; // TODO: DYNAMIC
-    const int w_min  = UI__GIT_LOGO_W + SIZE__SPACE + UI__GIT_BRANCH_MIN_W
-                       + SIZE__SPACE + V_FILE__STATUS_MAX
-                       + UI__HORIZONTAL_PADDING;
+    const unsigned sz_max = USHRT_MAX;
+    const unsigned h_min  = UI__UBAR_SZ + SIZE__LN + UI__MAX_LBAR_H; // TODO: DYNAMIC
+    const unsigned w_min  = UI__GIT_LOGO_W + SIZE__SPACE + UI__GIT_BRANCH_MIN_W
+                            + SIZE__SPACE + V_FILE__STATUS_MAX
+                            + UI__HORIZONTAL_PADDING;
 
     const struct winsize Term_win;
 

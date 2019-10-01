@@ -33,7 +33,7 @@ void fiflo__run(int argc, char** const argv)
     for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
     {
         if(!buffer__init(&V_file[file_i]) || !config__load(&Config)
-           || !file_io__set_name(&V_file[file_i], argv[1 + file_i])
+           || !file_io__set_name(&V_file[file_i], argv[fname_arg_sz + file_i])
            || !file_io__load(&V_file[file_i], &Config, &Modes))
         {
             goto free;
@@ -43,11 +43,13 @@ void fiflo__run(int argc, char** const argv)
 
     for(;;) // The main program loop.
     {
-        recognized_extension = extension__recognize(V_file->basename);
-        if(V_file->extension != recognized_extension)
+        printf("actual %u\n", additional_argc_i);
+
+        recognized_extension = extension__recognize(V_file[actual_file_i].basename);
+        if(V_file[actual_file_i].extension != recognized_extension)
         {
             syntax__load(&Syntax, recognized_extension);
-            V_file->extension = recognized_extension;
+            V_file[actual_file_i].extension = recognized_extension;
         }
         if(!file_io__get_git_branch(&V_file[actual_file_i])
            || !input__parse_key(&V_file[actual_file_i], &Config, &Modes,
@@ -63,7 +65,8 @@ void fiflo__run(int argc, char** const argv)
 
         // Flushes and renders always after the keypress.
         if(!window__render(V_file, &Config, &Modes, &Syntax,
-                           (size_t) argc - SIZE__I, (size_t) actual_file_i))        {
+                           (size_t) argc - SIZE__I, (size_t) actual_file_i))
+        {
             break;
         }
         pressed_key = input__getch();
@@ -79,7 +82,10 @@ free:
     {
         buffer__free(&V_file[file_i]);
     }
-    free(V_file);
+    if(V_file != NULL)
+    {
+        free(V_file);
+    }
 }
 
 int main(int argc, char** argv)

@@ -151,13 +151,13 @@ bool input__parse_key(V_file_t* const V_file, const Conf_t* const Config,
 
     if((key == ASCII__CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
     {
+        ch_i                     = 0;
         V_file->esc_seq_on_input = true;
 
 #ifdef DEBUG_INPUT
         V_file->esc_seq_on_input = false;
 #endif
 
-        ch_i = 0;
     }
     if(V_file->esc_seq_on_input)
     {

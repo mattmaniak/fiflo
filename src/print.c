@@ -47,15 +47,13 @@ void print__line_with_tabs(const V_file_t* const V_file,
 size_t print__set_start_line(const V_file_t* const V_file,
                              const Ui_t* const Ui)
 {
-    size_t scrolled_lines = 0;
-
     if(V_FILE__ACTUAL_LN_I >= Ui->txtarea_h)
     {
         // Amount of lines to hide in a magic upper area.
-        scrolled_lines = V_file->ln_amount + SIZE__I - Ui->txtarea_h
-                         - V_file->cursor_rev_y;
+        return V_file->ln_amount + SIZE__I - Ui->txtarea_h
+               - V_file->cursor_rev_y;
     }
-    return scrolled_lines;
+    return 0;
 }
 
 void print__actual_line(const V_file_t* const V_file,
@@ -103,8 +101,8 @@ void print__actual_line(const V_file_t* const V_file,
     }
     else // Shrink the line.
     {
-        print__line_with_tabs(V_file, Config, Syntax, V_FILE__ACTUAL_LN_I,
-                              0, (const size_t) Ui->txtarea_w - SIZE__LF);
+        print__line_with_tabs(V_file, Config, Syntax, V_FILE__ACTUAL_LN_I, 0,
+                              (size_t) Ui->txtarea_w - SIZE__LF);
 
         // Not last rendered line so wrap it.
         if(((V_FILE__ACTUAL_LN_I + SIZE__I) < Ui->txtarea_h)
@@ -141,7 +139,7 @@ void print__another_line(const V_file_t* const V_file,
     else
     {
         print__line_with_tabs(V_file, Config, Syntax, ln_i, start_ch_i,
-                              (const size_t) Ui->txtarea_w - SIZE__LF);
+                              (size_t) Ui->txtarea_w - SIZE__LF);
         UI__WRAP_LN();
     }
 }
@@ -190,13 +188,13 @@ void print__fit_lines(const V_file_t* const V_file, const Conf_t* const Config,
 
         if(V_FILE__LAST_LN.len < Ui->txtarea_w)
         {
-            print__line_with_tabs(V_file, Config, Syntax, V_file->ln_amount,
-                                  0, V_FILE__LAST_LN.len);
+            print__line_with_tabs(V_file, Config, Syntax, V_file->ln_amount, 0,
+                                  V_FILE__LAST_LN.len);
         }
         else
         {
-            print__line_with_tabs(V_file, Config, Syntax, V_file->ln_amount,
-                                  0, (const size_t) Ui->txtarea_w - SIZE__LF);
+            print__line_with_tabs(V_file, Config, Syntax, V_file->ln_amount, 0,
+                                  (size_t) Ui->txtarea_w - SIZE__LF);
         }
         pcard__print_after_txt(Config, Ui, V_FILE__LAST_LN.txt,
                                V_FILE__LAST_LN.len);
@@ -277,8 +275,8 @@ void print__scroll_lines(const V_file_t* const V_file,
     else
     {
         // Render only left part of a line. The cursor can be scrolled.
-        print__line_with_tabs(V_file, Config, Syntax, V_FILE__ACTUAL_LN_I,
-                              0, (size_t) Ui->txtarea_w - SIZE__LF);
+        print__line_with_tabs(V_file, Config, Syntax, V_FILE__ACTUAL_LN_I, 0,
+                              (size_t) Ui->txtarea_w - SIZE__LF);
     }
     pcard__print_after_txt(Config, Ui, V_FILE__ACTUAL_LN.txt,
                            (V_file->cursor_rev_y == 0) ? V_FILE__ACTUAL_LN.len

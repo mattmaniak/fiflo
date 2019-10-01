@@ -39,7 +39,7 @@ bool path__extract_pathname_from_arg(V_file_t* const V_file)
 
 void path__extract_basename_from_arg(V_file_t* const V_file)
 {
-    size_t ch_i             = strlen(V_file->fname);
+    size_t ch_i           = strlen(V_file->fname);
     size_t slash_last_pos = 0;
 
     while(ch_i > 0)

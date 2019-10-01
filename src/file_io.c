@@ -18,7 +18,7 @@ bool file_io__set_name(V_file_t* const V_file, const char* const arg)
         if(cw_dir_len >= (PATH_MAX - SIZE__SLASH))
         {
             fprintf(stderr,
-                    "Can't insert the slash. The Current dir is too long.\n");
+                    "Can't insert the slash. The current dir is too long.\n");
             return false;
         }
         strcpy(V_file->fname, V_file->pathname); // Copy pathname.
@@ -106,8 +106,8 @@ bool file_io__load(V_file_t* const V_file, const Conf_t* const Config,
         V_FILE__SET_STATUS("current directory set");
         return true;
     }
-
-    if((Textfile = fopen(V_file->fname, "r")) == NULL)
+    Textfile = fopen(V_file->fname, "r");
+    if(Textfile == NULL)
     {
         V_FILE__SET_STATUS("the file will be created");
         return true;

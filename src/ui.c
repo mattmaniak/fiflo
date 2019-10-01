@@ -3,7 +3,7 @@
 void ui__colorize(const int value)
 {
     // Reset to a default color or set am another one.
-    printf("\033[%um", (value == 0) ? 0 : value);
+    printf("\033[%um", value);
 }
 
 void ui__print_line_number(const V_file_t* const V_file,
@@ -18,7 +18,7 @@ void ui__print_line_number(const V_file_t* const V_file,
         ui__colorize(0);
         ui__colorize(Config->Color_ui.value);
     }
-    printf("%*lu", ln_num_len - SIZE__SPACE, ln_i + SIZE__I);
+    printf("%*u", ln_num_len - SIZE__SPACE, (unsigned) ln_i + SIZE__I);
 
     ui__colorize(0);
     putchar(' ');
@@ -80,10 +80,10 @@ void ui__lower_bar(const V_file_t* const V_file, const Conf_t* const Config,
     char       cursor_pos_indicator[V_FILE__STATUS_MAX];
 
     sprintf(punch_card, "%lu", punch_card_w);
-    sprintf(cursor_pos_indicator, "[%lu; %lu]",
-            V_file[actual_file_i].ln_amount
-            - V_file[actual_file_i].cursor_rev_y + SIZE__I,
-            V_FILE__CURSOR_X + SIZE__I);
+    sprintf(cursor_pos_indicator, "[%u; %u]",
+            (unsigned) (V_file[actual_file_i].ln_amount
+            - V_file[actual_file_i].cursor_rev_y + SIZE__I),
+            (unsigned) V_FILE__CURSOR_X + SIZE__I);
 
     UI__WRAP_LN();
     ui__colorize(0); // Resets a last line color.

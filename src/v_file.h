@@ -18,7 +18,7 @@
 /* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
    recomended to set the V_FILE__CH_MAX to a value bigger than (INT_MAX - 1)
    because of possible casting. */
-#define V_FILE__CH_MAX USHRT_MAX // TODO
+#define V_FILE__CH_MAX (INT_MAX / 128)
 
 #define V_FILE__STATUS_MAX      32
 #define V_FILE__SET_STATUS(msg) \

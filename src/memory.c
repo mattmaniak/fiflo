@@ -11,8 +11,7 @@ bool memory__extend_line(V_file_t* const V_file, const size_t ln_i)
         V_file->Lines[ln_i].txt = realloc(V_file->Lines[ln_i].txt, memblk);
 
 #ifdef DEBUG_MEMORY
-        printf("Extend_line %u with mem of %u B.\n", ln_i + SIZE__I,
-               memblk);
+        printf("Extend_line %u with mem of %u B.\n", ln_i + SIZE__I, memblk);
 #endif
 
     }
@@ -24,15 +23,14 @@ bool memory__extend_line(V_file_t* const V_file, const size_t ln_i)
         V_file->Lines[ln_i].txt = realloc(V_file->Lines[ln_i].txt, memblk);
 
 #ifdef DEBUG_MEMORY
-        printf("Extend_line %u with mem of %u B.\n", ln_i + SIZE__I,
-               memblk);
+        printf("Extend_line %u with mem of %u B.\n", ln_i + SIZE__I, memblk);
 #endif
 
     }
     if(V_file->Lines[ln_i].txt == NULL)
     {
-        fprintf(stderr, "Can't extend a memory block for the line %lu.\n",
-                ln_i + SIZE__I);
+        fprintf(stderr, "Can't extend a memory block for the line %u.\n",
+                (unsigned) ln_i + SIZE__I);
         return false;
     }
     return true;
@@ -65,8 +63,8 @@ bool memory__shrink_current_line(V_file_t* const V_file)
     V_FILE__ACTUAL_LN.txt = realloc(V_FILE__ACTUAL_LN.txt, memblk);
     if(V_FILE__ACTUAL_LN.txt == NULL)
     {
-        fprintf(stderr, "Can't shrink a memory block for the line %lu\n",
-                V_FILE__ACTUAL_LN_I + SIZE__I);
+        fprintf(stderr, "Can't shrink a memory block for the line %u\n",
+                (int) V_FILE__ACTUAL_LN_I + SIZE__I);
         return false;
     }
     return true;
@@ -96,9 +94,8 @@ bool memory__shrink_prev_line(V_file_t* const V_file)
     V_FILE__PREV_LN.txt = realloc(V_FILE__PREV_LN.txt, memblk);
     if(V_FILE__PREV_LN.txt == NULL)
     {
-        fprintf(stderr,
-                "Can't shrink a memory block for the prev. %lu line.\n",
-                V_FILE__PREV_LN_I + SIZE__I);
+        fprintf(stderr, "Can't shrink a memory block for the prev. %u line.\n",
+                (unsigned) V_FILE__PREV_LN_I + SIZE__I);
         return false;
     }
     return true;
@@ -156,8 +153,8 @@ bool memory__copy_lines_forward(V_file_t* const V_file)
 
         if(V_file->Lines[ln_i].txt == NULL)
         {
-            fprintf(stderr, "Can't resize the forward %lu line.\n",
-                    ln_i + SIZE__I);
+            fprintf(stderr, "Can't resize the forward %u line.\n",
+                    (unsigned) ln_i + SIZE__I);
             return false;
         }
         strcpy(V_file->Lines[ln_i].txt, V_file->Lines[ln_i - SIZE__PREV].txt);
@@ -182,8 +179,8 @@ bool memory__copy_lines_backward(V_file_t* const V_file)
 
         if(V_file->Lines[ln_i].txt == NULL)
         {
-            fprintf(stderr, "Can't copy the line %lu backward.\n",
-                    ln_i + SIZE__I);
+            fprintf(stderr, "Can't copy the line %u backward.\n",
+                    (unsigned) ln_i + SIZE__I);
             return false;
         }
         strcpy(V_file->Lines[ln_i].txt, V_file->Lines[ln_i + SIZE__NEXT].txt);

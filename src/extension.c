@@ -14,7 +14,7 @@ int extension__recognize(const char* const basename)
             ch_i++;
         }
         // bname_len = strlen(basename);
-        if((strlen(basename) > 0) && (ch_i != strlen(basename))) // Not at the end of an ext.
+        if((strlen(basename) > 0) && (ch_i != strlen(basename))) // Not at the end of an extension.
         {
             extension = &basename[ch_i + dot_sz];
 
