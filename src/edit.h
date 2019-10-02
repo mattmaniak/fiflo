@@ -9,7 +9,7 @@
 #include "memory.h"
 
 // Optionally shift a text horizontally.
-bool edit__delete_char(V_file_t*);
+bool edit__delete_ch(V_file_t*);
 
 // Delete a current line and decrement a lines amount indicator.
 bool edit__delete_line(V_file_t*);

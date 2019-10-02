@@ -19,6 +19,6 @@ enum
 };
 
 // Recognizes an extension of a current file.
-int extension__recognize(const char* const);
+char* extension__recognize(char* const);
 
 #endif

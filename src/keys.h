@@ -13,11 +13,11 @@
 #include "size.h"
 
 // Know what to do next with a pressed key or a combination. Based on ASCII.
-bool keys__parse_char(V_file_t* const, const Conf_t* const, Mod_t* const,
-                      const char);
+bool keys__parse_ch(V_file_t* const, const Conf_t* const, Mod_t* const,
+                    const char);
 
 // Add a char when a pressed key is a printable one.
-bool keys__printable_char(V_file_t* const, const char);
+bool keys__printable_ch(V_file_t* const, const char);
 
 // Initialize a new line.
 bool keys__linefeed(V_file_t* const);

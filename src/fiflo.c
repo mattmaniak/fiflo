@@ -2,20 +2,22 @@
 
 void fiflo__run(int argc, char** const argv)
 {
-    const int fname_arg_sz = 1;
+    const size_t fname_arg_sz = 1;
 
     char   pressed_key       = '\0'; // For an initialization purposes only.
     size_t actual_file_i     = 0;
-    size_t additional_argc_i = (argc > 1)
-                               ? (size_t) (argc - SIZE__I - fname_arg_sz)
-                               : (size_t) (argc - SIZE__I);
-    int    recognized_extension;
+    size_t additional_argc_i = (size_t) argc - SIZE__I;
+    char*  extension;
 
     V_file_t* V_file;
     Conf_t    Config;
     Mod_t     Modes;
     Syntax_t  Syntax;
 
+    if(argc > 1)
+    {
+        additional_argc_i -= fname_arg_sz;
+    }
     modes__init(&Modes);
     if(!args__parse(&Modes, &argc, argv))
     {
@@ -28,8 +30,6 @@ void fiflo__run(int argc, char** const argv)
         fprintf(stderr, "Can't alloc a memory for file buffers.\n");
         goto free;
     }
-    V_file->extension = EXTENSION__NONE;
-
     for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
     {
         if(!buffer__init(&V_file[file_i]) || !config__load(&Config)
@@ -40,16 +40,20 @@ void fiflo__run(int argc, char** const argv)
         }
         strcpy(V_file[file_i].fname_copy, V_file[file_i].fname);
     }
+    Syntax.kwrds_amount = 0;
 
     for(;;) // The main program loop.
     {
-        printf("actual %u\n", additional_argc_i);
-
-        recognized_extension = extension__recognize(V_file[actual_file_i].basename);
-        if(V_file[actual_file_i].extension != recognized_extension)
+        if(V_file[actual_file_i].basename[0] != '\0')
         {
-            syntax__load(&Syntax, recognized_extension);
-            V_file[actual_file_i].extension = recognized_extension;
+            extension = extension__recognize(V_file[actual_file_i].basename);
+            if((extension != NULL)
+               && strcmp(V_file[actual_file_i].extension, extension))
+            {
+                Syntax.kwrds_amount = 0;
+                syntax__load(&Syntax, extension);
+                strcpy(V_file[actual_file_i].extension, extension);
+            }
         }
         if(!file_io__get_git_branch(&V_file[actual_file_i])
            || !input__parse_key(&V_file[actual_file_i], &Config, &Modes,

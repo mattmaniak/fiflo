@@ -1,6 +1,6 @@
 #include "edit.h"
 
-bool edit__delete_char(V_file_t* V_file)
+bool edit__delete_ch(V_file_t* V_file)
 {
     if(!V_FILE__CURSOR_AT_LN_START)
     {
@@ -197,7 +197,7 @@ void edit__filename(V_file_t* V_file, const Conf_t* const Config, Mod_t* Modes,
     if((key >= 32) && (key != ASCII__BACKSPACE)
        && ((V_file->fname_len + SIZE__I) < PATH_MAX))
     {
-        V_file->fname[V_file->fname_len] = key;
+        V_file->fname[V_file->fname_len]   = key;
         V_file->fname[++V_file->fname_len] = '\0';
     }
     else if((key == ASCII__BACKSPACE) && (V_file->fname_len > 0))

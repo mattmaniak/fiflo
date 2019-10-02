@@ -26,7 +26,7 @@ strncpy(V_file->status, msg, V_FILE__STATUS_MAX - SIZE__I)
 
 typedef struct
 {
-    int      extension;
+    char     extension[NAME_MAX];
 
     // True if pressed key is ANSI escape code.
     bool     esc_seq_on_input;

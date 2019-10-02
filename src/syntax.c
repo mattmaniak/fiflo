@@ -1,29 +1,23 @@
 #include "syntax.h"
 
-bool syntax__load(Syntax_t* const Syntax, const int extension)
+bool syntax__load(Syntax_t* const Syntax, const char* const extension)
 {
-    char  fname[64];
-    char  keyword[SYNTAX__MAX_KWRD_LEN];
-    char  color[SYNTAX__MAX_KWRD_LEN];
-    FILE* File;
+    const char syntax_ext[]                      = ".fiflorc";
+    char       syntax_fname[PATH_MAX + NAME_MAX] = "/usr/share/fiflo/";
+    char       keyword[SYNTAX__MAX_KWRD_LEN];
+    char       color[SYNTAX__MAX_KWRD_LEN];
+    FILE*      File;
 
     Syntax->kwrds_amount = 0;
 
-    switch(extension)
+    strcat(syntax_fname, extension);
+    strcat(syntax_fname, syntax_ext);
+
+    if((extension == NULL) || (access(syntax_fname, R_OK) == -1))
     {
-    case EXTENSION__C:
-        strcpy(fname, "/usr/share/fiflo/c.fiflorc");
-        break;
-
-    case EXTENSION__PYTHON:
-        strcpy(fname, "/usr/share/fiflo/python.fiflorc");
-        break;
-
-    case EXTENSION__HTML:
-        strcpy(fname, "/usr/share/fiflo/html.fiflorc");
+        return true;
     }
-
-    File = fopen(fname, "r");
+    File = fopen(syntax_fname, "r");
     if(File != NULL)
     {
         while(fscanf(File, "%s = %s", keyword, color) != EOF)

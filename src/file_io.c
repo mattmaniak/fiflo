@@ -89,6 +89,7 @@ bool file_io__set_name(V_file_t* const V_file, const char* const arg)
 
         // Append a basename.
         strncpy(&V_file->fname[cw_dir_len + SIZE__SLASH], arg, NAME_MAX);
+        path__extract_basename_from_arg(V_file);
     }
     V_file->fname_len = strlen(V_file->fname);
 
@@ -118,7 +119,7 @@ bool file_io__load(V_file_t* const V_file, const Conf_t* const Config,
         switch(ch)
         {
         default:
-            if(!keys__printable_char(V_file, ch))
+            if(!keys__printable_ch(V_file, ch))
             {
                 return false;
             }
@@ -154,7 +155,7 @@ bool file_io__convert_tab_from_file(V_file_t* const V_file,
     {
         for(size_t ch_i = 0; ch_i < tab_sz; ch_i++)
         {
-            if(!keys__printable_char(V_file, tab_ch))
+            if(!keys__printable_ch(V_file, tab_ch))
             {
                 return false;
             }
@@ -221,7 +222,7 @@ bool file_io__get_git_branch(V_file_t* const V_file)
     strcpy(git_head_file_pathname, V_file->pathname);
     strcat(git_head_file_pathname, "/.git/HEAD");
 
-    if(access(git_head_file_pathname, F_OK) == -1)
+    if(access(git_head_file_pathname, R_OK) == -1)
     {
         goto empty_branch;
     }
@@ -234,7 +235,7 @@ bool file_io__get_git_branch(V_file_t* const V_file)
     }
 
     // Ignore a passed string in a file to get a branch after the slash.
-    if(fseek(Git_head_file, (long int) strlen("ref: refs/heads/"), 0) == -1)
+    if(fseek(Git_head_file, (long) strlen("ref: refs/heads/"), 0) == -1)
     {
         strcpy(V_file->git_branch, "[none]");
         return true;

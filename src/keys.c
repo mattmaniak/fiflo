@@ -1,12 +1,12 @@
 #include "keys.h"
 
-bool keys__parse_char(V_file_t* const V_file, const Conf_t* const Config,
-                      Mod_t* const Modes, const char ch)
+bool keys__parse_ch(V_file_t* const V_file, const Conf_t* const Config,
+                    Mod_t* const Modes, const char ch)
 {
     switch(ch)
     {
     default:
-        return keys__printable_char(V_file, ch);
+        return keys__printable_ch(V_file, ch);
 
     case '\t':
         return keys__tab(V_file, Config, Modes);
@@ -61,17 +61,17 @@ bool keys__linefeed(V_file_t* const V_file)
     return true;
 }
 
-bool keys__printable_char(V_file_t* const V_file, const char ch)
+bool keys__printable_ch(V_file_t* const V_file, const char ch)
 {
 
 #ifdef DEBUG_KEYS
-    const bool in_charmap = true;
+    const bool in_chmap = true;
 #else
-    const bool in_charmap = (ch == '\0') || (ch == '\t') || (ch == '\n')
+    const bool in_chmap = (ch == '\0') || (ch == '\t') || (ch == '\n')
                             || (ch >= 32);
 #endif
 
-    if(in_charmap)
+    if(in_chmap)
     {
         if(V_FILE__CH_LIMIT_NOT_EXCEEDED)
         {
@@ -117,7 +117,7 @@ bool keys__printable_char(V_file_t* const V_file, const char ch)
 }
 
 bool keys__backspace(V_file_t* const V_file, const Conf_t* const Config,
-                      const Mod_t* const Modes)
+                     const Mod_t* const Modes)
 {
     const size_t ln_i_before_change = V_FILE__ACTUAL_LN_I;
     const char   tab_ch             = (Modes->tabs_to_spaces) ? ' ' : '\t';
@@ -141,7 +141,7 @@ bool keys__backspace(V_file_t* const V_file, const Conf_t* const Config,
            && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X - SIZE__NUL] != tab_ch)
            && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X] == tab_ch))
         {
-            if(!edit__delete_char(V_file))
+            if(!edit__delete_ch(V_file))
             {
                 return false;
             }
@@ -149,7 +149,7 @@ bool keys__backspace(V_file_t* const V_file, const Conf_t* const Config,
         }
         if(!V_FILE__EMPTY_LN)
         {
-            if(!edit__delete_char(V_file))
+            if(!edit__delete_ch(V_file))
             {
                 return false;
             }
@@ -195,7 +195,7 @@ bool keys__backspace(V_file_t* const V_file, const Conf_t* const Config,
 }
 
 bool keys__tab(V_file_t* V_file, const Conf_t* const Config,
-                const Mod_t* const Modes)
+               const Mod_t* const Modes)
 {
     /* When the Tab key is pressed, it will insert e.g. 4 '\t' into a buffer.
        They will be converted during a rendering, loading and saving a file. */
@@ -208,7 +208,7 @@ bool keys__tab(V_file_t* V_file, const Conf_t* const Config,
     {
         for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
         {
-            if(!keys__printable_char(V_file, tab_ch))
+            if(!keys__printable_ch(V_file, tab_ch))
             {
                 return false;
             }

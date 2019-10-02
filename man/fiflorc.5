@@ -37,10 +37,11 @@ If a selector or a value is wrong or if there is no trailing newline at the end
 of the file, the default value will be applied. Else if the selector and value
 are wrong, the whole default editor's configuration will be applied.
 .SH SYNTAX HIGHLIGHTING
-Works only if there is a file placed in the /usr/share/nano dir. Currently
-supports: C, HTML and Python. Filename is [language].fiflorc, e.g. "c.fiflorc".
-File syntax is the same as the original fiflorc. The left side is a word to
-paint. The right side is a color. Everything in a separate line.
+Works only if there is a file placed in the /usr/share/nano dir. Filename is
+like [language].fiflorc, e.g. "c.fiflorc". The [language] will be used as
+a file extension to highlight it's defined keywords. The file syntax is the
+same as the original fiflorc. The left side is a word to paint. The right side
+is a color. Everything in a it's own line.
 .SH FILES
 .TP
 .B /etc/fiflorc

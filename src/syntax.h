@@ -27,7 +27,7 @@ typedef struct
 Syntax_t;
 
 // Loads a file with defined syntax highlighting colors.
-bool syntax__load(Syntax_t* const, const int);
+bool syntax__load(Syntax_t* const, const char* const);
 
 /* Sorts words descending by a length. It prevents glitching words if there is
    e.g "int" before "int32_t" by wrong double painting. */

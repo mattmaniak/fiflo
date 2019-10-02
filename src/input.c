@@ -180,7 +180,7 @@ bool input__parse_key(V_file_t* const V_file, const Conf_t* const Config,
     }
     else
     {
-        return keys__parse_char(V_file, Config, Modes, key);
+        return keys__parse_ch(V_file, Config, Modes, key);
     }
     return true;
 }

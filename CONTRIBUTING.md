@@ -16,13 +16,13 @@ Only with: master, develop and hotifx branches.
 [GNU's Writing C](https://www.gnu.org/prep/standards/html_node/Writing-C.html)
 Exceptions:
 - don't put additional spaces before braces or parenthesis,
-- keep data types in the same line as a function name,
+- keep data type in the same line as a function name,
 - place pointers' asterisks stuck on to a type name.
 
 ## Merge request
 - As the source base and it's develop branch can be found on
-[GitLab](https://gitlab.com/mattmaniak/fiflo/tree/develop) it would great to
-Use that platform by You to improve the code.
+[GitLab](https://gitlab.com/mattmaniak/fiflo/tree/develop)
+It would great to use that platform by You to improve the code.
 
 - Before requesting any change, check that your code matches basic standards
 described above and test it using the default Linux tty. Also You can open an
