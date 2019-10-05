@@ -48,8 +48,8 @@ char input__getch(void)
     return key;
 }
 
-void input__recognize_sequence(V_file_t* const V_file,
-                               const Conf_t* const Config,
+void input__recognize_sequence(V_file* const v_file,
+                               const Config* const config,
                                const char* const sequence,
                                size_t* const file_i)
 {
@@ -72,115 +72,203 @@ void input__recognize_sequence(V_file_t* const V_file,
 
     if(!strcmp(sequence, arrow_up))
     {
-        arrows__arrow_up(V_file);
-        V_file->esc_seq_on_input = false;
+        keys__arrow_up(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_down))
     {
-        arrows__arrow_down(V_file);
-        V_file->esc_seq_on_input = false;
+        keys__arrow_down(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_right))
     {
-        arrows__arrow_right(V_file, Config);
-        V_file->esc_seq_on_input = false;
+        keys__arrow_right(v_file, config);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_left))
     {
-        arrows__arrow_left(V_file, Config);
-        V_file->esc_seq_on_input = false;
+        keys__arrow_left(v_file, config);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
-        arrows__ctrl_arrow_up(V_file);
-        V_file->esc_seq_on_input = false;
+        keys__ctrl_arrow_up(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
-        arrows__ctrl_arrow_down(V_file);
-        V_file->esc_seq_on_input = false;
+        keys__ctrl_arrow_down(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_right))
     {
-        arrows__ctrl_arrow_right(V_file);
-        V_file->esc_seq_on_input = false;
+        keys__ctrl_arrow_right(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_left))
     {
-        arrows__ctrl_arrow_left(V_file);
-        V_file->esc_seq_on_input = false;
+        keys__ctrl_arrow_left(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f1))
     {
         *file_i = 0;
-        V_file->esc_seq_on_input = false;
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f2))
     {
         *file_i = 1;
-        V_file->esc_seq_on_input = false;
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f3))
     {
         *file_i = 2;
-        V_file->esc_seq_on_input = false;
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f4))
     {
         *file_i = 3;
-        V_file->esc_seq_on_input = false;
+        v_file->esc_seq_on_input = false;
     }
     // Other cases that block an input for "seq_len_max" chars.
     else if(strlen(sequence) >= seq_len_max)
     {
-        V_file->esc_seq_on_input = false;
+        v_file->esc_seq_on_input = false;
     }
 
 #ifdef DEBUG_INPUT
-    printf("cursor_rev_x %u, cursor_rev_y %u.\n", V_file->cursor_rev_x,
-           V_file->cursor_rev_y);
+    printf("mirrored_cursor_x %u, mirrored_cursor_y %u.\n", v_file->mirrored_cursor_x,
+           v_file->mirrored_cursor_y);
 #endif
 
 }
 
-bool input__parse_key(V_file_t* const V_file, const Conf_t* const Config,
-                      Mod_t* const Modes, size_t* const file_i, const char key)
+bool input__parse_key(V_file* const v_file, const Config* const config,
+                      Modes* const modes, size_t* const file_i, const char key)
 {
     static char   ch_sequence[INPUT__SEQ_MAX];
-    static size_t ch_i;
+    static size_t char_i;
 
-    if((key == ASCII__CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
+    if((key == ASCII__CTRL_LEFT_BRACKET) && !modes->live_fname_edit)
     {
-        ch_i                     = 0;
-        V_file->esc_seq_on_input = true;
+        char_i                     = 0;
+        v_file->esc_seq_on_input = true;
 
 #ifdef DEBUG_INPUT
-        V_file->esc_seq_on_input = false;
+        v_file->esc_seq_on_input = false;
 #endif
 
     }
-    if(V_file->esc_seq_on_input)
+    if(v_file->esc_seq_on_input)
     {
-        ch_sequence[ch_i] = key;
-        if(ch_i < (INPUT__SEQ_MAX - SIZE__NUL))
+        ch_sequence[char_i] = key;
+        if(char_i < (INPUT__SEQ_MAX - SIZE__NUL))
         {
-            ch_i++;
+            char_i++;
         }
-        ch_sequence[ch_i] = '\0';
-        input__recognize_sequence(V_file, Config, ch_sequence, file_i);
+        ch_sequence[char_i] = '\0';
+        input__recognize_sequence(v_file, config, ch_sequence, file_i);
 
-        if(!V_file->esc_seq_on_input)
+        if(!v_file->esc_seq_on_input)
         {
-            ch_i = 0;
+            char_i = 0;
         }
     }
-    else if(Modes->live_fname_edit)
+    else if(modes->live_fname_edit)
     {
-        edit__filename(V_file, Config, Modes, key);
+        edit__filename(v_file, config, modes, key);
     }
     else
     {
-        return keys__parse_ch(V_file, Config, Modes, key);
+        return input__parse_char(v_file, config, modes, key);
+    }
+    return true;
+}
+
+bool input__parse_char(V_file* const v_file, const Config* const config,
+                    Modes* const modes, const char ch)
+{
+    switch(ch)
+    {
+    default:
+        return input__printable_char(v_file, ch);
+
+    case '\t':
+        return keys__tab(v_file, config, modes);
+
+    case ASCII__BACKSPACE:
+        return keys__backspace(v_file, config, modes);
+
+    case ASCII__CTRL_Q:
+        return false;
+
+    case ASCII__CTRL_S:
+        return file_io__save(v_file, config);
+
+    case ASCII__CTRL_BACKSLASH:
+        modes->expanded_lbar = !modes->expanded_lbar;
+        break;
+
+    case ASCII__CTRL_D:
+        return edit__delete_line(v_file);
+
+    case ASCII__CTRL_O:
+        modes->live_fname_edit = true;
+    }
+    return true;
+}
+
+bool input__printable_char(V_file* const v_file, const char ch)
+{
+
+#ifdef DEBUG_KEYS
+    const bool char_is_allowed = true;
+#else
+    const bool char_is_allowed = (ch == '\0') || (ch == '\t') || (ch == '\n')
+                                 || (ch >= 32);
+#endif
+
+    if(char_is_allowed)
+    {
+        if(V_FILE__CHAR_LIMIT_NOT_EXCEEDED)
+        {
+            v_file->chars_amount++;
+            V_FILE__ACTUAL_LINE.len++;
+
+            if(!memory__extend_line(v_file, V_FILE__ACTUAL_LINE_I))
+            {
+                return false;
+            }
+            if(V_FILE__CURSOR_X_SCROLLED)
+            {
+                edit__shift_text_horizonally(v_file, 'r');
+            }
+            V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL] = ch;
+            V_FILE__LAST_CHAR_IN_LINE                               = '\0';
+
+            // Initializing nul handler.
+            if((ch == '\0') && !V_FILE__EMPTY_LINE)
+            {
+                v_file->chars_amount--;
+                V_FILE__ACTUAL_LINE.len--;
+            }
+            else if((ch == '\n') && !keys__linefeed(v_file))
+            {
+                return false;
+            }
+            if(ch != '\0')
+            {
+                V_FILE__SET_STATUS("edited");
+            }
+        }
+        else
+        {
+            V_FILE__SET_STATUS("can't read or insert more chars");
+        }
+    }
+    else
+    {
+        V_FILE__SET_STATUS("unsupported char(s)");
     }
     return true;
 }

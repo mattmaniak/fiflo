@@ -1,36 +1,80 @@
 #include "v_file.h"
 
-bool buffer__init(V_file_t* const V_file)
+V_file* v_file__new(void)
 {
-    V_file->pathname = malloc(PATH_MAX);
-    if(V_file->pathname == NULL)
+    V_file* v_file = malloc(sizeof(V_file));
+    if(v_file == NULL)
+    {
+        return NULL;
+    }
+
+    v_file->pathname = malloc(PATH_MAX);
+    if(v_file->pathname == NULL)
+    {
+        fprintf(stderr, "Can't alloc a memory for a directory.\n");
+        return NULL;
+    }
+
+    // Pointer to pointers, so an address size is required.
+    v_file->Lines = malloc(sizeof(Line_t));
+    if(v_file->Lines == NULL)
+    {
+        fprintf(stderr, "Can't alloc a memory a array with lines.\n");
+        return NULL;
+    }
+    v_file->chars_amount      = 0;
+    v_file->lines_amount      = 0;
+    v_file->mirrored_cursor_x = 0;
+    v_file->mirrored_cursor_y = 0;
+    V_FILE__ACTUAL_LINE.len   = 0;
+    v_file->fname_len         = 0;
+    v_file->fname[0]          = '\0';
+    v_file->fname_copy[0]     = '\0';
+    v_file->pathname[0]       = '\0';
+    v_file->basename[0]       = '\0';
+    v_file->extension[0]      = '\0';
+    v_file->esc_seq_on_input  = false;
+
+    V_FILE__ACTUAL_LINE.txt = malloc(V_FILE__BASIC_MEMBLK);
+    if(V_FILE__ACTUAL_LINE.txt == NULL)
+    {
+        fprintf(stderr, "Can't allocate a memory for a first line.\n");
+        return NULL;
+    }
+    return v_file;
+}
+
+bool buffer__init(V_file* const v_file)
+{
+    v_file->pathname = malloc(PATH_MAX);
+    if(v_file->pathname == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for a directory.\n");
         return false;
     }
 
     // Pointer to pointers, so an address size is required.
-    V_file->Lines = malloc(sizeof(Line_t));
-    if(V_file->Lines == NULL)
+    v_file->Lines = malloc(sizeof(Line_t));
+    if(v_file->Lines == NULL)
     {
         fprintf(stderr, "Can't alloc a memory a array with lines.\n");
         return false;
     }
-    V_file->ch_amount        = 0;
-    V_file->ln_amount        = 0;
-    V_file->cursor_rev_x     = 0;
-    V_file->cursor_rev_y     = 0;
-    V_FILE__ACTUAL_LN.len    = 0;
-    V_file->fname_len        = 0;
-    V_file->fname[0]         = '\0';
-    V_file->fname_copy[0]    = '\0';
-    V_file->pathname[0]      = '\0';
-    V_file->basename[0]      = '\0';
-    V_file->extension[0]     = '\0';
-    V_file->esc_seq_on_input = false;
+    v_file->chars_amount     = 0;
+    v_file->lines_amount     = 0;
+    v_file->mirrored_cursor_x     = 0;
+    v_file->mirrored_cursor_y     = 0;
+    V_FILE__ACTUAL_LINE.len  = 0;
+    v_file->fname_len        = 0;
+    v_file->fname[0]         = '\0';
+    v_file->fname_copy[0]    = '\0';
+    v_file->pathname[0]      = '\0';
+    v_file->basename[0]      = '\0';
+    v_file->extension[0]     = '\0';
+    v_file->esc_seq_on_input = false;
 
-    V_FILE__ACTUAL_LN.txt = malloc(V_FILE__BASIC_MEMBLK);
-    if(V_FILE__ACTUAL_LN.txt == NULL)
+    V_FILE__ACTUAL_LINE.txt = malloc(V_FILE__BASIC_MEMBLK);
+    if(V_FILE__ACTUAL_LINE.txt == NULL)
     {
         fprintf(stderr, "Can't allocate a memory for a first line.\n");
         return false;
@@ -38,21 +82,21 @@ bool buffer__init(V_file_t* const V_file)
     return true;
 }
 
-void buffer__free(V_file_t* const V_file)
+void v_file__delete(V_file* const v_file)
 {
-    for(size_t ln_i = 0; ln_i <= V_file->ln_amount; ln_i++)
+    for(size_t line_i = 0; line_i <= v_file->lines_amount; line_i++)
     {
-        if(V_file->Lines[ln_i].txt != NULL)
+        if(v_file->Lines[line_i].txt != NULL)
         {
-            free(V_file->Lines[ln_i].txt);
+            free(v_file->Lines[line_i].txt);
         }
     }
-    if(V_file->Lines != NULL)
+    if(v_file->Lines != NULL)
     {
-        free(V_file->Lines);
+        free(v_file->Lines);
     }
-    if(V_file->pathname != NULL)
+    if(v_file->pathname != NULL)
     {
-        free(V_file->pathname);
+        free(v_file->pathname);
     }
 }

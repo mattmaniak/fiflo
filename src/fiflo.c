@@ -9,54 +9,54 @@ void fiflo__run(int argc, char** const argv)
     size_t additional_argc_i = (size_t) argc - SIZE__I;
     char*  extension;
 
-    V_file_t* V_file;
-    Conf_t    Config;
-    Mod_t     Modes;
-    Syntax_t  Syntax;
+    V_file* v_files;
+    Config  config;
+    Modes   modes;
+    Syntax  syntax;
 
     if(argc > 1)
     {
         additional_argc_i -= fname_arg_sz;
     }
-    modes__init(&Modes);
-    if(!args__parse(&Modes, &argc, argv))
+    modes__init(&modes);
+    if(!args__parse(&modes, &argc, argv))
     {
         return;
     }
 
-    V_file = malloc((size_t) argc * sizeof(V_file_t));
-    if(V_file == NULL)
+    v_files = malloc((size_t) argc * sizeof(V_file));
+    if(v_files == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for file buffers.\n");
         goto free;
     }
     for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
     {
-        if(!buffer__init(&V_file[file_i]) || !config__load(&Config)
-           || !file_io__set_name(&V_file[file_i], argv[fname_arg_sz + file_i])
-           || !file_io__load(&V_file[file_i], &Config, &Modes))
+        if(!buffer__init(&v_files[file_i]) || !config__load(&config)
+           || !file_io__set_name(&v_files[file_i], argv[fname_arg_sz + file_i])
+           || !file_io__load(&v_files[file_i], &config, &modes))
         {
             goto free;
         }
-        strcpy(V_file[file_i].fname_copy, V_file[file_i].fname);
+        strcpy(v_files[file_i].fname_copy, v_files[file_i].fname);
     }
-    Syntax.kwrds_amount = 0;
+    syntax.keywords_amount = 0;
 
     for(;;) // The main program loop.
     {
-        if(V_file[actual_file_i].basename[0] != '\0')
+        if(v_files[actual_file_i].basename[0] != '\0')
         {
-            extension = extension__recognize(V_file[actual_file_i].basename);
+            extension = extension__recognize(v_files[actual_file_i].basename);
             if((extension != NULL)
-               && strcmp(V_file[actual_file_i].extension, extension))
+               && strcmp(v_files[actual_file_i].extension, extension))
             {
-                Syntax.kwrds_amount = 0;
-                syntax__load(&Syntax, extension);
-                strcpy(V_file[actual_file_i].extension, extension);
+                syntax.keywords_amount = 0;
+                syntax__load(&syntax, extension);
+                strcpy(v_files[actual_file_i].extension, extension);
             }
         }
-        if(!file_io__get_git_branch(&V_file[actual_file_i])
-           || !input__parse_key(&V_file[actual_file_i], &Config, &Modes,
+        if(!file_io__get_git_branch(&v_files[actual_file_i])
+           || !input__parse_key(&v_files[actual_file_i], &config, &modes,
                                 &actual_file_i, pressed_key))
         {
             break;
@@ -68,7 +68,7 @@ void fiflo__run(int argc, char** const argv)
         }
 
         // Flushes and renders always after the keypress.
-        if(!window__render(V_file, &Config, &Modes, &Syntax,
+        if(!window__render(v_files, &config, &modes, &syntax,
                            (size_t) argc - SIZE__I, (size_t) actual_file_i))
         {
             break;
@@ -84,11 +84,11 @@ void fiflo__run(int argc, char** const argv)
 free:
     for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
     {
-        buffer__free(&V_file[file_i]);
+        v_file__delete(&v_files[file_i]);
     }
-    if(V_file != NULL)
+    if(v_files != NULL)
     {
-        free(V_file);
+        free(v_files);
     }
 }
 

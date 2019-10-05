@@ -6,7 +6,7 @@
 #define SIZE__I      1
 #define SIZE__NUL    1
 #define SIZE__LF     1
-#define SIZE__LN     1
+#define SIZE__LINE   1
 #define SIZE__CURSOR 1
 #define SIZE__SPACE  1
 #define SIZE__SLASH  1

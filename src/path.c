@@ -1,35 +1,35 @@
 #include "path.h"
 
-bool path__extract_pathname_from_arg(V_file_t* const V_file)
+bool path__extract_pathname_from_arg(V_file* const v_file)
 {
-    size_t ch_i           = 0;
+    size_t char_i           = 0;
     size_t slash_last_pos = 0;
 
-    while(V_file->fname[ch_i] != '\0')
+    while(v_file->fname[char_i] != '\0')
     {
-        if(V_file->fname[ch_i] == '/')
+        if(v_file->fname[char_i] == '/')
         {
-            if(ch_i == 0) // Cares about the absolute path.
+            if(char_i == 0) // Cares about the absolute path.
             {
                 slash_last_pos = 1;
                 break;
             }
-            slash_last_pos = ch_i;
+            slash_last_pos = char_i;
         }
-        ch_i++;
+        char_i++;
     }
-    strncpy(V_file->pathname, V_file->fname, slash_last_pos);
-    V_file->pathname[slash_last_pos] = '\0';
+    strncpy(v_file->pathname, v_file->fname, slash_last_pos);
+    v_file->pathname[slash_last_pos] = '\0';
 
-    if(chdir(V_file->pathname) == -1)
+    if(chdir(v_file->pathname) == -1)
     {
         fprintf(stderr,
                 "Can't change the direcory to get the parent file path.\n");
         return false;
     }
 
-    V_file->pathname = getcwd(V_file->pathname, PATH_MAX);
-    if(V_file->pathname == NULL)
+    v_file->pathname = getcwd(v_file->pathname, PATH_MAX);
+    if(v_file->pathname == NULL)
     {
         fprintf(stderr, "Can't get the current directory. Too long.\n");
         return false;
@@ -37,29 +37,29 @@ bool path__extract_pathname_from_arg(V_file_t* const V_file)
     return true;
 }
 
-void path__extract_basename_from_arg(V_file_t* const V_file)
+void path__extract_basename_from_arg(V_file* const v_file)
 {
-    size_t ch_i           = strlen(V_file->fname);
+    size_t char_i         = strlen(v_file->fname);
     size_t slash_last_pos = 0;
 
-    while(ch_i > 0)
+    while(char_i > 0)
     {
-        if(V_file->fname[ch_i] == '/')
+        if(v_file->fname[char_i] == '/')
         {
-            slash_last_pos = ch_i + SIZE__SLASH;
+            slash_last_pos = char_i + SIZE__SLASH;
             break;
         }
-        ch_i--;
+        char_i--;
     }
-    strcpy(V_file->basename, &V_file->fname[slash_last_pos]);
+    strcpy(v_file->basename, &v_file->fname[slash_last_pos]);
 }
 
-void path__merge_pathname_and_basename(V_file_t* const V_file)
+void path__merge_pathname_and_basename(V_file* const v_file)
 {
-    strcpy(V_file->fname, V_file->pathname);
+    strcpy(v_file->fname, v_file->pathname);
 
-    V_file->fname[strlen(V_file->fname)] = '/'; // Append the slash.
-    V_file->fname[strlen(V_file->fname)] = '\0';
+    v_file->fname[strlen(v_file->fname)] = '/'; // Append the slash.
+    v_file->fname[strlen(v_file->fname)] = '\0';
 
-    strcat(V_file->fname, V_file->basename);
+    strcat(v_file->fname, v_file->basename);
 }

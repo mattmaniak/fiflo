@@ -1,20 +1,20 @@
 #include "config.h"
 
-bool config__load(Conf_t* const Config)
+bool config__load(Config* const config)
 {
     const char conf_fname[] = "/etc/fiflorc";
 
     if(access(conf_fname, F_OK) == -1) // There is no config file.
     {
-        config__set_default(Config);
+        config__set_default(config);
         return true;
     }
-    Config->File = fopen(conf_fname, "r");
-    if(Config->File != NULL)
+    config->File = fopen(conf_fname, "r");
+    if(config->File != NULL)
     {
-        config__load_custom(Config);
+        config__load_custom(config);
 
-        if(fclose(Config->File) == EOF)
+        if(fclose(config->File) == EOF)
         {
             fprintf(stderr, "Unable to close a configuration file.\n");
             return false;
@@ -23,43 +23,43 @@ bool config__load(Conf_t* const Config)
     return true;
 }
 
-void config__init_selectors(Conf_t* const Config)
+void config__init_selectors(Config* const config)
 {
-    strcpy(Config->Color_txt.selector,        "color_text");
-    strcpy(Config->Color_ui.selector,         "color_ui");
-    strcpy(Config->Color_whitespace.selector, "color_whitespace");
-    strcpy(Config->Pcard_w.selector,          "punch_card_width");
-    strcpy(Config->Tab_sz.selector,           "tab_size");
+    strcpy(config->Color_txt.selector,        "color_text");
+    strcpy(config->Color_ui.selector,         "color_ui");
+    strcpy(config->Color_whitespace.selector, "color_whitespace");
+    strcpy(config->Pcard_w.selector,          "punch_card_width");
+    strcpy(config->Tab_sz.selector,           "tab_size");
 }
 
-bool config__parse_selector(Conf_t* const Config, const char* const selector,
+bool config__parse_selector(Config* const config, const char* const selector,
                             const int value)
 {
     // Adds a value to a found selector in a configuration structure.
     if(value >= RED)
     {
-        if(!strcmp(Config->Color_ui.selector, selector))
+        if(!strcmp(config->Color_ui.selector, selector))
         {
-            Config->Color_ui.value = value;
+            config->Color_ui.value = value;
         }
-        else if(!strcmp(Config->Color_txt.selector, selector))
+        else if(!strcmp(config->Color_txt.selector, selector))
         {
-            Config->Color_txt.value = value;
+            config->Color_txt.value = value;
         }
-        else if(!strcmp(Config->Color_whitespace.selector, selector))
+        else if(!strcmp(config->Color_whitespace.selector, selector))
         {
-            Config->Color_whitespace.value = value;
+            config->Color_whitespace.value = value;
         }
-        else if(!strcmp(Config->Pcard_w.selector, selector))
+        else if(!strcmp(config->Pcard_w.selector, selector))
         {
-            Config->Pcard_w.value = value;
+            config->Pcard_w.value = value;
         }
     }
-    else if(!strcmp(Config->Tab_sz.selector, selector))
+    else if(!strcmp(config->Tab_sz.selector, selector))
     {
         if((value >= CONFIG__MIN_TAB_SZ) && (value <= CONFIG__MAX_TAB_SZ))
         {
-            Config->Tab_sz.value = value;
+            config->Tab_sz.value = value;
         }
     }
     else
@@ -134,16 +134,16 @@ int config__parse_value(const char* const read_value)
     return 0;
 }
 
-void config__set_default(Conf_t* const Config)
+void config__set_default(Config* const config)
 {
-    Config->Color_txt.value         = WHITE;
-    Config->Color_ui.value          = WHITE;
-    Config->Color_whitespace.value  = BRIGHT_BLACK;
-    Config->Pcard_w.value           = CONFIG__PUNCH_CARD_W;
-    Config->Tab_sz.value            = CONFIG__MAX_TAB_SZ;
+    config->Color_txt.value         = WHITE;
+    config->Color_ui.value          = WHITE;
+    config->Color_whitespace.value  = BRIGHT_BLACK;
+    config->Pcard_w.value           = CONFIG__PUNCH_CARD_W;
+    config->Tab_sz.value            = CONFIG__MAX_TAB_SZ;
 }
 
-void config__load_custom(Conf_t* const Config)
+void config__load_custom(Config* const config)
 {
     const char space_or_control_ch = 32;
     int        parsed_value        = 0;
@@ -151,9 +151,9 @@ void config__load_custom(Conf_t* const Config)
     char       selector[CONFIG__SELECTOR_SZ];
     char       value[32];
 
-    config__init_selectors(Config);
+    config__init_selectors(config);
 
-    while(fgets(line, 80, Config->File) != NULL)
+    while(fgets(line, 80, config->File) != NULL)
     {
         if((line[0] == '#') || (line[0] <= space_or_control_ch))
         {
@@ -165,14 +165,14 @@ void config__load_custom(Conf_t* const Config)
 
         parsed_value = config__parse_value(value);
 
-        if(!config__parse_selector(Config, selector, parsed_value))
+        if(!config__parse_selector(config, selector, parsed_value))
         {
-            config__set_default(Config);
+            config__set_default(config);
             break;
         }
     }
     if(parsed_value == 0) // If a whole file is commented out.
     {
-        config__set_default(Config);
+        config__set_default(config);
     }
 }

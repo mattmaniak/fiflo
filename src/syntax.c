@@ -1,6 +1,6 @@
 #include "syntax.h"
 
-bool syntax__load(Syntax_t* const Syntax, const char* const extension)
+bool syntax__load(Syntax* const syntax, const char* const extension)
 {
     const char syntax_ext[]                      = ".fiflorc";
     char       syntax_fname[PATH_MAX + NAME_MAX] = "/usr/share/fiflo/";
@@ -8,7 +8,7 @@ bool syntax__load(Syntax_t* const Syntax, const char* const extension)
     char       color[SYNTAX__MAX_KWRD_LEN];
     FILE*      File;
 
-    Syntax->kwrds_amount = 0;
+    syntax->keywords_amount = 0;
 
     strcat(syntax_fname, extension);
     strcat(syntax_fname, syntax_ext);
@@ -22,19 +22,19 @@ bool syntax__load(Syntax_t* const Syntax, const char* const extension)
     {
         while(fscanf(File, "%s = %s", keyword, color) != EOF)
         {
-            strncpy(Syntax->Keywords[Syntax->kwrds_amount].keyword, keyword,
+            strncpy(syntax->Keywords[syntax->keywords_amount].keyword, keyword,
                     SYNTAX__MAX_KWRD_LEN);
 
-            Syntax->Keywords[Syntax->kwrds_amount].color =
+            syntax->Keywords[syntax->keywords_amount].color =
             config__parse_value(color);
 
-            if(Syntax->kwrds_amount++ >= SYNTAX__MAX_KWRDS_IN_FILE)
+            if(syntax->keywords_amount++ >= SYNTAX__MAX_KWRDS_IN_FILE)
             {
                 break;
             }
         }
-        Syntax->kwrds_amount--;
-        syntax__sort(Syntax);
+        syntax->keywords_amount--;
+        syntax__sort(syntax);
 
         if(fclose(File) == EOF)
         {
@@ -45,57 +45,57 @@ bool syntax__load(Syntax_t* const Syntax, const char* const extension)
     return true;
 }
 
-void syntax__sort(Syntax_t* const Syntax)
+void syntax__sort(Syntax* const syntax)
 {
-    Syntax__Kwrd_t Tmp_kwrd;
+    syntax__Keyword Tmp_keyword;
 
     // Iterate through all keywords.
-    for(size_t kwrd_i = 0; kwrd_i < Syntax->kwrds_amount; kwrd_i++)
+    for(size_t keyword_i = 0; keyword_i < syntax->keywords_amount; keyword_i++)
     {
         // Set a value of a further keyword to compare.
-        for(size_t shift_i = kwrd_i + SIZE__NEXT;
-            shift_i < Syntax->kwrds_amount; shift_i++)
+        for(size_t shift_i = keyword_i + SIZE__NEXT;
+            shift_i < syntax->keywords_amount; shift_i++)
         {
             // Swap if a next keyword is longer.
-            if(strlen(Syntax->Keywords[kwrd_i].keyword)
-               < strlen(Syntax->Keywords[shift_i].keyword))
+            if(strlen(syntax->Keywords[keyword_i].keyword)
+               < strlen(syntax->Keywords[shift_i].keyword))
             {
-                Tmp_kwrd = Syntax->Keywords[kwrd_i];
+                Tmp_keyword = syntax->Keywords[keyword_i];
 
-                Syntax->Keywords[kwrd_i]  = Syntax->Keywords[shift_i];
-                Syntax->Keywords[shift_i] = Tmp_kwrd;
+                syntax->Keywords[keyword_i]  = syntax->Keywords[shift_i];
+                syntax->Keywords[shift_i] = Tmp_keyword;
             }
         }
     }
 }
 
-size_t syntax__paint_word(const Syntax_t* const Syntax,
-                          const Conf_t* const Config, Line_t* Line,
+size_t syntax__paint_word(const Syntax* const syntax,
+                          const Config* const config, Line_t* Line,
                           const size_t end_ch_i, size_t ch_i)
 {
     const char* const str_to_print_addr = &Line->txt[ch_i];
-    const size_t      pcard_w           = (size_t) Config->Pcard_w.value;
-    bool              kwrd_ignored      = false;
+    const size_t      pcard_w           = (size_t) config->Pcard_w.value;
+    bool              keyword_ignored      = false;
     size_t            end_paint_i;
 
-    if(Syntax->kwrds_amount <= 0)
+    if(syntax->keywords_amount <= 0)
     {
         return ch_i;
     }
-    for(size_t kwrd_i = 0; kwrd_i <= Syntax->kwrds_amount; kwrd_i++)
+    for(size_t keyword_i = 0; keyword_i <= syntax->keywords_amount; keyword_i++)
     {
-        if(strstr(str_to_print_addr, Syntax->Keywords[kwrd_i].keyword)
+        if(strstr(str_to_print_addr, syntax->Keywords[keyword_i].keyword)
            == str_to_print_addr)
         {
-            ui__colorize(Syntax->Keywords[kwrd_i].color);
+            ui__colorize(syntax->Keywords[keyword_i].color);
 
-            end_paint_i = (size_t) strlen(Syntax->Keywords[kwrd_i].keyword)
+            end_paint_i = (size_t) strlen(syntax->Keywords[keyword_i].keyword)
                           + ch_i;
 
             if(end_paint_i == 0)
             {
                 end_paint_i  = ch_i;
-                kwrd_ignored = true;
+                keyword_ignored = true;
             }
 
             // Breaks a word if the end of a terminal is achieved.
@@ -107,20 +107,20 @@ size_t syntax__paint_word(const Syntax_t* const Syntax,
             {
                 if(ch_i == (pcard_w - SIZE__I))
                 {
-                    ui__colorize(Config->Color_ui.value
+                    ui__colorize(config->Color_ui.value
                                  + ANSI__BG_COLOR_OFFSET);
-                    ui__colorize(Syntax->Keywords[kwrd_i].color);
+                    ui__colorize(syntax->Keywords[keyword_i].color);
                 }
                 putchar(Line->txt[ch_i]);
                 if(ch_i == (pcard_w - SIZE__I))
                 {
                     // Reset the background color after punch card.
                     ui__colorize(0);
-                    ui__colorize(Syntax->Keywords[kwrd_i].color);
+                    ui__colorize(syntax->Keywords[keyword_i].color);
                 }
             }
             // Not a last char, so don't hide a next.
-            if(!kwrd_ignored && (ch_i < end_ch_i))
+            if(!keyword_ignored && (ch_i < end_ch_i))
             {
                 ch_i--; // An other char will be printed. Make it visible.
             }

@@ -1,12 +1,12 @@
 #include "args.h"
 
-bool args__parse(Mod_t* const Modes, int* argc, char** const argv)
+bool args__parse(Modes* const modes, int* argc, char** const argv)
 {
     // Notice: argv[0] is the program name.
     const int fname_arg_sz  = 1;
-    const int max_files     = 4;
+    const int files_max     = 4;
     const int options_max   = 8;
-    const int argc_max      = fname_arg_sz + max_files + options_max;
+    const int argc_max      = fname_arg_sz + files_max + options_max;
     const int orig_argc     = *argc;
     int       passed_fnames = 0;
 
@@ -20,7 +20,7 @@ bool args__parse(Mod_t* const Modes, int* argc, char** const argv)
     {
         if(strlen(argv[arg_i]) < ARG_MAX)
         {
-            if(!options__parse_and_print(Modes, argv[arg_i]))
+            if(!options__parse_and_print(modes, argv[arg_i]))
             {
                 return false;
             }
@@ -38,10 +38,11 @@ bool args__parse(Mod_t* const Modes, int* argc, char** const argv)
             }
             else
             {
-                if(++passed_fnames > max_files)
+                passed_fnames++;
+                if(passed_fnames > files_max)
                 {
                     fprintf(stderr, "Max. %d files can be opened.\n",
-                            max_files);
+                            files_max);
                     return false;
                 }
             }

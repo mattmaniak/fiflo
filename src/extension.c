@@ -3,20 +3,20 @@
 char* extension__recognize(char* const basename)
 {
     const size_t dot_sz = 1;
-    size_t       ch_i   = 0;
+    size_t       char_i   = 0;
 
     if(basename == NULL)
     {
         return NULL;
     }
-    while((basename[ch_i] != '.') && (basename[ch_i] != '\0'))
+    while((basename[char_i] != '.') && (basename[char_i] != '\0'))
     {
-        ch_i++;
+        char_i++;
     }
     // bname_len = strlen(basename);
-    if((strlen(basename) > 0) && (ch_i != strlen(basename))) // Not at the end of an extension.
+    if((strlen(basename) > 0) && (char_i != strlen(basename))) // Not at the end of an extension.
     {
-        return &basename[ch_i + dot_sz];
+        return &basename[char_i + dot_sz];
     }
     return NULL;
 }

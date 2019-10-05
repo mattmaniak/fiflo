@@ -1,190 +1,101 @@
 #include "keys.h"
 
-bool keys__parse_ch(V_file_t* const V_file, const Conf_t* const Config,
-                    Mod_t* const Modes, const char ch)
+bool keys__linefeed(V_file* const v_file)
 {
-    switch(ch)
+    if(v_file->lines_amount < V_FILE__CHAR_MAX)
     {
-    default:
-        return keys__printable_ch(V_file, ch);
-
-    case '\t':
-        return keys__tab(V_file, Config, Modes);
-
-    case ASCII__BACKSPACE:
-        return keys__backspace(V_file, Config, Modes);
-
-    case ASCII__CTRL_Q:
-        return false;
-
-    case ASCII__CTRL_S:
-        return file_io__save(V_file, Config);
-
-    case ASCII__CTRL_BACKSLASH:
-        Modes->expanded_lbar = !Modes->expanded_lbar;
-        break;
-
-    case ASCII__CTRL_D:
-        return edit__delete_line(V_file);
-
-    case ASCII__CTRL_O:
-        Modes->live_fname_edit = true;
-    }
-    return true;
-}
-
-bool keys__linefeed(V_file_t* const V_file)
-{
-    if(V_file->ln_amount < V_FILE__CH_MAX)
-    {
-        V_file->ln_amount++;
-        if(!memory__extend_lines_array(V_file))
+        v_file->lines_amount++;
+        if(!memory__extend_lines_array(v_file))
         {
             return false;
         }
         if(V_FILE__CURSOR_X_SCROLLED)
         {
-            if(!edit__move_lines_forward(V_file))
+            if(!edit__move_lines_forward(v_file))
             {
                 return false;
             }
         }
         else if(V_FILE__CURSOR_Y_SCROLLED)
         {
-            if(!memory__copy_lines_forward(V_file))
+            if(!memory__copy_lines_forward(v_file))
             {
                 return false;
             }
         }
-        V_FILE__LAST_CH_IN_LN = '\0';
+        V_FILE__LAST_CHAR_IN_LINE = '\0';
     }
     return true;
 }
 
-bool keys__printable_ch(V_file_t* const V_file, const char ch)
+bool keys__backspace(V_file* const v_file, const Config* const config,
+                     const Modes* const modes)
 {
-
-#ifdef DEBUG_KEYS
-    const bool in_chmap = true;
-#else
-    const bool in_chmap = (ch == '\0') || (ch == '\t') || (ch == '\n')
-                            || (ch >= 32);
-#endif
-
-    if(in_chmap)
-    {
-        if(V_FILE__CH_LIMIT_NOT_EXCEEDED)
-        {
-            V_file->ch_amount++;
-            V_FILE__ACTUAL_LN.len++;
-
-            if(!memory__extend_line(V_file, V_FILE__ACTUAL_LN_I))
-            {
-                return false;
-            }
-            if(V_FILE__CURSOR_X_SCROLLED)
-            {
-                edit__shift_text_horizonally(V_file, 'r');
-            }
-            V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X - SIZE__NUL] = ch;
-            V_FILE__LAST_CH_IN_LN                               = '\0';
-
-            // Initializing nul handler.
-            if((ch == '\0') && !V_FILE__EMPTY_LN)
-            {
-                V_file->ch_amount--;
-                V_FILE__ACTUAL_LN.len--;
-            }
-            else if((ch == '\n') && !keys__linefeed(V_file))
-            {
-                return false;
-            }
-            if(ch != '\0')
-            {
-                V_FILE__SET_STATUS("edited");
-            }
-        }
-        else
-        {
-            V_FILE__SET_STATUS("can't read or insert more chars");
-        }
-    }
-    else
-    {
-        V_FILE__SET_STATUS("unsupported char(s)");
-    }
-    return true;
-}
-
-bool keys__backspace(V_file_t* const V_file, const Conf_t* const Config,
-                     const Mod_t* const Modes)
-{
-    const size_t ln_i_before_change = V_FILE__ACTUAL_LN_I;
-    const char   tab_ch             = (Modes->tabs_to_spaces) ? ' ' : '\t';
-    const size_t tab_sz             = (size_t) Config->Tab_sz.value;
+    const size_t line_i_before_charange = V_FILE__ACTUAL_LINE_I;
+    const char   tab_char             = (modes->tabs_to_spaces) ? ' ' : '\t';
+    const size_t tab_sz             = (size_t) config->Tab_sz.value;
 
     for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
     {
         // Prevent removing a char and 3 tabs from that e.g.: "\t\t\t\t".
         if((V_FILE__CURSOR_X > 1)
-           && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X - SIZE__NUL - SIZE__PREV]
-               == tab_ch)
-           && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X - SIZE__NUL]
-               != tab_ch))
+           && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL - SIZE__PREV]
+               == tab_char)
+           && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL] != tab_char))
         {
-            tab_i = (size_t) Config->Tab_sz.value - SIZE__I;
+            tab_i = (size_t) config->Tab_sz.value - SIZE__I;
         }
 
         /* Scenario when there is a char at the beginning and the Tab at the
            right. */
-        if((V_FILE__CURSOR_X == 1) && (V_file->cursor_rev_x > 0)
-           && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X - SIZE__NUL] != tab_ch)
-           && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X] == tab_ch))
+        if((V_FILE__CURSOR_X == 1) && (v_file->mirrored_cursor_x > 0)
+           && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL] != tab_char)
+           && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X] == tab_char))
         {
-            if(!edit__delete_ch(V_file))
+            if(!edit__delete_char(v_file))
             {
                 return false;
             }
             break;
         }
-        if(!V_FILE__EMPTY_LN)
+        if(!V_FILE__EMPTY_LINE)
         {
-            if(!edit__delete_ch(V_file))
+            if(!edit__delete_char(v_file))
             {
                 return false;
             }
         }
-        else if(!V_FILE__FIRST_LN && !V_FILE__CURSOR_Y_SCROLLED
-                && !edit__delete_last_empty_line(V_file))
+        else if(!V_FILE__FIRST_LINE && !V_FILE__CURSOR_Y_SCROLLED
+                && !edit__delete_last_empty_line(v_file))
         {
             return false;
         }
 
         // Some text and the Tab(s) at the end.
-        if((V_FILE__ACTUAL_LN.len > 0) && (V_file->cursor_rev_x == 0)
-           && (V_FILE__ACTUAL_LN.txt[V_FILE__ACTUAL_LN.len - SIZE__NUL]
-               != tab_ch))
+        if((V_FILE__ACTUAL_LINE.len > 0) && (v_file->mirrored_cursor_x == 0)
+           && (V_FILE__ACTUAL_LINE.txt[V_FILE__ACTUAL_LINE.len - SIZE__NUL]
+               != tab_char))
         {
             break;
         }
         /* Prevent removing a line when a first char in a line has to be
            removed. */
         else if((V_FILE__CURSOR_X == 0)
-                && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X] != tab_ch))
+                && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X] != tab_char))
         {
             break;
         }
         // Scenario when there is the Tab and some text further.
-        else if((V_FILE__CURSOR_X > 0) && (V_file->cursor_rev_x > 0)
-                && (V_FILE__ACTUAL_LN.txt[V_FILE__CURSOR_X - SIZE__NUL]
-                    != tab_ch))
+        else if((V_FILE__CURSOR_X > 0) && (v_file->mirrored_cursor_x > 0)
+                && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL]
+                    != tab_char))
         {
             break;
         }
 
         /* Prevents deleting [tab_width] lines at once with a maximally
            scrolled cursor in X. */
-        if(ln_i_before_change != V_FILE__ACTUAL_LN_I)
+        if(line_i_before_charange != V_FILE__ACTUAL_LINE_I)
         {
             break;
         }
@@ -194,21 +105,21 @@ bool keys__backspace(V_file_t* const V_file, const Conf_t* const Config,
     return true;
 }
 
-bool keys__tab(V_file_t* V_file, const Conf_t* const Config,
-               const Mod_t* const Modes)
+bool keys__tab(V_file* v_file, const Config* const config,
+               const Modes* const modes)
 {
     /* When the Tab key is pressed, it will insert e.g. 4 '\t' into a buffer.
        They will be converted during a rendering, loading and saving a file. */
 
-    const size_t tab_sz = (size_t) Config->Tab_sz.value;
-    const char   tab_ch = (Modes->tabs_to_spaces) ? ' ' : '\t';
+    const size_t tab_sz = (size_t) config->Tab_sz.value;
+    const char   tab_char = (modes->tabs_to_spaces) ? ' ' : '\t';
 
     // Prevent the not-full Tab insert.
-    if(V_file->ch_amount <= (size_t) (V_FILE__CH_MAX - tab_sz))
+    if(v_file->chars_amount <= (size_t) (V_FILE__CHAR_MAX - tab_sz))
     {
         for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
         {
-            if(!keys__printable_ch(V_file, tab_ch))
+            if(!input__printable_char(v_file, tab_char))
             {
                 return false;
             }
@@ -219,4 +130,224 @@ bool keys__tab(V_file_t* V_file, const Conf_t* const Config,
         V_FILE__SET_STATUS("can't read or insert more tabs");
     }
     return true;
+}
+
+void keys__arrow_left(V_file* const v_file, const Config* const config)
+{
+    const size_t tab_sz = (size_t) config->Tab_sz.value;
+
+    if(!V_FILE__CURSOR_AT_LINE_START)
+    {
+        // Skip the e.g "\t\t\t\t" as the one Tab.
+        for(size_t tab_i = 1; tab_i < tab_sz; tab_i++)
+        {
+            if(V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - tab_i] != '\t')
+            {
+                v_file->mirrored_cursor_x++;
+                break; // No Tab, so don't skip anything.
+            }
+            else if(tab_i == (tab_sz - SIZE__I))
+            {
+                v_file->mirrored_cursor_x += tab_sz;
+            }
+        }
+    }
+    else if((v_file->lines_amount > 0) && !V_FILE__CURSOR_AT_TOP)
+    {
+        // Set to a right part of a line ignoring it's linefeed.
+        v_file->mirrored_cursor_x = SIZE__LF;
+        v_file->mirrored_cursor_y++;
+    }
+    v_file->esc_seq_on_input = false;
+}
+
+void keys__arrow_right(V_file* const v_file, const Config* const config)
+{
+    const size_t tab_sz = (size_t) config->Tab_sz.value;
+
+    if(V_FILE__CURSOR_X_SCROLLED)
+    {
+        // Skip the e.g "\t\t\t\t" as the one Tab.
+        for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
+        {
+            if(V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X + tab_i] != '\t')
+            {
+                v_file->mirrored_cursor_x--;
+                break; // No Tab, so don't skip anything.
+            }
+            else if(tab_i == (tab_sz - SIZE__I))
+            {
+                v_file->mirrored_cursor_x -= tab_sz;
+            }
+        }
+        if(!V_FILE__CURSOR_X_SCROLLED && V_FILE__CURSOR_Y_SCROLLED)
+        {
+            v_file->mirrored_cursor_y--;
+            v_file->mirrored_cursor_x = V_FILE__ACTUAL_LINE.len;
+        }
+        /* Last line doesn't contain the inefeed so ignoring it isn't
+           necessary. */
+        else if(!V_FILE__CURSOR_X_SCROLLED && (v_file->mirrored_cursor_y == 1))
+        {
+            v_file->mirrored_cursor_y--;
+        }
+    }
+    v_file->esc_seq_on_input = false;
+}
+
+void keys__arrow_up(V_file* const v_file)
+{
+    if(!V_FILE__CURSOR_AT_TOP)
+    {
+        /* Cursor at a left side: doesn't go at a end of a line. Always at the
+           beginning or ignore the linefeed. */
+        v_file->mirrored_cursor_x = (V_FILE__CURSOR_AT_LINE_START)
+                               ? V_FILE__PREV_LINE.len : SIZE__LF;
+        v_file->mirrored_cursor_y++;
+    }
+    v_file->esc_seq_on_input = false;
+}
+
+void keys__arrow_down(V_file* const v_file)
+{
+    const bool cursor_at_prev_line_start = V_FILE__CURSOR_AT_LINE_START;
+
+    if(V_FILE__CURSOR_Y_SCROLLED)
+    {
+        v_file->mirrored_cursor_y--;
+        if(cursor_at_prev_line_start)
+        {
+            /* Cursor at the left side: doesn't go at a end of a line. Always
+               at the beginning. */
+            v_file->mirrored_cursor_x = V_FILE__ACTUAL_LINE.len;
+        }
+        else
+        {
+            // Ignore the LF or not.
+            v_file->mirrored_cursor_x = (V_FILE__CURSOR_Y_SCROLLED) ? SIZE__LF : 0;
+        }
+    }
+    v_file->esc_seq_on_input = false;
+}
+
+void keys__ctrl_arrow_left(V_file* const v_file)
+{
+    // Go to a previous line.
+    if((V_FILE__CURSOR_X == 0) && (v_file->mirrored_cursor_y < v_file->lines_amount))
+    {
+        v_file->mirrored_cursor_y++;
+        v_file->mirrored_cursor_x = SIZE__LF;
+    }
+    if((V_FILE__ACTUAL_CHAR != ' ') && (V_FILE__ACTUAL_CHAR != '\t'))
+    {
+        while((v_file->mirrored_cursor_x < V_FILE__ACTUAL_LINE.len)
+              && !((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+        {
+            v_file->mirrored_cursor_x++;
+        }
+        // Skip the Tab instantly instead of 1 column char for the first time.
+        if(!V_FILE__EMPTY_LINE
+           && ((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t'))
+           && ((V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__PREV] == ' ')
+           || (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__PREV] == '\t')))
+        {
+            // Prevents skipping only one part of the Tab.
+            while((v_file->mirrored_cursor_x < V_FILE__ACTUAL_LINE.len)
+                  && ((V_FILE__ACTUAL_CHAR == ' ')
+                      || (V_FILE__ACTUAL_CHAR == '\t')))
+            {
+                v_file->mirrored_cursor_x++;
+            }
+            if((V_FILE__ACTUAL_CHAR != ' ') && (V_FILE__ACTUAL_CHAR != '\t'))
+            {
+                v_file->mirrored_cursor_x--; // Don't stop on a printable char.
+            }
+        }
+    }
+    else // Non-whitespace chars.
+    {
+        while((v_file->mirrored_cursor_x < V_FILE__ACTUAL_LINE.len)
+              && ((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+        {
+            v_file->mirrored_cursor_x++;
+        }
+        // Skip a whole word at once instead of 1 char for the first time.
+        if(!((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+        {
+            while((v_file->mirrored_cursor_x < V_FILE__ACTUAL_LINE.len)
+                  && !((V_FILE__ACTUAL_CHAR == ' ')
+                       || (V_FILE__ACTUAL_CHAR == '\t')))
+            {
+                v_file->mirrored_cursor_x++;
+            }
+        }
+    }
+    v_file->esc_seq_on_input = false;
+}
+
+void keys__ctrl_arrow_right(V_file* const v_file)
+{
+    // Go to a next line.
+    if((v_file->mirrored_cursor_x == 1) && V_FILE__CURSOR_Y_SCROLLED)
+    {
+        v_file->mirrored_cursor_y--;
+        v_file->mirrored_cursor_x = V_FILE__ACTUAL_LINE.len;
+    }
+    if((V_FILE__ACTUAL_CHAR != ' ') && (V_FILE__ACTUAL_CHAR != '\t'))
+    {
+        while((v_file->mirrored_cursor_x > SIZE__NUL)
+              && !((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+        {
+            v_file->mirrored_cursor_x--;
+        }
+    }
+    else // Non-whitespace chars.
+    {
+        while((v_file->mirrored_cursor_x > SIZE__NUL)
+              && ((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+        {
+            v_file->mirrored_cursor_x--;
+        }
+        // Don't stop before a last part of the Tab.
+        if((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t'))
+        {
+            v_file->mirrored_cursor_x--;
+        }
+    }
+    v_file->esc_seq_on_input = false;
+}
+
+void keys__ctrl_arrow_up(V_file* const v_file)
+{
+    if(!V_FILE__CURSOR_AT_TOP)
+    {
+        for(;;)
+        {
+            v_file->mirrored_cursor_y++;
+            if((V_FILE__ACTUAL_LINE.txt[0] == '\n') || V_FILE__CURSOR_AT_TOP)
+            {
+                break;
+            }
+        }
+    }
+    v_file->mirrored_cursor_x     = V_FILE__ACTUAL_LINE.len;
+    v_file->esc_seq_on_input = false;
+}
+
+void keys__ctrl_arrow_down(V_file* const v_file)
+{
+    if(v_file->mirrored_cursor_y > 0) // Not at a bottom of the file.
+    {
+        for(;;)
+        {
+            v_file->mirrored_cursor_y--;
+            if((V_FILE__ACTUAL_LINE.txt[0] == '\n')
+               || (v_file->mirrored_cursor_y == 0))
+            {
+                break;
+            }
+        }
+    }
+    v_file->mirrored_cursor_x     = V_FILE__ACTUAL_LINE.len;
+    v_file->esc_seq_on_input = false;
 }

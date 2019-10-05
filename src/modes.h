@@ -11,9 +11,9 @@ typedef struct
     bool expanded_lbar;   // An extended lower bar is displayed.
     bool tabs_to_spaces;
 }
-Mod_t;
+Modes;
 
 // Initialize runtime parameters of the editor.
-void modes__init(Mod_t* const);
+void modes__init(Modes* const);
 
 #endif

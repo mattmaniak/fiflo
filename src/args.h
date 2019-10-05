@@ -13,6 +13,6 @@
 #include "size.h"
 
 // Analyze argumets passed to the editor.
-bool args__parse(Mod_t* const, int*, char** const);
+bool args__parse(Modes* const, int*, char** const);
 
 #endif

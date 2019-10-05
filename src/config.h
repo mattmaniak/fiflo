@@ -37,24 +37,24 @@ typedef struct
     Opt_t Pcard_w;
     Opt_t Tab_sz;
 }
-Conf_t;
+Config;
 
 // Open and load the specified configuration file.
-bool config__load(Conf_t* const);
+bool config__load(Config* const);
 
 // Set selectors names.
-void config__init_selectors(Conf_t* const);
+void config__init_selectors(Config* const);
 
 // Check if a selector_in_file is equal to an expected_selector or not.
-bool config__parse_selector(Conf_t* const, const char* const, const int);
+bool config__parse_selector(Config* const, const char* const, const int);
 
 // Convert a word into an ASCII escape code.
 int config__parse_value(const char* const);
 
 // Apply a built-in default config ignoring any config files.
-void config__set_default(Conf_t* const);
+void config__set_default(Config* const);
 
 // As above but read from a file.
-void config__load_custom(Conf_t* const);
+void config__load_custom(Config* const);
 
 #endif

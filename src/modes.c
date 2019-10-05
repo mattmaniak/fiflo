@@ -1,8 +1,8 @@
 #include "modes.h"
 
-void modes__init(Mod_t* const Modes)
+void modes__init(Modes* const modes)
 {
-    Modes->live_fname_edit = false;
-    Modes->expanded_lbar   = false;
-    Modes->tabs_to_spaces  = false;
+    modes->live_fname_edit = false;
+    modes->expanded_lbar   = false;
+    modes->tabs_to_spaces  = false;
 }
