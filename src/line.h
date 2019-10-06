@@ -10,6 +10,6 @@ typedef struct
 
     const size_t _padding;
 }
-Line_t;
+Line;
 
 #endif

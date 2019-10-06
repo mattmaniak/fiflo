@@ -34,7 +34,7 @@ bool syntax__load(Syntax* const, const char* const);
 void syntax__sort(Syntax* const);
 
 // Checks and renders a word if it's color should change.
-size_t syntax__paint_word(const Syntax* const, const Config* const, Line_t*,
+size_t syntax__paint_word(const Syntax* const, const Config* const, Line*,
                          const size_t, size_t);
 
 #endif

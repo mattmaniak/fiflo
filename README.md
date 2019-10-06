@@ -61,11 +61,9 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 ### Source files (submodules):
 - **args** - passed command-line arguments handling,
 
-- **arrows** - arrows support,
-
 - **v_file** - an implementation of the virtual file structure.
 
-- **keys** - do stuff after clicking on an ASCII value,
+- **keys** - stuff that happens after click,
 
 - **config** - fiflorc parser and values setter,
 
@@ -76,9 +74,9 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 - **fiflo** - **the main file**, just "main" and the execution loop,
 
-- **file_io** - read/save the file, live editing the filename,
+- **file_io** - read/save the file, filename live editing,
 
-- **input** - gets the key and parses it,
+- **input** - get the key and parse it,
 
 - **memory** - real-time automatic memory management for the text buffer,
 
@@ -86,7 +84,7 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 - **options** - "--help" and friends parameters,
 
-- **path** - pathname, basename setting from arg,
+- **path** - pathname, basename setting from an arg,
 
 - **pcard** - vertical line (sometimes called wrap guide) implementation.
 

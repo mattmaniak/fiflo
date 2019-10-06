@@ -4,7 +4,7 @@ void fiflo__run(int argc, char** const argv)
 {
     const size_t fname_arg_sz = 1;
 
-    char   pressed_key       = '\0'; // For an initialization purposes only.
+    char   pressed_key       = '\0'; // For initialization purposes only.
     size_t actual_file_i     = 0;
     size_t additional_argc_i = (size_t) argc - SIZE__I;
     char*  extension;
@@ -44,6 +44,17 @@ void fiflo__run(int argc, char** const argv)
 
     for(;;) // The main program loop.
     {
+        if(!file_io__get_git_branch(&v_files[actual_file_i])
+           || !input__parse_key(&v_files[actual_file_i], &config, &modes,
+                                &actual_file_i, pressed_key))
+        {
+            break;
+        }
+        // An user has selected too big id for the file, select the last one.
+        if(actual_file_i > additional_argc_i)
+        {
+            actual_file_i = additional_argc_i;
+        }
         if(v_files[actual_file_i].basename[0] != '\0')
         {
             extension = extension__recognize(v_files[actual_file_i].basename);
@@ -54,17 +65,6 @@ void fiflo__run(int argc, char** const argv)
                 syntax__load(&syntax, extension);
                 strcpy(v_files[actual_file_i].extension, extension);
             }
-        }
-        if(!file_io__get_git_branch(&v_files[actual_file_i])
-           || !input__parse_key(&v_files[actual_file_i], &config, &modes,
-                                &actual_file_i, pressed_key))
-        {
-            break;
-        }
-        // An user has selected too big id for a file, select the last one.
-        if(actual_file_i > additional_argc_i)
-        {
-            actual_file_i = additional_argc_i;
         }
 
         // Flushes and renders always after the keypress.

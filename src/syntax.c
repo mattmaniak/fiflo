@@ -70,7 +70,7 @@ void syntax__sort(Syntax* const syntax)
 }
 
 size_t syntax__paint_word(const Syntax* const syntax,
-                          const Config* const config, Line_t* Line,
+                          const Config* const config, Line* Line,
                           const size_t end_ch_i, size_t ch_i)
 {
     const char* const str_to_print_addr = &Line->txt[ch_i];

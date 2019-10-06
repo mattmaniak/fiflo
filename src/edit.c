@@ -25,7 +25,7 @@ bool edit__delete_char(V_file* v_file)
 bool edit__delete_line(V_file* v_file)
 {
     const size_t next_line_i   = V_FILE__ACTUAL_LINE_I + SIZE__NEXT;
-    const size_t next_line_len = v_file->Lines[next_line_i].len;
+    const size_t next_line_len = v_file->lines[next_line_i].len;
 
     if(!V_FILE__FIRST_LINE)
     {

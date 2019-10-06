@@ -10,7 +10,7 @@ void print__line_with_tabs(const V_file* const v_file,
 
     for(size_t char_i = start_char_i; char_i < end_char_i; char_i++)
     {
-        ch = v_file->Lines[line_i].txt[char_i];
+        ch = v_file->lines[line_i].txt[char_i];
         pcard__print_at_offset(config, char_i);
 
         switch(ch) // Mostly whitespace highlighting.
@@ -24,7 +24,7 @@ void print__line_with_tabs(const V_file* const v_file,
 
         default: // Print words.
             char_i_after_kwrd = syntax__paint_word(syntax, config,
-                                                 &v_file->Lines[line_i],
+                                                 &v_file->lines[line_i],
                                                  end_char_i, char_i);
             if(char_i == char_i_after_kwrd)
             {
@@ -120,15 +120,15 @@ void print__another_line(const V_file* const v_file,
     ui__print_line_number(v_file, config, line_i, ui->line_num_len);
 
     // Ignore the linefeed and print it after the wrap line.
-    if(v_file->Lines[line_i].len < ui->txtarea_w)
+    if(v_file->lines[line_i].len < ui->txtarea_w)
     {
         /* Using the -ui->pcard_delta_x as the initiale offset scroll all other
            lines horizontally. */
         print__line_with_tabs(v_file, config, syntax, line_i, start_char_i,
-                              v_file->Lines[line_i].len - SIZE__LF);
+                              v_file->lines[line_i].len - SIZE__LF);
 
-        pcard__print_after_txt(config, ui, v_file->Lines[line_i].txt,
-                               v_file->Lines[line_i].len - SIZE__LF);
+        pcard__print_after_txt(config, ui, v_file->lines[line_i].txt,
+                               v_file->lines[line_i].len - SIZE__LF);
         UI__WRAP_LINE();
     }
     else
@@ -220,18 +220,18 @@ void print__shrink_lines(const V_file* const v_file,
     }
     ui__print_line_number(v_file, config, last_line_i, ui->line_num_len);
 
-    if(v_file->Lines[last_line_i].len < ui->txtarea_w)
+    if(v_file->lines[last_line_i].len < ui->txtarea_w)
     {
         print__line_with_tabs(v_file, config, syntax, last_line_i, start_char_i,
-                              v_file->Lines[last_line_i].len - SIZE__LF);
+                              v_file->lines[last_line_i].len - SIZE__LF);
     }
     else
     {
         print__line_with_tabs(v_file, config, syntax, last_line_i, start_char_i,
                               (size_t) ui->txtarea_w - SIZE__LF);
     }
-    pcard__print_after_txt(config, ui, v_file->Lines[last_line_i].txt,
-                           v_file->Lines[last_line_i].len - SIZE__LF);
+    pcard__print_after_txt(config, ui, v_file->lines[last_line_i].txt,
+                           v_file->lines[last_line_i].len - SIZE__LF);
 }
 
 void print__scroll_lines(const V_file* const v_file,

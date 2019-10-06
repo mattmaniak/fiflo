@@ -173,7 +173,7 @@ void file_io__convert_tab_to_file(const V_file* const v_file,
     // Convert editor-friendly Tab, e.g. "\t\t\t\t" into a file-friendly '\t'.
     for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
     {
-        if(v_file->Lines[line_i].txt[*char_i + tab_i] != '\t')
+        if(v_file->lines[line_i].txt[*char_i + tab_i] != '\t')
         {
             break; // No Tab, so don't convert anything.
         }
@@ -198,10 +198,10 @@ bool file_io__save(V_file* const v_file, const Config* const config)
     {
         /* Using fputs or fprintf causes an use-of-uninitialized-value using
            MSan because of there is a more memory allocated than is needed. */
-        for(size_t char_i = 0; char_i < v_file->Lines[line_i].len; char_i++)
+        for(size_t char_i = 0; char_i < v_file->lines[line_i].len; char_i++)
         {
             file_io__convert_tab_to_file(v_file, config, line_i, &char_i);
-            putc(v_file->Lines[line_i].txt[char_i], Textfile);
+            putc(v_file->lines[line_i].txt[char_i], Textfile);
         }
     }
     if(fclose(Textfile) == EOF)
