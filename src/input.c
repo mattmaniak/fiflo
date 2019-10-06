@@ -230,27 +230,27 @@ bool input__printable_char(V_file* const v_file, const char ch)
 
     if(char_is_allowed)
     {
-        if(V_FILE__CHAR_LIMIT_NOT_EXCEEDED)
+        if(v_file->chars_amount < V_FILE__CHAR_MAX)
         {
             v_file->chars_amount++;
-            V_FILE__ACTUAL_LINE.len++;
+            v_file__get_actual_line(v_file)->len++;
 
-            if(!memory__extend_line(v_file, V_FILE__ACTUAL_LINE_I))
+            if(!memory__extend_line(v_file, v_file__get_cursor_y(v_file)))
             {
                 return false;
             }
-            if(V_FILE__CURSOR_X_SCROLLED)
+            if(v_file__is_cursor_x_scrolled(v_file))
             {
                 edit__shift_text_horizonally(v_file, 'r');
             }
-            V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL] = ch;
-            V_FILE__LAST_CHAR_IN_LINE                               = '\0';
+            v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - SIZE__NUL] = ch;
+            v_file__get_actual_line(v_file)->txt[v_file__get_actual_line(v_file)->len] = '\0';
 
             // Initializing nul handler.
-            if((ch == '\0') && !V_FILE__EMPTY_LINE)
+            if((ch == '\0') && !v_file__is_actual_line_empty(v_file))
             {
                 v_file->chars_amount--;
-                V_FILE__ACTUAL_LINE.len--;
+                v_file__get_actual_line(v_file)->len--;
             }
             else if((ch == '\n') && !keys__linefeed(v_file))
             {

@@ -65,7 +65,7 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 - **keys** - stuff that happens after click,
 
-- **config** - fiflorc parser and values setter,
+- **config** - configuration file parser and values setter,
 
 - **edit** - more complex text editing operations that happens after the
              keypress,

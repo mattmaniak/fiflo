@@ -42,29 +42,29 @@ bool memory__shrink_current_line(V_file* const v_file)
 
     /* These cases are executed only when the backspace is pressed. Works in
        the same way as "extend_current_line". */
-    if((V_FILE__ACTUAL_LINE.len >= V_FILE__BASIC_MEMBLK)
-       && (V_FILE__ACTUAL_LINE.len < V_FILE__MEMBLK))
+    if((v_file__get_actual_line(v_file)->len >= V_FILE__BASIC_MEMBLK)
+       && (v_file__get_actual_line(v_file)->len < V_FILE__MEMBLK))
     {
         // Shrink to size of the V_FILE__MEMBLK.
         memblk = V_FILE__MEMBLK;
     }
-    else if(V_FILE__ACTUAL_LINE.len >= V_FILE__MEMBLK)
+    else if(v_file__get_actual_line(v_file)->len >= V_FILE__MEMBLK)
     {
         // Remove the newest memblk because isn't needed now.
-        memblk = ((V_FILE__ACTUAL_LINE.len / V_FILE__MEMBLK) * V_FILE__MEMBLK)
+        memblk = ((v_file__get_actual_line(v_file)->len / V_FILE__MEMBLK) * V_FILE__MEMBLK)
                  + V_FILE__MEMBLK;
     }
 
 #ifdef DEBUG_MEMORY
     printf("Shrink_current_line %u with mem of %u B.\n",
-           V_FILE__ACTUAL_LINE_I + SIZE__I, memblk);
+           v_file__get_cursor_y(v_file) + SIZE__I, memblk);
 #endif
 
-    V_FILE__ACTUAL_LINE.txt = realloc(V_FILE__ACTUAL_LINE.txt, memblk);
-    if(V_FILE__ACTUAL_LINE.txt == NULL)
+    v_file__get_actual_line(v_file)->txt = realloc(v_file__get_actual_line(v_file)->txt, memblk);
+    if(v_file__get_actual_line(v_file)->txt == NULL)
     {
         fprintf(stderr, "Can't shrink a memory block for the line %u\n",
-                (int) V_FILE__ACTUAL_LINE_I + SIZE__I);
+                (int) v_file__get_cursor_y(v_file) + SIZE__I);
         return false;
     }
     return true;
@@ -72,30 +72,32 @@ bool memory__shrink_current_line(V_file* const v_file)
 
 bool memory__shrink_prev_line(V_file* const v_file)
 {
+    const size_t prev_line_number = v_file__get_cursor_y(v_file) - SIZE__PREV
+                                    + SIZE__I;
+
     size_t memblk = V_FILE__BASIC_MEMBLK;
 
-    if((V_FILE__PREV_LINE.len >= V_FILE__BASIC_MEMBLK)
-       && (V_FILE__PREV_LINE.len < V_FILE__MEMBLK))
+    if((v_file__get_prev_line(v_file)->len >= V_FILE__BASIC_MEMBLK)
+       && (v_file__get_prev_line(v_file)->len < V_FILE__MEMBLK))
     {
         memblk = V_FILE__MEMBLK;
     }
-    else if((V_FILE__PREV_LINE.len >= V_FILE__MEMBLK))
+    else if((v_file__get_prev_line(v_file)->len >= V_FILE__MEMBLK))
     {
         // Set the size of some MEMBLKs.
-        memblk = ((V_FILE__PREV_LINE.len / V_FILE__MEMBLK) * V_FILE__MEMBLK)
+        memblk = ((v_file__get_prev_line(v_file)->len / V_FILE__MEMBLK) * V_FILE__MEMBLK)
                  + V_FILE__MEMBLK;
     }
 
 #ifdef DEBUG_MEMORY
-    printf("Shrink_PREV_line %u with mem of %u B\n",
-           V_FILE__PREV_LINE_I + SIZE__I, memblk);
+    printf("Shrink_PREV_line %u with mem of %u B\n", prev_line_number, memblk);
 #endif
 
-    V_FILE__PREV_LINE.txt = realloc(V_FILE__PREV_LINE.txt, memblk);
-    if(V_FILE__PREV_LINE.txt == NULL)
+    v_file__get_prev_line(v_file)->txt = realloc(v_file__get_prev_line(v_file)->txt, memblk);
+    if(v_file__get_prev_line(v_file)->txt == NULL)
     {
         fprintf(stderr, "Can't shrink a memory block for the prev. %u line.\n",
-                (unsigned) V_FILE__PREV_LINE_I + SIZE__I);
+                (unsigned) prev_line_number);
         return false;
     }
     return true;
@@ -113,14 +115,14 @@ bool memory__extend_lines_array(V_file* const v_file)
     }
 
     // The new line is allocated with only 4 or 8 bytes bytes.
-    V_FILE__LAST_LINE.txt = malloc(V_FILE__BASIC_MEMBLK);
-    if(V_FILE__LAST_LINE.txt == NULL)
+    v_file__get_last_line(v_file)->txt = malloc(V_FILE__BASIC_MEMBLK);
+    if(v_file__get_last_line(v_file)->txt == NULL)
     {
         fprintf(stderr, "Can't alloc a memory for a new line.\n");
         return false;
     }
     // Naturally the new line doesn't contains any chars - only terminator.
-    V_FILE__LAST_LINE.len = 0;
+    v_file__get_last_line(v_file)->len = 0;
 
     return true;
 }
@@ -139,7 +141,7 @@ bool memory__shrink_lines_array(V_file* const v_file)
 
 bool memory__copy_lines_forward(V_file* const v_file)
 {
-    for(size_t line_i = v_file->lines_amount; line_i > V_FILE__ACTUAL_LINE_I; line_i--)
+    for(size_t line_i = v_file->lines_amount; line_i > v_file__get_cursor_y(v_file); line_i--)
     {
         size_t memblk = ((v_file->lines[line_i - SIZE__PREV].len
                          / V_FILE__MEMBLK) * V_FILE__MEMBLK) + V_FILE__MEMBLK;
@@ -165,7 +167,7 @@ bool memory__copy_lines_forward(V_file* const v_file)
 
 bool memory__copy_lines_backward(V_file* const v_file)
 {
-    for(size_t line_i = V_FILE__ACTUAL_LINE_I; line_i < v_file->lines_amount; line_i++)
+    for(size_t line_i = v_file__get_cursor_y(v_file); line_i < v_file->lines_amount; line_i++)
     {
         size_t memblk = ((v_file->lines[line_i + SIZE__NEXT].len
                          / V_FILE__MEMBLK) * V_FILE__MEMBLK) + V_FILE__MEMBLK;

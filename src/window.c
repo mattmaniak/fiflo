@@ -92,12 +92,12 @@ void window__set_cursor_pos(const V_file* const v_file,
 
     if(!modes->live_fname_edit)
     {
-        if(V_FILE__ACTUAL_LINE.len < ui->txtarea_w)
+        if(v_file__get_actual_line(v_file)->len < ui->txtarea_w)
         {
             // No horizontal scrolling.
-            move_right = (term_t) (ui->line_num_len + V_FILE__CURSOR_X);
+            move_right = (term_t) (ui->line_num_len + v_file__get_cursor_x(v_file));
         }
-        else if((V_FILE__ACTUAL_LINE.len - ui->txtarea_w)
+        else if((v_file__get_actual_line(v_file)->len - ui->txtarea_w)
                 >= v_file->mirrored_cursor_x)
         {
             /* Last ui->txtarea_w chars are seen. Current line is scrolled,
@@ -107,10 +107,10 @@ void window__set_cursor_pos(const V_file* const v_file,
         else
         {
             // Text is scrolled horizontally to a start. Cursor can be moved.
-            move_right = (term_t) (ui->line_num_len + V_FILE__CURSOR_X);
+            move_right = (term_t) (ui->line_num_len + v_file__get_cursor_x(v_file));
         }
-        move_up = (V_FILE__ACTUAL_LINE_I < ui->txtarea_h)
-                  ? (term_t) (ui->txtarea_h - V_FILE__ACTUAL_LINE_I - SIZE__I
+        move_up = (v_file__get_cursor_y(v_file) < ui->txtarea_h)
+                  ? (term_t) (ui->txtarea_h - v_file__get_cursor_y(v_file) - SIZE__I
                      + ui->lbar_h) : ui->lbar_h;
     }
     ANSI__CURSOR_RIGHT(move_right);
@@ -142,7 +142,7 @@ bool window__render(const V_file* const v_file, const Config* const config,
     ui.txtarea_h = (term_t) (ui.win_h - UI__UBAR_SZ - ui.lbar_h);
 
     ui.pcard_delta_x = (int) (ui.txtarea_w + v_file[actual_file_i].mirrored_cursor_x
-                       - V_FILE__ACTUAL_LINE.len - SIZE__I);
+                       - v_file__get_actual_line(v_file)->len - SIZE__I);
     ui.pcard_delta_x = (ui.pcard_delta_x > 0) ? 0 : ui.pcard_delta_x;
 
     ui__upper_bar(&v_file[actual_file_i], config, &ui);

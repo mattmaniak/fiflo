@@ -2,36 +2,38 @@
 
 bool edit__delete_char(V_file* v_file)
 {
-    if(!V_FILE__CURSOR_AT_LINE_START)
+    if(!v_file__is_cursor_at_line_start(v_file))
     {
         edit__shift_text_horizonally(v_file, 'l');
         if(!memory__shrink_current_line(v_file))
         {
             return false;
         }
-        V_FILE__ACTUAL_LINE.len--;
+        v_file__get_actual_line(v_file)->len--;
         v_file->chars_amount--;
     }
     // Deletes a non-empty line and copy chars to previous.
-    else if(!V_FILE__FIRST_LINE && !edit__move_lines_backward(v_file))
+    else if(!v_file__is_actual_line_first(v_file)
+            && !edit__move_lines_backward(v_file))
     {
         return false;
     }
-    V_FILE__LAST_CHAR_IN_LINE = '\0'; // Delete the linefeed.
+    // Delete the LF.
+    v_file__get_actual_line(v_file)->txt[v_file__get_actual_line(v_file)->len] = '\0';
 
     return true;
 }
 
 bool edit__delete_line(V_file* v_file)
 {
-    const size_t next_line_i   = V_FILE__ACTUAL_LINE_I + SIZE__NEXT;
+    const size_t next_line_i   = v_file__get_cursor_y(v_file) + SIZE__NEXT;
     const size_t next_line_len = v_file->lines[next_line_i].len;
 
-    if(!V_FILE__FIRST_LINE)
+    if(!v_file__is_actual_line_first(v_file))
     {
-        if(V_FILE__CURSOR_Y_SCROLLED)
+        if(v_file__is_cursor_y_scrolled(v_file))
         {
-            v_file->mirrored_cursor_x = (V_FILE__CURSOR_AT_LINE_START)
+            v_file->mirrored_cursor_x = (v_file__is_cursor_at_line_start(v_file))
                                    ? next_line_len : SIZE__LF;
 
             if(!memory__copy_lines_backward(v_file)
@@ -50,20 +52,20 @@ bool edit__delete_line(V_file* v_file)
 
             /* With a last line deletion there is a need to remove the
                linefeed in a previous line. */
-            V_FILE__LAST_LINE.len--;
-            V_FILE__LAST_LINE.txt[V_FILE__LAST_LINE.len] = '\0';
+            v_file__get_last_line(v_file)->len--;
+            v_file__get_last_line(v_file)->txt[v_file__get_last_line(v_file)->len] = '\0';
 
             v_file->mirrored_cursor_x = 0;
         }
     }
     else
     {
-        V_FILE__LAST_LINE.len                      = 0;
-        V_FILE__LAST_LINE.txt[V_FILE__LAST_LINE.len] = '\0';
+        v_file__get_last_line(v_file)->len                      = 0;
+        v_file__get_last_line(v_file)->txt[v_file__get_last_line(v_file)->len] = '\0';
 
-        V_FILE__LAST_LINE.txt = realloc(V_FILE__LAST_LINE.txt,
+        v_file__get_last_line(v_file)->txt = realloc(v_file__get_last_line(v_file)->txt,
                                       V_FILE__BASIC_MEMBLK);
-        if(V_FILE__LAST_LINE.txt == NULL)
+        if(v_file__get_last_line(v_file)->txt == NULL)
         {
             fprintf(stderr, "Can't realloc a memory in a first line.\n");
         }
@@ -80,51 +82,53 @@ void edit__shift_text_horizonally(V_file* v_file, const char direction)
     switch(direction)
     {
     case 'l':
-        for(char_i = V_FILE__CURSOR_X; char_i <= V_FILE__ACTUAL_LINE.len; char_i++)
+        for(char_i = v_file__get_cursor_x(v_file); char_i <= v_file__get_actual_line(v_file)->len; char_i++)
         {
-            tmp_char = V_FILE__ACTUAL_LINE.txt[char_i];
-            V_FILE__ACTUAL_LINE.txt[char_i - SIZE__PREV] = tmp_char;
+            tmp_char = v_file__get_actual_line(v_file)->txt[char_i];
+            v_file__get_actual_line(v_file)->txt[char_i - SIZE__PREV] = tmp_char;
         }
         break;
 
     case 'r':
-        for(char_i = V_FILE__ACTUAL_LINE.len; char_i >= V_FILE__CURSOR_X; char_i--)
+        for(char_i = v_file__get_actual_line(v_file)->len; char_i >= v_file__get_cursor_x(v_file); char_i--)
         {
-            tmp_char = V_FILE__ACTUAL_LINE.txt[char_i - SIZE__PREV];
-            V_FILE__ACTUAL_LINE.txt[char_i] = tmp_char;
+            tmp_char = v_file__get_actual_line(v_file)->txt[char_i - SIZE__PREV];
+            v_file__get_actual_line(v_file)->txt[char_i] = tmp_char;
         }
     }
 }
 
 bool edit__move_lines_forward(V_file* v_file)
 {
-    V_FILE__PREV_LINE.len -= v_file->mirrored_cursor_x;
+    v_file__get_prev_line(v_file)->len -= v_file->mirrored_cursor_x;
 
     // Move more lines vertically with a part of a current line.
-    if(V_FILE__CURSOR_Y_SCROLLED)
+    if(v_file__is_cursor_y_scrolled(v_file))
     {
         if(!memory__copy_lines_forward(v_file))
         {
             return false;
         }
-        V_FILE__ACTUAL_LINE.len = 0;
+        v_file__get_actual_line(v_file)->len = 0;
     }
 
     // Move a right part (separated by the cursor) of a line to a next.
-    for(size_t char_i = V_FILE__PREV_LINE.len;
-        char_i < V_FILE__PREV_LINE.len + v_file->mirrored_cursor_x; char_i++)
+    for(size_t char_i = v_file__get_prev_line(v_file)->len;
+        char_i < v_file__get_prev_line(v_file)->len + v_file->mirrored_cursor_x; char_i++)
     {
-        V_FILE__LAST_CHAR_IN_LINE = V_FILE__PREV_LINE.txt[char_i];
-        V_FILE__ACTUAL_LINE.len++;
+        v_file__get_actual_line(v_file)->txt[v_file__get_actual_line(v_file)->len]
+            = v_file__get_prev_line(v_file)->txt[char_i];
 
-        if(!memory__extend_line(v_file, V_FILE__ACTUAL_LINE_I))
+        v_file__get_actual_line(v_file)->len++;
+
+        if(!memory__extend_line(v_file, v_file__get_cursor_y(v_file)))
         {
             return false;
         }
     }
 
     // Now a length of an upper line will be shrinked after copying.
-    V_FILE__PREV_LINE.txt[V_FILE__PREV_LINE.len] = '\0';
+    v_file__get_prev_line(v_file)->txt[v_file__get_prev_line(v_file)->len] = '\0';
     if(!memory__shrink_prev_line(v_file))
     {
         return false;
@@ -134,24 +138,26 @@ bool edit__move_lines_forward(V_file* v_file)
 
 bool edit__move_lines_backward(V_file* v_file)
 {
+    const size_t prev_line_i = v_file__get_cursor_y(v_file) - SIZE__PREV;
+
     v_file->chars_amount--;
-    V_FILE__PREV_LINE.len--;
+    v_file__get_prev_line(v_file)->len--;
 
     // Merge a previous line with a next.
-    for(size_t char_i = 0; char_i <= V_FILE__ACTUAL_LINE.len; char_i++)
+    for(size_t char_i = 0; char_i <= v_file__get_actual_line(v_file)->len; char_i++)
     {
-        V_FILE__PREV_LINE.txt[V_FILE__PREV_LINE.len] = V_FILE__ACTUAL_LINE.txt[char_i];
+        v_file__get_prev_line(v_file)->txt[v_file__get_prev_line(v_file)->len] = v_file__get_actual_line(v_file)->txt[char_i];
 
-        if(V_FILE__ACTUAL_LINE.txt[char_i] != '\0')
+        if(v_file__get_actual_line(v_file)->txt[char_i] != '\0')
         {
-            V_FILE__PREV_LINE.len++;
+            v_file__get_prev_line(v_file)->len++;
         }
-        if(!memory__extend_line(v_file, V_FILE__PREV_LINE_I))
+        if(!memory__extend_line(v_file, prev_line_i))
         {
             return false;
         }
     }
-    if(V_FILE__CURSOR_Y_SCROLLED && !memory__copy_lines_backward(v_file))
+    if(v_file__is_cursor_y_scrolled(v_file) && !memory__copy_lines_backward(v_file))
     {
         return false;
     }
@@ -164,14 +170,14 @@ bool edit__move_lines_backward(V_file* v_file)
 
 bool edit__delete_last_empty_line(V_file* v_file)
 {
-    free(V_FILE__ACTUAL_LINE.txt);
+    free(v_file__get_actual_line(v_file)->txt);
 
     v_file->lines_amount--;
     if(!memory__shrink_current_line(v_file))
     {
         return false;
     }
-    V_FILE__ACTUAL_LINE.len--;
+    v_file__get_actual_line(v_file)->len--;
     v_file->chars_amount--;
 
     if(!memory__shrink_lines_array(v_file))
@@ -183,7 +189,7 @@ bool edit__delete_last_empty_line(V_file* v_file)
 
 bool edit__delete_last_line(V_file* v_file)
 {
-    free(V_FILE__LAST_LINE.txt);
+    free(v_file__get_last_line(v_file)->txt);
 
     v_file->lines_amount--;
     return memory__shrink_lines_array(v_file);

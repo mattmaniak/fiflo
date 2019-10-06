@@ -31,6 +31,12 @@
 #define V_FILE__SET_STATUS(msg) \
 strncpy(v_file->status, msg, V_FILE__STATUS_MAX - SIZE__I)
 
+// Aligned memory blocks.
+#define V_FILE__BASIC_MEMBLK (sizeof(v_file->lines) * sizeof(char))
+
+// Must be >= 16 and dividable by 8.
+#define V_FILE__MEMBLK (size_t) (128 * sizeof(char))
+
 typedef struct
 {
     char     extension[NAME_MAX];
@@ -55,7 +61,7 @@ typedef struct
     size_t   fname_len; // Strlen of the above array.
 
     // File's content and some indicators.
-    Line*  lines;
+    Line*    lines;
     size_t   chars_amount; // All chars amount index.
     size_t   lines_amount; // All lines amount index.
 
@@ -66,52 +72,34 @@ typedef struct
 }
 V_file;
 
-// Aligned memory blocks.
-#define V_FILE__BASIC_MEMBLK (sizeof(v_file->lines) * sizeof(char))
-
-// Must be >= 16 and dividable by 8.
-#define V_FILE__MEMBLK (size_t) (128 * sizeof(char))
-
-// Some placeholders.
-#define V_FILE__ACTUAL_LINE_I (v_file->lines_amount - v_file->mirrored_cursor_y)
-
-#define V_FILE__ACTUAL_LINE v_file->lines[V_FILE__ACTUAL_LINE_I]
-
-#define V_FILE__CURSOR_X (V_FILE__ACTUAL_LINE.len - v_file->mirrored_cursor_x)
-
-#define V_FILE__ACTUAL_CHAR V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X]
-
-#define V_FILE__PREV_CHAR V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__PREV]
-
-#define V_FILE__LAST_CHAR_IN_LINE V_FILE__ACTUAL_LINE.txt[V_FILE__ACTUAL_LINE.len]
-
-#define V_FILE__PREV_LINE_I (V_FILE__ACTUAL_LINE_I - SIZE__PREV)
-
-#define V_FILE__PREV_LINE v_file->lines[V_FILE__PREV_LINE_I]
-
-#define V_FILE__LAST_LINE v_file->lines[v_file->lines_amount]
-
-#define V_FILE__CHAR_LIMIT_NOT_EXCEEDED (v_file->chars_amount < V_FILE__CHAR_MAX)
-
-#define V_FILE__CURSOR_X_SCROLLED (v_file->mirrored_cursor_x > 0)
-
-#define V_FILE__CURSOR_Y_SCROLLED (v_file->mirrored_cursor_y > 0)
-
-#define V_FILE__EMPTY_LINE (V_FILE__ACTUAL_LINE.len == 0)
-
-#define V_FILE__FIRST_LINE (V_FILE__ACTUAL_LINE_I == 0)
-
-#define V_FILE__CURSOR_AT_LINE_START \
-(v_file->mirrored_cursor_x == V_FILE__ACTUAL_LINE.len)
-
-#define V_FILE__CURSOR_AT_TOP (v_file->mirrored_cursor_y == v_file->lines_amount)
-
-V_file* v_file__new(void);
-
 // Initialize all v_file structure members.
-bool buffer__init(V_file* const);
+bool v_file__init(V_file* const);
 
 // Display an error message and exit.
 void v_file__delete(V_file* const);
+
+size_t v_file__get_cursor_x(const V_file* const);
+
+size_t v_file__get_cursor_y(const V_file* const);
+
+Line* v_file__get_actual_line(const V_file* const);
+
+Line* v_file__get_prev_line(const V_file* const);
+
+char v_file__get_actual_char(const V_file* const);
+
+Line* v_file__get_last_line(const V_file* const);
+
+bool v_file__is_cursor_x_scrolled(const V_file* const);
+
+bool v_file__is_cursor_y_scrolled(const V_file* const);
+
+bool v_file__is_actual_line_empty(const V_file* const);
+
+bool v_file__is_actual_line_first(const V_file* const);
+
+bool v_file__is_cursor_at_top(const V_file* const);
+
+bool v_file__is_cursor_at_line_start(const V_file* const);
 
 #endif

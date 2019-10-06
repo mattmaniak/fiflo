@@ -9,21 +9,21 @@ bool keys__linefeed(V_file* const v_file)
         {
             return false;
         }
-        if(V_FILE__CURSOR_X_SCROLLED)
+        if(v_file__is_cursor_x_scrolled(v_file))
         {
             if(!edit__move_lines_forward(v_file))
             {
                 return false;
             }
         }
-        else if(V_FILE__CURSOR_Y_SCROLLED)
+        else if(v_file__is_cursor_y_scrolled(v_file))
         {
             if(!memory__copy_lines_forward(v_file))
             {
                 return false;
             }
         }
-        V_FILE__LAST_CHAR_IN_LINE = '\0';
+        v_file__get_actual_line(v_file)->txt[v_file__get_actual_line(v_file)->len] = '\0';
     }
     return true;
 }
@@ -31,26 +31,26 @@ bool keys__linefeed(V_file* const v_file)
 bool keys__backspace(V_file* const v_file, const Config* const config,
                      const Modes* const modes)
 {
-    const size_t line_i_before_charange = V_FILE__ACTUAL_LINE_I;
+    const size_t line_i_before_charange = v_file__get_cursor_y(v_file);
     const char   tab_char             = (modes->tabs_to_spaces) ? ' ' : '\t';
     const size_t tab_sz             = (size_t) config->Tab_sz.value;
 
     for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
     {
         // Prevent removing a char and 3 tabs from that e.g.: "\t\t\t\t".
-        if((V_FILE__CURSOR_X > 1)
-           && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL - SIZE__PREV]
+        if((v_file__get_cursor_x(v_file) > 1)
+           && (v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - SIZE__NUL - SIZE__PREV]
                == tab_char)
-           && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL] != tab_char))
+           && (v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - SIZE__NUL] != tab_char))
         {
             tab_i = (size_t) config->Tab_sz.value - SIZE__I;
         }
 
         /* Scenario when there is a char at the beginning and the Tab at the
            right. */
-        if((V_FILE__CURSOR_X == 1) && (v_file->mirrored_cursor_x > 0)
-           && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL] != tab_char)
-           && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X] == tab_char))
+        if((v_file__get_cursor_x(v_file) == 1) && (v_file->mirrored_cursor_x > 0)
+           && (v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - SIZE__NUL] != tab_char)
+           && (v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file)] == tab_char))
         {
             if(!edit__delete_char(v_file))
             {
@@ -58,36 +58,37 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
             }
             break;
         }
-        if(!V_FILE__EMPTY_LINE)
+        if(!v_file__is_actual_line_empty(v_file))
         {
             if(!edit__delete_char(v_file))
             {
                 return false;
             }
         }
-        else if(!V_FILE__FIRST_LINE && !V_FILE__CURSOR_Y_SCROLLED
+        else if(!v_file__is_actual_line_first(v_file)
+                && !v_file__is_cursor_y_scrolled(v_file)
                 && !edit__delete_last_empty_line(v_file))
         {
             return false;
         }
 
         // Some text and the Tab(s) at the end.
-        if((V_FILE__ACTUAL_LINE.len > 0) && (v_file->mirrored_cursor_x == 0)
-           && (V_FILE__ACTUAL_LINE.txt[V_FILE__ACTUAL_LINE.len - SIZE__NUL]
+        if((v_file__get_actual_line(v_file)->len > 0) && (v_file->mirrored_cursor_x == 0)
+           && (v_file__get_actual_line(v_file)->txt[v_file__get_actual_line(v_file)->len - SIZE__NUL]
                != tab_char))
         {
             break;
         }
         /* Prevent removing a line when a first char in a line has to be
            removed. */
-        else if((V_FILE__CURSOR_X == 0)
-                && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X] != tab_char))
+        else if((v_file__get_cursor_x(v_file) == 0)
+                && (v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file)] != tab_char))
         {
             break;
         }
         // Scenario when there is the Tab and some text further.
-        else if((V_FILE__CURSOR_X > 0) && (v_file->mirrored_cursor_x > 0)
-                && (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__NUL]
+        else if((v_file__get_cursor_x(v_file) > 0) && (v_file->mirrored_cursor_x > 0)
+                && (v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - SIZE__NUL]
                     != tab_char))
         {
             break;
@@ -95,7 +96,7 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
 
         /* Prevents deleting [tab_width] lines at once with a maximally
            scrolled cursor in X. */
-        if(line_i_before_charange != V_FILE__ACTUAL_LINE_I)
+        if(line_i_before_charange != v_file__get_cursor_y(v_file))
         {
             break;
         }
@@ -136,12 +137,12 @@ void keys__arrow_left(V_file* const v_file, const Config* const config)
 {
     const size_t tab_sz = (size_t) config->Tab_sz.value;
 
-    if(!V_FILE__CURSOR_AT_LINE_START)
+    if(!v_file__is_cursor_at_line_start(v_file))
     {
         // Skip the e.g "\t\t\t\t" as the one Tab.
         for(size_t tab_i = 1; tab_i < tab_sz; tab_i++)
         {
-            if(V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - tab_i] != '\t')
+            if(v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - tab_i] != '\t')
             {
                 v_file->mirrored_cursor_x++;
                 break; // No Tab, so don't skip anything.
@@ -152,7 +153,7 @@ void keys__arrow_left(V_file* const v_file, const Config* const config)
             }
         }
     }
-    else if((v_file->lines_amount > 0) && !V_FILE__CURSOR_AT_TOP)
+    else if((v_file->lines_amount > 0) && !v_file__is_cursor_at_top(v_file))
     {
         // Set to a right part of a line ignoring it's linefeed.
         v_file->mirrored_cursor_x = SIZE__LF;
@@ -165,12 +166,12 @@ void keys__arrow_right(V_file* const v_file, const Config* const config)
 {
     const size_t tab_sz = (size_t) config->Tab_sz.value;
 
-    if(V_FILE__CURSOR_X_SCROLLED)
+    if(v_file__is_cursor_x_scrolled(v_file))
     {
         // Skip the e.g "\t\t\t\t" as the one Tab.
         for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
         {
-            if(V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X + tab_i] != '\t')
+            if(v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) + tab_i] != '\t')
             {
                 v_file->mirrored_cursor_x--;
                 break; // No Tab, so don't skip anything.
@@ -180,14 +181,14 @@ void keys__arrow_right(V_file* const v_file, const Config* const config)
                 v_file->mirrored_cursor_x -= tab_sz;
             }
         }
-        if(!V_FILE__CURSOR_X_SCROLLED && V_FILE__CURSOR_Y_SCROLLED)
+        if(!v_file__is_cursor_x_scrolled(v_file) && v_file__is_cursor_y_scrolled(v_file))
         {
             v_file->mirrored_cursor_y--;
-            v_file->mirrored_cursor_x = V_FILE__ACTUAL_LINE.len;
+            v_file->mirrored_cursor_x = v_file__get_actual_line(v_file)->len;
         }
         /* Last line doesn't contain the inefeed so ignoring it isn't
            necessary. */
-        else if(!V_FILE__CURSOR_X_SCROLLED && (v_file->mirrored_cursor_y == 1))
+        else if(!v_file__is_cursor_x_scrolled(v_file) && (v_file->mirrored_cursor_y == 1))
         {
             v_file->mirrored_cursor_y--;
         }
@@ -197,12 +198,12 @@ void keys__arrow_right(V_file* const v_file, const Config* const config)
 
 void keys__arrow_up(V_file* const v_file)
 {
-    if(!V_FILE__CURSOR_AT_TOP)
+    if(!v_file__is_cursor_at_top(v_file))
     {
         /* Cursor at a left side: doesn't go at a end of a line. Always at the
            beginning or ignore the linefeed. */
-        v_file->mirrored_cursor_x = (V_FILE__CURSOR_AT_LINE_START)
-                               ? V_FILE__PREV_LINE.len : SIZE__LF;
+        v_file->mirrored_cursor_x = (v_file__is_cursor_at_line_start(v_file))
+                               ? v_file__get_prev_line(v_file)->len : SIZE__LF;
         v_file->mirrored_cursor_y++;
     }
     v_file->esc_seq_on_input = false;
@@ -210,21 +211,21 @@ void keys__arrow_up(V_file* const v_file)
 
 void keys__arrow_down(V_file* const v_file)
 {
-    const bool cursor_at_prev_line_start = V_FILE__CURSOR_AT_LINE_START;
+    const bool cursor_at_prev_line_start = v_file__is_cursor_at_line_start(v_file);
 
-    if(V_FILE__CURSOR_Y_SCROLLED)
+    if(v_file__is_cursor_y_scrolled(v_file))
     {
         v_file->mirrored_cursor_y--;
         if(cursor_at_prev_line_start)
         {
             /* Cursor at the left side: doesn't go at a end of a line. Always
                at the beginning. */
-            v_file->mirrored_cursor_x = V_FILE__ACTUAL_LINE.len;
+            v_file->mirrored_cursor_x = v_file__get_actual_line(v_file)->len;
         }
         else
         {
             // Ignore the LF or not.
-            v_file->mirrored_cursor_x = (V_FILE__CURSOR_Y_SCROLLED) ? SIZE__LF : 0;
+            v_file->mirrored_cursor_x = (v_file__is_cursor_y_scrolled(v_file)) ? SIZE__LF : 0;
         }
     }
     v_file->esc_seq_on_input = false;
@@ -233,32 +234,32 @@ void keys__arrow_down(V_file* const v_file)
 void keys__ctrl_arrow_left(V_file* const v_file)
 {
     // Go to a previous line.
-    if((V_FILE__CURSOR_X == 0) && (v_file->mirrored_cursor_y < v_file->lines_amount))
+    if((v_file__get_cursor_x(v_file) == 0) && (v_file->mirrored_cursor_y < v_file->lines_amount))
     {
         v_file->mirrored_cursor_y++;
         v_file->mirrored_cursor_x = SIZE__LF;
     }
-    if((V_FILE__ACTUAL_CHAR != ' ') && (V_FILE__ACTUAL_CHAR != '\t'))
+    if((v_file__get_actual_char(v_file) != ' ') && (v_file__get_actual_char(v_file) != '\t'))
     {
-        while((v_file->mirrored_cursor_x < V_FILE__ACTUAL_LINE.len)
-              && !((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+        while((v_file->mirrored_cursor_x < v_file__get_actual_line(v_file)->len)
+              && !((v_file__get_actual_char(v_file) == ' ') || (v_file__get_actual_char(v_file) == '\t')))
         {
             v_file->mirrored_cursor_x++;
         }
         // Skip the Tab instantly instead of 1 column char for the first time.
-        if(!V_FILE__EMPTY_LINE
-           && ((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t'))
-           && ((V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__PREV] == ' ')
-           || (V_FILE__ACTUAL_LINE.txt[V_FILE__CURSOR_X - SIZE__PREV] == '\t')))
+        if(!v_file__is_actual_line_empty(v_file)
+           && ((v_file__get_actual_char(v_file) == ' ') || (v_file__get_actual_char(v_file) == '\t'))
+           && ((v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - SIZE__PREV] == ' ')
+           || (v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - SIZE__PREV] == '\t')))
         {
             // Prevents skipping only one part of the Tab.
-            while((v_file->mirrored_cursor_x < V_FILE__ACTUAL_LINE.len)
-                  && ((V_FILE__ACTUAL_CHAR == ' ')
-                      || (V_FILE__ACTUAL_CHAR == '\t')))
+            while((v_file->mirrored_cursor_x < v_file__get_actual_line(v_file)->len)
+                  && ((v_file__get_actual_char(v_file) == ' ')
+                      || (v_file__get_actual_char(v_file) == '\t')))
             {
                 v_file->mirrored_cursor_x++;
             }
-            if((V_FILE__ACTUAL_CHAR != ' ') && (V_FILE__ACTUAL_CHAR != '\t'))
+            if((v_file__get_actual_char(v_file) != ' ') && (v_file__get_actual_char(v_file) != '\t'))
             {
                 v_file->mirrored_cursor_x--; // Don't stop on a printable char.
             }
@@ -266,17 +267,17 @@ void keys__ctrl_arrow_left(V_file* const v_file)
     }
     else // Non-whitespace chars.
     {
-        while((v_file->mirrored_cursor_x < V_FILE__ACTUAL_LINE.len)
-              && ((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+        while((v_file->mirrored_cursor_x < v_file__get_actual_line(v_file)->len)
+              && ((v_file__get_actual_char(v_file) == ' ') || (v_file__get_actual_char(v_file) == '\t')))
         {
             v_file->mirrored_cursor_x++;
         }
         // Skip a whole word at once instead of 1 char for the first time.
-        if(!((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+        if(!((v_file__get_actual_char(v_file) == ' ') || (v_file__get_actual_char(v_file) == '\t')))
         {
-            while((v_file->mirrored_cursor_x < V_FILE__ACTUAL_LINE.len)
-                  && !((V_FILE__ACTUAL_CHAR == ' ')
-                       || (V_FILE__ACTUAL_CHAR == '\t')))
+            while((v_file->mirrored_cursor_x < v_file__get_actual_line(v_file)->len)
+                  && !((v_file__get_actual_char(v_file) == ' ')
+                       || (v_file__get_actual_char(v_file) == '\t')))
             {
                 v_file->mirrored_cursor_x++;
             }
@@ -288,15 +289,15 @@ void keys__ctrl_arrow_left(V_file* const v_file)
 void keys__ctrl_arrow_right(V_file* const v_file)
 {
     // Go to a next line.
-    if((v_file->mirrored_cursor_x == 1) && V_FILE__CURSOR_Y_SCROLLED)
+    if((v_file->mirrored_cursor_x == 1) && v_file__is_cursor_y_scrolled(v_file))
     {
         v_file->mirrored_cursor_y--;
-        v_file->mirrored_cursor_x = V_FILE__ACTUAL_LINE.len;
+        v_file->mirrored_cursor_x = v_file__get_actual_line(v_file)->len;
     }
-    if((V_FILE__ACTUAL_CHAR != ' ') && (V_FILE__ACTUAL_CHAR != '\t'))
+    if((v_file__get_actual_char(v_file) != ' ') && (v_file__get_actual_char(v_file) != '\t'))
     {
         while((v_file->mirrored_cursor_x > SIZE__NUL)
-              && !((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+              && !((v_file__get_actual_char(v_file) == ' ') || (v_file__get_actual_char(v_file) == '\t')))
         {
             v_file->mirrored_cursor_x--;
         }
@@ -304,12 +305,12 @@ void keys__ctrl_arrow_right(V_file* const v_file)
     else // Non-whitespace chars.
     {
         while((v_file->mirrored_cursor_x > SIZE__NUL)
-              && ((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t')))
+              && ((v_file__get_actual_char(v_file) == ' ') || (v_file__get_actual_char(v_file) == '\t')))
         {
             v_file->mirrored_cursor_x--;
         }
         // Don't stop before a last part of the Tab.
-        if((V_FILE__ACTUAL_CHAR == ' ') || (V_FILE__ACTUAL_CHAR == '\t'))
+        if((v_file__get_actual_char(v_file) == ' ') || (v_file__get_actual_char(v_file) == '\t'))
         {
             v_file->mirrored_cursor_x--;
         }
@@ -319,19 +320,19 @@ void keys__ctrl_arrow_right(V_file* const v_file)
 
 void keys__ctrl_arrow_up(V_file* const v_file)
 {
-    if(!V_FILE__CURSOR_AT_TOP)
+    if(!v_file__is_cursor_at_top(v_file))
     {
         for(;;)
         {
             v_file->mirrored_cursor_y++;
-            if((V_FILE__ACTUAL_LINE.txt[0] == '\n') || V_FILE__CURSOR_AT_TOP)
+            if((v_file__get_actual_line(v_file)->txt[0] == '\n') || v_file__is_cursor_at_top(v_file))
             {
                 break;
             }
         }
     }
-    v_file->mirrored_cursor_x     = V_FILE__ACTUAL_LINE.len;
-    v_file->esc_seq_on_input = false;
+    v_file->mirrored_cursor_x = v_file__get_actual_line(v_file)->len;
+    v_file->esc_seq_on_input  = false;
 }
 
 void keys__ctrl_arrow_down(V_file* const v_file)
@@ -341,13 +342,13 @@ void keys__ctrl_arrow_down(V_file* const v_file)
         for(;;)
         {
             v_file->mirrored_cursor_y--;
-            if((V_FILE__ACTUAL_LINE.txt[0] == '\n')
+            if((v_file__get_actual_line(v_file)->txt[0] == '\n')
                || (v_file->mirrored_cursor_y == 0))
             {
                 break;
             }
         }
     }
-    v_file->mirrored_cursor_x     = V_FILE__ACTUAL_LINE.len;
+    v_file->mirrored_cursor_x     = v_file__get_actual_line(v_file)->len;
     v_file->esc_seq_on_input = false;
 }

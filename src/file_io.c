@@ -99,8 +99,8 @@ bool file_io__set_name(V_file* const v_file, const char* const arg)
 bool file_io__load(V_file* const v_file, const Config* const config,
                    const Modes* const modes)
 {
+    char  ch = '\0';
     FILE* Textfile;
-    char  ch;
 
     if(v_file->fname[v_file->fname_len - SIZE__NUL] == '/')
     {

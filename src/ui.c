@@ -13,7 +13,7 @@ void ui__print_line_number(const V_file* const v_file,
     ui__colorize(config->Color_ui.value);
     ANSI__INVERT();
 
-    if(line_i == V_FILE__ACTUAL_LINE_I)
+    if(line_i == v_file__get_cursor_y(v_file))
     {
         ui__colorize(0);
         ui__colorize(config->Color_ui.value);
