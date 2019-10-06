@@ -67,6 +67,11 @@ size_t v_file__get_cursor_y(const V_file* const this)
     return this->lines_amount - this->mirrored_cursor_y;
 }
 
+char v_file__get_actual_char(const V_file* const this)
+{
+    return v_file__get_actual_line(this)->txt[v_file__get_cursor_x(this)];
+}
+
 Line* v_file__get_actual_line(const V_file* const this)
 {
     return &this->lines[v_file__get_cursor_y(this)];
@@ -75,11 +80,6 @@ Line* v_file__get_actual_line(const V_file* const this)
 Line* v_file__get_prev_line(const V_file* const this)
 {
     return &this->lines[v_file__get_cursor_y(this) - SIZE__PREV];
-}
-
-char v_file__get_actual_char(const V_file* const this)
-{
-    return v_file__get_actual_line(this)->txt[v_file__get_cursor_x(this)];
 }
 
 Line* v_file__get_last_line(const V_file* const this)

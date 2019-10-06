@@ -16,11 +16,12 @@
 #include "size.h"
 
 /* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
-   recomended to set the V_FILE__CHAR_MAX to a value bigger than (INT_MAX - 1)
-   because of possible casting. */
+   recomended to set the V_FILE__CHAR_MAX to a value bigger than INT_MAX
+   because of possible casting to the integer. */
 
 #define V_FILE__CHAR_MAX (INT_MAX / 128)
 
+// TODO
 // if SIZE_MAX == SHRT_MAX
 //     #define V_FILE__CHAR_MAX SHRT_MAX
 // #else
@@ -45,7 +46,9 @@ typedef struct
     bool     esc_seq_on_input;
     char     git_branch[NAME_MAX]; // Max size is 250 defined by Git.
 
-    const int32_t _padding_0;
+    const int8_t  _padding_0;
+    const int32_t _padding_1;
+    const int32_t _padding_2;
 
     // Filename.
     char*    pathname; // Doesn't include the trailing slash.
@@ -55,8 +58,8 @@ typedef struct
     char     fname[PATH_MAX + NAME_MAX];
     char     fname_copy[PATH_MAX + NAME_MAX];
 
-    const int8_t  _padding_1;
-    const int16_t _padding_2;
+    const int8_t  _padding_3;
+    const int16_t _padding_4;
 
     size_t   fname_len; // Strlen of the above array.
 
@@ -78,15 +81,16 @@ bool v_file__init(V_file* const);
 // Display an error message and exit.
 void v_file__delete(V_file* const);
 
+// Some basic getters those combine multiple values in one function.
 size_t v_file__get_cursor_x(const V_file* const);
 
 size_t v_file__get_cursor_y(const V_file* const);
 
+char v_file__get_actual_char(const V_file* const);
+
 Line* v_file__get_actual_line(const V_file* const);
 
 Line* v_file__get_prev_line(const V_file* const);
-
-char v_file__get_actual_char(const V_file* const);
 
 Line* v_file__get_last_line(const V_file* const);
 

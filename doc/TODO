@@ -10,4 +10,3 @@ fiflo - TODOs and ideas:
 - cursor scroll in the live filename edit mode,
 - more precise Ctrl^Arrow left (full-word cursor scroll),
 - regex,
-- punch_card that is invisible without scroll.

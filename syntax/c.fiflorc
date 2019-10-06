@@ -42,6 +42,7 @@ union = magenta
 unsigned = magenta
 void = magenta
 volatile = magenta
+wchar_t = magenta
 while = magenta
 __FILE__ = blue
 __LINE__ = blue

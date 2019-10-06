@@ -36,6 +36,8 @@ typedef struct
     Opt_t Color_whitespace;
     Opt_t Pcard_w;
     Opt_t Tab_sz;
+
+    const int32_t _padding;
 }
 Config;
 

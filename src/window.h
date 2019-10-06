@@ -14,7 +14,7 @@
 #include "ui.h"
 
 // Return current terminal width and height and exits if it's wrong.
-term_t window__receive_term_sz(const char);
+term_t window__receive_terminal_size(const char);
 
 // Clean a whole rendered window.
 void window__flush(void);
@@ -24,8 +24,8 @@ void window__fill(const V_file* const, const Config* const,
                   const Ui* const);
 
 // Sets the cursor position starting from a left bottom.
-void window__set_cursor_pos(const V_file* const, const Modes* const,
-                            const Ui* const);
+void window__adjust_cursor_pos(const V_file* const, const Modes* const,
+                               const Ui* const);
 
 // Stupid wrapper for above things.
 bool window__render(const V_file* const, const Config* const,

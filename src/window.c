@@ -1,9 +1,9 @@
 #include "window.h"
 
-term_t window__receive_term_sz(const char axis)
+term_t window__receive_terminal_size(const char axis)
 {
     const unsigned sz_max = USHRT_MAX;
-    const unsigned h_min  = UI__UBAR_SZ + SIZE__LINE + UI__MAX_LBAR_H; // TODO: DYNAMIC
+    const unsigned h_min  = UI__UBAR_SZ + SIZE__LINE + UI__MAX_LBAR_H;
     const unsigned w_min  = UI__GIT_LOGO_W + SIZE__SPACE + UI__GIT_BRANCH_MIN_W
                             + SIZE__SPACE + V_FILE__STATUS_MAX
                             + UI__HORIZONTAL_PADDING;
@@ -42,7 +42,7 @@ term_t window__receive_term_sz(const char axis)
 
 void window__flush(void)
 {
-    const term_t term_h = window__receive_term_sz('h');
+    const term_t term_h = window__receive_terminal_size('h');
 
     // Restore to a lowest left corner and clean a lowest line.
     ANSI__RESTORE_CURSOR_POS();
@@ -74,8 +74,8 @@ void window__fill(const V_file* const v_file, const Config* const config,
     // Else the lower bar will by positioned by a text.
 }
 
-void window__set_cursor_pos(const V_file* const v_file,
-                            const Modes* const modes, const Ui* const ui)
+void window__adjust_cursor_pos(const V_file* const v_file,
+                               const Modes* const modes, const Ui* const ui)
 {
     // Set by default to a filename edit.
     term_t move_right = (term_t) (UI__LEFT_PADDING + v_file->fname_len);
@@ -126,8 +126,8 @@ bool window__render(const V_file* const v_file, const Config* const config,
 
     sprintf(line_num_str, "%lu", v_file[actual_file_i].lines_amount + SIZE__I);
 
-    if(((ui.win_w = window__receive_term_sz('w')) == 0)
-       || ((ui.win_h = window__receive_term_sz('h')) == 0))
+    if(((ui.win_w = window__receive_terminal_size('w')) == 0)
+       || ((ui.win_h = window__receive_terminal_size('h')) == 0))
     {
         return false;
     }
@@ -136,13 +136,16 @@ bool window__render(const V_file* const v_file, const Config* const config,
                          : UI__LBAR_SZ;
 
     ui.line_num_len = (term_t) (strlen(line_num_str) + SIZE__SPACE
-                    + UI__LEFT_PADDING);
+                      + UI__LEFT_PADDING);
 
     ui.txtarea_w = (term_t) (ui.win_w - ui.line_num_len);
     ui.txtarea_h = (term_t) (ui.win_h - UI__UBAR_SZ - ui.lbar_h);
 
-    ui.pcard_delta_x = (int) (ui.txtarea_w + v_file[actual_file_i].mirrored_cursor_x
-                       - v_file__get_actual_line(v_file)->len - SIZE__I);
+    ui.pcard_delta_x = (int) (ui.txtarea_w
+                              + v_file[actual_file_i].mirrored_cursor_x
+                              - v_file__get_actual_line(v_file)->len
+                              - SIZE__I);
+
     ui.pcard_delta_x = (ui.pcard_delta_x > 0) ? 0 : ui.pcard_delta_x;
 
     ui__upper_bar(&v_file[actual_file_i], config, &ui);
@@ -152,7 +155,7 @@ bool window__render(const V_file* const v_file, const Config* const config,
 
     ui__lower_bar(v_file, config, modes, &ui, additional_argc_i,
                   actual_file_i);
-    window__set_cursor_pos(&v_file[actual_file_i], modes, &ui);
+    window__adjust_cursor_pos(&v_file[actual_file_i], modes, &ui);
 
     return true;
 }
