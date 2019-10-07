@@ -5,7 +5,7 @@ void print__line_with_tabs(const V_file* const v_file,
                            const Syntax* const syntax, const size_t line_i,
                            const size_t start_char_i, const size_t end_char_i)
 {
-    size_t char_i_after_kwrd;
+    size_t char_i_after_keyword;
     char   ch;
 
     for(size_t char_i = start_char_i; char_i < end_char_i; char_i++)
@@ -23,17 +23,17 @@ void print__line_with_tabs(const V_file* const v_file,
             break;
 
         default: // Print words.
-            char_i_after_kwrd = syntax__paint_word(syntax, config,
-                                                 &v_file->lines[line_i],
-                                                 end_char_i, char_i);
-            if(char_i == char_i_after_kwrd)
+            char_i_after_keyword = syntax__paint_word(syntax, config,
+                                                      &v_file->lines[line_i],
+                                                      end_char_i, char_i);
+            if(char_i == char_i_after_keyword)
             {
                 ui__colorize(config->Color_txt.value);
                 putchar(ch);
             }
             else // Word printed and highlighted. Shift the index to the next.
             {
-                char_i = char_i_after_kwrd;
+                char_i = char_i_after_keyword;
             }
         }
         ui__colorize(0);
@@ -117,6 +117,9 @@ void print__another_line(const V_file* const v_file,
     const size_t start_char_i = (-ui->pcard_delta_x < 0) ? 0
                                 : (size_t) -ui->pcard_delta_x;
 
+    size_t end_char_i = (size_t) (ui->txtarea_w - ui->pcard_delta_x
+                                  - SIZE__LF);
+
     ui__print_line_number(v_file, config, line_i, ui->line_num_len);
 
     // Ignore the linefeed and print it after the wrap line.
@@ -133,8 +136,15 @@ void print__another_line(const V_file* const v_file,
     }
     else
     {
+        if(end_char_i >= v_file->lines[line_i].len)
+        {
+            end_char_i = v_file->lines[line_i].len - SIZE__LF;
+        }
         print__line_with_tabs(v_file, config, syntax, line_i, start_char_i,
-                              (size_t) ui->txtarea_w - SIZE__LF);
+                              end_char_i);
+
+        pcard__print_after_txt(config, ui, v_file->lines[line_i].txt,
+                               v_file->lines[line_i].len - SIZE__LF);
         UI__WRAP_LINE();
     }
 }
@@ -144,7 +154,7 @@ void print__scroll_line_horizontally(const V_file* const v_file,
                                      const Syntax* const syntax,
                                      const Ui* const ui)
 {
-    // AT text will be scrolled. Not the cursor.
+    // Text will be scrolled. Not the cursor.
     print__line_with_tabs(v_file, config, syntax, v_file__get_cursor_y(v_file),
                           v_file__get_cursor_x(v_file) + SIZE__CURSOR - ui->txtarea_w,
                           v_file__get_cursor_x(v_file));
@@ -242,13 +252,15 @@ void print__scroll_lines(const V_file* const v_file,
     size_t start_line_i = print__set_start_line(v_file, ui);
 
     // Previous lines. If they are scrolled. Only a beginning is shown.
-    for(size_t line_i = start_line_i; line_i < v_file__get_cursor_y(v_file); line_i++)
+    for(size_t line_i = start_line_i; line_i < v_file__get_cursor_y(v_file);
+        line_i++)
     {
         print__another_line(v_file, config, syntax, ui, line_i);
     }
 
     // Display a last line without the linefeed to prevent a lbar breaking.
-    ui__print_line_number(v_file, config, v_file__get_cursor_y(v_file), ui->line_num_len);
+    ui__print_line_number(v_file, config, v_file__get_cursor_y(v_file),
+                          ui->line_num_len);
 
     if(v_file__get_actual_line(v_file)->len < ui->txtarea_w)
     {
@@ -258,28 +270,34 @@ void print__scroll_lines(const V_file* const v_file,
         {
             end_char_i--;
         }
-        print__line_with_tabs(v_file, config, syntax, v_file__get_cursor_y(v_file), 0,
-                              end_char_i);
+        print__line_with_tabs(v_file, config, syntax,
+                              v_file__get_cursor_y(v_file), 0, end_char_i);
     }
     // Chars won't fit in a horizontal space.
     else if((v_file__get_actual_line(v_file)->len - ui->txtarea_w) >= v_file->mirrored_cursor_x)
     {
         // Text will be scrolled. Not cursor.
-        print__line_with_tabs(v_file, config, syntax, v_file__get_cursor_y(v_file),
-                              v_file__get_cursor_x(v_file) + SIZE__CURSOR - ui->txtarea_w,
+        print__line_with_tabs(v_file, config, syntax,
+                              v_file__get_cursor_y(v_file),
+                              v_file__get_cursor_x(v_file) + SIZE__CURSOR
+                              - ui->txtarea_w,
                               v_file__get_cursor_x(v_file));
     }
     else
     {
         // Render only left part of a line. The cursor can be scrolled.
-        print__line_with_tabs(v_file, config, syntax, v_file__get_cursor_y(v_file), 0,
+        print__line_with_tabs(v_file, config, syntax,
+                              v_file__get_cursor_y(v_file), 0,
                               (size_t) ui->txtarea_w - SIZE__LF);
     }
     if(config->Pcard_w.value < ui->txtarea_w)
     {
-        pcard__print_after_txt(config, ui, v_file__get_actual_line(v_file)->txt,
-                               (v_file->mirrored_cursor_y == 0) ? v_file__get_actual_line(v_file)->len
-                               : v_file__get_actual_line(v_file)->len - SIZE__LF);
+        pcard__print_after_txt(config, ui,
+                               v_file__get_actual_line(v_file)->txt,
+                               (v_file->mirrored_cursor_y == 0)
+                               ? v_file__get_actual_line(v_file)->len
+                               : v_file__get_actual_line(v_file)->len
+                                 - SIZE__LF);
     }
 }
 

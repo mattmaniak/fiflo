@@ -139,7 +139,8 @@ void config__set_default(Config* const config)
     config->Color_txt.value         = WHITE;
     config->Color_ui.value          = WHITE;
     config->Color_whitespace.value  = BRIGHT_BLACK;
-    config->Pcard_w.value           = CONFIG__PUNCH_CARD_W;
+    // config->Pcard_w.value           = CONFIG__PUNCH_CARD_W;
+    config->Pcard_w.value           = 48;
     config->Tab_sz.value            = CONFIG__MAX_TAB_SZ;
 }
 

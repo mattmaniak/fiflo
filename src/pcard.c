@@ -36,9 +36,18 @@ void pcard__print_after_txt(const Config* const config, const Ui* const ui,
                 putchar(' ');
             }
         }
+        // The OLD Linefeed highlighting.
+        // else if((line_txt[line_len] == '\n')
+        //         && ((line_len + SIZE__I) == pcard_w)
+        //         && ((int) line_len >= -ui->pcard_delta_x))
+        // {
+        //     ui__colorize(config->Color_ui.value + ANSI__BG_COLOR_OFFSET);
+        //     putchar(' ');
+        // }
+        // // The Linefeed highlighting.
         // The Linefeed highlighting.
-        else if((line_txt[line_len] == '\n') && ((line_len + SIZE__I) == pcard_w)
-                && ((int) line_len >= -ui->pcard_delta_x))
+        else if((line_len >= pcard_w) && (pcard_w == ui->txtarea_w)
+                && (ui->pcard_delta_x == 0))
         {
             ui__colorize(config->Color_ui.value + ANSI__BG_COLOR_OFFSET);
             putchar(' ');
