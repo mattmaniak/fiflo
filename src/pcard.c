@@ -36,15 +36,6 @@ void pcard__print_after_txt(const Config* const config, const Ui* const ui,
                 putchar(' ');
             }
         }
-        // The OLD Linefeed highlighting.
-        // else if((line_txt[line_len] == '\n')
-        //         && ((line_len + SIZE__I) == pcard_w)
-        //         && ((int) line_len >= -ui->pcard_delta_x))
-        // {
-        //     ui__colorize(config->Color_ui.value + ANSI__BG_COLOR_OFFSET);
-        //     putchar(' ');
-        // }
-        // // The Linefeed highlighting.
         // The Linefeed highlighting.
         else if((line_len >= pcard_w) && (pcard_w == ui->txtarea_w)
                 && (ui->pcard_delta_x == 0))
@@ -54,25 +45,40 @@ void pcard__print_after_txt(const Config* const config, const Ui* const ui,
         }
         ui__colorize(0);
     }
-    else if(ui->txtarea_w > (ui->pcard_delta_x + (int) pcard_w - SIZE__LF))
+    else if(((line_len + ui->pcard_delta_x) > 0)
+            && (-ui->pcard_delta_x <= pcard_w))
     {
         // A line is hidden. Punched card is not.
-        if(-ui->pcard_delta_x > (int) line_len)
+        if(-ui->pcard_delta_x > (int) (line_len)) // TODO
         {
-            printf("%*s", ui->pcard_delta_x + (int) pcard_w - SIZE__LF, " ");
+            if((-ui->pcard_delta_x + SIZE__I) < pcard_w)
+            {
+                printf("%*s", ui->pcard_delta_x + (int) pcard_w - SIZE__LF, " ");
+                putchar('!');
+            }
+            else if((-ui->pcard_delta_x + SIZE__I) == pcard_w)
+            {
+                putchar('!');
+            }
         }
-        else // A line is visible and shifted but not punched card.
-        {
-            printf("%*s", (int) (pcard_w - line_len - SIZE__LF), " ");
-        }
-        ui__colorize(config->Color_ui.value + ANSI__BG_COLOR_OFFSET);
-        putchar(' ');
-        ui__colorize(0);
+        // A line is scrolled and partially visible.
+        // else if((ui->pcard_delta_x < 0) && (line_len < ui->txtarea_w))
+        // {
+        //     printf("%*s", ui->txtarea_w - line_len, " ");
+        //     putchar('*');
+        // }
+        // ui__colorize(config->Color_ui.value + ANSI__BG_COLOR_OFFSET);
+        // ui__colorize(0);
     }
+    // Transition.
+    // else if(-ui->pcard_delta_x == line_len)
+    // {
+    //     printf("%*s", ui->txtarea_w - line_len, " ");
+    //     putchar('X');
+    // }
 }
 
-void pcard__print_after_nothing(const Config* const config,
-                                const Ui* const ui)
+void pcard__print_after_nothing(const Config* const config, const Ui* const ui)
 {
     const int pcard_w = config->Pcard_w.value;
 
