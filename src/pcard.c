@@ -12,8 +12,8 @@ void pcard__print_after_txt(const Config* const config, const Ui* const ui,
                             const char* const line_txt, const size_t line_len)
 {
     const size_t pcard_w      = (size_t) config->Pcard_w.value;
-    int          pcard_offset = (int) ((unsigned) config->Pcard_w.value
-                                       - line_len - SIZE__I);
+    int          pcard_offset = (int) ((unsigned) pcard_w - line_len
+                                       - SIZE__I);
 
     if(ui->txtarea_w >= config->Pcard_w.value)
     {
@@ -48,25 +48,29 @@ void pcard__print_after_txt(const Config* const config, const Ui* const ui,
     else if(((line_len + ui->pcard_delta_x) > 0)
             && (-ui->pcard_delta_x <= pcard_w))
     {
+        const bool offset_smaller_than_txtarea = (ui->pcard_delta_x + (int) pcard_w - SIZE__LF) < ui->txtarea_w;
         // A line is hidden. Punched card is not.
         if(-ui->pcard_delta_x > (int) (line_len)) // TODO
         {
-            if((-ui->pcard_delta_x + SIZE__I) < pcard_w)
+            if(((-ui->pcard_delta_x + SIZE__I) < pcard_w)
+               && offset_smaller_than_txtarea)
             {
                 printf("%*s", ui->pcard_delta_x + (int) pcard_w - SIZE__LF, " ");
+                // printf("[%d %d]", ui->pcard_delta_x + (int) pcard_w - SIZE__LF);
                 putchar('!');
             }
             else if((-ui->pcard_delta_x + SIZE__I) == pcard_w)
             {
-                putchar('!');
+                putchar('X');
             }
         }
         // A line is scrolled and partially visible.
-        // else if((ui->pcard_delta_x < 0) && (line_len < ui->txtarea_w))
-        // {
-        //     printf("%*s", ui->txtarea_w - line_len, " ");
-        //     putchar('*');
-        // }
+        else if((ui->pcard_delta_x < 0) && (line_len < ui->txtarea_w)
+                && offset_smaller_than_txtarea)
+        {
+            printf("%*s", pcard_offset, " ");
+            putchar('*');
+        }
         // ui__colorize(config->Color_ui.value + ANSI__BG_COLOR_OFFSET);
         // ui__colorize(0);
     }
