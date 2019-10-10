@@ -6,14 +6,10 @@
 #include "v_file.h"
 #include "config.h"
 #include "modes.h"
-#include "path.h"
 
 #define FILE__AT_LEAST_ONE_TAB 1
 
 extern bool input__printable_char(V_file* const, const char);
-
-// Set a filename. If basename is passed as an arg actual path will be added.
-bool file_io__set_name(V_file* const, const char* const);
 
 // Load a file to the program.
 bool file_io__load(V_file* const, const Config* const, const Modes* const);

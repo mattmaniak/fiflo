@@ -34,7 +34,7 @@ typedef struct
     Opt_t Color_txt;
     Opt_t Color_ui;
     Opt_t Color_whitespace;
-    Opt_t Pcard_w;
+    Opt_t Punched_card_width;
     Opt_t Tab_sz;
 
     const int32_t _padding;

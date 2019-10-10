@@ -9,7 +9,7 @@
 #include "config.h"
 #include "syntax.h"
 #include "modes.h"
-#include "pcard.h"
+#include "punched_card.h"
 #include "ui.h"
 
 #define PRINT__SPACE_HIGHLIGHT '.'

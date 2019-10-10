@@ -33,10 +33,10 @@
 strncpy(v_file->status, msg, V_FILE__STATUS_MAX - SIZE__I)
 
 // Aligned memory blocks.
-#define V_FILE__BASIC_MEMBLK (sizeof(v_file->lines) * sizeof(char))
+#define V_FILE__BASIC_MEMBLOCK (sizeof(v_file->lines) * sizeof(char))
 
 // Must be >= 16 and dividable by 8.
-#define V_FILE__MEMBLK (size_t) (128 * sizeof(char))
+#define V_FILE__MEMBLOCK (size_t) (128 * sizeof(char))
 
 typedef struct
 {
@@ -82,17 +82,17 @@ bool v_file__init(V_file* const);
 void v_file__delete(V_file* const);
 
 // Some basic getters those combine multiple values in one function.
-size_t v_file__get_cursor_x(const V_file* const);
+size_t v_file_cursor_x(const V_file* const);
 
-size_t v_file__get_cursor_y(const V_file* const);
+size_t v_file_cursor_y(const V_file* const);
 
-char v_file__get_actual_char(const V_file* const);
+char v_file_actual_char(const V_file* const);
 
-Line* v_file__get_actual_line(const V_file* const);
+Line* v_file_actual_line(const V_file* const);
 
-Line* v_file__get_prev_line(const V_file* const);
+Line* v_file_prev_line(const V_file* const);
 
-Line* v_file__get_last_line(const V_file* const);
+Line* v_file_last_line(const V_file* const);
 
 bool v_file__is_cursor_x_scrolled(const V_file* const);
 

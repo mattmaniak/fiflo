@@ -76,6 +76,8 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 - **file_io** - read/save the file, filename live editing,
 
+- **filename** - pathname, basename setting from an arg,
+
 - **input** - get the key and parse it,
 
 - **memory** - real-time automatic memory management for the text buffer,
@@ -84,9 +86,8 @@ Read the "CONTRIBUTING.md" and check the "doc/" directory.
 
 - **options** - "--help" and friends parameters,
 
-- **path** - pathname, basename setting from an arg,
-
-- **pcard** - vertical line (sometimes called wrap guide) implementation.
+- **punched_card** - vertical line (sometimes called wrap guide)
+                     implementation.
 
 - **print** - various magic that prints the text,
 

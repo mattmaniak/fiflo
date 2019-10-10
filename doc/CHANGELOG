@@ -10,7 +10,7 @@ v4.1.0 (2019, WIP):
 - cursor position indicator shows it's x-pos instead of a current line length,
 - file extension recognition,
 - simple syntax highlighting,
-- vertical punch card,
+- vertical punch card (highlight a char that crosses e.g. 80th column),
 - all lines will be scrolled horizontally instead of one,
 - selectors' names change in the configuration file,
 - inverted color UI with a configurable color,

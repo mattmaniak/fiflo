@@ -9,7 +9,7 @@
 #include "v_file.h"
 #include "config.h"
 #include "modes.h"
-#include "pcard.h"
+#include "punched_card.h"
 #include "print.h"
 #include "ui.h"
 
@@ -20,8 +20,7 @@ term_t window__receive_terminal_size(const char);
 void window__flush(void);
 
 // Vertical fill between a text and lower bar. If there isn't many lines.
-void window__fill(const V_file* const, const Config* const,
-                  const Ui* const);
+void window__fill(const V_file* const, const Ui* const);
 
 // Sets the cursor position starting from a left bottom.
 void window__adjust_cursor_pos(const V_file* const, const Modes* const,

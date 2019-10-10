@@ -71,18 +71,21 @@ void syntax__sort(Syntax* const syntax)
 
 size_t syntax__paint_word(const Syntax* const syntax,
                           const Config* const config, Line* Line,
-                          const size_t end_ch_i, size_t ch_i)
+                          const size_t end_char_i, size_t char_i)
 {
-    const char* const str_to_print_addr = &Line->txt[ch_i];
-    const size_t      pcard_w           = (size_t) config->Pcard_w.value;
-    bool              keyword_ignored      = false;
+    const char* const str_to_print_addr = &Line->txt[char_i];
+    const size_t      pcard_w
+        = (size_t) config->Punched_card_width.value;
+
+    bool              keyword_ignored   = false;
     size_t            end_paint_i;
 
     if(syntax->keywords_amount <= 0)
     {
-        return ch_i;
+        return char_i;
     }
-    for(size_t keyword_i = 0; keyword_i <= syntax->keywords_amount; keyword_i++)
+    for(size_t keyword_i = 0; keyword_i <= syntax->keywords_amount;
+        keyword_i++)
     {
         if(strstr(str_to_print_addr, syntax->Keywords[keyword_i].keyword)
            == str_to_print_addr)
@@ -90,29 +93,29 @@ size_t syntax__paint_word(const Syntax* const syntax,
             ui__colorize(syntax->Keywords[keyword_i].color);
 
             end_paint_i = (size_t) strlen(syntax->Keywords[keyword_i].keyword)
-                          + ch_i;
+                                   + char_i;
 
             if(end_paint_i == 0)
             {
-                end_paint_i  = ch_i;
+                end_paint_i  = char_i;
                 keyword_ignored = true;
             }
 
             // Breaks a word if the end of a terminal is achieved.
-            if(end_paint_i > end_ch_i)
+            if(end_paint_i > end_char_i)
             {
-                end_paint_i = end_ch_i;
+                end_paint_i = end_char_i;
             }
-            for(; ch_i < end_paint_i; ch_i++)
+            for(; char_i < end_paint_i; char_i++)
             {
-                if(ch_i == (pcard_w - SIZE__I))
+                if(char_i == (pcard_w - SIZE__I))
                 {
                     ui__colorize(config->Color_ui.value
                                  + ANSI__BG_COLOR_OFFSET);
                     ui__colorize(syntax->Keywords[keyword_i].color);
                 }
-                putchar(Line->txt[ch_i]);
-                if(ch_i == (pcard_w - SIZE__I))
+                putchar(Line->txt[char_i]);
+                if(char_i == (pcard_w - SIZE__I))
                 {
                     // Reset the background color after punch card.
                     ui__colorize(0);
@@ -120,12 +123,12 @@ size_t syntax__paint_word(const Syntax* const syntax,
                 }
             }
             // Not a last char, so don't hide a next.
-            if(!keyword_ignored && (ch_i < end_ch_i))
+            if(!keyword_ignored && (char_i < end_char_i))
             {
-                ch_i--; // An other char will be printed. Make it visible.
+                char_i--; // An other char will be printed. Make it visible.
             }
             break;
         }
     }
-    return ch_i;
+    return char_i;
 }

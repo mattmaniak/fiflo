@@ -25,11 +25,11 @@ bool config__load(Config* const config)
 
 void config__init_selectors(Config* const config)
 {
-    strcpy(config->Color_txt.selector,        "color_text");
-    strcpy(config->Color_ui.selector,         "color_ui");
-    strcpy(config->Color_whitespace.selector, "color_whitespace");
-    strcpy(config->Pcard_w.selector,          "punch_card_width");
-    strcpy(config->Tab_sz.selector,           "tab_size");
+    strcpy(config->Color_txt.selector,         "color_txt");
+    strcpy(config->Color_ui.selector,           "color_ui");
+    strcpy(config->Color_whitespace.selector,   "color_whitespace");
+    strcpy(config->Punched_card_width.selector, "punch_card_width");
+    strcpy(config->Tab_sz.selector,             "tab_size");
 }
 
 bool config__parse_selector(Config* const config, const char* const selector,
@@ -50,9 +50,9 @@ bool config__parse_selector(Config* const config, const char* const selector,
         {
             config->Color_whitespace.value = value;
         }
-        else if(!strcmp(config->Pcard_w.selector, selector))
+        else if(!strcmp(config->Punched_card_width.selector, selector))
         {
-            config->Pcard_w.value = value;
+            config->Punched_card_width.value = value;
         }
     }
     else if(!strcmp(config->Tab_sz.selector, selector))
@@ -136,12 +136,11 @@ int config__parse_value(const char* const read_value)
 
 void config__set_default(Config* const config)
 {
-    config->Color_txt.value         = WHITE;
-    config->Color_ui.value          = WHITE;
-    config->Color_whitespace.value  = BRIGHT_BLACK;
-    // config->Pcard_w.value           = CONFIG__PUNCH_CARD_W;
-    config->Pcard_w.value           = 53;
-    config->Tab_sz.value            = CONFIG__MAX_TAB_SZ;
+    config->Color_txt.value          = WHITE;
+    config->Color_ui.value           = WHITE;
+    config->Color_whitespace.value   = BRIGHT_BLACK;
+    config->Punched_card_width.value = CONFIG__PUNCH_CARD_W;
+    config->Tab_sz.value             = CONFIG__MAX_TAB_SZ;
 }
 
 void config__load_custom(Config* const config)

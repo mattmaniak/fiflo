@@ -33,7 +33,7 @@ void fiflo__run(int argc, char** const argv)
     for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
     {
         if(!v_file__init(&v_files[file_i]) || !config__load(&config)
-           || !file_io__set_name(&v_files[file_i], argv[fname_arg_sz + file_i])
+           || !filename__set_name(&v_files[file_i], argv[fname_arg_sz + file_i])
            || !file_io__load(&v_files[file_i], &config, &modes))
         {
             goto free;
@@ -74,7 +74,7 @@ void fiflo__run(int argc, char** const argv)
             break;
         }
         pressed_key = input__getch();
-        if(pressed_key == -1)
+        if(pressed_key == (char) -1)
         {
             break;
         }

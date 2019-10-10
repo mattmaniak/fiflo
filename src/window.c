@@ -57,21 +57,19 @@ void window__flush(void)
     fflush(NULL);
 }
 
-void window__fill(const V_file* const v_file, const Config* const config,
-                  const Ui* const ui)
+void window__fill(const V_file* const v_file, const Ui* const ui)
 {
     const size_t line_to_fill = (size_t) ui->txtarea_h - UI__LBAR_SZ;
 
-    // Fill an empty area below a text to adjust a position the lower bar.
+    // Fill an empty area below a txt to adjust a position the lower bar.
     if((v_file->lines_amount + SIZE__I) < (size_t) ui->txtarea_h)
     {
         for(size_t line = v_file->lines_amount; line < line_to_fill; line++)
         {
             UI__WRAP_LINE();
-            pcard__print_after_nothing(config, ui);
         }
     }
-    // Else the lower bar will by positioned by a text.
+    // Else the lower bar will by positioned by a txt.
 }
 
 void window__adjust_cursor_pos(const V_file* const v_file,
@@ -92,12 +90,13 @@ void window__adjust_cursor_pos(const V_file* const v_file,
 
     if(!modes->live_fname_edit)
     {
-        if(v_file__get_actual_line(v_file)->len < ui->txtarea_w)
+        if(v_file_actual_line(v_file)->length < ui->txtarea_w)
         {
             // No horizontal scrolling.
-            move_right = (term_t) (ui->line_num_len + v_file__get_cursor_x(v_file));
+            move_right = (term_t) (ui->line_number_length
+                                   + v_file_cursor_x(v_file));
         }
-        else if((v_file__get_actual_line(v_file)->len - ui->txtarea_w)
+        else if((v_file_actual_line(v_file)->length - ui->txtarea_w)
                 >= v_file->mirrored_cursor_x)
         {
             /* Last ui->txtarea_w chars are seen. Current line is scrolled,
@@ -107,11 +106,13 @@ void window__adjust_cursor_pos(const V_file* const v_file,
         else
         {
             // Text is scrolled horizontally to a start. Cursor can be moved.
-            move_right = (term_t) (ui->line_num_len + v_file__get_cursor_x(v_file));
+            move_right = (term_t) (ui->line_number_length
+                                   + v_file_cursor_x(v_file));
         }
-        move_up = (v_file__get_cursor_y(v_file) < ui->txtarea_h)
-                  ? (term_t) (ui->txtarea_h - v_file__get_cursor_y(v_file) - SIZE__I
-                     + ui->lbar_h) : ui->lbar_h;
+        move_up = (v_file_cursor_y(v_file) < ui->txtarea_h)
+                  ? (term_t) (ui->txtarea_h - v_file_cursor_y(v_file)
+                              - SIZE__I + ui->lbar_h)
+                  : ui->lbar_h;
     }
     ANSI__CURSOR_RIGHT(move_right);
     ANSI__CURSOR_UP(move_up);
@@ -121,10 +122,11 @@ bool window__render(const V_file* const v_file, const Config* const config,
                     const Modes* const modes, const Syntax* const syntax,
                     const size_t additional_argc_i, const size_t actual_file_i)
 {
-    char line_num_str[16]; // Needed to count a length of a number.
+    char line_number_as_str[16]; // Needed to count a length of a number.
     Ui   ui;
 
-    sprintf(line_num_str, "%lu", v_file[actual_file_i].lines_amount + SIZE__I);
+    sprintf(line_number_as_str, "%u",
+            (int) v_file[actual_file_i].lines_amount + SIZE__I);
 
     if(((ui.win_w = window__receive_terminal_size('w')) == 0)
        || ((ui.win_h = window__receive_terminal_size('h')) == 0))
@@ -135,23 +137,24 @@ bool window__render(const V_file* const v_file, const Config* const config,
     ui.lbar_h          = (modes->expanded_lbar) ? ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 
-    ui.line_num_len = (term_t) (strlen(line_num_str) + SIZE__SPACE
-                      + UI__LEFT_PADDING);
+    ui.line_number_length = (term_t) (strlen(line_number_as_str) + SIZE__SPACE
+                                      + UI__LEFT_PADDING);
 
-    ui.txtarea_w = (term_t) (ui.win_w - ui.line_num_len);
+    ui.txtarea_w = (term_t) (ui.win_w - ui.line_number_length);
     ui.txtarea_h = (term_t) (ui.win_h - UI__UBAR_SZ - ui.lbar_h);
 
-    ui.pcard_delta_x = (int) (ui.txtarea_w
-                              + v_file[actual_file_i].mirrored_cursor_x
-                              - v_file__get_actual_line(v_file)->len
-                              - SIZE__I);
+    ui.punched_card_delta_x = (int) (ui.txtarea_w
+                                     + v_file[actual_file_i].mirrored_cursor_x
+                                     - v_file_actual_line(v_file)->length
+                                     - SIZE__I);
 
-    ui.pcard_delta_x = (ui.pcard_delta_x > 0) ? 0 : ui.pcard_delta_x;
+    ui.punched_card_delta_x = (ui.punched_card_delta_x > 0) ? 0
+                              : ui.punched_card_delta_x;
 
     ui__upper_bar(&v_file[actual_file_i], config, &ui);
 
     print__display_text(&v_file[actual_file_i], config, syntax, &ui);
-    window__fill(&v_file[actual_file_i], config, &ui);
+    window__fill(&v_file[actual_file_i], &ui);
 
     ui__lower_bar(v_file, config, modes, &ui, additional_argc_i,
                   actual_file_i);

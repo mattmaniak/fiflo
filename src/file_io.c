@@ -1,101 +1,5 @@
 #include "file_io.h"
 
-bool file_io__set_name(V_file* const v_file, const char* const arg)
-{
-    size_t cw_dir_len;
-
-    if(arg == NULL) // Name not passed by an user.
-    {
-        v_file->pathname = getcwd(v_file->pathname, PATH_MAX);
-        if(v_file->pathname == NULL)
-        {
-            fprintf(stderr, "Can't get the current directory. Too long.\n");
-            return false;
-        }
-        cw_dir_len = strlen(v_file->pathname);
-
-        // Getcwd() returns a pathname without the slash, which is required.
-        if(cw_dir_len >= (PATH_MAX - SIZE__SLASH))
-        {
-            fprintf(stderr,
-                    "Can't insert the slash. The current dir is too long.\n");
-            return false;
-        }
-        strcpy(v_file->fname, v_file->pathname); // Copy pathname.
-
-        v_file->fname[cw_dir_len]               = '/'; // Add the slash.
-        v_file->fname[cw_dir_len + SIZE__SLASH] = '\0';
-        v_file->fname_len                       = strlen(v_file->fname);
-
-        return true;
-    }
-
-    // A current or parent directory.
-    if(!strncmp(arg, "./", 2) || !strncmp(arg, "../", 3))
-    {
-        if(strlen(arg) >= (PATH_MAX + NAME_MAX))
-        {
-            fprintf(stderr, "The passed filename is too long.\n");
-            return false;
-        }
-        strncpy(v_file->fname, arg, PATH_MAX + NAME_MAX);
-
-        if(!path__extract_pathname_from_arg(v_file))
-        {
-            return false;
-        }
-        path__extract_basename_from_arg(v_file);
-        path__merge_pathname_and_basename(v_file);
-    }
-    else if(arg[0] == '/') // An absolute dir.
-    {
-        if(strlen(arg) >= (PATH_MAX + NAME_MAX))
-        {
-            fprintf(stderr, "The passed filename is too long.\n");
-            return false;
-        }
-        strncpy(v_file->fname, arg, PATH_MAX + NAME_MAX);
-
-        if(!path__extract_pathname_from_arg(v_file))
-        {
-            return false;
-        }
-    }
-    else // A relative pathname or a basename.
-    {
-        if(strlen(arg) >= NAME_MAX)
-        {
-            fprintf(stderr, "The passed filename is too long.\n");
-            return false;
-        }
-        if((v_file->pathname = getcwd(v_file->pathname, PATH_MAX)) == NULL)
-        {
-            fprintf(stderr, "Can't get a current directory. Too long.\n");
-            return false;
-        }
-        cw_dir_len = strlen(v_file->pathname);
-
-        // Getcwd() returns a pathname without the slash, which is required.
-        if(cw_dir_len >= (PATH_MAX - SIZE__SLASH))
-        {
-            fprintf(stderr,
-                    "Can't insert the slash. The current dir is too long.\n");
-            return false;
-        }
-        strncpy(v_file->fname, v_file->pathname, PATH_MAX); // Copy pathname.
-
-        v_file->fname[cw_dir_len]               = '/'; // Add the slash.
-        v_file->fname[cw_dir_len + SIZE__SLASH] = '\0';
-
-        // Append a basename.
-        strncpy(&v_file->fname[cw_dir_len + SIZE__SLASH], arg, NAME_MAX);
-        path__extract_basename_from_arg(v_file);
-    }
-    v_file->fname_len = strlen(v_file->fname);
-
-    return true;
-}
-
 bool file_io__load(V_file* const v_file, const Config* const config,
                    const Modes* const modes)
 {
@@ -134,7 +38,7 @@ bool file_io__load(V_file* const v_file, const Config* const config,
     }
     if(fclose(Textfile) == EOF)
     {
-        fprintf(stderr, "Can't close a textfile after load.\n");
+        fprintf(stderr, "Can't close a txtfile after load.\n");
         return false;
     }
     V_FILE__SET_STATUS("read a file");
@@ -198,7 +102,7 @@ bool file_io__save(V_file* const v_file, const Config* const config)
     {
         /* Using fputs or fprintf causes an use-of-uninitialized-value using
            MSan because of there is a more memory allocated than is needed. */
-        for(size_t char_i = 0; char_i < v_file->lines[line_i].len; char_i++)
+        for(size_t char_i = 0; char_i < v_file->lines[line_i].length; char_i++)
         {
             file_io__convert_tab_to_file(v_file, config, line_i, &char_i);
             putc(v_file->lines[line_i].txt[char_i], Textfile);
@@ -206,7 +110,7 @@ bool file_io__save(V_file* const v_file, const Config* const config)
     }
     if(fclose(Textfile) == EOF)
     {
-        fprintf(stderr, "Can't close the textfile after save.\n");
+        fprintf(stderr, "Can't close the txtfile after save.\n");
         return false;
     }
     V_FILE__SET_STATUS("saved");

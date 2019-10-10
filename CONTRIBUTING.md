@@ -14,7 +14,7 @@ Only with: master, develop and hotifx branches.
 
 ### Coding rules
 [GNU's Writing C](https://www.gnu.org/prep/standards/html_node/Writing-C.html)
-Exceptions:
+but with some exceptions:
 - don't put additional spaces before braces or parenthesis,
 - keep data type in the same line as a function name,
 - place pointers' asterisks stuck on to a type name.

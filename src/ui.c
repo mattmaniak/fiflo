@@ -8,17 +8,18 @@ void ui__colorize(const int value)
 
 void ui__print_line_number(const V_file* const v_file,
                            const Config* const config, const size_t line_i,
-                           const term_t line_num_len)
+                           const term_t line_number_length)
 {
     ui__colorize(config->Color_ui.value);
     ANSI__INVERT();
 
-    if(line_i == v_file__get_cursor_y(v_file))
+    if(line_i == v_file_cursor_y(v_file))
     {
         ui__colorize(0);
         ui__colorize(config->Color_ui.value);
     }
-    printf("%*u", line_num_len - SIZE__SPACE, (unsigned) line_i + SIZE__I);
+    printf("%*u", line_number_length - SIZE__SPACE,
+           (unsigned) line_i + SIZE__I);
 
     ui__colorize(0);
     putchar(' ');
@@ -74,14 +75,15 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
                    const size_t additional_argc_i, const size_t actual_file_i)
 {
     const V_file* const v_file      = &v_files[actual_file_i];
-    const int           fname_area  = ui->win_w - UI__LEFT_PADDING - UI__RIGHT_PADDING;
+    const int           fname_area  = ui->win_w - UI__LEFT_PADDING
+                                      - UI__RIGHT_PADDING;
     const char          files_str[] = "loaded files";
     char                cursor_pos_indicator[V_FILE__STATUS_MAX];
 
 
     sprintf(cursor_pos_indicator, "[%u; %u]",
-            (unsigned) v_file__get_cursor_y(v_file) + SIZE__I,
-            (unsigned) v_file__get_cursor_x(v_file) + SIZE__I);
+            (unsigned) v_file_cursor_y(v_file) + SIZE__I,
+            (unsigned) v_file_cursor_x(v_file) + SIZE__I);
 
     UI__WRAP_LINE();
     ui__colorize(0); // Resets a last line color.

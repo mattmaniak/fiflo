@@ -10,4 +10,4 @@ fiflo - TODOs and ideas:
 - cursor scroll in the live filename edit mode,
 - more precise Ctrl^Arrow left (full-word cursor scroll),
 - regex,
-- punched card rendering if pcard_w > txtarea_h.
+- syntax file rework.

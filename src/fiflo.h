@@ -8,7 +8,7 @@
 #include "args.h"
 #include "v_file.h"
 #include "config.h"
-#include "file_io.h"
+#include "filename.h"
 #include "extension.h"
 #include "modes.h"
 #include "input.h"

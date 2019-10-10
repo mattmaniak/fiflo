@@ -18,7 +18,7 @@ char input__getch(void)
         window__flush();
         fprintf(stderr, "Stdin attribiutes error. Pipe isn't supported.\n");
 
-        return -1;
+        return (char) -1;
     }
     new_term_params = old_term_params;
 
@@ -33,7 +33,7 @@ char input__getch(void)
         window__flush();
         fprintf(stderr, "Can't set a terminal's raw mode. Type \"reset\".\n");
 
-        return -1;
+        return (char) -1;
     }
     key = (char) getchar();
 
@@ -43,7 +43,7 @@ char input__getch(void)
         window__flush();
         fprintf(stderr,
                 "Can't restore a terminal's normal mode. Type \"reset\".\n");
-        return -1;
+        return (char) -1;
     }
     return key;
 }
@@ -137,8 +137,8 @@ void input__recognize_sequence(V_file* const v_file,
     }
 
 #ifdef DEBUG_INPUT
-    printf("mirrored_cursor_x %u, mirrored_cursor_y %u.\n", v_file->mirrored_cursor_x,
-           v_file->mirrored_cursor_y);
+    printf("mirrored_cursor_x %u, mirrored_cursor_y %u.\n",
+           v_file->mirrored_cursor_x, v_file->mirrored_cursor_y);
 #endif
 
 }
@@ -233,9 +233,9 @@ bool input__printable_char(V_file* const v_file, const char ch)
         if(v_file->chars_amount < V_FILE__CHAR_MAX)
         {
             v_file->chars_amount++;
-            v_file__get_actual_line(v_file)->len++;
+            v_file_actual_line(v_file)->length++;
 
-            if(!memory__extend_line(v_file, v_file__get_cursor_y(v_file)))
+            if(!memory__extend_line(v_file, v_file_cursor_y(v_file)))
             {
                 return false;
             }
@@ -243,14 +243,17 @@ bool input__printable_char(V_file* const v_file, const char ch)
             {
                 edit__shift_text_horizonally(v_file, 'r');
             }
-            v_file__get_actual_line(v_file)->txt[v_file__get_cursor_x(v_file) - SIZE__NUL] = ch;
-            v_file__get_actual_line(v_file)->txt[v_file__get_actual_line(v_file)->len] = '\0';
+            v_file_actual_line(v_file)->txt[
+                v_file_cursor_x(v_file) - SIZE__NUL] = ch;
+
+            v_file_actual_line(v_file)->txt[
+                v_file_actual_line(v_file)->length] = '\0';
 
             // Initializing nul handler.
             if((ch == '\0') && !v_file__is_actual_line_empty(v_file))
             {
                 v_file->chars_amount--;
-                v_file__get_actual_line(v_file)->len--;
+                v_file_actual_line(v_file)->length--;
             }
             else if((ch == '\n') && !keys__linefeed(v_file))
             {
