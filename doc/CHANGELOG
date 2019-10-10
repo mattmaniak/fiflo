@@ -2,11 +2,11 @@ fiflo - changelog
 
 Description
 Dates are not alternative version names. They are just release dates.
-The changelog contains only new tangible features and source code changes. To
-see what's new in the implementation, use git-show or git-log.
+The changelog contains only new tangible features and source code changes.
+To see what's new in the implementation, use git-show or git-log.
 
 Versions:
-v4.1.0 (2019, WIP):
+v4.1.0 (2019, October 10):
 - cursor position indicator shows it's x-pos instead of a current line length,
 - file extension recognition,
 - simple syntax highlighting,

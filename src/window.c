@@ -59,12 +59,12 @@ void window__flush(void)
 
 void window__fill(const V_file* const v_file, const Ui* const ui)
 {
-    const size_t line_to_fill = (size_t) ui->txtarea_h - UI__LBAR_SZ;
+    const size_t lines_to_fill = (size_t) ui->txtarea_h - UI__LBAR_SZ;
 
     // Fill an empty area below a txt to adjust a position the lower bar.
     if((v_file->lines_amount + SIZE__I) < (size_t) ui->txtarea_h)
     {
-        for(size_t line = v_file->lines_amount; line < line_to_fill; line++)
+        for(size_t line = v_file->lines_amount; line < lines_to_fill; line++)
         {
             UI__WRAP_LINE();
         }
