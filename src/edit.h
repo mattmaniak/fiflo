@@ -40,6 +40,13 @@ void edit__skip_tab_left(V_file* const);
 void edit__skip_visible_chars_left(V_file* const);
 
 // Scenario when there is a char at the beginning and the Tab at the right.
-bool edit__shift_tab_from_right(V_file* const, const Modes* const);
+bool edit__shift_tab_from_right(V_file* const);
+
+// Prevent removing a char and 3 tabs from e.g. "\t\t\t\t".
+size_t edit__dont_delete_char_after_tab(V_file* const, const size_t,
+                                        const char, const size_t);
+
+// Some txt and the Tab(s) at the end.
+bool edit__delete_char_before_tab(V_file* const, const char, const size_t);
 
 #endif

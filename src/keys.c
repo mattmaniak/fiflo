@@ -32,7 +32,7 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
                      const Modes* const modes)
 {
     const size_t ln_i_before_charange = v_file_cursor_y(v_file);
-    const char   tab_char             = (modes->tabs_to_spaces) ? ' ' : '\t';
+    const char   tab_ch               = (modes->tabs_to_spaces) ? ' ' : '\t';
     const size_t tab_sz               = (size_t) config->tab_sz.value;
     size_t       actual_char_x;
 
@@ -40,18 +40,12 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
     {
         actual_char_x = v_file_cursor_x(v_file) - SIZE__NUL;
 
-        // Prevent removing a char and 3 tabs from that e.g.: "\t\t\t\t".
-        if((v_file_cursor_x(v_file) > 1)
-           && (v_file__actual_line(v_file)->txt[actual_char_x - SIZE__PREV]
-               == tab_char)
-           && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_char))
-        {
-            tab_i = (size_t) config->tab_sz.value - SIZE__I;
-        }
+        tab_i = edit__dont_delete_char_after_tab(v_file, tab_sz, tab_ch,
+                                                 tab_i);
+
         if((v_file_cursor_x(v_file) == 1) && (v_file->mirrored_cursor_x > 0)
-           && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_char)
-           && (v_file__actual_line(v_file)->txt[v_file_cursor_x(v_file)]
-               == tab_char))
+           && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_ch)
+           && *v_file__actual_char(v_file) == tab_ch)
         {
             if(!edit__delete_char(v_file))
             {
@@ -59,33 +53,13 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
             }
             break;
         }
-        if(!edit__shift_tab_from_right(v_file, modes))
+        if(!edit__shift_tab_from_right(v_file))
         {
             return false;
         }
+        actual_char_x = v_file_cursor_x(v_file) - SIZE__NUL;
 
-        // Some txt and the Tab(s) at the end.
-        if((v_file__actual_line(v_file)->len > 0)
-           && (v_file->mirrored_cursor_x == 0)
-           && (v_file__actual_line(v_file)->txt[
-                   v_file__actual_line(v_file)->len - SIZE__NUL]
-               != tab_char))
-        {
-            break;
-        }
-        /* Prevent removing a line when a first char in a line has to be
-           removed. */
-        else if((v_file_cursor_x(v_file) == 0)
-                && (v_file__actual_line(v_file)->txt[v_file_cursor_x(v_file)]
-                    != tab_char))
-        {
-            break;
-        }
-        // Scenario when there is the Tab and some txt further.
-        else if((v_file_cursor_x(v_file) > 0)
-                && (v_file->mirrored_cursor_x > 0)
-                && (v_file__actual_line(v_file)->txt[actual_char_x]
-                    != tab_char))
+        if(!edit__delete_char_before_tab(v_file, tab_ch, actual_char_x))
         {
             break;
         }
@@ -109,14 +83,14 @@ bool keys__tab(V_file* v_file, const Config* const config,
        They will be converted during a rendering, loading and saving a file. */
 
     const size_t tab_sz = (size_t) config->tab_sz.value;
-    const char   tab_char = (modes->tabs_to_spaces) ? ' ' : '\t';
+    const char   tab_ch = (modes->tabs_to_spaces) ? ' ' : '\t';
 
     // Prevent the not-full Tab insert.
     if(v_file->chars_amount <= (size_t) (V_FILE__CHAR_MAX - tab_sz))
     {
         for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
         {
-            if(!input__printable_char(v_file, tab_char))
+            if(!input__printable_char(v_file, tab_ch))
             {
                 return false;
             }

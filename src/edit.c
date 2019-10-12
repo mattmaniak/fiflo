@@ -292,11 +292,8 @@ void edit__skip_visible_chars_left(V_file* const v_file)
     }
 }
 
-bool edit__shift_tab_from_right(V_file* const v_file, const Modes* const modes)
+bool edit__shift_tab_from_right(V_file* const v_file)
 {
-    const char   tab_char      = (modes->tabs_to_spaces) ? ' ' : '\t';
-    const size_t actual_char_x = v_file_cursor_x(v_file) - SIZE__NUL;
-
     if(!v_file__is_actual_line_empty(v_file))
     {
         if(!edit__delete_char(v_file))
@@ -307,6 +304,50 @@ bool edit__shift_tab_from_right(V_file* const v_file, const Modes* const modes)
     else if(!v_file__is_actual_line_first(v_file)
             && !v_file__is_cursor_y_scrolled(v_file)
             && !edit__delete_last_empty_line(v_file))
+    {
+        return false;
+    }
+    return true;
+}
+
+size_t edit__dont_delete_char_after_tab(V_file* const v_file,
+                                        const size_t tab_sz, const char tab_ch,
+                                        const size_t tab_i)
+{
+    const size_t actual_char_x = v_file_cursor_x(v_file) - SIZE__NUL;
+
+    // Prevent removing a char and 3 tabs from that e.g.: "\t\t\t\t".
+    if((v_file_cursor_x(v_file) > 1)
+       && (v_file__actual_line(v_file)->txt[actual_char_x - SIZE__PREV]
+           == tab_ch)
+       && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_ch))
+    {
+        return (size_t) tab_sz - SIZE__I;
+    }
+    return tab_i;
+}
+
+bool edit__delete_char_before_tab(V_file* const v_file, const char tab_ch,
+                                  const size_t actual_char_x)
+{
+    if((v_file__actual_line(v_file)->len > 0)
+       && (v_file->mirrored_cursor_x == 0)
+       && (v_file__actual_line(v_file)->txt[
+               v_file__actual_line(v_file)->len - SIZE__NUL]!= tab_ch))
+    {
+        return false;
+    }
+    /* Prevent removing a line when a first char in a line has to be
+       removed. */
+    else if((v_file_cursor_x(v_file) == 0)
+            && *v_file__actual_char(v_file) != tab_ch)
+    {
+        return false;
+    }
+    // Scenario when there is the Tab and some txt further.
+    else if((v_file_cursor_x(v_file) > 0)
+            && (v_file->mirrored_cursor_x > 0)
+            && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_ch))
     {
         return false;
     }
