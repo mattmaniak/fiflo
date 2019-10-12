@@ -21,7 +21,7 @@ syntax__Keyword;
 
 typedef struct
 {
-    syntax__Keyword Keywords[SYNTAX__MAX_KWRDS_IN_FILE];
+    syntax__Keyword keywords[SYNTAX__MAX_KWRDS_IN_FILE];
     size_t          keywords_amount;
 }
 Syntax;

@@ -28,7 +28,7 @@ void window__adjust_cursor_pos(const V_file* const, const Modes* const,
 
 // Stupid wrapper for above things.
 bool window__render(const V_file* const, const Config* const,
-                    const Modes* const, const Syntax* const, const size_t,
+                    const Modes* const, const Syntax* const, size_t,
                     const size_t);
 
 #endif

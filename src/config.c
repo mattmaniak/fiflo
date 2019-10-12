@@ -9,12 +9,12 @@ bool config__load(Config* const config)
         config__set_default(config);
         return true;
     }
-    config->File = fopen(conf_fname, "r");
-    if(config->File != NULL)
+    config->file = fopen(conf_fname, "r");
+    if(config->file != NULL)
     {
         config__load_custom(config);
 
-        if(fclose(config->File) == EOF)
+        if(fclose(config->file) == EOF)
         {
             fprintf(stderr, "Unable to close a configuration file.\n");
             return false;
@@ -25,11 +25,11 @@ bool config__load(Config* const config)
 
 void config__init_selectors(Config* const config)
 {
-    strcpy(config->Color_txt.selector,         "color_txt");
-    strcpy(config->Color_ui.selector,           "color_ui");
-    strcpy(config->Color_whitespace.selector,   "color_whitespace");
-    strcpy(config->Punched_card_width.selector, "punch_card_width");
-    strcpy(config->Tab_sz.selector,             "tab_size");
+    strcpy(config->color_txt.selector,          "color_txt");
+    strcpy(config->color_ui.selector,           "color_ui");
+    strcpy(config->color_whitespace.selector,   "color_whitespace");
+    strcpy(config->punched_card_width.selector, "punch_card_width");
+    strcpy(config->tab_sz.selector,             "tab_size");
 }
 
 bool config__parse_selector(Config* const config, const char* const selector,
@@ -38,28 +38,28 @@ bool config__parse_selector(Config* const config, const char* const selector,
     // Adds a value to a found selector in a configuration structure.
     if(value >= RED)
     {
-        if(!strcmp(config->Color_ui.selector, selector))
+        if(!strcmp(config->color_ui.selector, selector))
         {
-            config->Color_ui.value = value;
+            config->color_ui.value = value;
         }
-        else if(!strcmp(config->Color_txt.selector, selector))
+        else if(!strcmp(config->color_txt.selector, selector))
         {
-            config->Color_txt.value = value;
+            config->color_txt.value = value;
         }
-        else if(!strcmp(config->Color_whitespace.selector, selector))
+        else if(!strcmp(config->color_whitespace.selector, selector))
         {
-            config->Color_whitespace.value = value;
+            config->color_whitespace.value = value;
         }
-        else if(!strcmp(config->Punched_card_width.selector, selector))
+        else if(!strcmp(config->punched_card_width.selector, selector))
         {
-            config->Punched_card_width.value = value;
+            config->punched_card_width.value = value;
         }
     }
-    else if(!strcmp(config->Tab_sz.selector, selector))
+    else if(!strcmp(config->tab_sz.selector, selector))
     {
         if((value >= CONFIG__MIN_TAB_SZ) && (value <= CONFIG__MAX_TAB_SZ))
         {
-            config->Tab_sz.value = value;
+            config->tab_sz.value = value;
         }
     }
     else
@@ -127,20 +127,16 @@ int config__parse_value(const char* const read_value)
     {
         return BRIGHT_CYAN;
     }
-    else if(!strcmp(read_value, "bright_white"))
-    {
-        return BRIGHT_WHITE;
-    }
     return 0;
 }
 
 void config__set_default(Config* const config)
 {
-    config->Color_txt.value          = WHITE;
-    config->Color_ui.value           = WHITE;
-    config->Color_whitespace.value   = BRIGHT_BLACK;
-    config->Punched_card_width.value = CONFIG__PUNCH_CARD_W;
-    config->Tab_sz.value             = CONFIG__MAX_TAB_SZ;
+    config->color_txt.value          = WHITE;
+    config->color_ui.value           = WHITE;
+    config->color_whitespace.value   = BRIGHT_BLACK;
+    config->punched_card_width.value = CONFIG__PUNCH_CARD_W;
+    config->tab_sz.value             = CONFIG__MAX_TAB_SZ;
 }
 
 void config__load_custom(Config* const config)
@@ -153,13 +149,13 @@ void config__load_custom(Config* const config)
 
     config__init_selectors(config);
 
-    while(fgets(line, 80, config->File) != NULL)
+    while(fgets(line, 80, config->file) != NULL)
     {
         if((line[0] == '#') || (line[0] <= space_or_control_ch))
         {
             continue;
         }
-        // Splits a string around the " = ".
+        // Split a string around the " = " into the "selector" and "value".
         strncpy(selector, strtok(line, " = "), CONFIG__SELECTOR_SZ);
         strncpy(value,    strtok(NULL, " = "), 32);
 

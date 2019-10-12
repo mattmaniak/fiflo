@@ -33,4 +33,13 @@ bool edit__delete_last_line(V_file*);
 // When the CTRL^O is pressed, there is possibility to basically edit a fname.
 void edit__filename(V_file*, const Config* const, Modes*, const char);
 
+// Skip the Tab instantly instead of 1 column char for the first time.
+void edit__skip_tab_left(V_file* const);
+
+// As in the name.
+void edit__skip_visible_chars_left(V_file* const);
+
+// Scenario when there is a char at the beginning and the Tab at the right.
+bool edit__shift_tab_from_right(V_file* const, const Modes* const);
+
 #endif

@@ -30,12 +30,12 @@ Opt_t;
 
 typedef struct
 {
-    FILE* File;
-    Opt_t Color_txt;
-    Opt_t Color_ui;
-    Opt_t Color_whitespace;
-    Opt_t Punched_card_width;
-    Opt_t Tab_sz;
+    FILE* file;
+    Opt_t color_txt;
+    Opt_t color_ui;
+    Opt_t color_whitespace;
+    Opt_t punched_card_width;
+    Opt_t tab_sz;
 
     const int32_t _padding;
 }

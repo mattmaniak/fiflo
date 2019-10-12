@@ -1,18 +1,18 @@
 #include "memory.h"
 
-bool memory__extend_line(V_file* const v_file, const size_t line_i)
+bool memory__extend_line(V_file* const v_file, const size_t ln_i)
 {
     size_t memblock = V_FILE__MEMBLOCK;
-    size_t line_len = v_file->lines[line_i].length;
+    size_t line_len = v_file->lines[ln_i].len;
 
     if(line_len == V_FILE__BASIC_MEMBLOCK)
     {
         // There are 4/8 (on different arch) chars, extend to V_FILE__MEMBLOCK.
-        v_file->lines[line_i].txt = realloc(v_file->lines[line_i].txt,
+        v_file->lines[ln_i].txt = realloc(v_file->lines[ln_i].txt,
                                             memblock);
 
 #ifdef DEBUG_MEMORY
-        printf("Extend_line %u with mem of %u B.\n", line_i + SIZE__I,
+        printf("Extend_line %u with mem of %u B.\n", ln_i + SIZE__I,
                memblock);
 #endif
 
@@ -24,19 +24,19 @@ bool memory__extend_line(V_file* const v_file, const size_t line_i)
         memblock = ((line_len / V_FILE__MEMBLOCK) * V_FILE__MEMBLOCK)
                    + V_FILE__MEMBLOCK;
 
-        v_file->lines[line_i].txt = realloc(v_file->lines[line_i].txt,
+        v_file->lines[ln_i].txt = realloc(v_file->lines[ln_i].txt,
                                             memblock);
 
 #ifdef DEBUG_MEMORY
-        printf("Extend_line %u with mem of %u B.\n", line_i + SIZE__I,
+        printf("Extend_line %u with mem of %u B.\n", ln_i + SIZE__I,
                memblock);
 #endif
 
     }
-    if(v_file->lines[line_i].txt == NULL)
+    if(v_file->lines[ln_i].txt == NULL)
     {
         fprintf(stderr, "Can't extend a memory block for the line %u.\n",
-                (unsigned) line_i + SIZE__I);
+                (unsigned) ln_i + SIZE__I);
         return false;
     }
     return true;
@@ -48,16 +48,16 @@ bool memory__shrink_current_line(V_file* const v_file)
 
     /* These cases are executed only when the backspace is pressed. Works in
        the same way as "extend_current_line". */
-    if((v_file_actual_line(v_file)->length >= V_FILE__BASIC_MEMBLOCK)
-       && (v_file_actual_line(v_file)->length < V_FILE__MEMBLOCK))
+    if((v_file__actual_line(v_file)->len >= V_FILE__BASIC_MEMBLOCK)
+       && (v_file__actual_line(v_file)->len < V_FILE__MEMBLOCK))
     {
         // Shrink to size of the V_FILE__MEMBLOCK.
         memblock = V_FILE__MEMBLOCK;
     }
-    else if(v_file_actual_line(v_file)->length >= V_FILE__MEMBLOCK)
+    else if(v_file__actual_line(v_file)->len >= V_FILE__MEMBLOCK)
     {
         // Remove the newest memblock because isn't needed now.
-        memblock = ((v_file_actual_line(v_file)->length / V_FILE__MEMBLOCK)
+        memblock = ((v_file__actual_line(v_file)->len / V_FILE__MEMBLOCK)
                     * V_FILE__MEMBLOCK) + V_FILE__MEMBLOCK;
     }
 
@@ -66,9 +66,9 @@ bool memory__shrink_current_line(V_file* const v_file)
            v_file_cursor_y(v_file) + SIZE__I, memblock);
 #endif
 
-    v_file_actual_line(v_file)->txt
-        = realloc(v_file_actual_line(v_file)->txt, memblock);
-    if(v_file_actual_line(v_file)->txt == NULL)
+    v_file__actual_line(v_file)->txt
+        = realloc(v_file__actual_line(v_file)->txt, memblock);
+    if(v_file__actual_line(v_file)->txt == NULL)
     {
         fprintf(stderr, "Can't shrink a memory block for the line %u\n",
                 (int) v_file_cursor_y(v_file) + SIZE__I);
@@ -84,15 +84,15 @@ bool memory__shrink_prev_line(V_file* const v_file)
 
     size_t memblock = V_FILE__BASIC_MEMBLOCK;
 
-    if((v_file_prev_line(v_file)->length >= V_FILE__BASIC_MEMBLOCK)
-       && (v_file_prev_line(v_file)->length < V_FILE__MEMBLOCK))
+    if((v_file_prev_line(v_file)->len >= V_FILE__BASIC_MEMBLOCK)
+       && (v_file_prev_line(v_file)->len < V_FILE__MEMBLOCK))
     {
         memblock = V_FILE__MEMBLOCK;
     }
-    else if((v_file_prev_line(v_file)->length >= V_FILE__MEMBLOCK))
+    else if((v_file_prev_line(v_file)->len >= V_FILE__MEMBLOCK))
     {
         // Set the size of some MEMBLOCKs.
-        memblock = ((v_file_prev_line(v_file)->length / V_FILE__MEMBLOCK)
+        memblock = ((v_file_prev_line(v_file)->len / V_FILE__MEMBLOCK)
                     * V_FILE__MEMBLOCK) + V_FILE__MEMBLOCK;
     }
 
@@ -131,7 +131,7 @@ bool memory__extend_lines_array(V_file* const v_file)
         return false;
     }
     // Naturally the new line doesn't contains any chars - only terminator.
-    v_file_last_line(v_file)->length = 0;
+    v_file_last_line(v_file)->len = 0;
 
     return true;
 }
@@ -150,64 +150,63 @@ bool memory__shrink_lines_array(V_file* const v_file)
 
 bool memory__copy_lines_forward(V_file* const v_file)
 {
-    for(size_t line_i = v_file->lines_amount;
-        line_i > v_file_cursor_y(v_file); line_i--)
+    for(size_t ln_i = v_file->lines_amount; ln_i > v_file_cursor_y(v_file);
+        ln_i--)
     {
-        size_t memblock = ((v_file->lines[line_i - SIZE__PREV].length
+        size_t memblock = ((v_file->lines[ln_i - SIZE__PREV].len
                            / V_FILE__MEMBLOCK) * V_FILE__MEMBLOCK)
                           + V_FILE__MEMBLOCK;
 
-        v_file->lines[line_i].txt = realloc(v_file->lines[line_i].txt,
+        v_file->lines[ln_i].txt = realloc(v_file->lines[ln_i].txt,
                                             memblock);
 
 #ifdef DEBUG_MEMORY
         printf("Copied line %u forward to %u with new mem of %u B.\n",
-               line_i + SIZE__I - SIZE__PREV, line_i + SIZE__I, memblock);
+               ln_i + SIZE__I - SIZE__PREV, ln_i + SIZE__I, memblock);
 #endif
 
-        if(v_file->lines[line_i].txt == NULL)
+        if(v_file->lines[ln_i].txt == NULL)
         {
             fprintf(stderr, "Can't resize the forward %u line.\n",
-                    (unsigned) line_i + SIZE__I);
+                    (unsigned) ln_i + SIZE__I);
             return false;
         }
-        strcpy(v_file->lines[line_i].txt,
-               v_file->lines[line_i - SIZE__PREV].txt);
+        strcpy(v_file->lines[ln_i].txt,
+               v_file->lines[ln_i - SIZE__PREV].txt);
 
-        v_file->lines[line_i].length = v_file->lines[
-                                           line_i - SIZE__PREV].length;
+        v_file->lines[ln_i].len = v_file->lines[
+                                           ln_i - SIZE__PREV].len;
     }
     return true;
 }
 
 bool memory__copy_lines_backward(V_file* const v_file)
 {
-    for(size_t line_i = v_file_cursor_y(v_file); line_i < v_file->lines_amount;
-        line_i++)
+    for(size_t ln_i = v_file_cursor_y(v_file); ln_i < v_file->lines_amount;
+        ln_i++)
     {
-        size_t memblock = ((v_file->lines[line_i + SIZE__NEXT].length
+        size_t memblock = ((v_file->lines[ln_i + SIZE__NEXT].len
                            / V_FILE__MEMBLOCK) * V_FILE__MEMBLOCK)
                           + V_FILE__MEMBLOCK;
 
-        v_file->lines[line_i].txt = realloc(v_file->lines[line_i].txt,
+        v_file->lines[ln_i].txt = realloc(v_file->lines[ln_i].txt,
                                             memblock);
 
 #ifdef DEBUG_MEMORY
         printf("Copied line %u backward to %u with new mem of %u B.\n",
-               line_i + SIZE__I + SIZE__NEXT, line_i + SIZE__I, memblock);
+               ln_i + SIZE__I + SIZE__NEXT, ln_i + SIZE__I, memblock);
 #endif
 
-        if(v_file->lines[line_i].txt == NULL)
+        if(v_file->lines[ln_i].txt == NULL)
         {
             fprintf(stderr, "Can't copy the line %u backward.\n",
-                    (unsigned) line_i + SIZE__I);
+                    (unsigned) ln_i + SIZE__I);
             return false;
         }
-        strcpy(v_file->lines[line_i].txt,
-               v_file->lines[line_i + SIZE__NEXT].txt);
+        strcpy(v_file->lines[ln_i].txt,
+               v_file->lines[ln_i + SIZE__NEXT].txt);
 
-        v_file->lines[line_i].length = v_file->lines[
-                                           line_i + SIZE__NEXT].length;
+        v_file->lines[ln_i].len = v_file->lines[ln_i + SIZE__NEXT].len;
     }
     return true;
 }

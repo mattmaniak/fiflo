@@ -4,19 +4,19 @@ char* extension__recognize(char* const basename)
 {
     const size_t dot_sz    = 1;
     const size_t bname_len = strlen(basename);
-    size_t       char_i    = 0;
+    size_t       ch_i      = 0;
 
     if(basename == NULL)
     {
         return NULL;
     }
-    while((basename[char_i] != '.') && (basename[char_i] != '\0'))
+    while((basename[ch_i] != '.') && (basename[ch_i] != '\0'))
     {
-        char_i++;
+        ch_i++;
     }
-    if(bname_len && (char_i != bname_len)) // Not at the end of an extension.
+    if(bname_len && (ch_i != bname_len)) // Not at the end of an extension.
     {
-        return &basename[char_i + dot_sz];
+        return &basename[ch_i + dot_sz];
     }
     return NULL;
 }

@@ -24,7 +24,6 @@ enum
     BRIGHT_BLUE,
     BRIGHT_MAGENTA,
     BRIGHT_CYAN,
-    BRIGHT_WHITE
 };
 
 #define ANSI__BG_COLOR_OFFSET 10

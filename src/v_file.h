@@ -21,13 +21,6 @@
 
 #define V_FILE__CHAR_MAX (INT_MAX / 128)
 
-// TODO
-// if SIZE_MAX == SHRT_MAX
-//     #define V_FILE__CHAR_MAX SHRT_MAX
-// #else
-//     #define V_FILE__CHAR_MAX (INT_MAX / 128)
-// #endif
-
 #define V_FILE__STATUS_MAX      32
 #define V_FILE__SET_STATUS(msg) \
 strncpy(v_file->status, msg, V_FILE__STATUS_MAX - SIZE__I)
@@ -40,38 +33,30 @@ strncpy(v_file->status, msg, V_FILE__STATUS_MAX - SIZE__I)
 
 typedef struct
 {
-    char     extension[NAME_MAX];
-
-    // True if pressed key is ANSI escape code.
-    bool     esc_seq_on_input;
-    char     git_branch[NAME_MAX]; // Max size is 250 defined by Git.
-
-    const int8_t  _padding_0;
-    const int32_t _padding_1;
-    const int32_t _padding_2;
+    char extension[NAME_MAX];
+    bool esc_seq_on_input; // True if a key generated an ANSI escape code.
 
     // Filename.
-    char*    pathname; // Doesn't include the trailing slash.
-    char     basename[NAME_MAX];
+    char* pathname; // Doesn't include the trailing slash.
+    char  basename[NAME_MAX];
+    char  git_branch[NAME_MAX]; // Max size is 250 defined by Git.
 
     // Full filename. Eg. /home/user/basename.
-    char     fname[PATH_MAX + NAME_MAX];
-    char     fname_copy[PATH_MAX + NAME_MAX];
+    char fname[PATH_MAX + NAME_MAX];
+    char fname_copy[PATH_MAX + NAME_MAX];
 
-    const int8_t  _padding_3;
-    const int16_t _padding_4;
-
-    size_t   fname_len; // Strlen of the above array.
+    const int32_t _padding;
 
     // File's content and some indicators.
-    Line*    lines;
-    size_t   chars_amount; // All chars amount index.
-    size_t   lines_amount; // All lines amount index.
+    size_t fname_len; // Strlen of the above array.
+    Line*  lines;
+    size_t chars_amount; // All chars amount index.
+    size_t lines_amount; // All lines amount index.
 
     // Visual shit.
-    size_t   mirrored_cursor_x;       // User's cursor position in the reversed X.
-    size_t   mirrored_cursor_y;       // As above but in Y-axis.
-    char     status[V_FILE__STATUS_MAX]; // Message displayed in a upper bar.
+    size_t mirrored_cursor_x; // E.g. cursor_x = line_len - mirrored_cursor_x.
+    size_t mirrored_cursor_y;
+    char   status[V_FILE__STATUS_MAX]; // Message displayed in a upper bar.
 }
 V_file;
 
@@ -86,14 +71,16 @@ size_t v_file_cursor_x(const V_file* const);
 
 size_t v_file_cursor_y(const V_file* const);
 
-char v_file_actual_char(const V_file* const);
+// As they are pointers, they getters but can be also explicitly assigned.
+char* v_file__actual_char(const V_file* const);
 
-Line* v_file_actual_line(const V_file* const);
+Line* v_file__actual_line(const V_file* const);
 
 Line* v_file_prev_line(const V_file* const);
 
 Line* v_file_last_line(const V_file* const);
 
+// And some boolean getters.
 bool v_file__is_cursor_x_scrolled(const V_file* const);
 
 bool v_file__is_cursor_y_scrolled(const V_file* const);

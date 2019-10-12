@@ -1,6 +1,32 @@
-#include "fiflo.h"
+#include "main.h"
 
-void fiflo__run(int argc, char** const argv)
+bool init(V_file* v_files, Config* const config, Modes* const modes,
+          Syntax* syntax, char** argv, size_t* const additional_argc_i)
+{
+    const size_t fname_arg_sz = 1;
+
+    if(v_files == NULL)
+    {
+        fprintf(stderr, "Can't alloc a memory for file buffers.\n");
+        return false;
+    }
+    for(size_t file_i = 0; file_i <= *additional_argc_i; file_i++)
+    {
+        if(!v_file__init(&v_files[file_i]) || !config__load(config)
+           || !filename__set_name(&v_files[file_i],
+                                  argv[fname_arg_sz + file_i])
+           || !file_io__load(&v_files[file_i], config, modes))
+        {
+            return false;
+        }
+        strcpy(v_files[file_i].fname_copy, v_files[file_i].fname);
+    }
+    syntax->keywords_amount = 0;
+
+    return true;
+}
+
+int main(int argc, char** argv)
 {
     const size_t fname_arg_sz = 1;
 
@@ -21,27 +47,15 @@ void fiflo__run(int argc, char** const argv)
     modes__init(&modes);
     if(!args__parse(&modes, &argc, argv))
     {
-        return;
+        return 0;
     }
 
     v_files = malloc((size_t) argc * sizeof(V_file));
-    if(v_files == NULL)
+    if(!init(v_files, &config, &modes, &syntax, argv,
+                    &additional_argc_i))
     {
-        fprintf(stderr, "Can't alloc a memory for file buffers.\n");
         goto free;
     }
-    for(size_t file_i = 0; file_i <= additional_argc_i; file_i++)
-    {
-        if(!v_file__init(&v_files[file_i]) || !config__load(&config)
-           || !filename__set_name(&v_files[file_i], argv[fname_arg_sz + file_i])
-           || !file_io__load(&v_files[file_i], &config, &modes))
-        {
-            goto free;
-        }
-        strcpy(v_files[file_i].fname_copy, v_files[file_i].fname);
-    }
-    syntax.keywords_amount = 0;
-
     for(;;) // The main program loop.
     {
         if(!file_io__get_git_branch(&v_files[actual_file_i])
@@ -90,11 +104,6 @@ free:
     {
         free(v_files);
     }
-}
-
-int main(int argc, char** argv)
-{
-    fiflo__run(argc, argv);
     fflush(NULL); // Clean both output buffers.
 
     return 0;

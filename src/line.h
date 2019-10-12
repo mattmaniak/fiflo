@@ -6,7 +6,7 @@
 typedef struct
 {
     char*  txt;
-    size_t length;
+    size_t len;
 
     const size_t _padding;
 }

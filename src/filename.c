@@ -98,21 +98,21 @@ bool filename__set_name(V_file* const v_file, const char* const arg)
 
 bool filename__extract_pathname_from_arg(V_file* const v_file)
 {
-    size_t char_i           = 0;
+    size_t ch_i           = 0;
     size_t slash_last_pos = 0;
 
-    while(v_file->fname[char_i] != '\0')
+    while(v_file->fname[ch_i] != '\0')
     {
-        if(v_file->fname[char_i] == '/')
+        if(v_file->fname[ch_i] == '/')
         {
-            if(char_i == 0) // Cares about the absolute path.
+            if(ch_i == 0) // Cares about the absolute path.
             {
                 slash_last_pos = 1;
                 break;
             }
-            slash_last_pos = char_i;
+            slash_last_pos = ch_i;
         }
-        char_i++;
+        ch_i++;
     }
     strncpy(v_file->pathname, v_file->fname, slash_last_pos);
     v_file->pathname[slash_last_pos] = '\0';
@@ -135,17 +135,17 @@ bool filename__extract_pathname_from_arg(V_file* const v_file)
 
 void filename__extract_basename_from_arg(V_file* const v_file)
 {
-    size_t char_i         = strlen(v_file->fname);
+    size_t ch_i         = strlen(v_file->fname);
     size_t slash_last_pos = 0;
 
-    while(char_i > 0)
+    while(ch_i > 0)
     {
-        if(v_file->fname[char_i] == '/')
+        if(v_file->fname[ch_i] == '/')
         {
-            slash_last_pos = char_i + SIZE__SLASH;
+            slash_last_pos = ch_i + SIZE__SLASH;
             break;
         }
-        char_i--;
+        ch_i--;
     }
     strcpy(v_file->basename, &v_file->fname[slash_last_pos]);
 }

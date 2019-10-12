@@ -14,7 +14,7 @@ term_t window__receive_terminal_size(const char axis)
         specific device (stdout)." */
     if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal) == -1)
     {
-        fprintf(stderr, "Can't get a terminal's size.\n");
+        fprintf(stderr, "Can't get a terminal size.\n");
         return 0;
     }
 
@@ -90,13 +90,13 @@ void window__adjust_cursor_pos(const V_file* const v_file,
 
     if(!modes->live_fname_edit)
     {
-        if(v_file_actual_line(v_file)->length < ui->txtarea_w)
+        if(v_file__actual_line(v_file)->len < ui->txtarea_w)
         {
             // No horizontal scrolling.
-            move_right = (term_t) (ui->line_number_length
+            move_right = (term_t) (ui->line_number_len
                                    + v_file_cursor_x(v_file));
         }
-        else if((v_file_actual_line(v_file)->length - ui->txtarea_w)
+        else if((v_file__actual_line(v_file)->len - ui->txtarea_w)
                 >= v_file->mirrored_cursor_x)
         {
             /* Last ui->txtarea_w chars are seen. Current line is scrolled,
@@ -106,7 +106,7 @@ void window__adjust_cursor_pos(const V_file* const v_file,
         else
         {
             // Text is scrolled horizontally to a start. Cursor can be moved.
-            move_right = (term_t) (ui->line_number_length
+            move_right = (term_t) (ui->line_number_len
                                    + v_file_cursor_x(v_file));
         }
         move_up = (v_file_cursor_y(v_file) < ui->txtarea_h)
@@ -120,9 +120,9 @@ void window__adjust_cursor_pos(const V_file* const v_file,
 
 bool window__render(const V_file* const v_file, const Config* const config,
                     const Modes* const modes, const Syntax* const syntax,
-                    const size_t additional_argc_i, const size_t actual_file_i)
+                    size_t additional_argc_i, const size_t actual_file_i)
 {
-    char line_number_as_str[16]; // Needed to count a length of a number.
+    char line_number_as_str[16]; // Needed to count a len of a number.
     Ui   ui;
 
     sprintf(line_number_as_str, "%u",
@@ -133,20 +133,23 @@ bool window__render(const V_file* const v_file, const Config* const config,
     {
         return false;
     }
+    if(additional_argc_i == 0)
+    {
+        additional_argc_i++;
+    }
     ui.expanded_lbar_h = (term_t) (UI__LBAR_SZ + additional_argc_i + SIZE__I);
     ui.lbar_h          = (modes->expanded_lbar) ? ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 
-    ui.line_number_length = (term_t) (strlen(line_number_as_str) + SIZE__SPACE
-                                      + UI__LEFT_PADDING);
+    ui.line_number_len = (term_t) (strlen(line_number_as_str) + SIZE__SPACE
+                                   + UI__LEFT_PADDING);
 
-    ui.txtarea_w = (term_t) (ui.win_w - ui.line_number_length);
+    ui.txtarea_w = (term_t) (ui.win_w - ui.line_number_len);
     ui.txtarea_h = (term_t) (ui.win_h - UI__UBAR_SZ - ui.lbar_h);
 
-    ui.punched_card_delta_x = (int) (ui.txtarea_w
-                                     + v_file[actual_file_i].mirrored_cursor_x
-                                     - v_file_actual_line(v_file)->length
-                                     - SIZE__I);
+    ui.punched_card_delta_x = (int) (v_file[actual_file_i].mirrored_cursor_x
+                                     - v_file__actual_line(v_file)->len
+                                     - SIZE__I + ui.txtarea_w);
 
     ui.punched_card_delta_x = (ui.punched_card_delta_x > 0) ? 0
                               : ui.punched_card_delta_x;

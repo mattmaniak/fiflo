@@ -147,11 +147,11 @@ bool input__parse_key(V_file* const v_file, const Config* const config,
                       Modes* const modes, size_t* const file_i, const char key)
 {
     static char   ch_sequence[INPUT__SEQ_MAX];
-    static size_t char_i;
+    static size_t ch_i;
 
     if((key == ASCII__CTRL_LEFT_BRACKET) && !modes->live_fname_edit)
     {
-        char_i                     = 0;
+        ch_i                     = 0;
         v_file->esc_seq_on_input = true;
 
 #ifdef DEBUG_INPUT
@@ -161,17 +161,17 @@ bool input__parse_key(V_file* const v_file, const Config* const config,
     }
     if(v_file->esc_seq_on_input)
     {
-        ch_sequence[char_i] = key;
-        if(char_i < (INPUT__SEQ_MAX - SIZE__NUL))
+        ch_sequence[ch_i] = key;
+        if(ch_i < (INPUT__SEQ_MAX - SIZE__NUL))
         {
-            char_i++;
+            ch_i++;
         }
-        ch_sequence[char_i] = '\0';
+        ch_sequence[ch_i] = '\0';
         input__recognize_sequence(v_file, config, ch_sequence, file_i);
 
         if(!v_file->esc_seq_on_input)
         {
-            char_i = 0;
+            ch_i = 0;
         }
     }
     else if(modes->live_fname_edit)
@@ -222,18 +222,18 @@ bool input__printable_char(V_file* const v_file, const char ch)
 {
 
 #ifdef DEBUG_KEYS
-    const bool char_is_allowed = true;
+    const bool ch_is_allowed = true;
 #else
-    const bool char_is_allowed = (ch == '\0') || (ch == '\t') || (ch == '\n')
+    const bool ch_is_allowed = (ch == '\0') || (ch == '\t') || (ch == '\n')
                                  || (ch >= 32);
 #endif
 
-    if(char_is_allowed)
+    if(ch_is_allowed)
     {
         if(v_file->chars_amount < V_FILE__CHAR_MAX)
         {
             v_file->chars_amount++;
-            v_file_actual_line(v_file)->length++;
+            v_file__actual_line(v_file)->len++;
 
             if(!memory__extend_line(v_file, v_file_cursor_y(v_file)))
             {
@@ -243,17 +243,17 @@ bool input__printable_char(V_file* const v_file, const char ch)
             {
                 edit__shift_text_horizonally(v_file, 'r');
             }
-            v_file_actual_line(v_file)->txt[
+            v_file__actual_line(v_file)->txt[
                 v_file_cursor_x(v_file) - SIZE__NUL] = ch;
 
-            v_file_actual_line(v_file)->txt[
-                v_file_actual_line(v_file)->length] = '\0';
+            v_file__actual_line(v_file)->txt[
+                v_file__actual_line(v_file)->len] = '\0';
 
             // Initializing nul handler.
             if((ch == '\0') && !v_file__is_actual_line_empty(v_file))
             {
                 v_file->chars_amount--;
-                v_file_actual_line(v_file)->length--;
+                v_file__actual_line(v_file)->len--;
             }
             else if((ch == '\n') && !keys__linefeed(v_file))
             {

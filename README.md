@@ -7,6 +7,17 @@ the C pointers and memory management exercise. The goal is to create an editor
 that mixes the Atom's rich functionality and Windows-like keyboard bindings
 with the Nano's minimalism.
 
+## Features
+- Windows-like keyboard shortcuts,
+- terminal-based,
+- up to 4 files simultaneous editing,
+- tabs/spaces recognition/selection,
+- syntax highlighting,
+- Git branch display,
+- punched card, that inverts the e.g. 80th char color,
+- easily configurable,
+- dependency-free compilation.
+
 ## Usage
 ### Check the requirements for the GNU/Linux:
 - git,
@@ -56,7 +67,8 @@ sudo make uninstall
 ```
 
 ## Development
-Read the "CONTRIBUTING.md" and check the "doc/" directory.
+Read the "CONTRIBUTING.md" and check the "doc/" directory. The planning is done
+spontaneously so differences between commits may be big due the experiments.
 
 ### Source files (submodules):
 - **args** - passed command-line arguments handling,

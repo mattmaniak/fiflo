@@ -7,19 +7,18 @@ void ui__colorize(const int value)
 }
 
 void ui__print_line_number(const V_file* const v_file,
-                           const Config* const config, const size_t line_i,
-                           const term_t line_number_length)
+                           const Config* const config, const size_t ln_i,
+                           const term_t line_number_len)
 {
-    ui__colorize(config->Color_ui.value);
+    ui__colorize(config->color_ui.value);
     ANSI__INVERT();
 
-    if(line_i == v_file_cursor_y(v_file))
+    if(ln_i == v_file_cursor_y(v_file))
     {
         ui__colorize(0);
-        ui__colorize(config->Color_ui.value);
+        ui__colorize(config->color_ui.value);
     }
-    printf("%*u", line_number_length - SIZE__SPACE,
-           (unsigned) line_i + SIZE__I);
+    printf("%*u", line_number_len - SIZE__SPACE, (unsigned) ln_i + SIZE__I);
 
     ui__colorize(0);
     putchar(' ');
@@ -30,7 +29,7 @@ void ui__upper_bar(const V_file* const v_file, const Config* const config,
 {
     const int fname_area  = ui->win_w - UI__LEFT_PADDING - UI__RIGHT_PADDING;
 
-    ui__colorize(config->Color_ui.value);
+    ui__colorize(config->color_ui.value);
     ANSI__INVERT();
     printf("%*s", UI__LEFT_PADDING, " ");
 
@@ -72,7 +71,7 @@ void ui__upper_bar(const V_file* const v_file, const Config* const config,
 
 void ui__lower_bar(const V_file* const v_files, const Config* const config,
                    const Modes* const modes, const Ui* const ui,
-                   const size_t additional_argc_i, const size_t actual_file_i)
+                   size_t additional_argc_i, const size_t actual_file_i)
 {
     const V_file* const v_file      = &v_files[actual_file_i];
     const int           fname_area  = ui->win_w - UI__LEFT_PADDING
@@ -87,7 +86,7 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
 
     UI__WRAP_LINE();
     ui__colorize(0); // Resets a last line color.
-    ui__colorize(config->Color_ui.value);
+    ui__colorize(config->color_ui.value);
 
     if(modes->expanded_lbar)
     {
@@ -97,16 +96,20 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
                fname_area - (int) strlen(files_str) + UI__RIGHT_PADDING, " ");
         UI__WRAP_LINE();
 
+        if(additional_argc_i == 0)
+        {
+            additional_argc_i++;
+        }
         for(size_t file_i = 0; file_i < additional_argc_i; file_i++)
         {
             ui__colorize(0);
-            ui__colorize(config->Color_ui.value);
+            ui__colorize(config->color_ui.value);
             ANSI__INVERT();
 
             if(file_i == actual_file_i)
             {
                 ui__colorize(0);
-                ui__colorize(config->Color_ui.value);
+                ui__colorize(config->color_ui.value);
             }
             printf("%*s", UI__LEFT_PADDING, " ");
 
@@ -123,7 +126,7 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
             UI__WRAP_LINE();
         }
     }
-    ui__colorize(config->Color_ui.value);
+    ui__colorize(config->color_ui.value);
     ANSI__INVERT();
 
     // Cursor position indicator (2D matrix).
