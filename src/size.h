@@ -3,8 +3,7 @@
 
 // Macros that makes the life a little bit more readable.
 
-#define SIZE__I      1
-#define SIZE__NUL    1
+#define SIZE__I      1 // Size of the index. Just 1.
 #define SIZE__LF     1
 #define SIZE__LINE   1
 #define SIZE__CURSOR 1

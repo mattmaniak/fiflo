@@ -25,10 +25,11 @@ bool syntax__load(Syntax* const syntax, const char* const extension)
             strncpy(syntax->keywords[syntax->keywords_amount].keyword, keyword,
                     SYNTAX__MAX_KWRD_LEN);
 
-            syntax->keywords[syntax->keywords_amount].color =
-            config__parse_value(color);
+            syntax->keywords[syntax->keywords_amount].color
+                = config__parse_value(color);
 
-            if(syntax->keywords_amount++ >= SYNTAX__MAX_KWRDS_IN_FILE)
+            syntax->keywords_amount++;
+            if(syntax->keywords_amount > SYNTAX__MAX_KWRDS_IN_FILE)
             {
                 break;
             }
@@ -62,8 +63,8 @@ void syntax__sort(Syntax* const syntax)
             {
                 Tmp_keyword = syntax->keywords[keyword_i];
 
-                syntax->keywords[keyword_i]  = syntax->keywords[shift_i];
-                syntax->keywords[shift_i] = Tmp_keyword;
+                syntax->keywords[keyword_i] = syntax->keywords[shift_i];
+                syntax->keywords[shift_i]   = Tmp_keyword;
             }
         }
     }
@@ -73,11 +74,9 @@ size_t syntax__paint_word(const Syntax* const syntax,
                           const Config* const config, Line* Line,
                           const size_t end_ch_i, size_t ch_i)
 {
-    const char* const str_to_print_addr = &Line->txt[ch_i];
-    const size_t      pcard_w
-        = (size_t) config->punched_card_width.value;
-
-    bool              keyword_ignored   = false;
+    const char* const str_to_print = &Line->txt[ch_i];
+    const size_t      pcard_w      = (size_t) config->punched_card_width.value;
+    bool              word_ignored = false;
     size_t            end_paint_i;
 
     if(syntax->keywords_amount <= 0)
@@ -87,18 +86,18 @@ size_t syntax__paint_word(const Syntax* const syntax,
     for(size_t keyword_i = 0; keyword_i <= syntax->keywords_amount;
         keyword_i++)
     {
-        if(strstr(str_to_print_addr, syntax->keywords[keyword_i].keyword)
-           == str_to_print_addr)
+        if((str_to_print != NULL)
+           && (strstr(str_to_print, syntax->keywords[keyword_i].keyword)
+               == str_to_print))
         {
             ui__colorize(syntax->keywords[keyword_i].color);
 
             end_paint_i = (size_t) strlen(syntax->keywords[keyword_i].keyword)
                                    + ch_i;
-
             if(end_paint_i == 0)
             {
                 end_paint_i  = ch_i;
-                keyword_ignored = true;
+                word_ignored = true;
             }
 
             // Breaks a word if the end of a terminal is achieved.
@@ -123,7 +122,7 @@ size_t syntax__paint_word(const Syntax* const syntax,
                 }
             }
             // Not a last char, so don't hide a next.
-            if(!keyword_ignored && (ch_i < end_ch_i))
+            if(!word_ignored && (ch_i < end_ch_i))
             {
                 ch_i--; // An other char will be printed. Make it visible.
             }

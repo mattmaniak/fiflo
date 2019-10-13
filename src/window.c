@@ -64,7 +64,7 @@ void window__fill(const V_file* const v_file, const Ui* const ui)
     // Fill an empty area below a txt to adjust a position the lower bar.
     if((v_file->lines_amount + SIZE__I) < (size_t) ui->txtarea_h)
     {
-        for(size_t line = v_file->lines_amount; line < lines_to_fill; line++)
+        for(size_t ln = v_file->lines_amount; ln < lines_to_fill; ln++)
         {
             UI__WRAP_LINE();
         }
@@ -94,7 +94,7 @@ void window__adjust_cursor_pos(const V_file* const v_file,
         {
             // No horizontal scrolling.
             move_right = (term_t) (ui->line_number_len
-                                   + v_file_cursor_x(v_file));
+                                   + v_file__cursor_x(v_file));
         }
         else if((v_file__actual_line(v_file)->len - ui->txtarea_w)
                 >= v_file->mirrored_cursor_x)
@@ -107,10 +107,10 @@ void window__adjust_cursor_pos(const V_file* const v_file,
         {
             // Text is scrolled horizontally to a start. Cursor can be moved.
             move_right = (term_t) (ui->line_number_len
-                                   + v_file_cursor_x(v_file));
+                                   + v_file__cursor_x(v_file));
         }
-        move_up = (v_file_cursor_y(v_file) < ui->txtarea_h)
-                  ? (term_t) (ui->txtarea_h - v_file_cursor_y(v_file)
+        move_up = (v_file__cursor_y(v_file) < ui->txtarea_h)
+                  ? (term_t) (ui->txtarea_h - v_file__cursor_y(v_file)
                               - SIZE__I + ui->lbar_h)
                   : ui->lbar_h;
     }
@@ -128,8 +128,10 @@ bool window__render(const V_file* const v_file, const Config* const config,
     sprintf(line_number_as_str, "%u",
             (int) v_file[actual_file_i].lines_amount + SIZE__I);
 
-    if(((ui.win_w = window__receive_terminal_size('w')) == 0)
-       || ((ui.win_h = window__receive_terminal_size('h')) == 0))
+    ui.win_w = window__receive_terminal_size('w');
+    ui.win_h = window__receive_terminal_size('h');
+
+    if((ui.win_w == 0) || (ui.win_h == 0))
     {
         return false;
     }

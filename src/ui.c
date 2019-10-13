@@ -13,7 +13,7 @@ void ui__print_line_number(const V_file* const v_file,
     ui__colorize(config->color_ui.value);
     ANSI__INVERT();
 
-    if(ln_i == v_file_cursor_y(v_file))
+    if(ln_i == v_file__cursor_y(v_file))
     {
         ui__colorize(0);
         ui__colorize(config->color_ui.value);
@@ -35,14 +35,16 @@ void ui__upper_bar(const V_file* const v_file, const Config* const config,
 
     if(v_file->fname_len <= (size_t) fname_area)
     {
-        printf("%s%*s", v_file->fname, fname_area
-               - (int) strlen(v_file->fname) + UI__RIGHT_PADDING, " ");
+        printf("%s%*s", v_file->fname,
+               fname_area - (int) strlen(v_file->fname) + UI__RIGHT_PADDING,
+               " ");
     }
     else
     {
         // The filename is too long to show - scroll it.
         for(size_t char_i = v_file->fname_len - ui->win_w
-            + UI__HORIZONTAL_PADDING; char_i < v_file->fname_len; char_i++)
+            + UI__HORIZONTAL_PADDING;
+            char_i < v_file->fname_len; char_i++)
         {
             putchar(v_file->fname[char_i]);
         }
@@ -50,16 +52,19 @@ void ui__upper_bar(const V_file* const v_file, const Config* const config,
         UI__WRAP_LINE();
     }
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", v_file->status,
-           (V_FILE__STATUS_MAX - (int) strlen(v_file->status)
-           - SIZE__SPACE + UI__GIT_LOGO_W), UI__GIT_LOGO);
+           V_FILE__STATUS_MAX - (int) strlen(v_file->status) - SIZE__SPACE
+           + UI__GIT_LOGO_W,
+           UI__GIT_LOGO);
 
     if((term_t) strlen(v_file->git_branch)
        < (ui->win_w - UI__GIT_LOGO_W - V_FILE__STATUS_MAX
           - UI__HORIZONTAL_PADDING))
     {
-        printf("%s%*s", v_file->git_branch, (fname_area
-               - V_FILE__STATUS_MAX - (int) strlen(v_file->git_branch)
-               - UI__GIT_LOGO_W + UI__LEFT_PADDING + UI__RIGHT_PADDING), " ");
+        printf("%s%*s", v_file->git_branch,
+               fname_area - V_FILE__STATUS_MAX
+               - (int) strlen(v_file->git_branch) - UI__GIT_LOGO_W
+               + UI__LEFT_PADDING + UI__RIGHT_PADDING,
+               " ");
     }
     else
     {
@@ -81,8 +86,8 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
 
 
     sprintf(cursor_pos_indicator, "[%u; %u]",
-            (unsigned) v_file_cursor_y(v_file) + SIZE__I,
-            (unsigned) v_file_cursor_x(v_file) + SIZE__I);
+            (unsigned) v_file__cursor_y(v_file) + SIZE__I,
+            (unsigned) v_file__cursor_x(v_file) + SIZE__I);
 
     UI__WRAP_LINE();
     ui__colorize(0); // Resets a last line color.

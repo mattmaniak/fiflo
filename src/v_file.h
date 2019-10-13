@@ -67,18 +67,22 @@ bool v_file__init(V_file* const);
 void v_file__delete(V_file* const);
 
 // Some basic getters those combine multiple values in one function.
-size_t v_file_cursor_x(const V_file* const);
+size_t v_file__cursor_x(const V_file* const);
 
-size_t v_file_cursor_y(const V_file* const);
+size_t v_file__cursor_y(const V_file* const);
 
 // As they are pointers, they getters but can be also explicitly assigned.
 char* v_file__actual_char(const V_file* const);
 
+char* v_file__last_char_in_actual_line(const V_file* const);
+
+char* v_file__last_char(const V_file* const);
+
 Line* v_file__actual_line(const V_file* const);
 
-Line* v_file_prev_line(const V_file* const);
+Line* v_file__prev_line(const V_file* const);
 
-Line* v_file_last_line(const V_file* const);
+Line* v_file__last_line(const V_file* const);
 
 // And some boolean getters.
 bool v_file__is_cursor_x_scrolled(const V_file* const);

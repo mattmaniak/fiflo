@@ -14,7 +14,8 @@ char* extension__recognize(char* const basename)
     {
         ch_i++;
     }
-    if(bname_len && (ch_i != bname_len)) // Not at the end of an extension.
+    // Not at the end of an extension.
+    if((bname_len > 0) && (ch_i != bname_len))
     {
         return &basename[ch_i + dot_sz];
     }

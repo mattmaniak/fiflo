@@ -6,7 +6,7 @@ bool file_io__load(V_file* const v_file, const Config* const config,
     char  ch = '\0';
     FILE* textfile;
 
-    if(v_file->fname[v_file->fname_len - SIZE__NUL] == '/')
+    if(v_file->fname[v_file->fname_len - SIZE__I] == '/')
     {
         V_FILE__SET_STATUS("current directory set");
         return true;
@@ -149,9 +149,9 @@ bool file_io__get_git_branch(V_file* const v_file)
     while(fgets(v_file->git_branch, NAME_MAX, Git_head_file) != NULL)
 
     // Delete the linefeed from the name.
-    if(v_file->git_branch[strlen(v_file->git_branch) - SIZE__NUL] == '\n')
+    if(v_file->git_branch[strlen(v_file->git_branch) - SIZE__I] == '\n')
     {
-        v_file->git_branch[strlen(v_file->git_branch) - SIZE__NUL] = '\0';
+        v_file->git_branch[strlen(v_file->git_branch) - SIZE__I] = '\0';
     }
 
     if(fclose(Git_head_file) == EOF)

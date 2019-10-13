@@ -69,16 +69,18 @@ int main(int argc, char** argv)
         {
             actual_file_i = additional_argc_i;
         }
-        if(v_files[actual_file_i].basename[0] != '\0')
+        extension = extension__recognize(v_files[actual_file_i].basename);
+        if((extension != NULL) // Enable highlighting.
+           && strcmp(v_files[actual_file_i].extension, extension))
         {
-            extension = extension__recognize(v_files[actual_file_i].basename);
-            if((extension != NULL)
-               && strcmp(v_files[actual_file_i].extension, extension))
-            {
-                syntax.keywords_amount = 0;
-                syntax__load(&syntax, extension);
-                strcpy(v_files[actual_file_i].extension, extension);
-            }
+            syntax.keywords_amount = 0;
+            syntax__load(&syntax, extension);
+            strcpy(v_files[actual_file_i].extension, extension);
+        }
+        else if(extension == NULL) // Disable highlighting.
+        {
+            syntax.keywords_amount = 0;
+            memset(v_files[actual_file_i].extension, 0, NAME_MAX);
         }
 
         // Flushes and renders always after the keypress.

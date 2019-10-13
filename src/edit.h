@@ -6,6 +6,7 @@
 #include "ascii.h"
 #include "v_file.h"
 #include "file_io.h"
+#include "filename.h"
 #include "memory.h"
 
 // Optionally shift a text horizontally.
@@ -31,7 +32,7 @@ bool edit__delete_last_empty_line(V_file*);
 bool edit__delete_last_line(V_file*);
 
 // When the CTRL^O is pressed, there is possibility to basically edit a fname.
-void edit__filename(V_file*, const Config* const, Modes*, const char);
+bool edit__filename(V_file*, const Config* const, Modes*, const char);
 
 // Skip the Tab instantly instead of 1 column char for the first time.
 void edit__skip_tab_left(V_file* const);

@@ -12,3 +12,7 @@
 #include "syntax.h"
 #include "window.h"
 #include "options.h"
+
+// Initialize the app.
+bool init(V_file*, Config* const, Modes* const, Syntax*, char**,
+          size_t* const);

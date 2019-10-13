@@ -31,19 +31,19 @@ bool keys__linefeed(V_file* const v_file)
 bool keys__backspace(V_file* const v_file, const Config* const config,
                      const Modes* const modes)
 {
-    const size_t ln_i_before_charange = v_file_cursor_y(v_file);
+    const size_t ln_i_before_charange = v_file__cursor_y(v_file);
     const char   tab_ch               = (modes->tabs_to_spaces) ? ' ' : '\t';
     const size_t tab_sz               = (size_t) config->tab_sz.value;
     size_t       actual_char_x;
 
     for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
     {
-        actual_char_x = v_file_cursor_x(v_file) - SIZE__NUL;
+        actual_char_x = v_file__cursor_x(v_file) - SIZE__I;
 
         tab_i = edit__dont_delete_char_after_tab(v_file, tab_sz, tab_ch,
                                                  tab_i);
 
-        if((v_file_cursor_x(v_file) == 1) && (v_file->mirrored_cursor_x > 0)
+        if((v_file__cursor_x(v_file) == 1) && (v_file->mirrored_cursor_x > 0)
            && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_ch)
            && *v_file__actual_char(v_file) == tab_ch)
         {
@@ -57,7 +57,7 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
         {
             return false;
         }
-        actual_char_x = v_file_cursor_x(v_file) - SIZE__NUL;
+        actual_char_x = v_file__cursor_x(v_file) - SIZE__I;
 
         if(!edit__delete_char_before_tab(v_file, tab_ch, actual_char_x))
         {
@@ -66,7 +66,7 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
 
         /* Prevents deleting [tab_width] lines at once with a maximally
            scrolled cursor in X. */
-        if(ln_i_before_charange != v_file_cursor_y(v_file))
+        if(ln_i_before_charange != v_file__cursor_y(v_file))
         {
             break;
         }
@@ -112,7 +112,7 @@ void keys__arrow_left(V_file* const v_file, const Config* const config)
         // Skip the e.g "\t\t\t\t" as the one Tab.
         for(size_t tab_i = 1; tab_i < tab_sz; tab_i++)
         {
-            if(v_file__actual_line(v_file)->txt[v_file_cursor_x(v_file) - tab_i]
+            if(v_file__actual_line(v_file)->txt[v_file__cursor_x(v_file) - tab_i]
                != '\t')
             {
                 v_file->mirrored_cursor_x++;
@@ -136,14 +136,16 @@ void keys__arrow_left(V_file* const v_file, const Config* const config)
 void keys__arrow_right(V_file* const v_file, const Config* const config)
 {
     const size_t tab_sz = (size_t) config->tab_sz.value;
+    size_t       ch_i;
 
     if(v_file__is_cursor_x_scrolled(v_file))
     {
         // Skip the e.g "\t\t\t\t" as the one Tab.
         for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
         {
-            if(v_file__actual_line(v_file)->txt[v_file_cursor_x(v_file) + tab_i]
-               != '\t')
+            ch_i = v_file__cursor_x(v_file) + tab_i;
+
+            if(v_file__actual_line(v_file)->txt[ch_i] != '\t')
             {
                 v_file->mirrored_cursor_x--;
                 break; // No Tab, so don't skip anything.
@@ -177,7 +179,7 @@ void keys__arrow_up(V_file* const v_file)
         /* Cursor at a left side: doesn't go at a end of a line. Always at the
            beginning or ignore the linefeed. */
         v_file->mirrored_cursor_x = (v_file__is_cursor_at_line_start(v_file))
-                                    ? v_file_prev_line(v_file)->len
+                                    ? v_file__prev_line(v_file)->len
                                     : SIZE__LF;
         v_file->mirrored_cursor_y++;
     }
@@ -212,7 +214,7 @@ void keys__arrow_down(V_file* const v_file)
 void keys__ctrl_arrow_left(V_file* const v_file)
 {
     // Go to a previous line.
-    if((v_file_cursor_x(v_file) == 0)
+    if((v_file__cursor_x(v_file) == 0)
        && (v_file->mirrored_cursor_y < v_file->lines_amount))
     {
         v_file->mirrored_cursor_y++;
@@ -248,7 +250,7 @@ void keys__ctrl_arrow_right(V_file* const v_file)
     if((*v_file__actual_char(v_file) != ' ')
        && (*v_file__actual_char(v_file) != '\t'))
     {
-        while((v_file->mirrored_cursor_x > SIZE__NUL)
+        while((v_file->mirrored_cursor_x > SIZE__I)
               && !((*v_file__actual_char(v_file) == ' ')
                    || (*v_file__actual_char(v_file) == '\t')))
         {
@@ -257,7 +259,7 @@ void keys__ctrl_arrow_right(V_file* const v_file)
     }
     else // Non-whitespace chars.
     {
-        while((v_file->mirrored_cursor_x > SIZE__NUL)
+        while((v_file->mirrored_cursor_x > SIZE__I)
               && ((*v_file__actual_char(v_file) == ' ')
                   || (*v_file__actual_char(v_file) == '\t')))
         {

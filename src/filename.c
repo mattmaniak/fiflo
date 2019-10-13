@@ -35,7 +35,7 @@ bool filename__set_name(V_file* const v_file, const char* const arg)
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
-            fprintf(stderr, "The passed filename is too long.\n");
+            fprintf(stderr, "Passed filename is too long.\n");
             return false;
         }
         strncpy(v_file->fname, arg, PATH_MAX + NAME_MAX);
@@ -51,7 +51,7 @@ bool filename__set_name(V_file* const v_file, const char* const arg)
     {
         if(strlen(arg) >= (PATH_MAX + NAME_MAX))
         {
-            fprintf(stderr, "The passed filename is too long.\n");
+            fprintf(stderr, "Passed filename is too long.\n");
             return false;
         }
         strncpy(v_file->fname, arg, PATH_MAX + NAME_MAX);
@@ -65,7 +65,7 @@ bool filename__set_name(V_file* const v_file, const char* const arg)
     {
         if(strlen(arg) >= NAME_MAX)
         {
-            fprintf(stderr, "The passed filename is too long.\n");
+            fprintf(stderr, "Passed basename is too long.\n");
             return false;
         }
         if((v_file->pathname = getcwd(v_file->pathname, PATH_MAX)) == NULL)

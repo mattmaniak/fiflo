@@ -162,7 +162,7 @@ bool input__parse_key(V_file* const v_file, const Config* const config,
     if(v_file->esc_seq_on_input)
     {
         ch_sequence[ch_i] = key;
-        if(ch_i < (INPUT__SEQ_MAX - SIZE__NUL))
+        if(ch_i < (INPUT__SEQ_MAX - SIZE__I))
         {
             ch_i++;
         }
@@ -176,7 +176,10 @@ bool input__parse_key(V_file* const v_file, const Config* const config,
     }
     else if(modes->live_fname_edit)
     {
-        edit__filename(v_file, config, modes, key);
+        if(!edit__filename(v_file, config, modes, key))
+        {
+            return false;
+        }
     }
     else
     {
@@ -235,7 +238,7 @@ bool input__printable_char(V_file* const v_file, const char ch)
             v_file->chars_amount++;
             v_file__actual_line(v_file)->len++;
 
-            if(!memory__extend_line(v_file, v_file_cursor_y(v_file)))
+            if(!memory__extend_line(v_file, v_file__cursor_y(v_file)))
             {
                 return false;
             }
@@ -244,7 +247,7 @@ bool input__printable_char(V_file* const v_file, const char ch)
                 edit__shift_text_horizonally(v_file, 'r');
             }
             v_file__actual_line(v_file)->txt[
-                v_file_cursor_x(v_file) - SIZE__NUL] = ch;
+                v_file__cursor_x(v_file) - SIZE__I] = ch;
 
             v_file__actual_line(v_file)->txt[
                 v_file__actual_line(v_file)->len] = '\0';
