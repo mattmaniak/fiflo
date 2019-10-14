@@ -23,7 +23,7 @@ bool keys__linefeed(V_file* const v_file)
                 return false;
             }
         }
-        *v_file__actual_char(v_file) = '\0';
+        *v_file__last_char_in_actual_line(v_file) = '\0';
     }
     return true;
 }
@@ -45,7 +45,7 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
 
         if((v_file__cursor_x(v_file) == 1) && (v_file->mirrored_cursor_x > 0)
            && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_ch)
-           && *v_file__actual_char(v_file) == tab_ch)
+           && (*v_file__actual_char(v_file) == tab_ch))
         {
             if(!edit__delete_char(v_file))
             {
