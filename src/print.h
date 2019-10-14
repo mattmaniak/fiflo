@@ -3,47 +3,55 @@
 
 // Renders the text itself. Cares about scrolling.
 
-#include "buffer.h"
+#include <string.h>
+
+#include "v_file.h"
 #include "config.h"
+#include "syntax.h"
 #include "modes.h"
+#include "punched_card.h"
 #include "ui.h"
 
 #define PRINT__SPACE_HIGHLIGHT '.'
 #define PRINT__TAB_HIGHLIGHT   '>'
 
-// Converts stupidly-implemented tabs into some renderable spaces.
-void print__line_with_tabs(const Buff_t* const, const Conf_t* const,
-                           const idx_t, const idx_t, const idx_t);
+// Convert specifically implemented tabs into some renderable spaces.
+void print__line_with_tabs(const V_file* const, const Config* const,
+                           const Syntax* const, const size_t, const size_t,
+                           const size_t);
 
-// Returns value of hidden lines.
-idx_t print__set_start_line(const Buff_t* const, const Ui_t* const);
+// Return value of hidden lines.
+size_t print__set_start_line(const V_file* const, const Ui* const);
 
-// Decides how to show it. Can scroll it or the cursor.
-void print__actual_line(const Buff_t* const, const Conf_t* const,
-                        const Ui_t* const);
+// Decide how to display a line. Can scroll it or the cursor.
+void print__actual_line(const V_file* const, const Config* const,
+                        const Syntax* const, const Ui* const);
 
-// Prints and shrinks line that is non-actual.
-void print__another_line(const Buff_t* const, const Ui_t* const,
-                         const Conf_t* const, const idx_t);
+// Print and shrink a line that without the cursor.
+void print__another_line(const V_file* const, const Config* const,
+                         const Syntax* const, const Ui* const,
+                         const size_t);
 
-// Scrolls chars. Used when the cursor is in static position.
-void print__scroll_line_horizontally(const Buff_t* const, const Conf_t* const,
-                                     const Ui_t* const);
+// Scroll chars. Used when the cursor is in a static right position.
+void print__scroll_line_horizontally(const V_file* const,
+                                     const Config* const,
+                                     const Syntax* const, const Ui* const);
 
-// Renders a text when there is smaller amount of lines than the window height.
-void print__fit_lines(const Buff_t* const, const Ui_t* const,
-                      const Conf_t* const);
+// Render a text when there is smaller amount of lines than a window height.
+void print__fit_lines(const V_file* const, const Config* const,
+                      const Syntax* const, const Ui* const);
 
-// If there is more lines but they are scrolled to the start.
-void print__shrink_lines(const Buff_t* const, const Ui_t* const,
-                         const Conf_t* const);
+/* Handle rendering if there is more lines but they are scrolled from the
+   beginning. */
+void print__shrink_lines(const V_file* const, const Config* const,
+                         const Syntax* const, const Ui* const);
 
-// Lines rendering starts at specified by user offset.
-void print__scroll_lines(const Buff_t* const, const Ui_t* const,
-                         const Conf_t* const);
+// Render lines starting at a certain offset.
+void print__scroll_lines(const V_file* const, const Config* const,
+                         const Syntax* const, const Ui* const);
 
-// Shows a text in the window.
-void print__display_text(const Buff_t* const, const Ui_t* const,
-                         const Conf_t* const);
+// Show a text in a window.
+void print__display_text(const V_file* const, const Config* const,
+                         const Syntax* const, const Ui* const);
 
 #endif

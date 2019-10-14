@@ -1,6 +1,5 @@
 bin/
 cov/
-*.fiflo
 *.gcda
 *.gcno
 *.gcov

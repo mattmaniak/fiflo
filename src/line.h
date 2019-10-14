@@ -1,19 +1,15 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include <stdint.h>
-
-typedef uint32_t idx_t;
+// The structure that represents a line of a text.
 
 typedef struct
 {
-    char* text;
-    idx_t length;
+    char*  txt;
+    size_t len;
 
-    idx_t _padding;
+    const size_t _padding;
 }
-Line_t;
-
-#define LINE__TYPE_SZ sizeof(Line_t)
+Line;
 
 #endif

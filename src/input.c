@@ -12,46 +12,48 @@ char input__getch(void)
 
     char key;
 
-    // Get the state of the standard input.
-    if(tcgetattr(STDIN_FILENO, &old_term_params) == ERROR)
+    // Get a state of the standard input.
+    if(tcgetattr(STDIN_FILENO, &old_term_params) == -1)
     {
         window__flush();
         fprintf(stderr, "Stdin attribiutes error. Pipe isn't supported.\n");
 
-        return ERROR;
+        return (char) -1;
     }
     new_term_params = old_term_params;
 
-    // Look that the options of below flags are negated.
+    // Notice that options of below flags are negated.
     new_term_params.c_iflag &= ~enable_xon;
     new_term_params.c_lflag &= ~(canonical_mode_on | echo_input | enable_sigs);
 
-    /* Immediately set the state of the stdin to the *new_term_params. Use the
-    new terminal I/O settings. */
-    if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == ERROR)
+    /* Immediately set a state of the stdin to the *new_term_params. Use the
+       new terminal I/O settings. */
+    if(tcsetattr(STDIN_FILENO, TCSANOW, &new_term_params) == -1)
     {
         window__flush();
-        fprintf(stderr, "Can't set the terminal's raw mode. Type \"reset\".\n");
+        fprintf(stderr, "Can't set a terminal's raw mode. Type \"reset\".\n");
 
-        return ERROR;
+        return (char) -1;
     }
     key = (char) getchar();
 
     // Immediately restore the state of the stdin (0) to the* new_term_params.
-    if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == ERROR)
+    if(tcsetattr(STDIN_FILENO, TCSANOW, &old_term_params) == -1)
     {
         window__flush();
         fprintf(stderr,
-                "Can't restore the terminal's normal mode. Type \"reset\".\n");
-        return ERROR;
+                "Can't restore a terminal's normal mode. Type \"reset\".\n");
+        return (char) -1;
     }
     return key;
 }
 
-void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
-                               const char* const sequence, size_t* file_idx)
+void input__recognize_sequence(V_file* const v_file,
+                               const Config* const config,
+                               const char* const sequence,
+                               size_t* const file_i)
 {
-    const size_t seq_length_max = 6;
+    const size_t seq_len_max = 6;
 
     const char arrow_up[]    = "\033[A";
     const char arrow_down[]  = "\033[B";
@@ -63,122 +65,216 @@ void input__recognize_sequence(Buff_t* Buffer, const Conf_t* const Config,
     const char ctrl_arrow_right[] = "\033[1;5C";
     const char ctrl_arrow_left[]  = "\033[1;5D";
 
-    const char ctrl_f1[]  = "\033[1;5P";
-    const char ctrl_f2[]  = "\033[1;5Q";
-    const char ctrl_f3[]  = "\033[1;5R";
-    const char ctrl_f4[]  = "\033[1;5S";
+    const char ctrl_f1[] = "\033[1;5P";
+    const char ctrl_f2[] = "\033[1;5Q";
+    const char ctrl_f3[] = "\033[1;5R";
+    const char ctrl_f4[] = "\033[1;5S";
 
     if(!strcmp(sequence, arrow_up))
     {
-        keys__arrow_up(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        keys__arrow_up(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_down))
     {
-        keys__arrow_down(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        keys__arrow_down(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_right))
     {
-        keys__arrow_right(Buffer, Config);
-        Buffer->escape_sequence_on_input = false;
+        keys__arrow_right(v_file, config);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, arrow_left))
     {
-        keys__arrow_left(Buffer, Config);
-        Buffer->escape_sequence_on_input = false;
+        keys__arrow_left(v_file, config);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_up)) // Scroll to the beginning now.
     {
-        keys__ctrl_arrow_up(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        keys__ctrl_arrow_up(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_down)) // Scroll to the end of file.
     {
-        keys__ctrl_arrow_down(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        keys__ctrl_arrow_down(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_right))
     {
-        keys__ctrl_arrow_right(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        keys__ctrl_arrow_right(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_arrow_left))
     {
-        keys__ctrl_arrow_left(Buffer);
-        Buffer->escape_sequence_on_input = false;
+        keys__ctrl_arrow_left(v_file);
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f1))
     {
-        *file_idx = 0;
-        Buffer->escape_sequence_on_input = false;
+        *file_i = 0;
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f2))
     {
-        *file_idx = 1;
-        Buffer->escape_sequence_on_input = false;
+        *file_i = 1;
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f3))
     {
-        *file_idx = 2;
-        Buffer->escape_sequence_on_input = false;
+        *file_i = 2;
+        v_file->esc_seq_on_input = false;
     }
     else if(!strcmp(sequence, ctrl_f4))
     {
-        *file_idx = 3;
-        Buffer->escape_sequence_on_input = false;
+        *file_i = 3;
+        v_file->esc_seq_on_input = false;
     }
-    // Other cases that block the input for "seq_length_max" chars.
-    else if(strlen(sequence) >= seq_length_max)
+    // Other cases that block an input for "seq_len_max" chars.
+    else if(strlen(sequence) >= seq_len_max)
     {
-        Buffer->escape_sequence_on_input = false;
+        v_file->esc_seq_on_input = false;
     }
 
 #ifdef DEBUG_INPUT
-    printf("cursor_rev_x %u, cursor_rev_y %u.\n", Buffer->cursor_rev_x,
-           Buffer->cursor_rev_y);
+    printf("mirrored_cursor_x %u, mirrored_cursor_y %u.\n",
+           v_file->mirrored_cursor_x, v_file->mirrored_cursor_y);
 #endif
 
 }
 
-bool input__parse_key(Buff_t* Buffer, const Conf_t* const Config, Mod_t* Modes,
-                      size_t* file_idx, const char key)
+bool input__parse_key(V_file* const v_file, const Config* const config,
+                      Modes* const modes, size_t* const file_i, const char key)
 {
-    static char  chars_sequence[INPUT__SEQ_MAX];
-    static idx_t char_idx;
+    static char   ch_sequence[INPUT__SEQ_MAX];
+    static size_t ch_i;
 
-    if((key == CTRL_LEFT_BRACKET) && !Modes->live_fname_edit)
+    if((key == ASCII__CTRL_LEFT_BRACKET) && !modes->live_fname_edit)
     {
-        Buffer->escape_sequence_on_input = true;
+        ch_i                     = 0;
+        v_file->esc_seq_on_input = true;
 
 #ifdef DEBUG_INPUT
-        Buffer->escape_sequence_on_input = false;
+        v_file->esc_seq_on_input = false;
 #endif
 
-        char_idx = 0;
     }
-    if(Buffer->escape_sequence_on_input)
+    if(v_file->esc_seq_on_input)
     {
-        chars_sequence[char_idx] = key;
-        if(char_idx < (INPUT__SEQ_MAX - NUL_SZ))
+        ch_sequence[ch_i] = key;
+        if(ch_i < (INPUT__SEQ_MAX - SIZE__I))
         {
-            char_idx++;
+            ch_i++;
         }
-        chars_sequence[char_idx] = '\0';
-        input__recognize_sequence(Buffer, Config, chars_sequence, file_idx);
+        ch_sequence[ch_i] = '\0';
+        input__recognize_sequence(v_file, config, ch_sequence, file_i);
 
-        if(!Buffer->escape_sequence_on_input)
+        if(!v_file->esc_seq_on_input)
         {
-            char_idx = 0;
+            ch_i = 0;
         }
     }
-    else if(Modes->live_fname_edit)
+    else if(modes->live_fname_edit)
     {
-        edit__filename(Buffer, Config, Modes, key);
+        if(!edit__filename(v_file, config, modes, key))
+        {
+            return false;
+        }
     }
     else
     {
-        return chars__parse_char(Buffer, Config, Modes, key);
+        return input__parse_char(v_file, config, modes, key);
+    }
+    return true;
+}
+
+bool input__parse_char(V_file* const v_file, const Config* const config,
+                    Modes* const modes, const char ch)
+{
+    switch(ch)
+    {
+    default:
+        return input__printable_char(v_file, ch);
+
+    case '\t':
+        return keys__tab(v_file, config, modes);
+
+    case ASCII__BACKSPACE:
+        return keys__backspace(v_file, config, modes);
+
+    case ASCII__CTRL_Q:
+        return false;
+
+    case ASCII__CTRL_S:
+        return file_io__save(v_file, config);
+
+    case ASCII__CTRL_BACKSLASH:
+        modes->expanded_lbar = !modes->expanded_lbar;
+        break;
+
+    case ASCII__CTRL_D:
+        return edit__delete_line(v_file);
+
+    case ASCII__CTRL_O:
+        modes->live_fname_edit = true;
+    }
+    return true;
+}
+
+bool input__printable_char(V_file* const v_file, const char ch)
+{
+
+#ifdef DEBUG_KEYS
+    const bool ch_is_allowed = true;
+#else
+    const bool ch_is_allowed = (ch == '\0') || (ch == '\t') || (ch == '\n')
+                               || (ch >= 32);
+#endif
+
+    if(ch_is_allowed)
+    {
+        if(v_file->chars_amount < V_FILE__CHAR_MAX)
+        {
+            v_file->chars_amount++;
+            v_file__actual_line(v_file)->len++;
+
+            if(!memory__extend_line(v_file, v_file__cursor_y(v_file)))
+            {
+                return false;
+            }
+            if(v_file__is_cursor_x_scrolled(v_file))
+            {
+                edit__shift_text_horizonally(v_file, 'r');
+            }
+            v_file__actual_line(v_file)->txt[
+                v_file__cursor_x(v_file) - SIZE__I] = ch;
+
+            v_file__actual_line(v_file)->txt[
+                v_file__actual_line(v_file)->len] = '\0';
+
+            // Initializing nul handler.
+            if((ch == '\0') && !v_file__is_actual_line_empty(v_file))
+            {
+                v_file->chars_amount--;
+                v_file__actual_line(v_file)->len--;
+            }
+            else if((ch == '\n') && !keys__linefeed(v_file))
+            {
+                return false;
+            }
+            if(ch != '\0')
+            {
+                V_FILE__SET_STATUS("edited");
+            }
+        }
+        else
+        {
+            V_FILE__SET_STATUS("can't read or insert more chars");
+        }
+    }
+    else
+    {
+        V_FILE__SET_STATUS("unsupported char(s)");
     }
     return true;
 }
