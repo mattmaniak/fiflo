@@ -2,8 +2,8 @@
 
 bool memory__extend_line(V_file* const v_file, const size_t ln_i)
 {
-    size_t memblock = V_FILE__MEMBLOCK;
-    size_t line_len = v_file->lines[ln_i].len;
+    const size_t line_len = v_file->lines[ln_i].len;
+    size_t       memblock = V_FILE__MEMBLOCK;
 
     if(line_len == V_FILE__BASIC_MEMBLOCK)
     {

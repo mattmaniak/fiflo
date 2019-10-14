@@ -75,7 +75,7 @@ int main(int argc, char** argv)
         {
             syntax.keywords_amount = 0;
             syntax__load(&syntax, extension);
-            strcpy(v_files[actual_file_i].extension, extension);
+            strncpy(v_files[actual_file_i].extension, extension, NAME_MAX);
         }
         else if(extension == NULL) // Disable highlighting.
         {

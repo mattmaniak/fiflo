@@ -12,7 +12,6 @@
 
 color_text = white
 color_ui = white
-color_warning = red
 color_whitespace = bright_black
 punched_card_width = 80
 tab_size = 8

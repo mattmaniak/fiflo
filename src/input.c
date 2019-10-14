@@ -228,7 +228,7 @@ bool input__printable_char(V_file* const v_file, const char ch)
     const bool ch_is_allowed = true;
 #else
     const bool ch_is_allowed = (ch == '\0') || (ch == '\t') || (ch == '\n')
-                                 || (ch >= 32);
+                               || (ch >= 32);
 #endif
 
     if(ch_is_allowed)
