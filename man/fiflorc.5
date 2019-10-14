@@ -1,63 +1,51 @@
 .TH fiflorc 5 "File Formats Manual"
 .SH NAME
-fiflo runcom
+fiflo configuration file
 .SH SYNOPSIS
 .TP
 [selector] = [value]
-Everything in a single line. Next one in the next line. Single neighbour spaces
-around the equality sign are essential.
+Everything in a single line. Next one in a next line. Single spaces around the
+equality sign are essential.
 .SH DESCRIPTION
 File that allows to change the default configuration of the fiflo which is
-built-in in the editor. It ignores the lines that starts with a whitespace,
-with the '#' or that are just empty. If You use a one of selectors multiple
-times, the value from the last occurence in the file will be read.
+built-in in the editor. It ignores lines that starts with a whitespace, with
+the '#' or just empty ones. If You use a one of selectors multiple times.
 .SH SELECTORS
-The Order doesn't matter.
+An order doesn't matter.
 .TP
-.B color-current-file
-Visible if the lower bar is toggled.
+.B color_text
+Color of a text.
 .TP
-.B color-line-number
-Set line numbers color excluding a current one.
+.B color_ui
+Upper and lower bar text color.
 .TP
-.B color-line-number-current
-Set the current line number color.
-.TP
-.B color-text
-Color of a typed text.
-.TP
-.B color-ui
-Upper and lower bars colors.
-.TP
-.B color-warning
-When sometimes goes wrong a part of the UI is highlighted with this color.
-Actually it is only the punch card indicator.
-.TP
-.B color-whitespace
+.B color_whitespace
 Tabs and spaces highlighting.
 .TP
-.B tab-size
-Equality of spaces that the tab key produces.
-.SH VALUES
+.B punched_card_width
+Horizontal offset of the vertical wrap guide line. Available values: <1; 1024>.
 .TP
-.B red, green, yellow, blue, magenta, cyan, white, bright-black, bright-red, \
-bright-green, bright-yellow, bright-blue, bright-magenta, bright-cyan, \
-bright-white
-Available colors. Every one of them is a foreground color. There is no
-possibility to set the background. Can be used only with selectors that starts
-with "color".
+.B tab_size
+Equality of spaces that the tab key produces. Available values: <2; 8>.
+.SH COLORS
 .TP
-.B <2; 8>
-Available tab width.
-.SH WRONG SYNTAX HANDLING
-If the selector or value is wrong or if there is no trailing newline at the end
+.B red, green, yellow, blue, magenta, cyan, white, bright_black, bright_red, \
+bright_green, bright_yellow, bright_blue, bright_magenta, bright_cyan
+.SH TYPOS HANDLING
+If a selector or a value is wrong or if there is no trailing newline at the end
 of the file, the default value will be applied. Else if the selector and value
-are wrong, default editor's configuration will be applied.
+are wrong, the whole default editor's configuration will be applied.
+.SH SYNTAX HIGHLIGHTING
+Works only if there is a file placed in the /usr/share/nano dir. Filename is
+like [language].fiflorc, e.g. "c.fiflorc". The [language] will be used as
+a file extension to highlight it's defined keywords. The file syntax is the
+same as the original fiflorc. The left side is a word to paint. The right side
+is a color. Everything in a it's own line.
 .SH FILES
 .TP
 .B /etc/fiflorc
-The only and global confiuguration. If doesn't exist, the default config will be
-applied.
+The only and global config file. If doesn't exist, the default settings will
+be applied.
 .SH SEE ALSO
 fiflo(1)
 .SH AUTHOR

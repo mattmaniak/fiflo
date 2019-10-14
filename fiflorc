@@ -1,5 +1,5 @@
 # Example fiflo configuration file.
-# To make it work, copy it to the /etc/fiflorc
+# To make it work, copy it to the /etc.
 #
 # If You've already executed "sudo make install", check "man fiflorc" for
 # details.
@@ -7,14 +7,11 @@
 # Remark: " = " (excluding quotation marks) is the only correct assignment.
 #
 # Default configuration below.
-# Changes nothing because the editor has it implemented independently.
+# It changes nothing because the editor has it implemented independently.
+# If You change anything it will be applied.
 
-color-current-file = bright-black
-color-current-line = bright-black
-color-line-number-current = bright-black
-color-line-number = white
-color-text = white
-color-ui = white
-color-warning = red
-color-whitespace = bright-black
-tab-size = 8
+color_text = white
+color_ui = white
+color_whitespace = bright_black
+punched_card_width = 80
+tab_size = 8

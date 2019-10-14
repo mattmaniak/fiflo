@@ -1,125 +1,142 @@
 #include "ui.h"
 
-void ui__set_color(const Opt_t* const Option)
+void ui__colorize(const int value)
 {
-    // Reset to the default color or set am another one.
-    printf("\033[%um", (Option == NULL) ? 0 : Option->value);
+    // Reset to a default color or set am another one.
+    printf("\033[%um", value);
 }
 
-void ui__print_line_number(const Buff_t* const Buffer,
-                           const Conf_t* const Config, const idx_t line_idx,
-                           const term_t line_num_length)
+void ui__print_line_number(const V_file* const v_file,
+                           const Config* const config, const size_t ln_i,
+                           const term_t line_number_len)
 {
-    ui__set_color(&Config->Color_line_number);
+    ui__colorize(config->color_ui.value);
+    ANSI__INVERT();
 
-    if(line_idx == BUFFER__CURRENT_LINE_IDX)
+    if(ln_i == v_file__cursor_y(v_file))
     {
-        ui__set_color(&Config->Color_line_number_current);
+        ui__colorize(0);
+        ui__colorize(config->color_ui.value);
     }
-    printf("%*u ", line_num_length - SPACE_SZ, line_idx + IDX);
+    printf("%*u", line_number_len - SIZE__SPACE, (unsigned) ln_i + SIZE__I);
 
-    ui__set_color(NULL);
+    ui__colorize(0);
+    putchar(' ');
 }
 
-void ui__upper_bar(const Buff_t* const Buffer, const Conf_t* const Config,
-                   const Ui_t* const Ui)
+void ui__upper_bar(const V_file* const v_file, const Config* const config,
+                   const Ui* const ui)
 {
-    ui__set_color(&Config->Color_ui);
+    const int fname_area  = ui->win_w - UI__LEFT_PADDING - UI__RIGHT_PADDING;
+
+    ui__colorize(config->color_ui.value);
+    ANSI__INVERT();
     printf("%*s", UI__LEFT_PADDING, " ");
 
-    if(Buffer->fname_length < (size_t) (Ui->win_w - UI__RIGHT_PADDING))
+    if(v_file->fname_len <= (size_t) fname_area)
     {
-        puts(Buffer->fname);
+        printf("%s%*s", v_file->fname,
+               fname_area - (int) strlen(v_file->fname) + UI__RIGHT_PADDING,
+               " ");
     }
     else
     {
         // The filename is too long to show - scroll it.
-        for(size_t char_i = Buffer->fname_length - Ui->win_w
-            + UI__HORIZONTAL_PADDING; char_i < Buffer->fname_length; char_i++)
+        for(size_t char_i = v_file->fname_len - ui->win_w
+            + UI__HORIZONTAL_PADDING;
+            char_i < v_file->fname_len; char_i++)
         {
-            putchar(Buffer->fname[char_i]);
+            putchar(v_file->fname[char_i]);
         }
-        WRAP_LINE();
+        printf("%*s", UI__RIGHT_PADDING, " ");
+        UI__WRAP_LINE();
     }
-    printf("%*s%s%*s", UI__LEFT_PADDING, " ", Buffer->status, (int) (STATUS_MAX
-           - strlen(Buffer->status) - SPACE_SZ + UI__GIT_LOGO_W), UI__GIT_LOGO);
+    printf("%*s%s%*s", UI__LEFT_PADDING, " ", v_file->status,
+           V_FILE__STATUS_MAX - (int) strlen(v_file->status) - SIZE__SPACE
+           + UI__GIT_LOGO_W,
+           UI__GIT_LOGO);
 
-    if((term_t) strlen(Buffer->git_branch)
-       < (Ui->win_w - UI__GIT_LOGO_W - STATUS_MAX - UI__HORIZONTAL_PADDING))
+    if((term_t) strlen(v_file->git_branch)
+       < (ui->win_w - UI__GIT_LOGO_W - V_FILE__STATUS_MAX
+          - UI__HORIZONTAL_PADDING))
     {
-        printf("%s", Buffer->git_branch);
+        printf("%s%*s", v_file->git_branch,
+               fname_area - V_FILE__STATUS_MAX
+               - (int) strlen(v_file->git_branch) - UI__GIT_LOGO_W
+               + UI__LEFT_PADDING + UI__RIGHT_PADDING,
+               " ");
     }
     else
     {
-        printf("%.*s", Ui->win_w - STATUS_MAX - SPACE_SZ , Buffer->git_branch);
+        printf("%.*s", ui->win_w - V_FILE__STATUS_MAX - SIZE__SPACE,
+               v_file->git_branch);
     }
-    WRAP_LINE();
+    UI__WRAP_LINE();
 }
 
-void ui__lower_bar(const Buff_t* const Buffer, const Conf_t* const Config,
-                   const Mod_t* const Modes, const Ui_t* const Ui,
-                   const idx_t additional_argc_idx,
-                   const idx_t current_file_idx)
+void ui__lower_bar(const V_file* const v_files, const Config* const config,
+                   const Modes* const modes, const Ui* const ui,
+                   size_t additional_argc_i, const size_t actual_file_i)
 {
-    idx_t       punch_card_width = 80;
-    const idx_t tmp_width        = punch_card_width;
-    char        punch_card[16];
-    char        lbar_text[STATUS_MAX];
+    const V_file* const v_file      = &v_files[actual_file_i];
+    const int           fname_area  = ui->win_w - UI__LEFT_PADDING
+                                      - UI__RIGHT_PADDING;
+    const char          files_str[] = "loaded files";
+    char                cursor_pos_indicator[V_FILE__STATUS_MAX];
 
-    sprintf(punch_card, "%u", punch_card_width);
-    sprintf(lbar_text, "[%u; %u]", Buffer->lines_idx + IDX,
-            BUFFER__CURRENT_LINE_LENGTH + IDX);
 
-    WRAP_LINE();
+    sprintf(cursor_pos_indicator, "[%u; %u]",
+            (unsigned) v_file__cursor_y(v_file) + SIZE__I,
+            (unsigned) v_file__cursor_x(v_file) + SIZE__I);
 
-    ui__set_color(NULL); // Resets the last line color.
-    ui__set_color(&Config->Color_ui);
+    UI__WRAP_LINE();
+    ui__colorize(0); // Resets a last line color.
+    ui__colorize(config->color_ui.value);
 
-    if(Modes->lbar_toggled)
+    if(modes->expanded_lbar)
     {
-        printf("%*sloaded files:", UI__LEFT_PADDING, "");
-        WRAP_LINE();
+        ANSI__INVERT();
 
-        for(idx_t file_idx = 0; file_idx <= additional_argc_idx; file_idx++)
+        printf("%*s%s%*s", UI__LEFT_PADDING, " ", files_str,
+               fname_area - (int) strlen(files_str) + UI__RIGHT_PADDING, " ");
+        UI__WRAP_LINE();
+
+        if(additional_argc_i == 0)
         {
-            if(file_idx == current_file_idx)
-            {
-                ui__set_color(&Config->Color_current_file);
-            }
-            printf("%*s%s", UI__LEFT_PADDING, "", Buffer[file_idx].fname);
-
-            ui__set_color(NULL);
-            WRAP_LINE();
+            additional_argc_i++;
         }
-        for(idx_t newline_idx = 0; newline_idx < 4 - additional_argc_idx - IDX;
-            newline_idx++)
+        for(size_t file_i = 0; file_i < additional_argc_i; file_i++)
         {
-            WRAP_LINE();
+            ui__colorize(0);
+            ui__colorize(config->color_ui.value);
+            ANSI__INVERT();
+
+            if(file_i == actual_file_i)
+            {
+                ui__colorize(0);
+                ui__colorize(config->color_ui.value);
+            }
+            printf("%*s", UI__LEFT_PADDING, " ");
+
+            if((term_t) strlen(v_file[file_i].fname) <= fname_area)
+            {
+                printf("%s%*s", v_file[file_i].fname,
+                       fname_area - (int) strlen(v_file[file_i].fname), " ");
+            }
+            else
+            {
+                printf("%.*s", fname_area, v_file[file_i].fname);
+            }
+            printf("%*s", UI__RIGHT_PADDING, " ");
+            UI__WRAP_LINE();
         }
     }
+    ui__colorize(config->color_ui.value);
+    ANSI__INVERT();
 
     // Cursor position indicator (2D matrix).
-    printf("%*s%.*s%*s", UI__LEFT_PADDING, "", STATUS_MAX, lbar_text,
-           (int) (STATUS_MAX - strlen(lbar_text)), "");
-
-    if((idx_t) (Ui->textarea_w + UI__HORIZONTAL_PADDING) > punch_card_width)
-    {
-        printf("%*s",
-               Ui->line_num_length + punch_card_width - STATUS_MAX - SPACE_SZ
-               - (term_t) strlen(punch_card), " ");
-
-        if(BUFFER__CURSOR_X >= Ui->textarea_w) // Scrolling.
-        {
-            punch_card_width = BUFFER__CURSOR_X + IDX - Ui->textarea_w
-                               + tmp_width;
-        }
-
-        if((BUFFER__CURRENT_LINE_LENGTH > punch_card_width)
-           && (BUFFER__CURRENT_LINE[punch_card_width] != '\n'))
-        {
-            ui__set_color(&Config->Color_warning);
-        }
-        printf("%d^", punch_card_width);
-    }
-    ui__set_color(NULL);;
+    printf("%*s%s%*s", UI__LEFT_PADDING, " ", cursor_pos_indicator,
+           ui->win_w - UI__LEFT_PADDING - (int) strlen(cursor_pos_indicator),
+           " ");
+    ui__colorize(0);
 }

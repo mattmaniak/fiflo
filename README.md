@@ -1,11 +1,22 @@
 # fiflo
-Terminal-based text editor with Windows-like (CUA) bindings.
+Edit text on Linux using Windows keyboard shortcuts.
 
 ## Abstract
-Learn C by writing pure C. It is exercise where I've started learning pointers
-and memory management. As You can see it has grown to the text editor. It is
-inspired by the Nano's minimalism and the Atom's rich features that make
-programming easier.
+Learn C. Create a text editor for Linux without any dependencies. Started as
+the C pointers and memory management exercise. The goal is to create an editor
+that mixes the Atom's rich functionality and Windows-like keyboard bindings
+with the Nano's minimalism.
+
+## Features
+- Windows-like keyboard shortcuts,
+- terminal-based,
+- up to 4 files simultaneous editing,
+- tabs/spaces recognition/selection,
+- syntax highlighting,
+- Git branch display,
+- punched card, that inverts the e.g. 80th char color,
+- easily configurable,
+- dependency-free compilation.
 
 ## Usage
 ### Check the requirements for the GNU/Linux:
@@ -13,9 +24,11 @@ programming easier.
 - make,
 - gcc >= 4.9 or clang >= 3.6,
 - gzip (only for the installation),
-- sudo (only for the installation, even for the bare Debian on root).
+- sudo (only for the installation, for Debian as root too).
 
-### Clone on a desktop, compile and run.
+**It's also recommended to use a modern terminal emulator to avoid blinking.**
+
+### Clone on a desktop, compile from source and run
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git &&
 cd fiflo &&
@@ -33,7 +46,7 @@ Then use it directly from a disk...
 fiflo
 ```
 
-or better read the  manual...
+or better, read the manual...
 ```
 man fiflo
 ```
@@ -43,84 +56,92 @@ and it's configuration guide.
 man fiflorc
 ```
 
-### Optional cleanup - remove bin/ and obj/ after the compilation
+### Optional cleanup - remove bin/ and obj/ directories after a compilation
 ```
 make clean
 ```
 
-### Uninstall, what You have installed
+### Uninstall
 ```
 sudo make uninstall
 ```
 
 ## Development
-Read the "CONTRIBUTING.md" and check the "doc/" directory.
+Read the "CONTRIBUTING.md" and check the "doc/" directory. The planning is done
+spontaneously so differences between commits may be big due the experiments.
 
 ### Source files (submodules):
-- args - passed command-line arguments handling,
+- **args** - passed command-line arguments handling,
 
-- buffer - initialization and deleting the main buffer which holds the text
-and it's metadata,semantic macros,
+- **v_file** - an implementation of the virtual file structure.
 
-- chars - ascii codes that are interpreted as text,
+- **keys** - stuff that happens after click,
 
-- config - fiflorc parser and values setter,
+- **config** - configuration file parser and values setter,
 
-- edit - more complex text editing operations that happens after the keypress,
+- **edit** - more complex text editing operations that happens after the
+             keypress,
 
-- fiflo - the main file, just "main" and the execution loop,
+- **extension** - file extension recognition,
 
-- file - read/save the file, live editing the filename,
+- **fiflo** - **the main file**, just "main" and the execution loop,
 
-- input - gets the key and parses it,
+- **file_io** - read/save the file, filename live editing,
 
-- keys - keyboard bindings that don't insert chars, e.g. arrows,
+- **filename** - pathname, basename setting from an arg,
 
-- memory - (de)allocation of the memory for the text,
+- **input** - get the key and parse it,
 
-- options - "--help" and friends parameters,
+- **memory** - real-time automatic memory management for the text buffer,
 
-- path - pathname, basename setting from arg,
+- **modes** - possible states of the editor, e.g. lower bar expanded,
 
-- print - various magic that prints the text,
+- **options** - "--help" and friends parameters,
 
-- ui - user interface components like bars.
+- **punched_card** - vertical line (sometimes called wrap guide)
+                     implementation.
 
-- window - window rendering and flushing.
+- **print** - various magic that prints the text,
 
-### Needed tools for debugging:
-- AddressSanitizer (built-in gcc and clang),
+- **syntax** - syntax highlighting,
+
+- **ui** - user interface components like bars,
+
+- **window** - window rendering and flushing.
+
+### Tools required for a debugging:
+- AddressSanitizer (included in gcc and clang),
 - gcov,
 - valgrind.
 
-### Get and set the development branch
+### Checkout the develop branch for new, unstable features.
 ```
 git clone https://gitlab.com/mattmaniak/fiflo.git -b develop &&
 git checkout develop
 ```
 
 ### Debugging
-Link the AddressSanitizer and add support fot the gcov. Causes slowdown and huge
-memory usage.
+Link the AddressSanitizer and add support for the gcov (code coverage checker).
+Causes slowdown and huge memory usage.
 ```
 make debug
 ```
 
 After that and the fiflo execution, there is possibility to check the code
-coverage. It will create the cov/ dir and put the every source file with codecov
-marked after the previous execution The program must be compiled with the
-"debug" option previously. Gcc only.
+coverage. It will create the cov/ dir and put the every source file with
+codecov marked after the previous execution The program must be compiled using
+the "debug" option previously. Possible only with the gcc.
 ```
 make coverage
 ```
 
 Use the valgrind.
 ```
-valgrind -v ./fiflo [optional args for the editor]
+valgrind -v ./fiflo [optional arg(s) for the editor]
 ```
 Remark: fiflo must be compiled without ASan and MSan.
 
-### Install only the binary with ASan linked for debugging.
+### Install only the binary with AddressSanitizer linked for debugging.
 ```
 sudo make install_debug
 ```

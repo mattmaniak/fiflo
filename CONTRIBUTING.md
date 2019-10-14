@@ -7,27 +7,22 @@ before making a change.
 ## Workflow
 ### Branching
 [V. Driessen's model](https://nvie.com/posts/a-successful-git-branching-model/)
-As described but only with: master, develop, hotifx branches.
+Only with: master, develop and hotifx branches.
 
 ### Version scheme
 [SemVer](https://semver.org/)
 
-### Coding rules:
-- Allman-like brace style,
-- indentation: 4 spaces,
-- line ending: LF,
-- only snake_case is allowed,
-- visually align: defines, types, names, assignments etc,
-- single line should not exceed 80 chars printable chars,
-- e,g function "f_name" in the file asdf.c should be named "asdf__f_name","
-- insert short TODOs near thing to fix as uppercase comments,
-- write documentation comments,
-- keep docs up-to-date with the code in stable releases,
+### Coding rules
+[GNU's Writing C](https://www.gnu.org/prep/standards/html_node/Writing-C.html)
+but with some exceptions:
+- don't put additional spaces before braces or parenthesis,
+- keep data type in the same line as a function name,
+- place pointers' asterisks stuck on to a type name.
 
 ## Merge request
 - As the source base and it's develop branch can be found on
-[GitLab](https://gitlab.com/mattmaniak/fiflo/tree/develop) it would great to
-Use that platform by You to improve the code.
+[GitLab](https://gitlab.com/mattmaniak/fiflo/tree/develop)
+It would great to use that platform by You to improve the code.
 
 - Before requesting any change, check that your code matches basic standards
 described above and test it using the default Linux tty. Also You can open an

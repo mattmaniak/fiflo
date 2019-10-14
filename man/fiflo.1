@@ -1,23 +1,28 @@
 .TH fiflo 1 "General Commands Manual"
 .SH NAME
-fiflo - terminal-based text editor with Common User Access keyboard shortcuts
+fiflo - edit text on Linux using Windows keyboard shortcuts
 .SH SYNOPSIS
 fiflo [basename/filename/option]
 .SH DESCRIPTION
-Currently supports only all ASCII printable chars, space and horizontal tab.
+Currently supports all ASCII printable chars, space and the horizontal tab.
 It has got dynamically allocated buffer which can hold up to 16 MB - 1 chars.
-Implementation considers that newline char is equal to the linefeed. The tab
-char needs as many bytes as it's width in the editor: from 2, 4 or 8. Also it
-supports the paste option from outside the terminal but it probably depends from
-the terminal.
+Implementation considers that newline char is equal to the linefeed
+(converts CR LF to LF). The tab char needs as many bytes as it's width in
+the editor: from 2 to 8.
 .SH OPTIONS
 .TP
 .B -h, --help
-Show a program help.
+Show the program help.
+.TP
+.B -s, --spaces
+Force to use spaces for an indentation and convert tabs.
+.TP
+.B -t, --tabs
+Force to use tabs for an indentation but without converting spaces.
 .TP
 .B -v, --version
 Display information about a version You use.
-.SH KEYBOARD
+.SH KEYBOARD SHORTCUTS
 .TP
 .B Arrow left/right
 Move the cursor one char left/right.
@@ -35,17 +40,17 @@ Move the cursor to the previous/next paragraph.
 Expand the lower bar with basic keyboard shortcuts.
 .TP
 .B Ctrl^D
-Delete the current line.
+Delete a current line.
 .TP
 .B Ctrl^O
-Save as - Switch to the filename edit mode. Enter to confirm and save. Escapes
-returns to the text editing.
+Save as - Switch to the filename edit mode. Enter to confirm and save. Escape
+key aborts and switches back to text editing.
 .TP
 .B Ctrl^Q
 Exit.
 .TP
 .B Ctrl^S
-Quickly save the file with the filename displayed in the upper bar.
+Quickly save a file with a filename displayed in the upper bar.
 .TP
 .B Ctrl^F1-F4
 Switch between the first and the last (forth) loaded file.
@@ -56,16 +61,21 @@ fiflorc(5)
 .B Blinking
 Blinking window with a default tty. It's caused by the implementation which
 renders a full window every time. With modern terminal emulators, the problem
-does not occur.
+does not occur so often.
 .TP
 .B Ctrl^[ or Escape
 The next five chars will be ignored.
+.TP
 .B Using arrows during the live filename edit
-It will insert some of the escape sequence chars to the text and exit from
+It will insert some of the escape sequence chars to a text and exit from
 filename edition mode.
 .TP
 .B Ctrl^Arrow left
-Skipping words at the left side is less precise and a little faster than at the
-right side.
+Skipping words at the left side is less precise and a little faster than to
+the right side.
+.TP
+.B Git branch refresh after Ctrl^O and Ctrl^S
+A branch will be set to "[none]" because of problem with ".git/HEAD" file
+access.
 .SH AUTHOR
 mattmaniak

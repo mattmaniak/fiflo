@@ -1,14 +1,25 @@
 fiflo - changelog
 
 Description
-Below version numbers contains more detailed descriptions of annotated Git
-tags. Dates are not alternative version names. They are just release dates.
-Changelog contains only new tangible features and source code changes. To see
-what's new in the implementation, use git-show or git-log.
+Dates are not alternative version names. They are just release dates.
+The changelog contains only new tangible features and source code changes.
+To see what's new in the implementation, use git-show or git-log.
 
 Versions:
+v4.1.0 (2019, October 10):
+- cursor position indicator shows it's x-pos instead of a current line length,
+- file extension recognition,
+- simple syntax highlighting,
+- vertical punch card (highlight a char that crosses e.g. 80th column),
+- all lines will be scrolled horizontally instead of one,
+- selectors' names change in the configuration file,
+- inverted color UI with a configurable color,
+- adaptive expanded lower bar height instead of the fixed one,
+- soft/hard tabs choice,
+- indentation recognition.
+
 v4.0.0 (2019, June 18):
-- vertical Arrows^Ctrl scroll paragraphs now,
+- vertical Arrows^Ctrl shortcut scrolls paragraphs now,
 - simplified text management API,
 - possibility to open, edit and switch up to 4 files simultaneously,
 - cursor position indicator [x, y],
