@@ -1,7 +1,7 @@
 # fiflo
 Edit a text on Linux using Windows keyboard shortcuts.
 
-![image](screenshot.webp "Editing in Fiflo")
+![image](screenshot.png "Editing in Fiflo")
 
 ## Abstract
 Learn C. Create a text editor for Linux without any dependencies. Started as
