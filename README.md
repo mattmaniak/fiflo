@@ -1,4 +1,4 @@
-# <img src='art/gui_icon.png' align='left' width='32' margin-right='8'> fiflo
+# <img src='art/gui_icon.png' width='32'> fiflo
 Edit a text on Linux using Windows keyboard shortcuts.
 
 ![image](screenshot.png "Editing in Fiflo")
