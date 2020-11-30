@@ -6,7 +6,7 @@ before making a change.
 
 ## Workflow
 ### Branching
-[V. Driessen's model](https://nvie.com/posts/a-successful-git-branching-model/)
+[V. Driessen's model/Gitflow Workflow](https://nvie.com/posts/a-successful-git-branching-model/)
 Only with: master, develop and hotifx branches.
 
 ### Version scheme
