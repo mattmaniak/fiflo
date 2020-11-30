@@ -1,7 +1,7 @@
 # <img src='art/gui_icon.png' width='32'> fiflo
 Edit a text on Linux using Windows keyboard shortcuts.
 
-![image](screenshot.png "Editing in Fiflo")
+![image](art/screenshot.png "Editing in Fiflo")
 
 ## Abstract
 Learn C. Create a text editor for Linux without any dependencies. Started as
