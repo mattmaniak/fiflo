@@ -1,5 +1,7 @@
-# fiflo
-Edit text on Linux using Windows keyboard shortcuts.
+# <img src='art/gui_icon.png' width='32'> fiflo
+Edit a text on Linux using Windows keyboard shortcuts.
+
+![image](art/screenshot.png "Editing in Fiflo")
 
 ## Abstract
 Learn C. Create a text editor for Linux without any dependencies. Started as
@@ -20,11 +22,11 @@ with the Nano's minimalism.
 
 ## Usage
 ### Check the requirements for the GNU/Linux:
-- git,
-- make,
-- gcc >= 4.9 or clang >= 3.6,
-- gzip (only for the installation),
-- sudo (only for the installation, for Debian as root too).
+- `git`,
+- `make`,
+- `gcc` >= `4.9` or `clang` >= `3.6`,
+- `gzip` (only for the installation),
+- `sudo` (only for the installation, for Debian as root too).
 
 **It's also recommended to use a modern terminal emulator to avoid blinking.**
 
