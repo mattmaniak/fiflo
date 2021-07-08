@@ -64,6 +64,10 @@ $(TARGET): $(OBJS)
 	@echo ' '
 	@echo "Fiflo compiled."
 
+.PHONE: fresh
+fresh: clean
+fresh: $(TARGET)
+
 # Debugging.
 .PHONY: debug
 debug: CFLAGS  += $(GCOV_FLAGS)
