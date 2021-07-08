@@ -21,12 +21,12 @@ with the Nano's minimalism.
 - dependency-free compilation.
 
 ## Usage
-### Check the requirements for the GNU/Linux:
+### Check the minimal requirements for the GNU/Linux:
 - `git`,
 - `make`,
-- `gcc` >= `4.9` or `clang` >= `3.6`,
-- `gzip` (only for the installation),
-- `sudo` (only for the installation, for Debian as root too).
+- `gcc` >= `8.1.0` or `clang` >= ``,
+- `gzip` (only for an installation),
+- `sudo` (only for an installation, for Debian as root too).
 
 **It's also recommended to use a modern terminal emulator to avoid blinking.**
 

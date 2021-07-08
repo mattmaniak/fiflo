@@ -1,7 +1,7 @@
 TARGET = fiflo
 
 CC =
-CFLAGS = -std=c11
+CFLAGS = -std=c17
 LDFLAGS =
 
 GCOV_FLAGS = -ftest-coverage -fprofile-arcs
@@ -43,7 +43,7 @@ ifdef CLANG
 	CC     = clang
 	CFLAGS += -Weverything
 endif
-$(error Compilation driver was not found: gcc or clang is required.)
+$(error Compilation driver was not found: gcc or clang is required, aborting.)
 endif
 
 # Compilation of object files depends on source files wnich depends on headers.
