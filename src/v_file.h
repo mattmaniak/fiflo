@@ -23,7 +23,7 @@
 
 #define V_FILE__STATUS_MAX      32
 #define V_FILE__SET_STATUS(msg) \
-strncpy(v_file->status, msg, V_FILE__STATUS_MAX - SIZE__I)
+strncpy(v_file->status, msg, strlen(msg) + SIZE__I);
 
 // Aligned memory blocks.
 #define V_FILE__BASIC_MEMBLOCK (sizeof(v_file->lines) * sizeof(char))

@@ -5,7 +5,7 @@ term_t window__receive_terminal_size(const char axis)
     const unsigned sz_max = USHRT_MAX;
     const unsigned h_min  = UI__UBAR_SZ + SIZE__LINE + UI__MAX_LBAR_H;
     const unsigned w_min  = UI__GIT_LOGO_W + SIZE__SPACE + UI__GIT_BRANCH_MIN_W
-                            + SIZE__SPACE + V_FILE__STATUS_MAX
+                            + SIZE__SPACE + V_FILE__STATUS_MAX + SIZE__I
                             + UI__HORIZONTAL_PADDING;
 
     const struct winsize terminal;

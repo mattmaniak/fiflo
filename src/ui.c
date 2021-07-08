@@ -53,7 +53,7 @@ void ui__upper_bar(const V_file* const v_file, const Config* const config,
     }
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", v_file->status,
            V_FILE__STATUS_MAX - (int) strlen(v_file->status) - SIZE__SPACE
-           + UI__GIT_LOGO_W,
+           + UI__GIT_LOGO_W + SIZE__I,
            UI__GIT_LOGO);
 
     if((term_t) strlen(v_file->git_branch)
@@ -61,15 +61,16 @@ void ui__upper_bar(const V_file* const v_file, const Config* const config,
           - UI__HORIZONTAL_PADDING))
     {
         printf("%s%*s", v_file->git_branch,
-               fname_area - V_FILE__STATUS_MAX
+               fname_area - V_FILE__STATUS_MAX - SIZE__I
                - (int) strlen(v_file->git_branch) - UI__GIT_LOGO_W
                + UI__LEFT_PADDING + UI__RIGHT_PADDING,
                " ");
     }
     else
     {
-        printf("%.*s", ui->win_w - V_FILE__STATUS_MAX - SIZE__SPACE,
-               v_file->git_branch);
+        printf("%.*s%*s", ui->win_w - V_FILE__STATUS_MAX - SIZE__SPACE - SIZE__I
+               - UI__GIT_LOGO_W,
+               v_file->git_branch, UI__RIGHT_PADDING, " ");
     }
     UI__WRAP_LINE();
 }
