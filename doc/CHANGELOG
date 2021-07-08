@@ -8,7 +8,7 @@ To see what's new in the implementation, use git-show or git-log.
 Versions:
 v4.2.0 (WIP):
 - minor codebase upgrade from C11 to C17,
-- development improvement: "fresh" rule for a complete rebuild.
+- Make improvements: new rules.
 
 v4.1.0 (2019, October 10):
 - cursor position indicator shows it's x-pos instead of a current line length,

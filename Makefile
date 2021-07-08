@@ -87,6 +87,10 @@ coverage:
 	gcov $(OBJ_DIR)/*.gcno
 	mv *.gcov $(COV_DIR)
 
+.PHONY: run
+run:
+	$(BIN_DIR)/$(TARGET)
+
 # Some fun with a user's filesystem.
 .PHONY: install
 install:
