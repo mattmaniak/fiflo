@@ -10,4 +10,5 @@ fiflo - TODOs and ideas:
 - cursor scroll in the live filename edit mode,
 - more precise Ctrl^Arrow left (full-word cursor scroll),
 - regex,
-- syntax file rework and highlighting improvement.
+- syntax file rework and highlighting improvement,
+- wrong terminal size handling instead of force quit.
