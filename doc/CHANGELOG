@@ -6,8 +6,8 @@ The changelog contains only new tangible features and source code changes.
 To see what's new in the implementation, use git-show or git-log.
 
 Versions:
-v4.2.0 (WIP):
-- minor codebase upgrade from C11 to C17,
+v5.0.0 (WIP):
+- language standard upgrade from C11 to C17,
 - Makefile improvements: new rules,
 - fix of handling a branch name if it's too long to show a whole.
 

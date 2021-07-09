@@ -3,8 +3,8 @@
 
 // Info about the current release.
 
-#define RELEASE__VERSION   "fiflo v4.1.0"
-#define RELEASE__COPYRIGHT "(C) 2018-2019 mattmaniak"
-#define RELEASE__REPO      "https://gitlab.com/mattmaniak/fiflo.git"
+#define RELEASE__VERSION   "fiflo v5.0.0 (WIP)"
+#define RELEASE__COPYRIGHT "(C) 2018-2019, 2021 mattmaniak"
+#define RELEASE__REPO      "https://github.com/mattmaniak/fiflo.git"
 
 #endif
