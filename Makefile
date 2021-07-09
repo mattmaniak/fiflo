@@ -87,6 +87,7 @@ coverage:
 	gcov $(OBJ_DIR)/*.gcno
 	mv *.gcov $(COV_DIR)
 
+# Remark: this mode doesn't support the editor's command-line arguments.
 .PHONY: run
 run:
 	$(BIN_DIR)/$(TARGET)
