@@ -11,4 +11,5 @@ fiflo - TODOs and ideas:
 - more precise Ctrl^Arrow left (full-word cursor scroll),
 - regex,
 - syntax file rework and highlighting improvement,
-- wrong terminal size handling instead of force quit.
+- wrong terminal size handling instead of force quit,
+- lower line of the upper bar doesn't fill a screen during first frame.
