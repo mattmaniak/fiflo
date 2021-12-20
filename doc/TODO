@@ -4,7 +4,7 @@ fiflo - TODOs and ideas:
 - cut/copy/paste,
 - improve vertical scroll - hard or soft with prev/next line preview,
 - load only part of a file (nearly-infinite buffer),
-- search option,
+- search option (binary search?),
 - UTF-8 support,
 - moving the cursor without a window redrawing,
 - cursor scroll in the live filename edit mode,
@@ -13,4 +13,6 @@ fiflo - TODOs and ideas:
 - syntax file rework and highlighting improvement,
 - wrong terminal size handling instead of force quit,
 - lower line of the upper bar doesn't fill a screen during first frame,
-- more variables/constants instead of ad hoc calculations.
+- more variables/constants instead of ad hoc calculations,
+- file locking?
+- editorconfig support?
