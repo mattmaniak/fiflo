@@ -9,3 +9,4 @@ obj/
 *.sh
 *.swp
 vgcore.*
+.DS_Store
