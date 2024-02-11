@@ -9,7 +9,16 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
+
+#ifdef __APPLE__
+// https://opensource.apple.com/source/xnu/xnu-4903.221.2/bsd/sys/syslimits.h.auto.html
+#include <sys/syslimits.h>
+#endif
+
+#ifdef __linux__
+// https://github.com/torvalds/linux/blob/master/include/uapi/linux/limits.h
 #include <linux/limits.h>
+#endif
 
 #include "extension.h"
 #include "line.h"
