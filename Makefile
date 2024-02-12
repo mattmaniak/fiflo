@@ -29,21 +29,33 @@ CONF_DIR     = /etc
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.c))
 
 # Define or not if a compiler exists or not.
-GCC   := $(shell command -v gcc   2> /dev/null)
+KERNEL_NAME := $(shell uname -s)
+
+ifeq ($(KERNEL_NAME), Linux)
+	GNU_GCC := $(shell command -v gcc 2> /dev/null)
+endif
+ifeq ($(KERNEL_NAME), Darwin)
+	GNU_GCC := $(shell command -v gcc-8 gcc-9 gcc-10 gcc-11 gcc-12 gcc-13 2> /dev/null)
+endif
+
 CLANG := $(shell command -v clang 2> /dev/null)
 
 # Check and set a compilation driver.
-ifdef GCC
-	CC     = gcc
+ifdef GNU_GCC
+	CC      = $(GNU_GCC)
 	CFLAGS += -Wall -Wextra -Wconversion -Wunreachable-code
 endif
-
-ifndef GCC
+ifndef GNU_GCC
 ifdef CLANG
-	CC     = clang
+	CC      = $(CLANG)
 	CFLAGS += -Weverything
 endif
+endif
+
+ifndef GNU_GCC
+ifndef CLANG
 $(error Compilation driver was not found: gcc or clang is required, aborting.)
+endif
 endif
 
 # Compilation of object files depends on source files wnich depends on headers.
