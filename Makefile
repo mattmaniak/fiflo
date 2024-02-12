@@ -46,16 +46,16 @@ ifdef GNU_GCC
 	CFLAGS += -Wall -Wextra -Wconversion -Wunreachable-code
 endif
 ifndef GNU_GCC
-ifdef CLANG
-	CC      = $(CLANG)
-	CFLAGS += -Weverything
-endif
+	ifdef CLANG
+		CC      = $(CLANG)
+		CFLAGS += -Weverything
+	endif
 endif
 
 ifndef GNU_GCC
-ifndef CLANG
-$(error Compilation driver was not found: gcc or clang is required, aborting.)
-endif
+	ifndef CLANG
+		$(error Compilation driver was not found: gcc or clang is required, aborting.)
+	endif
 endif
 
 # Compilation of object files depends on source files wnich depends on headers.
