@@ -16,3 +16,5 @@ fiflo - TODOs and ideas:
 - more variables/constants instead of ad hoc calculations,
 - file locking?
 - editorconfig support?
+- last line duplication on macOS - to fix.
+- gcc/clang version check in Makefile.

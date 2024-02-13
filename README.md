@@ -1,30 +1,30 @@
 # <img src='art/gui_icon.png' width='32'> fiflo
-Edit a text on Linux using Windows keyboard shortcuts.
+Edit a text on GNU/Linux and macOS using Windows keyboard shortcuts.
 
 ![image](art/screenshot.png "Editing in Fiflo")
 
 ## Abstract
-Learn C. Create a text editor for Linux without any dependencies. Started as
-the C pointers and memory management exercise. The goal is to create an editor
-that mixes the Atom's rich functionality and Windows-like keyboard bindings
-with the Nano's minimalism.
+Learn C. Create a text editor for GNU/Linux and macOS without any dependencies.
+Started as the C pointers and memory management exercise. The goal is to
+create an editor that mixes the Atom's rich functionality and Windows-like
+keyboard bindings with the Nano's minimalism.
 
 ## Features
 - Windows-like keyboard shortcuts,
-- terminal-based,
+- only terminal-based,
 - up to 4 files simultaneous editing,
 - tabs/spaces recognition/selection,
 - syntax highlighting,
 - Git branch display,
-- punched card, that inverts the e.g. 80th char color,
+- "punched card", that inverts the e.g. 80th char color,
 - easily configurable,
 - dependency-free compilation.
 
 ## Usage
-### Check the minimal requirements for the GNU/Linux:
+### Check the minimal requirements for the GNU/Linux or macOS:
 - `git`,
 - `make`,
-- `gcc` >= `8.1.0` or `clang` >= ``,
+- `gcc` >= `8.1.0` or `clang` >= `7.0.0`,
 - `gzip` (only for an installation),
 - `sudo` (only for an installation, for Debian as root too).
 
@@ -32,7 +32,7 @@ with the Nano's minimalism.
 
 ### Clone on a desktop, compile from source and run
 ```
-git clone https://gitlab.com/mattmaniak/fiflo.git &&
+git clone https://gitlab.com/mattmaniak/fiflo &&
 cd fiflo &&
 make &&
 bin/fiflo
@@ -118,7 +118,7 @@ spontaneously so differences between commits may be big due the experiments.
 
 ### Checkout the develop branch for new, unstable features.
 ```
-git clone https://gitlab.com/mattmaniak/fiflo.git -b develop &&
+git clone https://gitlab.com/mattmaniak/fiflo -b develop &&
 git checkout develop
 ```
 

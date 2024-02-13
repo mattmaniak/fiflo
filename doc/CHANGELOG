@@ -9,7 +9,8 @@ Versions:
 v5.0.0 (WIP):
 - language standard upgrade from C11 to C17,
 - Makefile improvements: new rules,
-- fix of handling a branch name if it's too long to show a whole.
+- fix of handling a branch name if it's too long to show a whole,
+- support for macOS has been added.
 
 v4.1.0 (2019, October 10):
 - cursor position indicator shows it's x-pos instead of a current line length,
