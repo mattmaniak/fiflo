@@ -27,11 +27,16 @@ void ui__print_line_number(const V_file* const v_file,
 void ui__upper_bar(const V_file* const v_file, const Config* const config,
                    const Ui* const ui)
 {
-    const int fname_area  = ui->win_w - UI__LEFT_PADDING - UI__RIGHT_PADDING;
+    const char   fname_prefix[]   = "file: ";
+    const int    fname_prefix_len = (int) strlen(fname_prefix);
+    const int    fname_area       = ui->win_w - UI__LEFT_PADDING
+                                    - fname_prefix_len
+                                    - UI__RIGHT_PADDING;
+    const term_t git_branch_len = (term_t) strlen(v_file->git_branch);
 
     ui__colorize(config->color_ui.value);
     ANSI__INVERT();
-    printf("%*s", UI__LEFT_PADDING, " ");
+    printf("%*s%s", UI__LEFT_PADDING, " ", fname_prefix);
 
     if(v_file->fname_len <= (size_t) fname_area)
     {
@@ -51,25 +56,27 @@ void ui__upper_bar(const V_file* const v_file, const Config* const config,
         printf("%*s", UI__RIGHT_PADDING, " ");
         UI__WRAP_LINE();
     }
+
+    // The second line.
     printf("%*s%s%*s", UI__LEFT_PADDING, " ", v_file->status,
            V_FILE__STATUS_MAX - (int) strlen(v_file->status) - SIZE__SPACE
            + UI__GIT_LOGO_W + SIZE__I,
            UI__GIT_LOGO);
 
-    if((term_t) strlen(v_file->git_branch)
+    if(git_branch_len
        < (ui->win_w - UI__GIT_LOGO_W - V_FILE__STATUS_MAX
           - UI__HORIZONTAL_PADDING))
     {
         printf("%s%*s", v_file->git_branch,
                fname_area - V_FILE__STATUS_MAX - SIZE__I
                - (int) strlen(v_file->git_branch) - UI__GIT_LOGO_W
-               + UI__LEFT_PADDING + UI__RIGHT_PADDING,
+               + UI__LEFT_PADDING + fname_prefix_len + UI__RIGHT_PADDING,
                " ");
     }
     else
     {
-        printf("%.*s%*s", ui->win_w - V_FILE__STATUS_MAX - SIZE__SPACE - SIZE__I
-               - UI__GIT_LOGO_W,
+        printf("%.*s%*s", ui->win_w - V_FILE__STATUS_MAX - SIZE__SPACE
+               - SIZE__I - UI__GIT_LOGO_W,
                v_file->git_branch, UI__RIGHT_PADDING, " ");
     }
     UI__WRAP_LINE();
@@ -79,10 +86,11 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
                    const Modes* const modes, const Ui* const ui,
                    size_t additional_argc_i, const size_t actual_file_i)
 {
-    const V_file* const v_file      = &v_files[actual_file_i];
-    const int           fname_area  = ui->win_w - UI__LEFT_PADDING
-                                      - UI__RIGHT_PADDING;
-    const char          files_str[] = "loaded files";
+    const V_file* const v_file        = &v_files[actual_file_i];
+    const char          files_str[]   = "loaded files:";
+    const int           fname_area    = ui->win_w - UI__LEFT_PADDING
+                                        - UI__RIGHT_PADDING;
+    const int           files_str_len = (int) strlen(files_str);
     char                cursor_pos_indicator[V_FILE__STATUS_MAX];
 
 
@@ -99,7 +107,7 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
         ANSI__INVERT();
 
         printf("%*s%s%*s", UI__LEFT_PADDING, " ", files_str,
-               fname_area - (int) strlen(files_str) + UI__RIGHT_PADDING, " ");
+               fname_area - files_str_len + UI__RIGHT_PADDING, " ");
         UI__WRAP_LINE();
 
         if(additional_argc_i == 0)

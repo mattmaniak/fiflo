@@ -18,3 +18,5 @@ fiflo - TODOs and ideas:
 - editorconfig support?
 - last line duplication on macOS - to fix.
 - gcc/clang version check in Makefile.
+- limit type casting,
+- fixed tab position.
