@@ -140,7 +140,7 @@ bool window__render(const V_file* const v_file, const Config* const config,
         additional_argc_i++;
     }
     ui.expanded_lbar_h = (term_t) (UI__LBAR_SZ + additional_argc_i + SIZE__I);
-    ui.lbar_h          = (modes->expanded_lbar) ? ui.expanded_lbar_h
+    ui.lbar_h          = modes->expanded_lbar ? ui.expanded_lbar_h
                          : UI__LBAR_SZ;
 
     ui.line_number_len = (term_t) (strlen(line_number_as_str) + SIZE__SPACE
@@ -161,8 +161,7 @@ bool window__render(const V_file* const v_file, const Config* const config,
     print__display_text(&v_file[actual_file_i], config, syntax, &ui);
     window__fill(&v_file[actual_file_i], &ui);
 
-    ui__lower_bar(v_file, config, modes, &ui, additional_argc_i,
-                  actual_file_i);
+    ui__lower_bar(v_file, config, modes, &ui, additional_argc_i, actual_file_i);
     window__adjust_cursor_pos(&v_file[actual_file_i], modes, &ui);
 
     return true;

@@ -11,6 +11,7 @@ bool file_io__load(V_file* const v_file, const Config* const config,
         V_FILE__SET_STATUS("current directory set");
         return true;
     }
+
     textfile = fopen(v_file->fname, "r");
     if(textfile == NULL)
     {
@@ -52,8 +53,8 @@ bool file_io__convert_tab_from_file(V_file* const v_file,
 {
     /* Converts in-file '\t' in to a sequence of e.g. "\t\t\t\t" if the Tab
        width is set to 4. */
-    const size_t tab_sz = (size_t) config->tab_sz.value;
-    const char   tab_char = (modes->tabs_to_spaces) ? ' ' : '\t';
+    const char   tab_char = modes->tabs_to_spaces ? ' ' : '\t';
+    const size_t tab_sz   = (size_t) config->tab_sz.value;
 
     if(ch == '\t')
     {

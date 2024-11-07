@@ -5,8 +5,8 @@ void print__line_with_tabs(const V_file* const v_file,
                            const Syntax* const syntax, const size_t ln_i,
                            const size_t start_ch_i, const size_t end_ch_i)
 {
-    size_t ch_i_after_keyword;
     char   ch;
+    size_t ch_i_after_keyword;
 
     for(size_t ch_i = start_ch_i; ch_i < end_ch_i; ch_i++)
     {
@@ -40,8 +40,7 @@ void print__line_with_tabs(const V_file* const v_file,
     }
 }
 
-size_t print__set_start_line(const V_file* const v_file,
-                             const Ui* const ui)
+size_t print__set_start_line(const V_file* const v_file, const Ui* const ui)
 {
     if(v_file__cursor_y(v_file) >= ui->txtarea_h)
     {
@@ -52,8 +51,7 @@ size_t print__set_start_line(const V_file* const v_file,
     return 0;
 }
 
-void print__actual_line(const V_file* const v_file,
-                        const Config* const config,
+void print__actual_line(const V_file* const v_file, const Config* const config,
                         const Syntax* const syntax, const Ui* const ui)
 {
     // There is a small amount of chars. Horizontal scroll isn't required.
@@ -94,12 +92,11 @@ void print__actual_line(const V_file* const v_file,
     }
 }
 
-void print__another_line(const V_file* const v_file,
-                         const Config* const config,
+void print__another_line(const V_file* const v_file, const Config* const config,
                          const Syntax* const syntax, const Ui* const ui,
                          const size_t ln_i)
 {
-    const size_t start_ch_i = (-ui->punched_card_delta_x < 0) ? 0
+    const size_t start_ch_i = (ui->punched_card_delta_x > 0) ? 0
                               : (size_t) -ui->punched_card_delta_x;
 
     size_t end_ch_i = (size_t) (ui->txtarea_w - ui->punched_card_delta_x
@@ -184,13 +181,12 @@ void print__fit_lines(const V_file* const v_file, const Config* const config,
     }
 }
 
-void print__shrink_lines(const V_file* const v_file,
-                         const Config* const config,
+void print__shrink_lines(const V_file* const v_file, const Config* const config,
                          const Syntax* const syntax, const Ui* const ui)
 {
-    const size_t start_ch_i = (-ui->punched_card_delta_x < 0) ? 0
-                              : (size_t) -ui->punched_card_delta_x;
     const size_t last_ln_i  = (size_t) ui->txtarea_h - SIZE__I;
+    const size_t start_ch_i = (ui->punched_card_delta_x > 0) ? 0
+                              : (size_t) -ui->punched_card_delta_x;
     size_t       ln_i       = 0;
 
     // Previous lines. If they are scrolled. Only a beginning is shown.
@@ -222,8 +218,7 @@ void print__shrink_lines(const V_file* const v_file,
     }
 }
 
-void print__scroll_lines(const V_file* const v_file,
-                         const Config* const config,
+void print__scroll_lines(const V_file* const v_file, const Config* const config,
                          const Syntax* const syntax, const Ui* const ui)
 {
     const size_t pre_last_ch_i = v_file__actual_line(v_file)->len - SIZE__I;
@@ -270,8 +265,7 @@ void print__scroll_lines(const V_file* const v_file,
     }
 }
 
-void print__display_text(const V_file* const v_file,
-                         const Config* const config,
+void print__display_text(const V_file* const v_file, const Config* const config,
                          const Syntax* const syntax, const Ui* const ui)
 {
     if(v_file->lines_amount < ui->txtarea_h)

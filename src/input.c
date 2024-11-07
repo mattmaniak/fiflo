@@ -190,7 +190,7 @@ bool input__parse_key(V_file* const v_file, const Config* const config,
 }
 
 bool input__parse_char(V_file* const v_file, const Config* const config,
-                    Modes* const modes, const char ch)
+                       Modes* const modes, const char ch)
 {
     switch(ch)
     {
@@ -226,13 +226,13 @@ bool input__printable_char(V_file* const v_file, const char ch)
 {
 
 #ifdef DEBUG_KEYS
-    const bool ch_is_allowed = true;
+    const bool is_ch_allowed = true;
 #else
-    const bool ch_is_allowed = (ch == '\0') || (ch == '\t') || (ch == '\n')
+    const bool is_ch_allowed = (ch == '\0') || (ch == '\t') || (ch == '\n')
                                || (ch >= 32);
 #endif
 
-    if(ch_is_allowed)
+    if(is_ch_allowed)
     {
         if(v_file->chars_amount < V_FILE__CHAR_MAX)
         {

@@ -31,8 +31,8 @@ bool keys__linefeed(V_file* const v_file)
 bool keys__backspace(V_file* const v_file, const Config* const config,
                      const Modes* const modes)
 {
+    const char   tab_ch               = modes->tabs_to_spaces ? ' ' : '\t';
     const size_t ln_i_before_charange = v_file__cursor_y(v_file);
-    const char   tab_ch               = (modes->tabs_to_spaces) ? ' ' : '\t';
     const size_t tab_sz               = (size_t) config->tab_sz.value;
     size_t       actual_char_x;
 
@@ -83,7 +83,7 @@ bool keys__tab(V_file* v_file, const Config* const config,
        They will be converted during a rendering, loading and saving a file. */
 
     const size_t tab_sz = (size_t) config->tab_sz.value;
-    const char   tab_ch = (modes->tabs_to_spaces) ? ' ' : '\t';
+    const char   tab_ch = modes->tabs_to_spaces ? ' ' : '\t';
 
     // Prevent the not-full Tab insert.
     if(v_file->chars_amount <= (size_t) (V_FILE__CHAR_MAX - tab_sz))
@@ -178,7 +178,7 @@ void keys__arrow_up(V_file* const v_file)
     {
         /* Cursor at a left side: doesn't go at a end of a line. Always at the
            beginning or ignore the linefeed. */
-        v_file->mirrored_cursor_x = (v_file__is_cursor_at_line_start(v_file))
+        v_file->mirrored_cursor_x = v_file__is_cursor_at_line_start(v_file)
                                     ? v_file__prev_line(v_file)->len
                                     : SIZE__LF;
         v_file->mirrored_cursor_y++;
@@ -204,7 +204,7 @@ void keys__arrow_down(V_file* const v_file)
         else
         {
             // Ignore the LF or not.
-            v_file->mirrored_cursor_x = (v_file__is_cursor_y_scrolled(v_file))
+            v_file->mirrored_cursor_x = v_file__is_cursor_y_scrolled(v_file)
                                         ? SIZE__LF : 0;
         }
     }

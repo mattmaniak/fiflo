@@ -36,7 +36,7 @@ bool edit__delete_line(V_file* v_file)
     {
         if(v_file__is_cursor_y_scrolled(v_file))
         {
-            v_file->mirrored_cursor_x = (cursor_is_at_line_start)
+            v_file->mirrored_cursor_x = cursor_is_at_line_start
                                         ? next_line_len : SIZE__LF;
 
             if(!memory__copy_lines_backward(v_file)
@@ -64,10 +64,10 @@ bool edit__delete_line(V_file* v_file)
     else
     {
         v_file__last_line(v_file)->len = 0;
-        *v_file__last_char(v_file)    = '\0';
+        *v_file__last_char(v_file)     = '\0';
 
         v_file__last_line(v_file)->txt = realloc(v_file__last_line(v_file)->txt,
-                                                V_FILE__BASIC_MEMBLOCK);
+                                                 V_FILE__BASIC_MEMBLOCK);
         if(v_file__last_line(v_file)->txt == NULL)
         {
             fprintf(stderr, "Can't realloc a memory in a first line.\n");
@@ -79,8 +79,8 @@ bool edit__delete_line(V_file* v_file)
 
 void edit__shift_text_horizonally(V_file* v_file, const char direction)
 {
-    size_t ch_i;
     char   tmp_char;
+    size_t ch_i;
 
     switch(direction)
     {

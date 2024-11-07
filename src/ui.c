@@ -116,6 +116,8 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
         }
         for(size_t file_i = 0; file_i < additional_argc_i; file_i++)
         {
+            size_t fname_len = strlen(v_file[file_i].fname);
+
             ui__colorize(0);
             ui__colorize(config->color_ui.value);
             ANSI__INVERT();
@@ -127,10 +129,10 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
             }
             printf("%*s", UI__LEFT_PADDING, " ");
 
-            if((term_t) strlen(v_file[file_i].fname) <= fname_area)
+            if((term_t) fname_len <= fname_area)
             {
                 printf("%s%*s", v_file[file_i].fname,
-                       fname_area - (int) strlen(v_file[file_i].fname), " ");
+                       fname_area - (int) fname_len, " ");
             }
             else
             {

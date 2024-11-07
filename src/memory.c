@@ -89,7 +89,7 @@ bool memory__shrink_prev_line(V_file* const v_file)
     }
     else if((v_file__prev_line(v_file)->len >= V_FILE__MEMBLOCK))
     {
-        // Set the size of some MEMBLOCKs.
+        // Set the size of some Memblocks.
         memblock = ((v_file__prev_line(v_file)->len / V_FILE__MEMBLOCK)
                     * V_FILE__MEMBLOCK) + V_FILE__MEMBLOCK;
     }

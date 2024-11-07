@@ -16,18 +16,18 @@ bool v_file__init(V_file* const v_file)
         fprintf(stderr, "Can't alloc a memory a array with lines.\n");
         return false;
     }
+    v_file__actual_line(v_file)->len = 0;
+    v_file->basename[0]              = '\0';
     v_file->chars_amount             = 0;
+    v_file->esc_seq_on_input         = false;
+    v_file->extension[0]             = '\0';
     v_file->lines_amount             = 0;
     v_file->mirrored_cursor_x        = 0;
     v_file->mirrored_cursor_y        = 0;
-    v_file__actual_line(v_file)->len = 0;
-    v_file->fname_len                = 0;
     v_file->fname[0]                 = '\0';
     v_file->fname_copy[0]            = '\0';
+    v_file->fname_len                = 0;
     v_file->pathname[0]              = '\0';
-    v_file->basename[0]              = '\0';
-    v_file->extension[0]             = '\0';
-    v_file->esc_seq_on_input         = false;
 
     v_file__actual_line(v_file)->txt = malloc(V_FILE__BASIC_MEMBLOCK);
     if(v_file__actual_line(v_file)->txt == NULL)
