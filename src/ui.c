@@ -30,9 +30,8 @@ void ui__upper_bar(const V_file* const v_file, const Config* const config,
     const char   fname_prefix[]   = "path: ";
     const int    fname_prefix_len = (int) strlen(fname_prefix);
     const int    fname_area       = ui->win_w - UI__LEFT_PADDING
-                                    - fname_prefix_len
-                                    - UI__RIGHT_PADDING;
-    const term_t git_branch_len = (term_t) strlen(v_file->git_branch);
+                                    - fname_prefix_len - UI__RIGHT_PADDING;
+    const term_t git_branch_len   = (term_t) strlen(v_file->git_branch);
 
     ui__colorize(config->color_ui.value);
     ANSI__INVERT();

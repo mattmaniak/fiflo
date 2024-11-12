@@ -3,8 +3,8 @@
 bool args__parse(Modes* const modes, int* argc, char** const argv)
 {
     // Notice: argv[0] is the program name.
-    const int fname_arg_sz  = 1;
     const int files_max     = 4;
+    const int fname_arg_sz  = 1;
     const int options_max   = 8;
     const int argc_max      = fname_arg_sz + files_max + options_max;
     const int orig_argc     = *argc;

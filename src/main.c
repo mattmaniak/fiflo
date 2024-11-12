@@ -51,8 +51,7 @@ int main(int argc, char** argv)
     }
 
     v_files = malloc((size_t) argc * sizeof(V_file));
-    if(!init(v_files, &config, &modes, &syntax, argv,
-                    &additional_argc_i))
+    if(!init(v_files, &config, &modes, &syntax, argv, &additional_argc_i))
     {
         goto free;
     }

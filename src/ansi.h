@@ -7,9 +7,9 @@
 
 enum
 {
-    ANSI__RESET = 0,
+    ANSI__RESET  = 0,
     ANSI__INVERT = 7,
-    BLACK = 30,
+    BLACK        = 30,
     RED,
     GREEN,
     YELLOW,

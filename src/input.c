@@ -276,7 +276,7 @@ bool input__printable_char(V_file* const v_file, const char ch)
     }
     else
     {
-        V_FILE__SET_STATUS("unsupported char(s)");
+        V_FILE__SET_STATUS("unsupported char");
     }
     return true;
 }

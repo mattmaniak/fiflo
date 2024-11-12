@@ -69,7 +69,7 @@ bool memory__shrink_current_line(V_file* const v_file)
     if(v_file__actual_line(v_file)->txt == NULL)
     {
         fprintf(stderr, "Can't shrink a memory block for the line %u\n",
-                (int) v_file__cursor_y(v_file) + SIZE__I);
+                (unsigned) v_file__cursor_y(v_file) + SIZE__I);
         return false;
     }
     return true;
