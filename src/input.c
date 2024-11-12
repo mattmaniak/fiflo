@@ -2,10 +2,10 @@
 
 char input__getch(void)
 {
-    const unsigned int canonical_mode_on = ICANON;
-    const unsigned int echo_input        = ECHO;
-    const unsigned int enable_sigs       = ISIG;
-    const unsigned int enable_xon        = IXON;
+    const unsigned canonical_mode_on = ICANON;
+    const unsigned echo_input        = ECHO;
+    const unsigned enable_sigs       = ISIG;
+    const unsigned enable_xon        = IXON;
 
     struct termios old_term_params;
     struct termios new_term_params;
