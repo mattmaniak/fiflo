@@ -37,7 +37,7 @@ void print__scroll_line_horizontally(const V_file* const,
                                      const Config* const,
                                      const Syntax* const, const Ui* const);
 
-// Render a text when there is smaller amount of lines than a window height.
+// Render a text when there is smaller number of lines than a window height.
 void print__fit_lines(const V_file* const, const Config* const,
                       const Syntax* const, const Ui* const);
 

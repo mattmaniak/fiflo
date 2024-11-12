@@ -12,7 +12,7 @@
 // Optionally shift a text horizontally.
 bool edit__delete_char(V_file*);
 
-// Delete a current line and decrement a lines amount indicator.
+// Delete a current line and decrement a lines number indicator.
 bool edit__delete_line(V_file*);
 
 // Move a text when the cursor is shifted left and a key was pressed.

@@ -44,7 +44,7 @@ size_t print__set_start_line(const V_file* const v_file, const Ui* const ui)
 {
     if(v_file__cursor_y(v_file) >= ui->txtarea_h)
     {
-        // Amount of lines to hide in a magic upper area.
+        // Number of lines to hide in a magic upper area.
         return v_file->lines_amount + SIZE__I - ui->txtarea_h
                - v_file->mirrored_cursor_y;
     }
@@ -54,7 +54,7 @@ size_t print__set_start_line(const V_file* const v_file, const Ui* const ui)
 void print__actual_line(const V_file* const v_file, const Config* const config,
                         const Syntax* const syntax, const Ui* const ui)
 {
-    // There is a small amount of chars. Horizontal scroll isn't required.
+    // There is a small number of chars. Horizontal scroll isn't required.
     if(v_file__actual_line(v_file)->len < ui->txtarea_w)
     {
         if(v_file__cursor_y(v_file) == v_file->lines_amount)
@@ -137,7 +137,7 @@ void print__scroll_line_horizontally(const V_file* const v_file,
                           v_file__cursor_x(v_file));
 
     /* Sometimes this is needed because the "window__fill" function renders the
-       smallest required amount of linefeeds. In other cases the linefeed is
+       smallest required number of linefeeds. In other cases the linefeed is
        provided by the char in a line. */
     if(v_file__is_cursor_y_scrolled(v_file))
     {

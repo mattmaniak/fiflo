@@ -24,7 +24,7 @@
 #include "line.h"
 #include "size.h"
 
-/* Max amount of chars: (16 MB - 1). Newline is also a char. It's not
+/* Max number of chars: (16 megabytes - 1). Newline is also a char. It's not
    recomended to set the V_FILE__CHAR_MAX to a value bigger than INT_MAX
    because of possible casting to the integer. */
 
@@ -59,8 +59,8 @@ typedef struct
     // File's content and some indicators.
     size_t fname_len;
     Line*  lines;
-    size_t chars_amount; // All chars amount index.
-    size_t lines_amount; // All lines amount index.
+    size_t chars_amount; // All chars number and index.
+    size_t lines_amount; // All lines number and index.
 
     // Visual shit.
     size_t mirrored_cursor_x; // E.g. cursor_x = line_len - mirrored_cursor_x.

@@ -20,7 +20,7 @@ bool keys__linefeed(V_file* const);
 // Remove a last char and optionally delete a last line.
 bool keys__backspace(V_file* const, const Config* const, const Modes* const);
 
-// Insert a specified amount of the '\t' to emulate the Tab.
+// Insert a specified number of the '\t' to emulate the Tab.
 bool keys__tab(V_file* const, const Config* const, const Modes* const);
 
 // Move the cursor.
