@@ -27,7 +27,7 @@ void ui__print_line_number(const V_file* const v_file,
 void ui__upper_bar(const V_file* const v_file, const Config* const config,
                    const Ui* const ui)
 {
-    const char   fname_prefix[]   = "file: ";
+    const char   fname_prefix[]   = "path: ";
     const int    fname_prefix_len = (int) strlen(fname_prefix);
     const int    fname_area       = ui->win_w - UI__LEFT_PADDING
                                     - fname_prefix_len
@@ -87,7 +87,7 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
                    size_t additional_argc_i, const size_t actual_file_i)
 {
     const V_file* const v_file        = &v_files[actual_file_i];
-    const char          files_str[]   = "loaded files:";
+    const char          files_str[]   = "loaded paths:";
     const int           fname_area    = ui->win_w - UI__LEFT_PADDING
                                         - UI__RIGHT_PADDING;
     const int           files_str_len = (int) strlen(files_str);
