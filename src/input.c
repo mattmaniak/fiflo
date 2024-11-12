@@ -55,6 +55,7 @@ void input__recognize_sequence(V_file* const v_file,
                                size_t* const file_i)
 {
     const size_t seq_len_max = 6;
+    const size_t seq_len     = strlen(sequence);
 
     const char arrow_up[]    = "\033[A";
     const char arrow_down[]  = "\033[B";
@@ -132,7 +133,7 @@ void input__recognize_sequence(V_file* const v_file,
         v_file->esc_seq_on_input = false;
     }
     // Other cases that block an input for "seq_len_max" chars.
-    else if(strlen(sequence) >= seq_len_max)
+    else if(seq_len >= seq_len_max)
     {
         v_file->esc_seq_on_input = false;
     }

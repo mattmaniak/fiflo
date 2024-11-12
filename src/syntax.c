@@ -53,13 +53,14 @@ void syntax__sort(Syntax* const syntax)
     // Iterate through all keywords.
     for(size_t keyword_i = 0; keyword_i < syntax->keywords_amount; keyword_i++)
     {
-        // Set a value of a further keyword to compare.
+        // Set a value of a next keyword to compare.
         for(size_t shift_i = keyword_i + SIZE__NEXT;
             shift_i < syntax->keywords_amount; shift_i++)
         {
+            size_t kwrd_len      = strlen(syntax->keywords[keyword_i].keyword);
+            size_t next_kwrd_len = strlen(syntax->keywords[shift_i].keyword);
             // Swap if a next keyword is longer.
-            if(strlen(syntax->keywords[keyword_i].keyword)
-               < strlen(syntax->keywords[shift_i].keyword))
+            if(next_kwrd_len > kwrd_len)
             {
                 Tmp_keyword = syntax->keywords[keyword_i];
 

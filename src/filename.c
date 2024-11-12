@@ -135,7 +135,7 @@ bool filename__extract_pathname_from_arg(V_file* const v_file)
 
 void filename__extract_basename_from_arg(V_file* const v_file)
 {
-    size_t ch_i         = strlen(v_file->fname);
+    size_t ch_i           = strlen(v_file->fname);
     size_t slash_last_pos = 0;
 
     while(ch_i > 0)

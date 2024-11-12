@@ -57,7 +57,7 @@ typedef struct
     const int32_t _padding;
 
     // File's content and some indicators.
-    size_t fname_len; // Strlen of the above array.
+    size_t fname_len;
     Line*  lines;
     size_t chars_amount; // All chars amount index.
     size_t lines_amount; // All lines amount index.

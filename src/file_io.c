@@ -121,8 +121,11 @@ bool file_io__save(V_file* const v_file, const Config* const config)
 
 bool file_io__get_git_branch(V_file* const v_file)
 {
-    const char  git_head_file_pathname[] = ".git/HEAD";
-    FILE*       git_head_file;
+    const char   git_head_file_pathname[] = ".git/HEAD";
+    const char   git_ref_path[]           = "ref: refs/heads/";
+    const size_t git_ref_path_len         = strlen(git_ref_path);
+    FILE*        git_head_file;
+    size_t       git_branch_len;
 
     if(access(git_head_file_pathname, R_OK) == -1)
     {
@@ -137,7 +140,7 @@ bool file_io__get_git_branch(V_file* const v_file)
     }
 
     // Ignore a passed string in a file to get a branch after the slash.
-    if(fseek(git_head_file, (long) strlen("ref: refs/heads/"), 0) == -1)
+    if(fseek(git_head_file, (long) git_ref_path_len, 0) == -1)
     {
         strcpy(v_file->git_branch, "[none]");
         goto close;
@@ -145,11 +148,12 @@ bool file_io__get_git_branch(V_file* const v_file)
 
     // Read a contents of the file.
     while(fgets(v_file->git_branch, NAME_MAX, git_head_file) != NULL)
+    git_branch_len = strlen(v_file->git_branch);
 
     // Delete the linefeed from the name.
-    if(v_file->git_branch[strlen(v_file->git_branch) - SIZE__I] == '\n')
+    if(v_file->git_branch[git_branch_len - SIZE__I] == '\n')
     {
-        v_file->git_branch[strlen(v_file->git_branch) - SIZE__I] = '\0';
+        v_file->git_branch[git_branch_len - SIZE__I] = '\0';
     }
 
 close:
