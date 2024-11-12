@@ -114,7 +114,7 @@ bool memory__extend_lines_array(V_file* const v_file)
 {
     // Enhance the array that contains pointers to lines.
     v_file->lines = realloc(v_file->lines,
-                            (v_file->lines_amount + SIZE__I) * sizeof(Line));
+                            (v_file->lines_number + SIZE__I) * sizeof(Line));
     if(v_file->lines == NULL)
     {
         fprintf(stderr, "Can't extend an array with lines.\n");
@@ -137,7 +137,7 @@ bool memory__extend_lines_array(V_file* const v_file)
 bool memory__shrink_lines_array(V_file* const v_file)
 {
     v_file->lines = realloc(v_file->lines,
-                            (v_file->lines_amount + SIZE__I) * sizeof(Line));
+                            (v_file->lines_number + SIZE__I) * sizeof(Line));
     if(v_file->lines == NULL)
     {
         fprintf(stderr, "Can't shrink an array with lines.\n");
@@ -148,7 +148,7 @@ bool memory__shrink_lines_array(V_file* const v_file)
 
 bool memory__copy_lines_forward(V_file* const v_file)
 {
-    for(size_t ln_i = v_file->lines_amount; ln_i > v_file__cursor_y(v_file);
+    for(size_t ln_i = v_file->lines_number; ln_i > v_file__cursor_y(v_file);
         ln_i--)
     {
         size_t memblock = ((v_file->lines[ln_i - SIZE__PREV].len
@@ -177,7 +177,7 @@ bool memory__copy_lines_forward(V_file* const v_file)
 
 bool memory__copy_lines_backward(V_file* const v_file)
 {
-    for(size_t ln_i = v_file__cursor_y(v_file); ln_i < v_file->lines_amount;
+    for(size_t ln_i = v_file__cursor_y(v_file); ln_i < v_file->lines_number;
         ln_i++)
     {
         size_t memblock = ((v_file->lines[ln_i + SIZE__NEXT].len

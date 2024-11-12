@@ -8,7 +8,7 @@ bool syntax__load(Syntax* const syntax, const char* const extension)
     char       color[SYNTAX__MAX_KWRD_LEN];
     FILE*      file;
 
-    syntax->keywords_amount = 0;
+    syntax->keywords_number = 0;
 
     strcat(syntax_fname, extension);
     strcat(syntax_fname, syntax_ext);
@@ -22,19 +22,19 @@ bool syntax__load(Syntax* const syntax, const char* const extension)
     {
         while(fscanf(file, "%s = %s", keyword, color) != EOF)
         {
-            strncpy(syntax->keywords[syntax->keywords_amount].keyword, keyword,
+            strncpy(syntax->keywords[syntax->keywords_number].keyword, keyword,
                     SYNTAX__MAX_KWRD_LEN);
 
-            syntax->keywords[syntax->keywords_amount].color
+            syntax->keywords[syntax->keywords_number].color
                 = config__parse_value(color);
 
-            syntax->keywords_amount++;
-            if(syntax->keywords_amount > SYNTAX__MAX_KWRDS_IN_FILE)
+            syntax->keywords_number++;
+            if(syntax->keywords_number > SYNTAX__MAX_KWRDS_IN_FILE)
             {
                 break;
             }
         }
-        syntax->keywords_amount--;
+        syntax->keywords_number--;
         syntax__sort(syntax);
 
         if(fclose(file) == EOF)
@@ -51,11 +51,11 @@ void syntax__sort(Syntax* const syntax)
     syntax__Keyword Tmp_keyword;
 
     // Iterate through all keywords.
-    for(size_t keyword_i = 0; keyword_i < syntax->keywords_amount; keyword_i++)
+    for(size_t keyword_i = 0; keyword_i < syntax->keywords_number; keyword_i++)
     {
         // Set a value of a next keyword to compare.
         for(size_t shift_i = keyword_i + SIZE__NEXT;
-            shift_i < syntax->keywords_amount; shift_i++)
+            shift_i < syntax->keywords_number; shift_i++)
         {
             size_t kwrd_len      = strlen(syntax->keywords[keyword_i].keyword);
             size_t next_kwrd_len = strlen(syntax->keywords[shift_i].keyword);
@@ -80,11 +80,11 @@ size_t syntax__paint_word(const Syntax* const syntax,
     bool              word_ignored = false;
     size_t            end_paint_i;
 
-    if(syntax->keywords_amount <= 0)
+    if(syntax->keywords_number <= 0)
     {
         return ch_i;
     }
-    for(size_t keyword_i = 0; keyword_i <= syntax->keywords_amount;
+    for(size_t keyword_i = 0; keyword_i <= syntax->keywords_number;
         keyword_i++)
     {
         if((str_to_print != NULL)

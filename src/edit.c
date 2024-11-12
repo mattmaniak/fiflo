@@ -10,7 +10,7 @@ bool edit__delete_char(V_file* v_file)
             return false;
         }
         v_file__actual_line(v_file)->len--;
-        v_file->chars_amount--;
+        v_file->chars_number--;
     }
     // Deletes a non-empty line and copy chars to previous.
     else if(!v_file__is_actual_line_first(v_file)
@@ -146,7 +146,7 @@ bool edit__move_lines_backward(V_file* v_file)
 {
     const size_t prev_ln_i = v_file__cursor_y(v_file) - SIZE__PREV;
 
-    v_file->chars_amount--;
+    v_file->chars_number--;
     v_file__prev_line(v_file)->len--;
 
     // Merge a previous line with a next.
@@ -180,13 +180,13 @@ bool edit__delete_last_empty_line(V_file* v_file)
 {
     free(v_file__actual_line(v_file)->txt);
 
-    v_file->lines_amount--;
+    v_file->lines_number--;
     if(!memory__shrink_current_line(v_file))
     {
         return false;
     }
     v_file__actual_line(v_file)->len--;
-    v_file->chars_amount--;
+    v_file->chars_number--;
 
     if(!memory__shrink_lines_array(v_file))
     {
@@ -199,7 +199,7 @@ bool edit__delete_last_line(V_file* v_file)
 {
     free(v_file__last_line(v_file)->txt);
 
-    v_file->lines_amount--;
+    v_file->lines_number--;
     return memory__shrink_lines_array(v_file);
 }
 

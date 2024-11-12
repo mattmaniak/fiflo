@@ -45,7 +45,7 @@ size_t print__set_start_line(const V_file* const v_file, const Ui* const ui)
     if(v_file__cursor_y(v_file) >= ui->txtarea_h)
     {
         // Number of lines to hide in a magic upper area.
-        return v_file->lines_amount + SIZE__I - ui->txtarea_h
+        return v_file->lines_number + SIZE__I - ui->txtarea_h
                - v_file->mirrored_cursor_y;
     }
     return 0;
@@ -57,7 +57,7 @@ void print__actual_line(const V_file* const v_file, const Config* const config,
     // There is a small number of chars. Horizontal scroll isn't required.
     if(v_file__actual_line(v_file)->len < ui->txtarea_w)
     {
-        if(v_file__cursor_y(v_file) == v_file->lines_amount)
+        if(v_file__cursor_y(v_file) == v_file->lines_number)
         {
             print__line_with_tabs(v_file, config, syntax,
                                   v_file__cursor_y(v_file), 0,
@@ -85,7 +85,7 @@ void print__actual_line(const V_file* const v_file, const Config* const config,
 
         // Not last rendered line so wrap it.
         if(((v_file__cursor_y(v_file) + SIZE__I) < ui->txtarea_h)
-           && (v_file__cursor_y(v_file) != v_file->lines_amount))
+           && (v_file__cursor_y(v_file) != v_file->lines_number))
         {
             UI__WRAP_LINE();
         }
@@ -161,21 +161,21 @@ void print__fit_lines(const V_file* const v_file, const Config* const config,
 
     if(v_file__is_cursor_y_scrolled(v_file))
     {
-        for(ln_i += SIZE__LINE; ln_i < v_file->lines_amount; ln_i++)
+        for(ln_i += SIZE__LINE; ln_i < v_file->lines_number; ln_i++)
         {
             print__another_line(v_file, config, syntax, ui, ln_i);
         }
-        ui__print_line_number(v_file, config, v_file->lines_amount,
+        ui__print_line_number(v_file, config, v_file->lines_number,
                               ui->line_number_len);
 
         if(v_file__last_line(v_file)->len < ui->txtarea_w)
         {
-            print__line_with_tabs(v_file, config, syntax, v_file->lines_amount,
+            print__line_with_tabs(v_file, config, syntax, v_file->lines_number,
                                   0, v_file__last_line(v_file)->len);
         }
         else
         {
-            print__line_with_tabs(v_file, config, syntax, v_file->lines_amount,
+            print__line_with_tabs(v_file, config, syntax, v_file->lines_number,
                                   0, (size_t) ui->txtarea_w - SIZE__LF);
         }
     }
@@ -268,7 +268,7 @@ void print__scroll_lines(const V_file* const v_file, const Config* const config,
 void print__display_text(const V_file* const v_file, const Config* const config,
                          const Syntax* const syntax, const Ui* const ui)
 {
-    if(v_file->lines_amount < ui->txtarea_h)
+    if(v_file->lines_number < ui->txtarea_h)
     {
         print__fit_lines(v_file, config, syntax, ui);
     }

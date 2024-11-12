@@ -2,9 +2,9 @@
 
 bool keys__linefeed(V_file* const v_file)
 {
-    if(v_file->lines_amount < V_FILE__CHAR_MAX)
+    if(v_file->lines_number < V_FILE__CHAR_MAX)
     {
-        v_file->lines_amount++;
+        v_file->lines_number++;
         if(!memory__extend_lines_array(v_file))
         {
             return false;
@@ -86,7 +86,7 @@ bool keys__tab(V_file* v_file, const Config* const config,
     const char   tab_ch = modes->tabs_to_spaces ? ' ' : '\t';
 
     // Prevent the not-full Tab insert.
-    if(v_file->chars_amount <= (size_t) (V_FILE__CHAR_MAX - tab_sz))
+    if(v_file->chars_number <= (size_t) (V_FILE__CHAR_MAX - tab_sz))
     {
         for(size_t tab_i = 0; tab_i < tab_sz; tab_i++)
         {
@@ -124,7 +124,7 @@ void keys__arrow_left(V_file* const v_file, const Config* const config)
             }
         }
     }
-    else if((v_file->lines_amount > 0) && !v_file__is_cursor_at_top(v_file))
+    else if((v_file->lines_number > 0) && !v_file__is_cursor_at_top(v_file))
     {
         // Set to a right part of a line ignoring it's linefeed.
         v_file->mirrored_cursor_x = SIZE__LF;
@@ -215,7 +215,7 @@ void keys__ctrl_arrow_left(V_file* const v_file)
 {
     // Go to a previous line.
     if((v_file__cursor_x(v_file) == 0)
-       && (v_file->mirrored_cursor_y < v_file->lines_amount))
+       && (v_file->mirrored_cursor_y < v_file->lines_number))
     {
         v_file->mirrored_cursor_y++;
         v_file->mirrored_cursor_x = SIZE__LF;

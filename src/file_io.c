@@ -99,7 +99,7 @@ bool file_io__save(V_file* const v_file, const Config* const config)
         V_FILE__SET_STATUS("can't write to the file");
         return true;
     }
-    for(size_t ln_i = 0; ln_i <= v_file->lines_amount; ln_i++)
+    for(size_t ln_i = 0; ln_i <= v_file->lines_number; ln_i++)
     {
         /* Using fputs or fprintf causes an use-of-uninitialized-value using
            MSan because of there is a more memory allocated than is needed. */

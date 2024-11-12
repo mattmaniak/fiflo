@@ -21,7 +21,7 @@ bool init(V_file* v_files, Config* const config, Modes* const modes,
         }
         strcpy(v_files[file_i].fname_copy, v_files[file_i].fname);
     }
-    syntax->keywords_amount = 0;
+    syntax->keywords_number = 0;
 
     return true;
 }
@@ -73,13 +73,13 @@ int main(int argc, char** argv)
         if((extension != NULL) // Enable highlighting.
            && strcmp(v_files[actual_file_i].extension, extension))
         {
-            syntax.keywords_amount = 0;
+            syntax.keywords_number = 0;
             syntax__load(&syntax, extension);
             strncpy(v_files[actual_file_i].extension, extension, NAME_MAX);
         }
         else if(extension == NULL) // Disable highlighting.
         {
-            syntax.keywords_amount = 0;
+            syntax.keywords_number = 0;
             memset(v_files[actual_file_i].extension, 0, NAME_MAX);
         }
 

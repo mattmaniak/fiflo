@@ -18,10 +18,10 @@ bool v_file__init(V_file* const v_file)
     }
     v_file__actual_line(v_file)->len = 0;
     v_file->basename[0]              = '\0';
-    v_file->chars_amount             = 0;
+    v_file->chars_number             = 0;
     v_file->esc_seq_on_input         = false;
     v_file->extension[0]             = '\0';
-    v_file->lines_amount             = 0;
+    v_file->lines_number             = 0;
     v_file->mirrored_cursor_x        = 0;
     v_file->mirrored_cursor_y        = 0;
     v_file->fname[0]                 = '\0';
@@ -40,7 +40,7 @@ bool v_file__init(V_file* const v_file)
 
 void v_file__delete(V_file* const v_file)
 {
-    for(size_t ln_i = 0; ln_i <= v_file->lines_amount; ln_i++)
+    for(size_t ln_i = 0; ln_i <= v_file->lines_number; ln_i++)
     {
         if(v_file->lines[ln_i].txt != NULL)
         {
@@ -64,7 +64,7 @@ size_t v_file__cursor_x(const V_file* const this)
 
 size_t v_file__cursor_y(const V_file* const this)
 {
-    return this->lines_amount - this->mirrored_cursor_y;
+    return this->lines_number - this->mirrored_cursor_y;
 }
 
 char* v_file__actual_char(const V_file* const this)
@@ -94,7 +94,7 @@ Line* v_file__prev_line(const V_file* const this)
 
 Line* v_file__last_line(const V_file* const this)
 {
-    return &this->lines[this->lines_amount];
+    return &this->lines[this->lines_number];
 }
 
 bool v_file__is_cursor_x_scrolled(const V_file* const this)
@@ -119,7 +119,7 @@ bool v_file__is_actual_line_first(const V_file* const this)
 
 bool v_file__is_cursor_at_top(const V_file* const this)
 {
-    return this->mirrored_cursor_y == this->lines_amount;
+    return this->mirrored_cursor_y == this->lines_number;
 }
 
 bool v_file__is_cursor_at_line_start(const V_file* const this)

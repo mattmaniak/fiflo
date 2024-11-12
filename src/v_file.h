@@ -59,8 +59,8 @@ typedef struct
     // File's content and some indicators.
     size_t fname_len;
     Line*  lines;
-    size_t chars_amount; // All chars number and index.
-    size_t lines_amount; // All lines number and index.
+    size_t chars_number; // All chars number and index.
+    size_t lines_number; // All lines number and index.
 
     // Visual shit.
     size_t mirrored_cursor_x; // E.g. cursor_x = line_len - mirrored_cursor_x.

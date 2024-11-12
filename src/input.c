@@ -235,9 +235,9 @@ bool input__printable_char(V_file* const v_file, const char ch)
 
     if(is_ch_allowed)
     {
-        if(v_file->chars_amount < V_FILE__CHAR_MAX)
+        if(v_file->chars_number < V_FILE__CHAR_MAX)
         {
-            v_file->chars_amount++;
+            v_file->chars_number++;
             v_file__actual_line(v_file)->len++;
 
             if(!memory__extend_line(v_file, v_file__cursor_y(v_file)))
@@ -257,7 +257,7 @@ bool input__printable_char(V_file* const v_file, const char ch)
             // Initializing nul handler.
             if((ch == '\0') && !v_file__is_actual_line_empty(v_file))
             {
-                v_file->chars_amount--;
+                v_file->chars_number--;
                 v_file__actual_line(v_file)->len--;
             }
             else if((ch == '\n') && !keys__linefeed(v_file))

@@ -62,9 +62,9 @@ void window__fill(const V_file* const v_file, const Ui* const ui)
     const size_t lines_to_fill = (size_t) ui->txtarea_h - UI__LBAR_SZ;
 
     // Fill an empty area below a txt to adjust a position the lower bar.
-    if((v_file->lines_amount + SIZE__I) < (size_t) ui->txtarea_h)
+    if((v_file->lines_number + SIZE__I) < (size_t) ui->txtarea_h)
     {
-        for(size_t ln = v_file->lines_amount; ln < lines_to_fill; ln++)
+        for(size_t ln = v_file->lines_number; ln < lines_to_fill; ln++)
         {
             UI__WRAP_LINE();
         }
@@ -126,7 +126,7 @@ bool window__render(const V_file* const v_file, const Config* const config,
     Ui   ui;
 
     sprintf(line_number_as_str, "%u",
-            (int) v_file[actual_file_i].lines_amount + SIZE__I);
+            (int) v_file[actual_file_i].lines_number + SIZE__I);
 
     ui.win_w = window__receive_terminal_size('w');
     ui.win_h = window__receive_terminal_size('h');
