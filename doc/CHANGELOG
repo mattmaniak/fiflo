@@ -15,7 +15,7 @@ v5.0.0 (WIP):
 - added support for macOS,
 - prefix for a displayed path has been added,
 - fixed some type casting scenarios,
-- applied GNU's writing C code guideline fully.
+- applied GNU's writing C code guideline fully (apart of braces indent).
 
 
 v4.1.0 (2019, October 10):

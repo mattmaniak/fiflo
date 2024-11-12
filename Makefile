@@ -159,4 +159,14 @@ uninstall:
 
 .PHONY: clean
 clean:
-	$(RM) -r $(BIN_DIR) $(COV_DIR) $(OBJ_DIR)
+	$(RM) -r $(BIN_DIR) $(COV_DIR) $(OBJ_DIR) $(SRC_DIR)/*.c~* $(SRC_DIR)/*.h~*
+
+
+# https://www.gnu.org/prep/standards/html_node/Formatting.html with an exception
+# of "-bli2" flag that is responsible for indenting braces 2 spaces futher than
+# a statemet above which is quite inconvenient to code like this. It has been
+# changed to "-bli0" to enforce no changes in braces indentation.
+.PHONY: lint
+lint:
+	indent src/* -nbad -bap -nbc -bbo -bl -bls -ncdb -nce -cp1 -cs -di2 \
+	-ndj -nfc1 -nfca -hnl -i2 -ip5 -lp -pcs -psl -nsc -nsob

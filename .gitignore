@@ -1,12 +1,13 @@
 bin/
 cov/
+obj/
+*.c~*
+*.h~*
 *.gcda
 *.gcno
 *.gcov
-obj/
 *.out
 *.save
-*.sh
 *.swp
 vgcore.*
 .DS_Store
