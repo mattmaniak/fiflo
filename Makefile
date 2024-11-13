@@ -168,5 +168,5 @@ clean:
 # changed to "-bli0" to enforce no changes in braces indentation.
 .PHONY: lint
 lint:
-	indent src/* -nbad -bap -nbc -bbo -bl -bls -ncdb -nce -cp1 -cs -di2 \
-	-ndj -nfc1 -nfca -hnl -i2 -ip5 -lp -pcs -psl -nsc -nsob
+	indent src/* -nbad -bap -nbc -bbo -bl -bli0 -bls -ncdb -nce -cp1 -cs -di2 \
+	-ndj -nfc1 -nfca -hnl -i4 -ip5 -lp -pcs -psl -nsc -nsob

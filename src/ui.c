@@ -92,7 +92,6 @@ void ui__lower_bar(const V_file* const v_files, const Config* const config,
     const int           files_str_len = (int) strlen(files_str);
     char                cursor_pos_indicator[V_FILE__STATUS_MAX];
 
-
     sprintf(cursor_pos_indicator, "[%u; %u]",
             (unsigned) v_file__cursor_y(v_file) + SIZE__I,
             (unsigned) v_file__cursor_x(v_file) + SIZE__I);

@@ -1,5 +1,5 @@
-#ifndef PCARD_H
-#define PCARD_H
+#ifndef PUNCHED_CARD_H
+#define PUNCHED_CARD_H
 
 // Punch card (wrap guide) rendering.
 
