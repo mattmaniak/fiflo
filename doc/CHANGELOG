@@ -14,8 +14,7 @@ v5.0.0 (WIP):
 - fix of handling a branch name if it's too long to show a whole,
 - added support for macOS,
 - prefix for a displayed path has been added,
-- fixed some type casting scenarios,
-- applied GNU's writing C code guideline fully (apart of braces indent).
+- fixed some type casting scenarios.
 
 
 v4.1.0 (2019, October 10):
