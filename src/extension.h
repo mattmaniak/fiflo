@@ -1,12 +1,11 @@
-#ifndef FEXTENSION_H
-#define FEXTENSION_H
+#ifndef EXTENSION_H
+#define EXTENSION_H
 
 // File extension recognition.
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <stdio.h>
 
 #include "line.h"
 

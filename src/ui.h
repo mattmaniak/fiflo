@@ -5,9 +5,9 @@
 
 #include <string.h>
 
-#include "v_file.h"
 #include "config.h"
 #include "modes.h"
+#include "v_file.h"
 
 #define UI__GIT_LOGO         "git |\\ "
 #define UI__GIT_LOGO_W       (int) strlen(UI__GIT_LOGO)

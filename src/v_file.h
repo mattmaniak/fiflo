@@ -3,12 +3,12 @@
 
 // An implementation of the virtual file structure.
 
+#include <limits.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <limits.h>
 
 #ifdef __APPLE__
 // https://opensource.apple.com/source/xnu/xnu-4903.221.2/bsd/sys/syslimits.h.auto.html

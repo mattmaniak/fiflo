@@ -3,13 +3,13 @@
 
 #include <termios.h>
 
-#include "v_file.h"
 #include "config.h"
-#include "keys.h"
 #include "edit.h"
 #include "file_io.h"
+#include "keys.h"
 #include "modes.h"
 #include "window.h"
+#include "v_file.h"
 
 #define INPUT__SEQ_MAX 8
 

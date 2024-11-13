@@ -4,13 +4,13 @@
 // Currently supported characters and their actions inside.
 
 #include "ascii.h"
-#include "v_file.h"
 #include "config.h"
-#include "modes.h"
+#include "edit.h"
 #include "file_io.h"
 #include "memory.h"
-#include "edit.h"
+#include "modes.h"
 #include "size.h"
+#include "v_file.h"
 
 extern bool input__printable_char(V_file* const, const char);
 

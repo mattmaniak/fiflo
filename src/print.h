@@ -5,12 +5,12 @@
 
 #include <string.h>
 
-#include "v_file.h"
 #include "config.h"
-#include "syntax.h"
 #include "modes.h"
 #include "punched_card.h"
+#include "syntax.h"
 #include "ui.h"
+#include "v_file.h"
 
 #define PRINT__SPACE_HIGHLIGHT '.'
 #define PRINT__TAB_HIGHLIGHT   '>'

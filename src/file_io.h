@@ -3,9 +3,9 @@
 
 // File operations.
 
-#include "v_file.h"
 #include "config.h"
 #include "modes.h"
+#include "v_file.h"
 
 #define FILE__AT_LEAST_ONE_TAB 1
 

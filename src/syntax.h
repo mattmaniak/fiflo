@@ -4,10 +4,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "v_file.h"
 #include "config.h"
 #include "extension.h"
 #include "ui.h"
+#include "v_file.h"
 
 #define SYNTAX__MAX_KWRDS_IN_FILE 256
 #define SYNTAX__MAX_KWRD_LEN      16

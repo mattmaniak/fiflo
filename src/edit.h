@@ -4,10 +4,10 @@
 // All the unseen magic that will happen when an user inserts a char.
 
 #include "ascii.h"
-#include "v_file.h"
 #include "file_io.h"
 #include "filename.h"
 #include "memory.h"
+#include "v_file.h"
 
 // Optionally shift a text horizontally.
 bool edit__delete_char(V_file*);

@@ -6,12 +6,12 @@
 #include <sys/ioctl.h>
 
 #include "ansi.h"
-#include "v_file.h"
 #include "config.h"
 #include "modes.h"
-#include "punched_card.h"
 #include "print.h"
+#include "punched_card.h"
 #include "ui.h"
+#include "v_file.h"
 
 // Return current terminal width and height and exits if it's wrong.
 term_t window__receive_terminal_size(const char);
