@@ -148,6 +148,13 @@ Remark: fiflo must be compiled without ASan and MSan.
 sudo make install_debug
 ```
 
+### Code Linting
+```
+make lint
+```
+
+Remember to use `make clean` to remove original backuped files after linting.
+
 ## FAQ
 Will you port it to the Windows?
 - No.
