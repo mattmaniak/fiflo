@@ -36,7 +36,7 @@ bool edit__delete_line(V_file* v_file)
     {
         if(v_file__is_cursor_y_scrolled(v_file))
         {
-            v_file->mirrored_cursor_x = cursor_is_at_line_start
+            v_file->cursor_inverted_x = cursor_is_at_line_start
                                         ? next_line_len : SIZE__LF;
 
             if(!memory__copy_lines_backward(v_file)
@@ -44,7 +44,7 @@ bool edit__delete_line(V_file* v_file)
             {
                 return false;
             }
-            v_file->mirrored_cursor_y--;
+            v_file->cursor_inverted_y--;
         }
         else
         {
@@ -58,7 +58,7 @@ bool edit__delete_line(V_file* v_file)
             v_file__last_line(v_file)->len--;
             *v_file__last_char(v_file) = '\0';
 
-            v_file->mirrored_cursor_x = 0;
+            v_file->cursor_inverted_x = 0;
         }
     }
     else
@@ -72,7 +72,7 @@ bool edit__delete_line(V_file* v_file)
         {
             fprintf(stderr, "Can't realloc a memory in a first line.\n");
         }
-        v_file->mirrored_cursor_x = 0;
+        v_file->cursor_inverted_x = 0;
     }
     return true;
 }
@@ -105,7 +105,7 @@ void edit__shift_text_horizonally(V_file* v_file, const char direction)
 
 bool edit__move_lines_forward(V_file* v_file)
 {
-    v_file__prev_line(v_file)->len -= v_file->mirrored_cursor_x;
+    v_file__prev_line(v_file)->len -= v_file->cursor_inverted_x;
 
     // Move more lines vertically with a part of a current line.
     if(v_file__is_cursor_y_scrolled(v_file))
@@ -119,7 +119,7 @@ bool edit__move_lines_forward(V_file* v_file)
 
     // Move a right part (separated by the cursor) of a line to a next.
     for(size_t ch_i = v_file__prev_line(v_file)->len;
-        ch_i < v_file__prev_line(v_file)->len + v_file->mirrored_cursor_x;
+        ch_i < v_file__prev_line(v_file)->len + v_file->cursor_inverted_x;
         ch_i++)
     {
         *v_file__last_char_in_actual_line(v_file)
@@ -263,39 +263,39 @@ void edit__skip_tab_left(V_file* const v_file)
        && ((prev_ch == ' ') || (prev_ch == '\t')))
     {
         // Prevents skipping only one part of the Tab.
-        while((v_file->mirrored_cursor_x
+        while((v_file->cursor_inverted_x
                < v_file__actual_line(v_file)->len)
               && ((*v_file__actual_char(v_file) == ' ')
                   || (*v_file__actual_char(v_file) == '\t')))
         {
-            v_file->mirrored_cursor_x++;
+            v_file->cursor_inverted_x++;
         }
         if((*v_file__actual_char(v_file) != ' ')
            && (*v_file__actual_char(v_file) != '\t'))
         {
-            v_file->mirrored_cursor_x--; // Don't stop on a printable char.
+            v_file->cursor_inverted_x--; // Don't stop on a printable char.
         }
     }
 }
 
 void edit__skip_visible_chars_left(V_file* const v_file)
 {
-    while((v_file->mirrored_cursor_x < v_file__actual_line(v_file)->len)
+    while((v_file->cursor_inverted_x < v_file__actual_line(v_file)->len)
           && ((*v_file__actual_char(v_file) == ' ')
               || (*v_file__actual_char(v_file) == '\t')))
     {
-        v_file->mirrored_cursor_x++;
+        v_file->cursor_inverted_x++;
     }
     // Skip a whole word at once instead of 1 char for the first time.
     if(!((*v_file__actual_char(v_file) == ' ')
          || (*v_file__actual_char(v_file) == '\t')))
     {
-        while((v_file->mirrored_cursor_x
+        while((v_file->cursor_inverted_x
                < v_file__actual_line(v_file)->len)
               && !((*v_file__actual_char(v_file) == ' ')
                    || (*v_file__actual_char(v_file) == '\t')))
         {
-            v_file->mirrored_cursor_x++;
+            v_file->cursor_inverted_x++;
         }
     }
 }
@@ -341,7 +341,7 @@ bool edit__delete_char_before_tab(V_file* const v_file, const char tab_ch,
     const size_t pre_last_ch_i = v_file__actual_line(v_file)->len - SIZE__I;
 
     if((v_file__actual_line(v_file)->len > 0)
-       && (v_file->mirrored_cursor_x == 0)
+       && (v_file->cursor_inverted_x == 0)
        && (v_file__actual_line(v_file)->txt[pre_last_ch_i] != tab_ch))
     {
         return false;
@@ -355,7 +355,7 @@ bool edit__delete_char_before_tab(V_file* const v_file, const char tab_ch,
     }
     // Scenario when there is the Tab and some txt further.
     else if((v_file__cursor_x(v_file) > 0)
-            && (v_file->mirrored_cursor_x > 0)
+            && (v_file->cursor_inverted_x > 0)
             && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_ch))
     {
         return false;

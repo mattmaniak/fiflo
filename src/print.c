@@ -46,7 +46,7 @@ size_t print__set_start_line(const V_file* const v_file, const Ui* const ui)
     {
         // Number of lines to hide in a magic upper area.
         return v_file->lines_number + SIZE__I - ui->txtarea_h
-               - v_file->mirrored_cursor_y;
+               - v_file->cursor_inverted_y;
     }
     return 0;
 }
@@ -73,7 +73,7 @@ void print__actual_line(const V_file* const v_file, const Config* const config,
     }
     // Chars won't fit in a horizontal space.
     else if((v_file__actual_line(v_file)->len - ui->txtarea_w)
-            >= v_file->mirrored_cursor_x)
+            >= v_file->cursor_inverted_x)
     {
         // Render only a right part of a line.
         print__scroll_line_horizontally(v_file, config, syntax, ui);
@@ -247,7 +247,7 @@ void print__scroll_lines(const V_file* const v_file, const Config* const config,
     }
     // Chars won't fit in a horizontal space.
     else if((v_file__actual_line(v_file)->len - ui->txtarea_w)
-            >= v_file->mirrored_cursor_x)
+            >= v_file->cursor_inverted_x)
     {
         // Text will be scrolled. Not cursor.
         print__line_with_tabs(v_file, config, syntax,

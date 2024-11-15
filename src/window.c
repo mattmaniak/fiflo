@@ -97,7 +97,7 @@ void window__adjust_cursor_pos(const V_file* const v_file,
                                    + v_file__cursor_x(v_file));
         }
         else if((v_file__actual_line(v_file)->len - ui->txtarea_w)
-                >= v_file->mirrored_cursor_x)
+                >= v_file->cursor_inverted_x)
         {
             /* Last ui->txtarea_w chars are seen. Current line is scrolled,
                not cursor. */
@@ -149,7 +149,7 @@ bool window__render(const V_file* const v_file, const Config* const config,
     ui.txtarea_w = (term_t) (ui.win_w - ui.line_number_len);
     ui.txtarea_h = (term_t) (ui.win_h - UI__UBAR_SZ - ui.lbar_h);
 
-    ui.punched_card_delta_x = (int) (v_file[actual_file_i].mirrored_cursor_x
+    ui.punched_card_delta_x = (int) (v_file[actual_file_i].cursor_inverted_x
                                      - v_file__actual_line(v_file)->len
                                      - SIZE__I + ui.txtarea_w);
 

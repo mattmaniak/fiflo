@@ -43,7 +43,7 @@ bool keys__backspace(V_file* const v_file, const Config* const config,
         tab_i = edit__dont_delete_char_after_tab(v_file, tab_sz, tab_ch,
                                                  tab_i);
 
-        if((v_file__cursor_x(v_file) == 1) && (v_file->mirrored_cursor_x > 0)
+        if((v_file__cursor_x(v_file) == 1) && (v_file->cursor_inverted_x > 0)
            && (v_file__actual_line(v_file)->txt[actual_char_x] != tab_ch)
            && (*v_file__actual_char(v_file) == tab_ch))
         {
@@ -115,20 +115,20 @@ void keys__arrow_left(V_file* const v_file, const Config* const config)
             if(v_file__actual_line(v_file)->txt[v_file__cursor_x(v_file) - tab_i]
                != '\t')
             {
-                v_file->mirrored_cursor_x++;
+                v_file->cursor_inverted_x++;
                 break; // No Tab, so don't skip anything.
             }
             else if(tab_i == (tab_sz - SIZE__I))
             {
-                v_file->mirrored_cursor_x += tab_sz;
+                v_file->cursor_inverted_x += tab_sz;
             }
         }
     }
     else if((v_file->lines_number > 0) && !v_file__is_cursor_at_top(v_file))
     {
         // Set to a right part of a line ignoring it's linefeed.
-        v_file->mirrored_cursor_x = SIZE__LF;
-        v_file->mirrored_cursor_y++;
+        v_file->cursor_inverted_x = SIZE__LF;
+        v_file->cursor_inverted_y++;
     }
     v_file->esc_seq_on_input = false;
 }
@@ -147,26 +147,26 @@ void keys__arrow_right(V_file* const v_file, const Config* const config)
 
             if(v_file__actual_line(v_file)->txt[ch_i] != '\t')
             {
-                v_file->mirrored_cursor_x--;
+                v_file->cursor_inverted_x--;
                 break; // No Tab, so don't skip anything.
             }
             else if(tab_i == (tab_sz - SIZE__I))
             {
-                v_file->mirrored_cursor_x -= tab_sz;
+                v_file->cursor_inverted_x -= tab_sz;
             }
         }
         if(!v_file__is_cursor_x_scrolled(v_file)
             && v_file__is_cursor_y_scrolled(v_file))
         {
-            v_file->mirrored_cursor_y--;
-            v_file->mirrored_cursor_x = v_file__actual_line(v_file)->len;
+            v_file->cursor_inverted_y--;
+            v_file->cursor_inverted_x = v_file__actual_line(v_file)->len;
         }
         /* Last line doesn't contain the inefeed so ignoring it isn't
            necessary. */
         else if(!v_file__is_cursor_x_scrolled(v_file)
-                && (v_file->mirrored_cursor_y == 1))
+                && (v_file->cursor_inverted_y == 1))
         {
-            v_file->mirrored_cursor_y--;
+            v_file->cursor_inverted_y--;
         }
     }
     v_file->esc_seq_on_input = false;
@@ -178,10 +178,10 @@ void keys__arrow_up(V_file* const v_file)
     {
         /* Cursor at a left side: doesn't go at a end of a line. Always at the
            beginning or ignore the linefeed. */
-        v_file->mirrored_cursor_x = v_file__is_cursor_at_line_start(v_file)
+        v_file->cursor_inverted_x = v_file__is_cursor_at_line_start(v_file)
                                     ? v_file__prev_line(v_file)->len
                                     : SIZE__LF;
-        v_file->mirrored_cursor_y++;
+        v_file->cursor_inverted_y++;
     }
     v_file->esc_seq_on_input = false;
 }
@@ -194,17 +194,17 @@ void keys__arrow_down(V_file* const v_file)
 
     if(v_file__is_cursor_y_scrolled(v_file))
     {
-        v_file->mirrored_cursor_y--;
+        v_file->cursor_inverted_y--;
         if(cursor_at_prev_line_start)
         {
             /* Cursor at the left side: doesn't go at a end of a line. Always
                at the beginning. */
-            v_file->mirrored_cursor_x = v_file__actual_line(v_file)->len;
+            v_file->cursor_inverted_x = v_file__actual_line(v_file)->len;
         }
         else
         {
             // Ignore the LF or not.
-            v_file->mirrored_cursor_x = v_file__is_cursor_y_scrolled(v_file)
+            v_file->cursor_inverted_x = v_file__is_cursor_y_scrolled(v_file)
                                         ? SIZE__LF : 0;
         }
     }
@@ -215,19 +215,19 @@ void keys__ctrl_arrow_left(V_file* const v_file)
 {
     // Go to a previous line.
     if((v_file__cursor_x(v_file) == 0)
-       && (v_file->mirrored_cursor_y < v_file->lines_number))
+       && (v_file->cursor_inverted_y < v_file->lines_number))
     {
-        v_file->mirrored_cursor_y++;
-        v_file->mirrored_cursor_x = SIZE__LF;
+        v_file->cursor_inverted_y++;
+        v_file->cursor_inverted_x = SIZE__LF;
     }
     if((*v_file__actual_char(v_file) != ' ')
        && (*v_file__actual_char(v_file) != '\t'))
     {
-        while((v_file->mirrored_cursor_x < v_file__actual_line(v_file)->len)
+        while((v_file->cursor_inverted_x < v_file__actual_line(v_file)->len)
               && !((*v_file__actual_char(v_file) == ' ')
                    || (*v_file__actual_char(v_file) == '\t')))
         {
-            v_file->mirrored_cursor_x++;
+            v_file->cursor_inverted_x++;
         }
         edit__skip_tab_left(v_file);
     }
@@ -241,35 +241,35 @@ void keys__ctrl_arrow_left(V_file* const v_file)
 void keys__ctrl_arrow_right(V_file* const v_file)
 {
     // Go to a next line.
-    if((v_file->mirrored_cursor_x == 1)
+    if((v_file->cursor_inverted_x == 1)
        && v_file__is_cursor_y_scrolled(v_file))
     {
-        v_file->mirrored_cursor_y--;
-        v_file->mirrored_cursor_x = v_file__actual_line(v_file)->len;
+        v_file->cursor_inverted_y--;
+        v_file->cursor_inverted_x = v_file__actual_line(v_file)->len;
     }
     if((*v_file__actual_char(v_file) != ' ')
        && (*v_file__actual_char(v_file) != '\t'))
     {
-        while((v_file->mirrored_cursor_x > SIZE__I)
+        while((v_file->cursor_inverted_x > SIZE__I)
               && !((*v_file__actual_char(v_file) == ' ')
                    || (*v_file__actual_char(v_file) == '\t')))
         {
-            v_file->mirrored_cursor_x--;
+            v_file->cursor_inverted_x--;
         }
     }
     else // Non-whitespace chars.
     {
-        while((v_file->mirrored_cursor_x > SIZE__I)
+        while((v_file->cursor_inverted_x > SIZE__I)
               && ((*v_file__actual_char(v_file) == ' ')
                   || (*v_file__actual_char(v_file) == '\t')))
         {
-            v_file->mirrored_cursor_x--;
+            v_file->cursor_inverted_x--;
         }
         // Don't stop before a last part of the Tab.
         if((*v_file__actual_char(v_file) == ' ')
            || (*v_file__actual_char(v_file) == '\t'))
         {
-            v_file->mirrored_cursor_x--;
+            v_file->cursor_inverted_x--;
         }
     }
     v_file->esc_seq_on_input = false;
@@ -281,7 +281,7 @@ void keys__ctrl_arrow_up(V_file* const v_file)
     {
         for(;;)
         {
-            v_file->mirrored_cursor_y++;
+            v_file->cursor_inverted_y++;
             if((v_file__actual_line(v_file)->txt[0] == '\n')
                || v_file__is_cursor_at_top(v_file))
             {
@@ -289,24 +289,24 @@ void keys__ctrl_arrow_up(V_file* const v_file)
             }
         }
     }
-    v_file->mirrored_cursor_x = v_file__actual_line(v_file)->len;
+    v_file->cursor_inverted_x = v_file__actual_line(v_file)->len;
     v_file->esc_seq_on_input  = false;
 }
 
 void keys__ctrl_arrow_down(V_file* const v_file)
 {
-    if(v_file->mirrored_cursor_y > 0) // Not at a bottom of the file.
+    if(v_file->cursor_inverted_y > 0) // Not at a bottom of the file.
     {
         for(;;)
         {
-            v_file->mirrored_cursor_y--;
+            v_file->cursor_inverted_y--;
             if((v_file__actual_line(v_file)->txt[0] == '\n')
-               || (v_file->mirrored_cursor_y == 0))
+               || (v_file->cursor_inverted_y == 0))
             {
                 break;
             }
         }
     }
-    v_file->mirrored_cursor_x = v_file__actual_line(v_file)->len;
+    v_file->cursor_inverted_x = v_file__actual_line(v_file)->len;
     v_file->esc_seq_on_input  = false;
 }

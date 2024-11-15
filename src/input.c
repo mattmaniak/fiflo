@@ -139,8 +139,8 @@ void input__recognize_sequence(V_file* const v_file,
     }
 
 #ifdef DEBUG_INPUT
-    printf("mirrored_cursor_x %u, mirrored_cursor_y %u.\n",
-           v_file->mirrored_cursor_x, v_file->mirrored_cursor_y);
+    printf("cursor_inverted_x %u, cursor_inverted_y %u.\n",
+           v_file->cursor_inverted_x, v_file->cursor_inverted_y);
 #endif
 
 }

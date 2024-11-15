@@ -63,8 +63,8 @@ typedef struct
     size_t lines_number; // All lines number and index.
 
     // Visual shit.
-    size_t mirrored_cursor_x; // E.g. cursor_x = line_len - mirrored_cursor_x.
-    size_t mirrored_cursor_y;
+    size_t cursor_inverted_x; // E.g. cursor_x = line_len - cursor_inverted_x.
+    size_t cursor_inverted_y;
     char   status[V_FILE__STATUS_MAX]; // Message displayed in a upper bar.
 }
 V_file;
