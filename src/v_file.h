@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 #ifdef __APPLE__
-// https://opensource.apple.com/source/xnu/xnu-4903.221.2/bsd/sys/syslimits.h.auto.html
+// https://github.com/opensource-apple/xnu/blob/master/bsd/sys/syslimits.h
 #include <sys/syslimits.h>
 #endif
 
